@@ -190,6 +190,17 @@ export interface AuthorityPort {
    */
   recordPracticeTestReviewed(): Promise<void>;
   /**
+   * Persist a completed practice-test sitting's SCORED result to the projection
+   * (WS5, §6) — the dashboard summary + durable freshness + Mistakes/repair queue.
+   * The runner scores server-side from the answer key (the browser never sees a
+   * key), so this sends only the sitting's `sessionToken`; the server re-derives
+   * the completion and records it idempotently by sitting id. The client fires it
+   * once the runner reports `done` and the block response's `resultPersisted` is
+   * false (the deployed backend does not self-persist; the dev/preview runner
+   * does, and reports true — so this no-ops there).
+   */
+  persistPracticeTestResult(sessionToken: string): Promise<void>;
+  /**
    * Hand a finished diagnostic's opening priors to the mastery engine. Seeds
    * only ever initialize units the learner has not practised, and are capped far
    * below the mastery threshold — see `applyMasterySeed`.

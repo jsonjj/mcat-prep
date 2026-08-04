@@ -1,7 +1,7 @@
 import { Readable } from 'node:stream';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { describe, expect, it } from 'vitest';
-import { PracticeTestBank } from './practice-test-bank';
+import { PracticeTestBank } from '@mcat/practice-test-runner';
 import { practiceTestSessionStore } from './practice-test-api';
 import {
   handlePracticeTestNextRequest,

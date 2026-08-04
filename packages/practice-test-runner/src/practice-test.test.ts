@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { UtcTimestamp } from '@mcat/contracts';
 import type { DatedUnitObservation, PracticeTestBlueprint } from '@mcat/policies';
 import { validatePracticeTestForm } from '@mcat/policies';
-import { PracticeTestBank } from './practice-test-bank';
+import { PracticeTestBank } from './bank';
 import { DiagnosticSessionStore, type SessionRecord } from '@mcat/diagnostic-runner';
 import {
   bankSupportsPracticeTest,
@@ -10,7 +10,7 @@ import {
   resolvePracticeTestBlock,
   type PracticeTestBlockView,
   type PracticeTestFreshness,
-} from './practice-test-engine';
+} from './engine';
 import type { PulledCorpus, PulledProtected, PulledQuestion } from '@mcat/corpus-pull';
 
 /**
@@ -202,7 +202,9 @@ describe('practice test assembled form meets the blueprint (validate before serv
     const { served } = runSitting(bank, new DiagnosticSessionStore(), 'learner-2');
     const items = bank.candidates.filter((c) => served.includes(c.questionId));
     expect(validatePracticeTestForm(items, BP)).toEqual([]);
-    expect(items.filter((c) => c.section === 'cars').length).toBeGreaterThanOrEqual(BP.sectionFloors.cars);
+    expect(items.filter((c) => c.section === 'cars').length).toBeGreaterThanOrEqual(
+      BP.sectionFloors.cars,
+    );
   });
 });
 

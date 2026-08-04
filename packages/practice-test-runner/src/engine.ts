@@ -19,7 +19,7 @@ import {
   PRACTICE_TEST_SECTION_ORDER,
   type PracticeTestBank,
   type PracticeTestItemView,
-} from './practice-test-bank';
+} from './bank';
 import type { ScoredResponse, SessionRecord } from '@mcat/diagnostic-runner';
 
 /**

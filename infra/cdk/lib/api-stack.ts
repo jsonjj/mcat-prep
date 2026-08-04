@@ -140,6 +140,13 @@ export class ApiStack extends Stack {
         ORIGIN_VERIFICATION_SECRET_ARN: props.data.originVerificationSecret.secretArn,
         RATE_LIMIT_PEPPER_SECRET_ARN: props.data.rateLimitPepperSecret.secretArn,
         SUPABASE_CONFIG_SECRET_NAME: LEARNER_SUPABASE_SECRET_NAME,
+        // WS5 (§6): the scored practice-test RUNNER is now served by this Lambda
+        // (`/v1/practice-test/*`, migration 0022), so the planner may reserve a
+        // `practice_test` slot into Today's Path — its runner completes end to end.
+        // The strict plan still cannot deadlock: a slot is only reserved when the
+        // §6 cadence is due, the serve boundary re-checks due-ness, and a completed
+        // (or client-skipped) activity advances the in-order pointer.
+        PRACTICE_TEST_ENABLED: 'true',
         LEARNER_WEB_ORIGIN: Lazy.string({
           produce: () => {
             if (deliveryReference.learnerOrigin === undefined) {

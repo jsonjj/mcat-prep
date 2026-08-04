@@ -1,0 +1,26 @@
+{
+  "name": "@mcat/practice-test-runner",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mcat/content": "workspace:*",
+    "@mcat/contracts": "workspace:*",
+    "@mcat/corpus-pull": "workspace:*",
+    "@mcat/diagnostic-runner": "workspace:*",
+    "@mcat/policies": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.5",
+    "typescript": "5.7.3",
+    "vitest": "3.2.6"
+  }
+}

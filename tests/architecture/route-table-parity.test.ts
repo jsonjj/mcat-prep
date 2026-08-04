@@ -35,9 +35,6 @@ const signature = (route: { method: string; path: string }): string =>
 const KNOWN_UNIMPLEMENTED: readonly string[] = [
   // Offline command sync. No engine either.
   'POST /v1/sync',
-  // Scored practice-test summary. Engine present; not routed by the Lambda, and
-  // the client treats a 404 as "no test taken".
-  'GET /v1/practice-test/summary',
 ];
 
 const deployedSignatures = new Set(ROUTES.map(signature));

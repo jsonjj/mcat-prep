@@ -11,6 +11,7 @@ export * from './commands';
 export * from './cars-duel';
 export * from './passage-of-the-day';
 export * from './diagnostic-block';
+export * from './practice-test-block';
 export * from './learner-views';
 export * from './mastery';
 export * from './practice';

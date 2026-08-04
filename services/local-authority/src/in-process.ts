@@ -130,9 +130,7 @@ export class InProcessAuthorityClient implements AuthorityPort {
     activityId: string,
     status: 'in_progress' | 'complete' | 'skipped',
   ): Promise<void> {
-    await this.mutateAsync((state) =>
-      this.authority.recordPlanActivity(state, activityId, status),
-    );
+    await this.mutateAsync((state) => this.authority.recordPlanActivity(state, activityId, status));
   }
 
   async setDailyBudget(minutesPerDay: number): Promise<void> {
@@ -323,6 +321,19 @@ export class InProcessAuthorityClient implements AuthorityPort {
 
   async recordPracticeTestReviewed(): Promise<void> {
     this.mutate((state) => this.authority.recordPracticeTestReviewed(state));
+  }
+
+  /**
+   * No-op in the in-process dev authority. The dev/preview practice-test runner
+   * persists the SCORED result server-side on the completing block commit (via
+   * its recorder → `recordPracticeTestResult`), so by the time the client would
+   * fire this the sitting is already recorded — and the runner reports
+   * `resultPersisted: true`, so the client skips it here. This client-driven path
+   * exists for the DEPLOYED backend, which does not self-persist; keeping it a
+   * no-op (rather than double-recording) preserves the same idempotent outcome.
+   */
+  async persistPracticeTestResult(): Promise<void> {
+    // Intentionally empty — see the doc comment above.
   }
 
   async applyMasterySeed(seed: MasterySeed): Promise<void> {

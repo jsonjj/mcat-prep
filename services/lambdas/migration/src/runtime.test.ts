@@ -390,6 +390,11 @@ describe('migration runtime security boundary', () => {
     expect(sql).toContain(
       'grant select, insert on table practice_repair, attempt_results to mcat_learner_api',
     );
+    // WS5 (§6): the in-flight scored practice-test sitting store — read + append +
+    // update only, NO DELETE (mirrors diagnostic_sessions; expiry is by timestamp).
+    expect(sql).toContain(
+      'grant select, insert, update on table practice_test_sessions to mcat_learner_api',
+    );
     expect(sql).toContain('grant select, update on table outbox to mcat_workers');
     expect(sql).toContain('grant select, insert on table inbox_deduplication to mcat_workers');
     expect(sql).toContain('grant usage on schema public to mcat_learner_api');

@@ -10,7 +10,12 @@ import {
 } from '@mcat/contracts';
 import { resolveCarsSkill, resolveReasoningOperation } from '@mcat/content';
 import type { PracticeTestCandidate } from '@mcat/policies';
-import { loadPulledCorpus, type PulledCorpus, type PulledQuestion } from '@mcat/corpus-pull';
+import {
+  loadPulledCorpus,
+  type PulledCorpus,
+  type PulledProtected,
+  type PulledQuestion,
+} from '@mcat/corpus-pull';
 
 /**
  * Server-side bank for the periodic practice test (WS5).
@@ -31,8 +36,12 @@ import { loadPulledCorpus, type PulledCorpus, type PulledQuestion } from '@mcat/
  * (`PracticeTestFreshness`), so freshness + the re-measure survive a restart
  * (WS5, §6, Task 1). Migrations 0016/0017 remain the deployed Postgres shape for
  * the same facts, but the running app persists them on the event-sourced
- * `state_json` blob like `goal`/`mastery`/`sittings` — so no separate table is
- * wired, and 0016/0017 can be dropped if the team commits to the JSON-blob home.
+ * `state_json` blob like `goal`/`mastery`/`sittings`.
+ *
+ * One mapping, two producers. The gitignored local corpus pull (dev) and the
+ * Postgres question bank (deployed, via `practiceTestCorpusFromRows`) both hand
+ * rows in the same {@link PulledCorpus} shape; this class turns them into a bank,
+ * keeping answer material server-side.
  *
  * Node-only: `grade`/`score` read the protected key material.
  */
@@ -76,7 +85,14 @@ const SECTION_TITLE: Readonly<Record<Section, string>> = {
 
 /** status values treated as test-eligible (the corpus ships as candidates). */
 const ELIGIBLE_STATUS = new Set(['production_candidate', 'published']);
-const HELD_OUT_STATUSES = new Set(['held_out', 'holdout', 'retired', 'archived', 'draft', 'rejected']);
+const HELD_OUT_STATUSES = new Set([
+  'held_out',
+  'holdout',
+  'retired',
+  'archived',
+  'draft',
+  'rejected',
+]);
 const VALID_CLUSTERS = new Set<string>(SKILL_CLUSTERS);
 const CHOICE_IDS = ['A', 'B', 'C', 'D'] as const;
 
@@ -109,7 +125,10 @@ interface BankItem {
 const formatOf = (passage: string): QuestionFormat =>
   passage.trim() === '' ? 'discrete_mcq' : 'passage_mcq';
 
-function toItem(row: PulledQuestion, key: { correct_answer: 'A' | 'B' | 'C' | 'D'; explanations: Record<string, string> }): BankItem | null {
+function toItem(
+  row: PulledQuestion,
+  key: { correct_answer: 'A' | 'B' | 'C' | 'D'; explanations: Record<string, string> },
+): BankItem | null {
   const choices = row.choices;
   const c = row.cluster;
   if (
@@ -262,3 +281,121 @@ export function createPracticeTestBank(
 
 /** The four sections in blueprint delivery order (C/P → CARS → B/B → P/S). */
 export const PRACTICE_TEST_SECTION_ORDER: readonly Section[] = SectionSchema.options;
+
+// ---------------------------------------------------------------------------
+// Deployed bank source (Postgres → local pull), mirroring the diagnostic bank's
+// `resolveDiagnosticBankItems`. The learner-API injects `loadFromPostgres`; dev
+// leaves it unset and falls straight through to the local pull.
+// ---------------------------------------------------------------------------
+
+/**
+ * One practice-test-eligible question row: learner-safe fields plus the
+ * SERVER-ONLY answer key. The shape `@mcat/persistence-postgres`'s
+ * `listPracticeTestBankRows` produces (the diagnostic bank row + `kc_id`, which
+ * the practice-test scorer needs to route a miss to its KC), so the deployed
+ * bank is built from Postgres through the same mapping the local pull uses.
+ * NEVER return these rows to the browser — only the learner-safe `view` may.
+ */
+export interface PracticeTestBankSourceRow {
+  question_id: string;
+  section: string;
+  cluster: string | null;
+  kc_id: string | null;
+  lesson_id: string | null;
+  family_id: string | null;
+  subject: string | null;
+  primary_skill: string | null;
+  dok_level: number | null;
+  stem: string;
+  passage: string | null;
+  choices: Record<string, string> | null;
+  status: string | null;
+  correct_answer: 'A' | 'B' | 'C' | 'D';
+  explanations: Record<string, string>;
+}
+
+/** Assemble a {@link PulledCorpus} from question-bank rows (deployed Postgres path). */
+export function practiceTestCorpusFromRows(
+  rows: readonly PracticeTestBankSourceRow[],
+): PulledCorpus {
+  const questions: PulledQuestion[] = [];
+  const keys: [string, PulledProtected][] = [];
+  for (const row of rows) {
+    questions.push({
+      question_id: row.question_id,
+      section: row.section,
+      cluster: row.cluster,
+      kc_id: row.kc_id,
+      lesson_id: row.lesson_id,
+      family_id: row.family_id,
+      subject: row.subject,
+      primary_skill: row.primary_skill,
+      dok_level: row.dok_level,
+      stem: row.stem,
+      passage: row.passage,
+      choices: row.choices,
+      status: row.status,
+    });
+    keys.push([
+      row.question_id,
+      {
+        question_id: row.question_id,
+        correct_answer: row.correct_answer,
+        explanations: row.explanations,
+      },
+    ]);
+  }
+  return { questions, protectedById: new Map(keys) };
+}
+
+export type PracticeTestBankSource = 'postgres' | 'local-pull' | 'none';
+
+export interface PracticeTestBankResolution {
+  readonly source: PracticeTestBankSource;
+  readonly bank: PracticeTestBank | null;
+}
+
+/**
+ * Resolve the practice-test bank through the priority fallback: `postgres` (when
+ * a loader is supplied and returns rows) wins; otherwise the local pull;
+ * otherwise none (the runner answers 503, since a scored test has no synthetic
+ * fixture the way onboarding's diagnostic does).
+ */
+export async function resolvePracticeTestBank(deps: {
+  loadFromPostgres?: () => Promise<readonly PracticeTestBankSourceRow[] | null>;
+  loadFromLocalPull?: () => PulledCorpus | null;
+  warn?: (message: string, error?: unknown) => void;
+}): Promise<PracticeTestBankResolution> {
+  const { loadFromPostgres, loadFromLocalPull = loadPulledCorpus, warn = console.warn } = deps;
+  if (loadFromPostgres !== undefined) {
+    try {
+      const rows = await loadFromPostgres();
+      if (rows !== null && rows.length > 0) {
+        const bank = new PracticeTestBank(practiceTestCorpusFromRows(rows));
+        if (bank.stats.items > 0) return { source: 'postgres', bank };
+      }
+      warn('[practice-test] the question bank returned no items; falling back to the local pull.');
+    } catch (error) {
+      warn(
+        '[practice-test] reading the question bank failed; falling back to the local pull.',
+        error,
+      );
+    }
+  }
+  const corpus = loadFromLocalPull();
+  const bank = corpus ? createPracticeTestBank(corpus) : null;
+  return { source: bank ? 'local-pull' : 'none', bank };
+}
+
+/** One boot line stating which corpus the practice test is serving from. */
+export function practiceTestBankSourceLine(resolution: PracticeTestBankResolution): string {
+  const items = resolution.bank?.stats.items ?? 0;
+  switch (resolution.source) {
+    case 'postgres':
+      return `[practice-test] bank source: postgres — ${items} items (${resolution.bank?.stats.cars ?? 0} CARS).`;
+    case 'local-pull':
+      return `[practice-test] bank source: local pull — ${items} items (no DB reachable).`;
+    case 'none':
+      return '[practice-test] bank source: NONE — no DB and no local pull; the runner will 503.';
+  }
+}

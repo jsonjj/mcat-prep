@@ -11,6 +11,12 @@ import {
   DiagnosticBlockResponseSchema,
   DiagnosticNextRequestSchema,
 } from './diagnostic-block';
+import {
+  PracticeTestBlockRequestSchema,
+  PracticeTestBlockResponseSchema,
+  PracticeTestNextRequestSchema,
+  PracticeTestResultRequestSchema,
+} from './practice-test-block';
 import { ErrorCodeSchema } from './errors';
 import { EventIdSchema } from './ids';
 import {
@@ -246,6 +252,34 @@ export const HTTP_API = {
     method: 'GET',
     path: '/v1/practice-test/summary',
     response: PracticeTestSummaryViewSchema.nullable(),
+  },
+  // Periodic scored practice-test RUNNER (WS5, §6). Block-based, like the
+  // diagnostic: `/next` starts (cadence-gated) or resumes a sitting and serves
+  // the current block; `/block` commits it (one-use block token) and serves the
+  // next / the scored result. Both session-gated but not CSRF write-gated (they
+  // mutate only the learner's own practice-test session row, never the
+  // projection). The wire carries no answer key and no per-item correctness.
+  practiceTestNext: {
+    method: 'POST',
+    path: '/v1/practice-test/next',
+    body: PracticeTestNextRequestSchema,
+    response: PracticeTestBlockResponseSchema,
+  },
+  practiceTestBlock: {
+    method: 'POST',
+    path: '/v1/practice-test/block',
+    body: PracticeTestBlockRequestSchema,
+    response: PracticeTestBlockResponseSchema,
+  },
+  // Persist a completed sitting's SCORED result to the learner projection (the
+  // dashboard summary + durable freshness + Mistakes/repair queue). State-changing
+  // (CSRF-gated): the server re-derives the score from the durable session, so no
+  // score is trusted from the client; idempotent by the sitting id.
+  practiceTestResult: {
+    method: 'POST',
+    path: '/v1/practice-test/result',
+    body: PracticeTestResultRequestSchema,
+    response: AcceptedCommandResponseSchema,
   },
   /**
    * Passage of the Day — FORMATIVE (writes no mastery). The learner's tz offset

@@ -4,18 +4,13 @@ import type {
   ChoiceId,
   PracticeTestServeRefusal,
   PracticeTestServeRefusalReason,
-  ReasoningOperation,
-  Section,
-  SkillCluster,
   UtcTimestamp,
 } from '@mcat/contracts';
 import {
-  estimatePracticeTestScaled,
   practiceTestBlueprintFor,
   type DatedUnitObservation,
   type PracticeTestLengthTier,
 } from '@mcat/policies';
-import { createPracticeTestBank, type PracticeTestBank } from './practice-test-bank';
 import {
   DiagnosticSessionError,
   DiagnosticSessionStore,
@@ -23,12 +18,16 @@ import {
 } from '@mcat/diagnostic-runner';
 import {
   bankSupportsPracticeTest,
+  buildPracticeTestCompletion,
+  createPracticeTestBank,
   recordPracticeTestBlock,
   resolvePracticeTestBlock,
+  type PracticeTestBank,
   type PracticeTestBlockView,
+  type PracticeTestCompletionResult,
   type PracticeTestFinalize,
   type PracticeTestFreshness,
-} from './practice-test-engine';
+} from '@mcat/practice-test-runner';
 
 /**
  * HTTP surface for the periodic practice test on the learner-web dev/preview
@@ -89,36 +88,6 @@ const sittingIdOf = (record: SessionRecord): string => {
  */
 const sessionAnswers = new WeakMap<SessionRecord, Map<string, ChoiceId | null>>();
 
-/** One per-item attempt the completion carries into the authority's attempt log (Task 2). */
-export interface PracticeTestAttemptPayload {
-  readonly questionId: string;
-  readonly kcId: string | null;
-  readonly skill: ReasoningOperation | null;
-  readonly cluster: SkillCluster | null;
-  readonly familyId: string | null;
-  readonly chosenChoiceId: ChoiceId | null;
-  readonly correct: boolean;
-  readonly elapsedMs: number | null;
-}
-
-/** The scored-result payload the completion recorder persists (WS5, §6). */
-export interface PracticeTestCompletionPayload {
-  readonly sittingId: string;
-  readonly takenOn: UtcTimestamp;
-  readonly tier: PracticeTestLengthTier;
-  readonly itemsScored: number;
-  readonly correct: number;
-  readonly sections: ReadonlyArray<{ section: Section; pctCorrect: number }>;
-  readonly scaledScore: number;
-  readonly reviewTargets: ReadonlyArray<{ kcId: string; skill?: ReasoningOperation }>;
-  /** Every item scored this sitting → the durable never-reuse set (Task 1). */
-  readonly scoredItemIds: readonly string[];
-  /** This sitting's per-unit observations → the durable re-measure history (Task 1). */
-  readonly unitObservations: readonly DatedUnitObservation[];
-  /** Per-item attempts → the Mistakes/error-log + pattern queue (Task 2). */
-  readonly attempts: readonly PracticeTestAttemptPayload[];
-}
-
 /** What the serve boundary needs to know before it will START a new sitting (WS5, §6). */
 export interface PracticeTestServeGate {
   readonly due: boolean;
@@ -149,13 +118,15 @@ export interface PracticeTestAuthorityRecorder {
    * the persisted learner state. Optional — a recorder that does not provide it
    * (a test stub) degrades to empty freshness (a first, all-fresh sitting).
    */
-  loadFreshness?(): Promise<{
-    scoredItemIds: readonly string[];
-    unitHistory: readonly DatedUnitObservation[];
-  }> | {
-    scoredItemIds: readonly string[];
-    unitHistory: readonly DatedUnitObservation[];
-  };
+  loadFreshness?():
+    | Promise<{
+        scoredItemIds: readonly string[];
+        unitHistory: readonly DatedUnitObservation[];
+      }>
+    | {
+        scoredItemIds: readonly string[];
+        unitHistory: readonly DatedUnitObservation[];
+      };
   /**
    * Mark a sitting STARTED so an incomplete one can be closed and the one-open
    * invariant held (Task 4). Optional; a recorder without it simply does not
@@ -166,7 +137,7 @@ export interface PracticeTestAuthorityRecorder {
     startedAt: UtcTimestamp;
     tier: PracticeTestLengthTier;
   }): Promise<void> | void;
-  recordCompleted(completion?: PracticeTestCompletionPayload): Promise<void> | void;
+  recordCompleted(completion?: PracticeTestCompletionResult): Promise<void> | void;
   recordReviewed(): Promise<void> | void;
 }
 
@@ -215,7 +186,8 @@ function clientId(request: IncomingMessage): string {
 }
 
 async function readJsonBody(request: IncomingMessage): Promise<Record<string, unknown>> {
-  if (!isJsonRequest(request)) throw new RequestBodyError('Request body must use application/json.', 415);
+  if (!isJsonRequest(request))
+    throw new RequestBodyError('Request body must use application/json.', 415);
   let body = '';
   for await (const chunk of request) {
     body += chunk.toString();
@@ -246,6 +218,14 @@ interface BlockResponsePayload extends PracticeTestBlockView {
   blockToken: string | null;
   /** Stable id of the open block, echoed back on commit (null once done). */
   blockId: string | null;
+  /**
+   * The dev/preview runner persists a completed sitting's scored result inline
+   * (its recorder → the in-process authority) on the completing block commit, so
+   * a `done` view is already persisted. The client reads this to skip the
+   * separate result write it makes against the deployed backend (which does not
+   * self-persist). See `apps/learner-web/src/app/practice-test-client.ts`.
+   */
+  resultPersisted: boolean;
 }
 
 function serveBlock(
@@ -263,68 +243,16 @@ function serveBlock(
     ? practiceTestSessionStore.issueBlockToken(record, block.blockId, block.questionIds)
     : null;
   return {
-    payload: { sessionToken, blockToken, blockId: block?.blockId ?? null, ...view },
+    payload: {
+      sessionToken,
+      blockToken,
+      blockId: block?.blockId ?? null,
+      // The dev runner persists the scored result on the completing commit, so a
+      // done view is already persisted; the client then skips its own write.
+      resultPersisted: view.done,
+      ...view,
+    },
     finalize,
-  };
-}
-
-/**
- * Turn a completed block payload into the scored-result the recorder persists.
- * Returns undefined when the payload is not a finished sitting (no result), so
- * the caller degrades to a counters-only completion. The per-section %-correct
- * are the dashboard's trend points; the scaled score is the conservative
- * estimate midpoint (the range is re-derived on read).
- *
- * It also carries the DURABLE freshness (`finalize`, Task 1) and the per-item
- * ATTEMPTS (Task 2) so the authority can persist the never-reuse set + re-measure
- * history and feed the same Mistakes/error-log queue adaptive practice uses. The
- * attempts are built from the response log joined to the bank classification and
- * the picked options accumulated across the sitting's blocks.
- */
-function completionFrom(
-  bank: PracticeTestBank,
-  record: SessionRecord,
-  payload: BlockResponsePayload,
-  finalize: PracticeTestFinalize,
-  tier: PracticeTestLengthTier,
-  now: UtcTimestamp,
-): PracticeTestCompletionPayload | undefined {
-  const result = payload.result;
-  if (result === null) return undefined;
-  const overallPct = result.itemsScored > 0 ? (result.correct / result.itemsScored) * 100 : 0;
-  const picked = sessionAnswers.get(record) ?? new Map<string, ChoiceId | null>();
-  const attempts: PracticeTestAttemptPayload[] = record.responses.map((r) => {
-    const c = bank.classify(r.questionId);
-    return {
-      questionId: r.questionId,
-      kcId: c?.kcId ?? null,
-      skill: c?.skill ?? null,
-      cluster: c?.cluster ?? null,
-      familyId: c?.familyId ?? r.familyId ?? null,
-      chosenChoiceId: picked.get(r.questionId) ?? null,
-      correct: r.correct,
-      // The engine stores 0 for an uncaptured time; the log wants NULL ("not
-      // captured") to keep it apart from a real instant 0 (WS0).
-      elapsedMs: r.elapsedMs > 0 ? r.elapsedMs : null,
-    };
-  });
-  return {
-    sittingId: sittingIdOf(record),
-    takenOn: now,
-    tier,
-    itemsScored: result.itemsScored,
-    correct: result.correct,
-    sections: result.perSection.map((s) => ({
-      section: s.section,
-      pctCorrect: Math.round(s.accuracy * 100),
-    })),
-    scaledScore: estimatePracticeTestScaled(overallPct, result.itemsScored).point,
-    reviewTargets: result.reviewTargets.map((t) =>
-      t.skill !== undefined ? { kcId: t.kcId, skill: t.skill } : { kcId: t.kcId },
-    ),
-    scoredItemIds: finalize.scoredItemIds,
-    unitObservations: finalize.unitObservations,
-    attempts,
   };
 }
 
@@ -364,10 +292,15 @@ function handleError(response: ServerResponse, error: unknown): void {
     writeJson(response, error.status, { error: error.message });
     return;
   }
-  writeJson(response, 500, { error: 'The practice test could not be processed. Please try again.' });
+  writeJson(response, 500, {
+    error: 'The practice test could not be processed. Please try again.',
+  });
 }
 
-function bankOr503(response: ServerResponse, bank: PracticeTestBank | null): bank is PracticeTestBank {
+function bankOr503(
+  response: ServerResponse,
+  bank: PracticeTestBank | null,
+): bank is PracticeTestBank {
   if (bank === null) {
     writeJson(response, 503, {
       error: 'The practice-test question bank is not available in this environment.',
@@ -378,9 +311,11 @@ function bankOr503(response: ServerResponse, bank: PracticeTestBank | null): ban
 }
 
 const REFUSAL_MESSAGE: Readonly<Record<PracticeTestServeRefusalReason, string>> = {
-  not_due_recent: 'Your next practice test is not due yet — keep studying and it will unlock on cadence.',
+  not_due_recent:
+    'Your next practice test is not due yet — keep studying and it will unlock on cadence.',
   blocked_unreviewed: 'Review your last practice test before starting a new one.',
-  blackout_before_exam: 'No practice test in the final days before your exam — rest and light review only.',
+  blackout_before_exam:
+    'No practice test in the final days before your exam — rest and light review only.',
   capped_today: 'You have already taken a practice test today. The next one is available tomorrow.',
   not_unlocked: 'Finish a few more lessons to unlock practice tests.',
 };
@@ -425,7 +360,10 @@ function servableOr503(
   record: SessionRecord,
   excludeIds: ReadonlySet<string>,
 ): boolean {
-  if (record.completed || bankSupportsPracticeTest(bank, excludeIds, practiceTestBlueprintFor(tierOf(record))))
+  if (
+    record.completed ||
+    bankSupportsPracticeTest(bank, excludeIds, practiceTestBlueprintFor(tierOf(record)))
+  )
     return true;
   writeJson(response, 503, {
     error: 'The practice-test question bank is not available in this environment.',
@@ -472,7 +410,11 @@ export function handlePracticeTestNextRequest(
         // Mark the sitting STARTED so an abandoned one is closed + the one-open
         // invariant holds (Task 4). Best-effort: a hiccup must not fail the serve.
         try {
-          await recorder.recordStarted?.({ sittingId: sittingIdOf(record), startedAt: now, tier: gate.tier });
+          await recorder.recordStarted?.({
+            sittingId: sittingIdOf(record),
+            startedAt: now,
+            tier: gate.tier,
+          });
         } catch {
           // A dev-authority hiccup must not block a due sitting from starting.
         }
@@ -537,10 +479,21 @@ export function handlePracticeTestBlockRequest(
       // freshness (Task 1), enqueues its misses into the Mistakes/repair queue
       // (Task 2), closes the open sitting (Task 4), and re-opens the review gate.
       // The block still succeeds even if the best-effort record hiccups.
-      if (!wasCompleted && record.completed && recorder !== undefined && finalize !== undefined) {
+      if (
+        !wasCompleted &&
+        record.completed &&
+        recorder !== undefined &&
+        finalize !== undefined &&
+        payload.result !== null
+      ) {
         try {
           await recorder.recordCompleted(
-            completionFrom(bank, record, payload, finalize, tierOf(record), now),
+            buildPracticeTestCompletion(bank, record, payload.result, finalize, {
+              picked: sessionAnswers.get(record) ?? new Map<string, ChoiceId | null>(),
+              sittingId: sittingIdOf(record),
+              tier: tierOf(record),
+              now,
+            }),
           );
         } catch {
           // Best-effort: a dev-authority hiccup must not fail a committed block.

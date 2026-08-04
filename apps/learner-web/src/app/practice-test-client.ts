@@ -73,6 +73,13 @@ export interface PracticeTestBlockView {
   itemsCommitted: number;
   questions: PracticeTestItemView[];
   result: PracticeTestResultView | null;
+  /**
+   * Whether the serving backend already persisted the scored sitting. The
+   * dev/preview runner does (true on a completed sitting); the deployed backend
+   * does not (false), so the runner fires the separate result write. Only
+   * meaningful when `done` is true.
+   */
+  resultPersisted: boolean;
   /** Set when the serve boundary refused to START a sitting (no test due). */
   notDue: { reason: string } | null;
 }
@@ -80,14 +87,19 @@ export interface PracticeTestBlockView {
 /** The learner's draft answers for one block. Null is an explicit "not known". */
 export type BlockAnswers = Record<string, ChoiceId | null>;
 
-interface WireResponse extends Omit<PracticeTestBlockView, 'notDue'> {
+interface WireResponse extends Omit<PracticeTestBlockView, 'notDue' | 'resultPersisted'> {
   sessionToken: string;
   blockToken: string | null;
+  /** Optional on the wire; absent (dev non-done responses) reads as not persisted. */
+  resultPersisted?: boolean;
 }
 
 const SESSION_KEY = 'mcat.practice-test.session';
 const DRAFT_PREFIX = 'mcat.practice-test.draft.';
-const BASE = '/api/practice-test';
+// The runner now lives on the deployed learner-API under `/v1/*` (CloudFront
+// routes only `/v1/*` to the Lambda). Dev/preview serves the same paths through
+// the in-process Vite plugin, so this is identical across environments.
+const BASE = '/v1/practice-test';
 
 class PracticeTestApiError extends Error {}
 
@@ -164,6 +176,7 @@ const EMPTY_VIEW = (notDue: { reason: string } | null): PracticeTestBlockView =>
   itemsCommitted: 0,
   questions: [],
   result: null,
+  resultPersisted: false,
   notDue,
 });
 
@@ -177,6 +190,9 @@ export class PracticeTestClient {
       method: 'POST',
       headers: { 'content-type': 'application/json', accept: 'application/json' },
       cache: 'no-store',
+      // The deployed runner is a session route: send the auth cookie. CloudFront
+      // injects the origin-verify header; these are not CSRF write-gated.
+      credentials: 'include',
       body: JSON.stringify(body),
     });
     let json: unknown;
@@ -220,8 +236,14 @@ export class PracticeTestClient {
       itemsCommitted: wire.itemsCommitted,
       questions: wire.questions ?? [],
       result: wire.result,
+      resultPersisted: wire.resultPersisted ?? false,
       notDue: null,
     };
+  }
+
+  /** The current sitting's opaque session token, for the scored-result write. */
+  getSessionToken(): string | null {
+    return this.sessionToken;
   }
 
   /** Start a new sitting or resume the stored session; serves the current block. */
@@ -268,16 +290,6 @@ export class PracticeTestClient {
       /* ignore */
     }
     return view;
-  }
-
-  /** Mark the just-completed test's review as done, releasing the §6 cadence gate. */
-  async markReviewed(): Promise<void> {
-    await fetch(`${BASE}/review`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', accept: 'application/json' },
-      cache: 'no-store',
-      body: JSON.stringify({ sessionToken: this.sessionToken ?? undefined }),
-    });
   }
 
   reset(): void {

@@ -150,9 +150,8 @@ export async function findPracticeItems(
   const hasOp = filter.hasReasoningOp !== false;
   const hasStats = filter.hasQuestionStats !== false;
   const target = (filter.bBand[0] + filter.bBand[1]) / 2;
-  const columns = (hasOp
-    ? LEARNER_SAFE_COLUMNS
-    : LEARNER_SAFE_COLUMNS.filter((c) => c !== 'reasoning_operation')
+  const columns = (
+    hasOp ? LEARNER_SAFE_COLUMNS : LEARNER_SAFE_COLUMNS.filter((c) => c !== 'reasoning_operation')
   )
     .map((c) => `q.${c}`)
     .join(', ');
@@ -269,6 +268,54 @@ export async function listDiagnosticBankRows(pool: Pool): Promise<DiagnosticBank
 }
 
 /**
+ * One practice-test-eligible question, learner-safe fields plus its SERVER-ONLY
+ * key. The practice-test sibling of {@link DiagnosticBankRow}, with the one
+ * addition the practice-test scorer needs over the diagnostic: `kc_id`, the
+ * science mastery grain a miss is routed to for the repair queue. Structurally
+ * matches `@mcat/practice-test-runner`'s `PracticeTestBankSourceRow`.
+ */
+export interface PracticeTestBankRow {
+  question_id: string;
+  section: string;
+  cluster: string | null;
+  kc_id: string | null;
+  lesson_id: string | null;
+  family_id: string | null;
+  subject: string | null;
+  primary_skill: string | null;
+  dok_level: number | null;
+  stem: string;
+  passage: string | null;
+  choices: Record<string, string> | null;
+  status: string | null;
+  correct_answer: 'A' | 'B' | 'C' | 'D';
+  explanations: Record<string, string>;
+}
+
+/**
+ * SERVER-ONLY. Every practice-test-eligible question (production_candidate /
+ * published) joined to its answer key, for building the practice-test bank at
+ * cold start. Unlike the diagnostic — which reaches concepts through lessons and
+ * so drops CARS — the practice test is a blueprint exam that INCLUDES CARS, so
+ * this selects every section. INNER JOIN on `question_protected`, so an item with
+ * no key is never returned (it could not be scored). NEVER return these rows to
+ * the browser — only the runner's learner-safe projection may cross that boundary.
+ */
+export async function listPracticeTestBankRows(pool: Pool): Promise<PracticeTestBankRow[]> {
+  const { rows } = await pool.query(
+    `select
+       q.question_id, q.section, q.cluster, q.kc_id, q.lesson_id, q.family_id, q.subject,
+       q.primary_skill, q.dok_level, q.stem, q.passage, q.choices, q.status,
+       p.correct_answer, p.explanations
+     from questions q
+     join question_protected p on p.question_id = q.question_id
+     where q.status in ('production_candidate', 'published')
+     order by q.question_id`,
+  );
+  return rows as PracticeTestBankRow[];
+}
+
+/**
  * SERVER-ONLY. The answer key + per-choice explanations for scoring. NEVER call
  * this on a learner-safe surface and NEVER return the result to the browser.
  */
@@ -285,7 +332,10 @@ export interface QuestionAnswer {
   error_models: Record<string, string> | null;
 }
 
-export async function getQuestionAnswer(pool: Pool, questionId: string): Promise<QuestionAnswer | null> {
+export async function getQuestionAnswer(
+  pool: Pool,
+  questionId: string,
+): Promise<QuestionAnswer | null> {
   const { rows } = await pool.query(
     // `error_models` is read column-agnostically. On a database that predates
     // migration 0015 the column does not exist, and naming it directly would make
@@ -298,7 +348,12 @@ export async function getQuestionAnswer(pool: Pool, questionId: string): Promise
     [questionId],
   );
   const row = rows[0] as
-    | { question_id: string; correct_answer: 'A' | 'B' | 'C' | 'D'; explanations: Record<string, string>; error_models?: Record<string, string> | null }
+    | {
+        question_id: string;
+        correct_answer: 'A' | 'B' | 'C' | 'D';
+        explanations: Record<string, string>;
+        error_models?: Record<string, string> | null;
+      }
     | undefined;
   if (row === undefined) return null;
   return {

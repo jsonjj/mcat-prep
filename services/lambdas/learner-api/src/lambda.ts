@@ -23,6 +23,7 @@ import {
 } from './auth/supabase';
 import { createGuestProjection } from './guest-projection';
 import { createPostgresDiagnosticPort } from './diagnostic-port';
+import { createPostgresPracticeTestPort } from './practice-test-port';
 import { createRepositoryLearnerApi, type LearnerApi, type PassagePort } from './handler';
 import type { LambdaApiGatewayEvent, LambdaApiGatewayResult, SafeLogger } from './http';
 
@@ -417,14 +418,18 @@ async function createRuntime(): Promise<LearnerApi> {
     // back to the synthetic fixture if the bank is unseeded so onboarding never
     // dead-ends (the cold-start content-health probe already flags an unseeded DB).
     diagnostic: createPostgresDiagnosticPort(pool),
-    // Periodic scored practice TEST — GATED OFF in production. The runner the
-    // client drives (`/api/practice-test/*`) is served only by the dev/preview
-    // Vite plugin; the deployed CloudFront/S3 SPA routes only `/v1/*` to this
-    // Lambda, so the runner has no production backend yet. Reserving a
-    // `practice_test` plan slot here would launch a dead runner and deadlock the
-    // strict plan, so the planner reserves none until the runner ships. Opt back
-    // in per-environment with PRACTICE_TEST_ENABLED=true. See
-    // docs/practice-test-prod.md for what remains to fully enable it.
+    // Periodic scored practice TEST RUNNER, served through the same
+    // session/origin-verify pipeline as every other /v1 route. The bank is built
+    // once per warm container from the question bank (production_candidate /
+    // published, CARS included) via the SAME mapping the local pull uses; the
+    // in-flight sitting persists in `practice_test_sessions` (migration 0022), and
+    // the SCORED result is persisted to the projection through the kernel's
+    // idempotent result write. No synthetic fixture: an unseeded bank 503s.
+    practiceTest: createPostgresPracticeTestPort(pool),
+    // Whether the planner may reserve a `practice_test` slot into Today's Path.
+    // Now that the runner is wired end-to-end, opt in with PRACTICE_TEST_ENABLED=true
+    // on the Lambda (default false keeps a slot from being reserved where the flag
+    // is unset). See docs/practice-test-prod.md.
     practiceTestEnabled: process.env.PRACTICE_TEST_ENABLED === 'true',
   });
 }

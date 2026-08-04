@@ -245,6 +245,17 @@ $role$`,
       // erasing a learner's attempt history or diagnostic sessions.
       'grant select, insert, update on table practice_exposure, practice_attempt_grant, diagnostic_sessions to mcat_learner_api',
       'grant select, insert on table practice_repair, attempt_results to mcat_learner_api',
+      // WS5 (§6): the periodic scored practice-test IN-FLIGHT sitting store
+      // (migration 0022). Read + append + update the learner's own session row —
+      // the append-only response log, the picked answers, the one-use block token,
+      // and, at completion, the cached result — but deliberately NO DELETE: like
+      // diagnostic_sessions, expiry is by timestamp, so withholding DELETE keeps a
+      // compromised runtime from erasing a learner's in-flight sitting (expired
+      // rows are reclaimed out of band). The SCORED result is persisted on the
+      // event-sourced projection (state_json.practiceTests) via the same
+      // accepted_events/outbox path every other write uses, so the runtime needs
+      // NO grant on the 0016/0017 result tables — they are unused by the app.
+      'grant select, insert, update on table practice_test_sessions to mcat_learner_api',
     ],
   },
   {

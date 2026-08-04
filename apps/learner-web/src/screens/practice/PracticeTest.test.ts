@@ -62,6 +62,7 @@ const block = (over: Partial<PracticeTestBlockView> = {}): PracticeTestBlockView
     },
   ],
   result: null,
+  resultPersisted: false,
   notDue: null,
   ...over,
 });
@@ -104,7 +105,11 @@ async function render(): Promise<ReactTestRenderer> {
     renderer = create(
       createElement(
         MemoryRouter,
-        { initialEntries: [{ pathname: '/app/practice/test', state: { returnTo: '/app/practice' } }] },
+        {
+          initialEntries: [
+            { pathname: '/app/practice/test', state: { returnTo: '/app/practice' } },
+          ],
+        },
         createElement(PracticeTest),
       ),
     );

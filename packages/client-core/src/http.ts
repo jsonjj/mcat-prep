@@ -623,10 +623,14 @@ export class HttpAuthorityClient implements AuthorityPort, AuthPort {
     // Session-gated but NOT state-changing (no CSRF write gate); the shared
     // request() still sends the session cookie via `credentials: 'include'`.
     await this.ensureBootstrap();
-    const response = await this.request(HTTP_API.passageAttempt.path, PassageAttemptResponseSchema, {
-      method: HTTP_API.passageAttempt.method,
-      body: JSON.stringify({ questionId, choiceId }),
-    });
+    const response = await this.request(
+      HTTP_API.passageAttempt.path,
+      PassageAttemptResponseSchema,
+      {
+        method: HTTP_API.passageAttempt.method,
+        body: JSON.stringify({ questionId, choiceId }),
+      },
+    );
     return response.grade;
   }
 
@@ -646,6 +650,16 @@ export class HttpAuthorityClient implements AuthorityPort, AuthPort {
   async recordPracticeTestReviewed(): Promise<void> {
     await this.acceptedCommand('/v1/hooks/practice-test/reviewed', {
       envelope: await this.commandEnvelope(),
+    });
+  }
+
+  async persistPracticeTestResult(sessionToken: string): Promise<void> {
+    // State-changing (CSRF-gated) write: the server re-derives the SCORED result
+    // from the durable session by `sessionToken` — no score is trusted from the
+    // client — and records it idempotently by sitting id, so a retry is safe.
+    await this.acceptedCommand(HTTP_API.practiceTestResult.path, {
+      envelope: await this.commandEnvelope(),
+      sessionToken,
     });
   }
 

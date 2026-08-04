@@ -139,15 +139,32 @@ export function useSubmitPracticeTestBlock() {
       answers: Readonly<Record<string, string>>;
       elapsedMs?: Readonly<Record<string, number>>;
     }) => practiceTestClient.submitBlock(v.questionIds, v.answers, v.elapsedMs),
-    onSuccess: (next: PracticeTestBlockView) => {
+    onSuccess: async (next: PracticeTestBlockView) => {
       qc.setQueryData(['practice-test'], next);
       // A completed sitting moves server state (a scored sitting + queued repairs
       // + the re-opened review gate), so the dashboard summary, the plan, and the
       // Mistakes tab all need refreshing once the last block commits.
       if (next.done) {
+        // The deployed backend does not self-persist the scored result (that
+        // write is CSRF-gated), so persist it here — a state-changing command the
+        // server re-derives from the durable session and records idempotently by
+        // sitting id. The dev/preview runner already persisted it (recorder) and
+        // reports `resultPersisted`, so we skip the redundant call there.
+        if (!next.resultPersisted) {
+          const sessionToken = practiceTestClient.getSessionToken();
+          if (sessionToken !== null) {
+            try {
+              await authority.persistPracticeTestResult(sessionToken);
+            } catch (error) {
+              // Best-effort: the learner already saw the score; the summary just
+              // won't refresh until a later retry. Never fail the block commit.
+              console.error('Failed to persist practice-test result:', error);
+            }
+          }
+        }
         void Promise.all(
-          [...TODAYS_PATH_INVALIDATE, 'practice-test-summary', 'errors', 'error-patterns'].map((k) =>
-            qc.invalidateQueries({ queryKey: [k] }),
+          [...TODAYS_PATH_INVALIDATE, 'practice-test-summary', 'errors', 'error-patterns'].map(
+            (k) => qc.invalidateQueries({ queryKey: [k] }),
           ),
         );
       }
@@ -159,7 +176,9 @@ export function useSubmitPracticeTestBlock() {
 export function useMarkPracticeTestReviewed() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: () => practiceTestClient.markReviewed(),
+    // Review is a projection write (releases the block-until-reviewed gate), so it
+    // goes through the authority command, not the bare runner client.
+    mutationFn: () => authority.recordPracticeTestReviewed(),
     onSuccess: () =>
       Promise.all(
         [...TODAYS_PATH_INVALIDATE, 'practice-test-summary'].map((k) =>

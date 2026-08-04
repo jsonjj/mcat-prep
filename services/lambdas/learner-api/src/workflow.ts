@@ -6,6 +6,7 @@ import {
   SyntheticPracticeBankPort,
   type LearnerState,
   type PracticeBankPort,
+  type PracticeTestCompletion,
 } from '@mcat/authority-core';
 import {
   AuthorityKernel,
@@ -431,6 +432,54 @@ export class RepositoryLearnerKernel {
     return view === null ? null : PracticeTestSummaryViewSchema.parse(view);
   }
 
+  /**
+   * The serve-boundary context the deployed practice-test runner needs (WS5, §6):
+   * the cadence GATE (whether a test is due right now, its length tier, and the
+   * next-eligible day for a typed refusal) and the DURABLE freshness (the
+   * never-reuse item set + the dated re-measure history), both read straight off
+   * the learner projection. Read-only — no event, no mutation.
+   */
+  async practiceTestServeContext(principal: Principal) {
+    const state = await this.loadState(principal);
+    const authority = this.authority();
+    return {
+      gate: authority.practiceTestServeGate(state),
+      freshness: authority.practiceTestFreshness(state),
+    };
+  }
+
+  /**
+   * Persist a completed sitting's SCORED result to the projection (WS5, §6): the
+   * dashboard summary + durable freshness + the Mistakes/repair queue. The runner
+   * computes the score from the answer key (the browser never sees one) and hands
+   * the completion in here. IDEMPOTENT by sitting id, so a retried or duplicated
+   * result write — a refresh re-firing it, or a second envelope for the same
+   * sitting — never double-books a sitting or double-counts its re-measure.
+   */
+  async handlePracticeTestResult(
+    envelope: CommandEnvelope,
+    principal: Principal,
+    completion: PracticeTestCompletion,
+  ) {
+    return AcceptedCommandResponseSchema.parse(
+      await this.mutate(envelope, principal, async (authority, state) => {
+        const alreadyRecorded =
+          state.practiceTests?.sittings?.some((s) => s.sittingId === completion.sittingId) ?? false;
+        if (alreadyRecorded) {
+          return {
+            eventType: 'practice_test_result_noop',
+            payload: { sittingId: completion.sittingId },
+          };
+        }
+        await authority.recordPracticeTestResult(state, completion);
+        return {
+          eventType: 'practice_test_result_recorded',
+          payload: toJsonObject(completion),
+        };
+      }),
+    );
+  }
+
   async vectorLessonStatus(principal: Principal) {
     const state = withVectorLesson(await this.loadState(principal));
     const run =
@@ -622,7 +671,11 @@ export class RepositoryLearnerKernel {
       const previousRun = restoreNormalizedLessonRun(persisted);
       let nextRun: NormalizedLessonRun;
       try {
-        nextRun = applyNormalizedLessonAction(previousRun, command.action, command.envelope.occurredAt);
+        nextRun = applyNormalizedLessonAction(
+          previousRun,
+          command.action,
+          command.envelope.occurredAt,
+        );
       } catch (error) {
         if (error instanceof AuthorityKernelError) throw error;
         throw validationError(

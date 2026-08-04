@@ -1,19 +1,29 @@
 # Periodic scored Practice TEST — production status & enablement
 
-**Date:** Aug 2, 2026 (reflects code as of current commit)
-**Status:** **Client DASHBOARD shown in production; scored RUNNER + server plan
-slot still gated off.** As of Aug 3, 2026 the deployed learner build sets
-`VITE_PRACTICE_TEST_ENABLED=true` (see `.github/workflows/deploy.yml` +
-`tools/aws/src/publish-web.ts`), so the Practice-test dashboard card renders on the
-live Practice page exactly as it does in dev — populated from a real summary once a
-sitting exists, or its honest empty states until then (the deployed API does not
-route `/v1/practice-test/summary`, and the client swallows that `not_found` into
-`null`). What remains OFF in production: the scored-test **runner**
-(`/api/practice-test/*` has no deployed backend) and the **server plan gate** — the
-learner-API Lambda leaves `PRACTICE_TEST_ENABLED` unset (default `false`), so
-`Authority.buildTodaysPath` reserves **no** `practice_test` slot and the strict
-guided plan can never deadlock on a runner that cannot serve. Dev (`pnpm dev`) is
-unchanged.
+**Date:** Aug 3, 2026 (reflects code as of current commit)
+**Status:** **SHIPPED end to end.** The scored practice-test **runner**, the
+**summary**, the **scored-result persistence**, and the **server plan slot** are
+all live on the deployed learner-API. The runner is served by the Lambda under
+`/v1/practice-test/{next,block}` (start/serve blocks, commit + score), the
+dashboard reads `GET /v1/practice-test/summary`, and a completed sitting is
+persisted to the learner projection by the CSRF-gated
+`POST /v1/practice-test/result` (the server re-derives the score from the durable
+session — no score is trusted from the client — and records it idempotently by
+sitting id). The learner-API Lambda now sets `PRACTICE_TEST_ENABLED=true`, so
+`Authority.buildTodaysPath` reserves a `practice_test` slot on the §6 cadence; the
+strict plan cannot deadlock (a slot is reserved only when the cadence is due, the
+serve boundary re-checks due-ness, and a completed/skipped activity advances the
+in-order pointer).
+
+The runner's deployable core now lives in `@mcat/practice-test-runner` (the
+diagnostic runner's fixed-form sibling: bank + engine + completion builder),
+reused by both the dev/preview Vite plugin and the deployed Lambda so the browser
+wire is identical across environments. The in-flight sitting persists in the
+`practice_test_sessions` table (migration 0022, mirroring `diagnostic_sessions`);
+the runtime role `mcat_learner_api` is granted `select, insert, update` on it (no
+DELETE). The SCORED result rides the event-sourced `state_json.practiceTests`
+blob via the standard accepted-events/outbox path, so no grant on the 0016/0017
+result tables is needed — they remain the legacy Postgres shape, unused by the app.
 
 If this document and the code disagree, the code wins.
 
@@ -87,7 +97,10 @@ origin-verify gate. Several of those touch `infra/cdk`, which this change must n
   plan built before the gate (advancing the plan rather than launching a dead
   runner).
 
-## What remains to fully enable it in production
+## What remained to enable it — now DONE
+
+> All six steps below are SHIPPED (see the status header). They are kept as the
+> record of what the enablement entailed; the current code is the source of truth.
 
 1. **Give the runner a production backend on `/v1/*`.** Either (a) add
    `/v1/practice-test/{next,block,review}` routes to

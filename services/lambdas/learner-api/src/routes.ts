@@ -34,6 +34,11 @@ import {
   PracticeItemViewSchema,
   PracticeQueueViewSchema,
   PracticeResultSchema,
+  PracticeTestBlockRequestSchema,
+  PracticeTestBlockResponseSchema,
+  PracticeTestNextRequestSchema,
+  PracticeTestResultRequestSchema,
+  PracticeTestSummaryViewSchema,
   RepairQueueViewSchema,
   SessionExchangeRequestSchema,
   SessionExchangeResponseSchema,
@@ -88,6 +93,10 @@ export type RouteId =
   | 'aiChat'
   | 'practiceTestCompleted'
   | 'practiceTestReviewed'
+  | 'practiceTestNext'
+  | 'practiceTestBlock'
+  | 'practiceTestSummary'
+  | 'practiceTestResult'
   | 'masterySeed'
   | 'wrapped'
   | 'resetProgress'
@@ -570,6 +579,54 @@ export const ROUTES: readonly RouteDefinition[] = [
     auth: 'session',
     stateChanging: true,
     bodySchema: ContinueCommandBodySchema,
+  },
+  {
+    // WS5 (§6): the periodic scored practice-test RUNNER, block-based like the
+    // diagnostic. `/next` starts (cadence-gated) or resumes a sitting and serves
+    // the current block; `/block` commits it (one-use block token) and serves the
+    // next / the scored result. Both persist only the learner's own
+    // `practice_test_sessions` row — never the projection — so, like the
+    // diagnostic, they are session + origin-verify gated but NOT `stateChanging`
+    // (no CSRF write gate). The served wire carries no answer key or per-item key.
+    id: 'practiceTestNext',
+    method: 'POST',
+    path: '/v1/practice-test/next',
+    auth: 'session',
+    stateChanging: false,
+    bodySchema: PracticeTestNextRequestSchema,
+    responseSchema: PracticeTestBlockResponseSchema,
+  },
+  {
+    id: 'practiceTestBlock',
+    method: 'POST',
+    path: '/v1/practice-test/block',
+    auth: 'session',
+    stateChanging: false,
+    bodySchema: PracticeTestBlockRequestSchema,
+    responseSchema: PracticeTestBlockResponseSchema,
+  },
+  {
+    // WS5 (§6): the dashboard summary — trends / readiness / estimated range,
+    // built from the learner's real scored sittings. Null until the first sitting.
+    id: 'practiceTestSummary',
+    method: 'GET',
+    path: '/v1/practice-test/summary',
+    auth: 'session',
+    stateChanging: false,
+    responseSchema: PracticeTestSummaryViewSchema.nullable(),
+  },
+  {
+    // WS5 (§6): persist a completed sitting's SCORED result to the learner
+    // projection (dashboard summary + durable freshness + Mistakes/repair queue).
+    // State-changing (CSRF write-gated) because it moves the projection; the
+    // server re-derives the score from the durable session, so no score is
+    // trusted from the client, and the write is idempotent by the sitting id.
+    id: 'practiceTestResult',
+    method: 'POST',
+    path: '/v1/practice-test/result',
+    auth: 'session',
+    stateChanging: true,
+    bodySchema: PracticeTestResultRequestSchema,
   },
   {
     id: 'masterySeed',

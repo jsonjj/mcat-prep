@@ -24,6 +24,7 @@ import {
   type PassageGrade,
   type PassageTodayView,
   type PlanActivityProgressCommand,
+  type PracticeTestResultRequest,
   type VectorLessonCommand,
   type VectorLessonStartCommand,
 } from '@mcat/contracts';
@@ -74,6 +75,7 @@ import {
 import { RepositoryLearnerKernel, type NormalizedLessonCommandInput } from './workflow';
 import { DiagnosticSessionError } from '@mcat/diagnostic-runner';
 import type { DiagnosticPort } from './diagnostic-port';
+import type { PracticeTestPort } from './practice-test-port';
 
 interface KernelPort {
   handle(input: unknown, principal: Principal): ReturnType<AuthorityKernel['handle']>;
@@ -150,6 +152,17 @@ interface KernelPort {
     input: ContinueCommandBody,
     principal: Principal,
   ): ReturnType<RepositoryLearnerKernel['handlePracticeTestReviewed']>;
+  practiceTestSummary(
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['practiceTestSummary']>;
+  practiceTestServeContext(
+    principal: Principal,
+  ): ReturnType<RepositoryLearnerKernel['practiceTestServeContext']>;
+  handlePracticeTestResult(
+    envelope: CommandEnvelope,
+    principal: Principal,
+    completion: Parameters<RepositoryLearnerKernel['handlePracticeTestResult']>[2],
+  ): ReturnType<RepositoryLearnerKernel['handlePracticeTestResult']>;
   handleMasterySeed(
     input: MasterySeedCommandBody,
     principal: Principal,
@@ -236,6 +249,14 @@ export interface LearnerApiDependencies {
    * route stays closed either way).
    */
   readonly diagnostic?: DiagnosticPort;
+  /**
+   * Periodic scored practice-test RUNNER (block-based). Off the authority kernel
+   * for the in-flight sitting (owns only its own `practice_test_sessions` rows)
+   * like {@link DiagnosticPort}; the SCORED result it builds is persisted to the
+   * projection through the kernel's idempotent result write. Optional: a
+   * deployment without it answers 503 on the runner routes.
+   */
+  readonly practiceTest?: PracticeTestPort;
 }
 
 export interface RepositoryLearnerApiDependencies extends Omit<LearnerApiDependencies, 'kernel'> {
@@ -323,6 +344,15 @@ function diagnosticErrorCode(status: number): HttpErrorCode {
     default:
       return 'validation_error';
   }
+}
+
+/**
+ * Map a practice-test session error's HTTP status onto the API's error-code
+ * vocab. Same as the diagnostic, plus 503 for an absent/infeasible bank (a scored
+ * test has no synthetic fixture to fall back to the way onboarding's does).
+ */
+function practiceTestErrorCode(status: number): HttpErrorCode {
+  return status === 503 ? 'unavailable' : diagnosticErrorCode(status);
 }
 
 function statusForCode(code: string): number {
@@ -1041,6 +1071,96 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
             throw error;
           }
         }
+        case 'practiceTestNext':
+        case 'practiceTestBlock': {
+          // The scored practice-test runner (WS5, §6), the diagnostic's fixed-form
+          // sibling. Off-kernel for the in-flight sitting (its own
+          // `practice_test_sessions` row); the §6 cadence GATE + durable freshness
+          // are read off the projection here and passed in. A not-due START is a
+          // typed 409 refusal the client renders (not an error); a session error
+          // carries its own status (401 expired, 409 replayed token, 503 no bank).
+          if (dependencies.practiceTest === undefined) {
+            return errorResponse(
+              'unavailable',
+              'The practice test is temporarily unavailable.',
+              origin,
+              requestIdValue,
+              { status: 503, retryable: true },
+            );
+          }
+          try {
+            const body = parsed.data as Record<string, unknown>;
+            const ctx = await dependencies.kernel.practiceTestServeContext(principal);
+            if (route.id === 'practiceTestNext') {
+              const served = await dependencies.practiceTest.next(principal.learnerId, body, ctx);
+              if (served.kind === 'refusal') {
+                return jsonResponse(409, served.refusal, origin, requestIdValue);
+              }
+              return jsonResponse(
+                200,
+                route.responseSchema?.parse(served.payload),
+                origin,
+                requestIdValue,
+              );
+            }
+            const payload = await dependencies.practiceTest.block(
+              principal.learnerId,
+              body,
+              ctx.freshness,
+            );
+            return jsonResponse(200, route.responseSchema?.parse(payload), origin, requestIdValue);
+          } catch (error) {
+            if (error instanceof DiagnosticSessionError) {
+              return errorResponse(
+                practiceTestErrorCode(error.status),
+                error.message,
+                origin,
+                requestIdValue,
+                { status: error.status, retryable: error.status === 429 },
+              );
+            }
+            throw error;
+          }
+        }
+        case 'practiceTestResult': {
+          // Persist a completed sitting's SCORED result to the projection. The
+          // server re-derives the completion from the durable session (never
+          // trusts a score from the client) and the kernel write is idempotent by
+          // sitting id. A missing/incomplete session has nothing to record → 409.
+          if (dependencies.practiceTest === undefined) {
+            return errorResponse(
+              'unavailable',
+              'The practice test is temporarily unavailable.',
+              origin,
+              requestIdValue,
+              { status: 503, retryable: true },
+            );
+          }
+          const body = parsed.data as PracticeTestResultRequest;
+          const completion = await dependencies.practiceTest.loadCompletion(
+            principal.learnerId,
+            body.sessionToken,
+          );
+          if (completion === null) {
+            return errorResponse(
+              'conflict',
+              'This practice test has no scored result to record.',
+              origin,
+              requestIdValue,
+              { status: 409 },
+            );
+          }
+          return jsonResponse(
+            200,
+            await dependencies.kernel.handlePracticeTestResult(
+              body.envelope,
+              principal,
+              completion,
+            ),
+            origin,
+            requestIdValue,
+          );
+        }
         case 'passageAttempt': {
           // FORMATIVE: scores one answer and reveals its explanation; writes no
           // mastery, appends no event. Returns 404 for an unknown question id (or
@@ -1256,6 +1376,18 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
       return jsonResponse(
         200,
         route.responseSchema?.parse(await dependencies.kernel.wrapped(principal)),
+        origin,
+        requestIdValue,
+      );
+    }
+
+    if (route.id === 'practiceTestSummary') {
+      // The dashboard summary (trends / readiness / estimated range), built from
+      // the learner's real scored sittings. Null until the first sitting — the
+      // graceful "no test taken yet" the client already renders.
+      return jsonResponse(
+        200,
+        route.responseSchema?.parse(await dependencies.kernel.practiceTestSummary(principal)),
         origin,
         requestIdValue,
       );

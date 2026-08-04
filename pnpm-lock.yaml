@@ -215,6 +215,9 @@ importers:
       '@mcat/persistence-postgres':
         specifier: workspace:*
         version: link:../../services/persistence-postgres
+      '@mcat/practice-test-runner':
+        specifier: workspace:*
+        version: link:../../packages/practice-test-runner
       '@types/emscripten':
         specifier: 1.41.5
         version: 1.41.5
@@ -504,6 +507,34 @@ importers:
         specifier: 3.2.6
         version: 3.2.6(@types/node@22.10.5)(jsdom@30.0.1)(tsx@4.23.1)
 
+  packages/practice-test-runner:
+    dependencies:
+      '@mcat/content':
+        specifier: workspace:*
+        version: link:../content
+      '@mcat/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      '@mcat/corpus-pull':
+        specifier: workspace:*
+        version: link:../corpus-pull
+      '@mcat/diagnostic-runner':
+        specifier: workspace:*
+        version: link:../diagnostic-runner
+      '@mcat/policies':
+        specifier: workspace:*
+        version: link:../policies
+    devDependencies:
+      '@types/node':
+        specifier: 22.10.5
+        version: 22.10.5
+      typescript:
+        specifier: 5.7.3
+        version: 5.7.3
+      vitest:
+        specifier: 3.2.6
+        version: 3.2.6(@types/node@22.10.5)(jsdom@30.0.1)(tsx@4.23.1)
+
   packages/recall-core:
     dependencies:
       '@mcat/contracts':
@@ -608,6 +639,9 @@ importers:
       '@mcat/policies':
         specifier: workspace:*
         version: link:../../../packages/policies
+      '@mcat/practice-test-runner':
+        specifier: workspace:*
+        version: link:../../../packages/practice-test-runner
       jose:
         specifier: 6.2.7
         version: 6.2.7
