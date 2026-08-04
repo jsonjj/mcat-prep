@@ -1,0 +1,4782 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-443492",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "91eedfeba438105b9120600d72f69baa51bbfe8b50785b5a7afd736968e25e6c",
+  "payload": {
+    "lesson_id": "V3-LES-443492",
+    "grouping_id": "V3-CL-443492",
+    "ordered_kc_ids": [
+      "V3-KC-599193",
+      "V3-KC-493500",
+      "V3-KC-853697",
+      "V3-KC-393396",
+      "V3-KC-729762"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-599193",
+      "V3-KC-493500",
+      "V3-KC-853697",
+      "V3-KC-393396",
+      "V3-KC-729762"
+    ],
+    "throughline": "Draw the reference geometry, set the sign convention, and propagate each ray or intermediate image before interpreting the result.",
+    "nodes": [
+      {
+        "node_id": "REF-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Low-stakes check: draw the normal and choose an angle reference. It neither selects a route nor awards exit credit."
+        ],
+        "representation_ids": [
+          "REF-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "REF-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "REF-CP-ENTRY",
+        "source_claim_refs": [
+          "REF-CLAIM-1",
+          "REF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "REF-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Plane reflection obeys equal incidence and reflection angles measured from the normal."
+        ],
+        "representation_ids": [
+          "REF-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "REF-CP-ORIENTATION",
+        "source_claim_refs": [
+          "REF-CLAIM-1",
+          "REF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "REF-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Draw the normal perpendicular to the mirror at incidence.",
+          "Place incident and reflected rays on opposite sides of that normal with equal angles."
+        ],
+        "representation_ids": [
+          "REF-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "REF-CP-EXPLANATION",
+        "source_claim_refs": [
+          "REF-CLAIM-1",
+          "REF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "REF-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fold the ray diagram along the normal: incident and reflected directions match."
+        ],
+        "representation_ids": [
+          "REF-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "REF-CP-MODEL",
+        "source_claim_refs": [
+          "REF-CLAIM-1",
+          "REF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "REF-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "I convert surface angles to normal angles before applying equality."
+        ],
+        "representation_ids": [
+          "REF-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "REF-CP-THINK",
+        "source_claim_refs": [
+          "REF-CLAIM-1",
+          "REF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "REF-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "A 30° normal angle reflects at 30° across the normal.",
+          "At normal incidence, the ray retraces its path."
+        ],
+        "representation_ids": [
+          "REF-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "REF-CP-WORKED",
+        "source_claim_refs": [
+          "REF-CLAIM-1",
+          "REF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "REF-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mark the normal and equal-angle arcs."
+        ],
+        "representation_ids": [
+          "REF-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "REF-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "REF-CP-GUIDED",
+        "source_claim_refs": [
+          "REF-CLAIM-1",
+          "REF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "REF-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Convert a surface angle before reflecting."
+        ],
+        "representation_ids": [
+          "REF-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "REF-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "REF-CP-LIGHT",
+        "source_claim_refs": [
+          "REF-CLAIM-1",
+          "REF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "REF-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Construct a fresh path independently."
+        ],
+        "representation_ids": [
+          "REF-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "REF-ACT-SOLO"
+        ],
+        "checkpoint_ref": "REF-CP-SOLO",
+        "source_claim_refs": [
+          "REF-CLAIM-1",
+          "REF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "REF-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Snell’s law belongs to transmission across media, not plane reflection."
+        ],
+        "representation_ids": [
+          "REF-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "REF-CP-CONTRAST",
+        "source_claim_refs": [
+          "REF-CLAIM-1",
+          "REF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "REF-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: reflect a new normal-based ray."
+        ],
+        "representation_ids": [
+          "REF-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "REF-ACT-NEAR"
+        ],
+        "checkpoint_ref": "REF-CP-NEAR",
+        "source_claim_refs": [
+          "REF-CLAIM-1",
+          "REF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "REF-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: predict the doubled reflected-direction turn when the mirror rotates."
+        ],
+        "representation_ids": [
+          "REF-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "REF-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "REF-CP-CHANGED",
+        "source_claim_refs": [
+          "REF-CLAIM-1",
+          "REF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "REF-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the equal-normal-angle reflection rule."
+        ],
+        "representation_ids": [
+          "REF-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "REF-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "REF-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "REF-CLAIM-1",
+          "REF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "REF-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly reflect a new ray."
+        ],
+        "representation_ids": [
+          "REF-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "REF-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "REF-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "REF-CLAIM-1",
+          "REF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "REF-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the factor-of-two rotation geometry."
+        ],
+        "representation_ids": [
+          "REF-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "REF-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "REF-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "REF-CLAIM-1",
+          "REF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "REF-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly apply mirror rotation."
+        ],
+        "representation_ids": [
+          "REF-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "REF-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "REF-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "REF-CLAIM-1",
+          "REF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "REF-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Measure from the normal; equal angles determine the reflected path."
+        ],
+        "representation_ids": [
+          "REF-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "REF-CP-RECAP",
+        "source_claim_refs": [
+          "REF-CLAIM-1",
+          "REF-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SNL-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Low-stakes check: compare refractive indices and direction. It neither selects a route nor awards exit credit."
+        ],
+        "representation_ids": [
+          "SNL-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "SNL-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "SNL-CP-ENTRY",
+        "source_claim_refs": [
+          "SNL-CLAIM-1",
+          "SNL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SNL-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Snell’s law relates normal-based angles and refractive indices; frequency stays fixed across the boundary."
+        ],
+        "representation_ids": [
+          "SNL-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SNL-CP-ORIENTATION",
+        "source_claim_refs": [
+          "SNL-CLAIM-1",
+          "SNL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SNL-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Toward normal means entering higher index; away means entering lower index.",
+          "TIR requires high-to-low travel above critical angle; wavelength-dependent index causes dispersion."
+        ],
+        "representation_ids": [
+          "SNL-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SNL-CP-EXPLANATION",
+        "source_claim_refs": [
+          "SNL-CLAIM-1",
+          "SNL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SNL-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Index changes speed and wavelength, while the source fixes frequency."
+        ],
+        "representation_ids": [
+          "SNL-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SNL-CP-MODEL",
+        "source_claim_refs": [
+          "SNL-CLAIM-1",
+          "SNL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SNL-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "I check direction and critical conditions before selecting refraction or TIR."
+        ],
+        "representation_ids": [
+          "SNL-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SNL-CP-THINK",
+        "source_claim_refs": [
+          "SNL-CLAIM-1",
+          "SNL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SNL-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Air to glass bends toward normal.",
+          "Glass to air above critical angle gives TIR."
+        ],
+        "representation_ids": [
+          "SNL-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SNL-CP-WORKED",
+        "source_claim_refs": [
+          "SNL-CLAIM-1",
+          "SNL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SNL-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Compare n1 and n2 before choosing direction."
+        ],
+        "representation_ids": [
+          "SNL-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "SNL-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "SNL-CP-GUIDED",
+        "source_claim_refs": [
+          "SNL-CLAIM-1",
+          "SNL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SNL-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Keep frequency fixed while speed and wavelength change."
+        ],
+        "representation_ids": [
+          "SNL-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "SNL-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "SNL-CP-LIGHT",
+        "source_claim_refs": [
+          "SNL-CLAIM-1",
+          "SNL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SNL-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Apply Snell qualitatively."
+        ],
+        "representation_ids": [
+          "SNL-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "SNL-ACT-SOLO"
+        ],
+        "checkpoint_ref": "SNL-CP-SOLO",
+        "source_claim_refs": [
+          "SNL-CLAIM-1",
+          "SNL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SNL-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "High-to-low travel alone is not TIR; incidence must exceed critical."
+        ],
+        "representation_ids": [
+          "SNL-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SNL-CP-CONTRAST",
+        "source_claim_refs": [
+          "SNL-CLAIM-1",
+          "SNL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SNL-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: identify TIR."
+        ],
+        "representation_ids": [
+          "SNL-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "SNL-ACT-NEAR"
+        ],
+        "checkpoint_ref": "SNL-CP-NEAR",
+        "source_claim_refs": [
+          "SNL-CLAIM-1",
+          "SNL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SNL-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: use wavelength-specific index for dispersion."
+        ],
+        "representation_ids": [
+          "SNL-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "SNL-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "SNL-CP-CHANGED",
+        "source_claim_refs": [
+          "SNL-CLAIM-1",
+          "SNL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SNL-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair both TIR conditions."
+        ],
+        "representation_ids": [
+          "SNL-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "SNL-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "SNL-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "SNL-CLAIM-1",
+          "SNL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SNL-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly identify TIR."
+        ],
+        "representation_ids": [
+          "SNL-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "SNL-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "SNL-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "SNL-CLAIM-1",
+          "SNL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SNL-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair dispersion with supplied indices."
+        ],
+        "representation_ids": [
+          "SNL-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "SNL-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "SNL-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "SNL-CLAIM-1",
+          "SNL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SNL-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly predict wavelength-dependent dispersion."
+        ],
+        "representation_ids": [
+          "SNL-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "SNL-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "SNL-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "SNL-CLAIM-1",
+          "SNL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "SNL-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Use indices, normal angles, wavelength dependence, and both TIR conditions."
+        ],
+        "representation_ids": [
+          "SNL-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SNL-CP-RECAP",
+        "source_claim_refs": [
+          "SNL-CLAIM-1",
+          "SNL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MIR-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Low-stakes check: identify mirror type and sign. It neither selects a route nor awards exit credit."
+        ],
+        "representation_ids": [
+          "MIR-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "MIR-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "MIR-CP-ENTRY",
+        "source_claim_refs": [
+          "MIR-CLAIM-1",
+          "MIR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MIR-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Concave mirrors converge with positive f; convex mirrors diverge with negative f under the stated convention."
+        ],
+        "representation_ids": [
+          "MIR-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MIR-CP-ORIENTATION",
+        "source_claim_refs": [
+          "MIR-CLAIM-1",
+          "MIR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MIR-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Use f=R/2 and 1/p+1/q=1/f.",
+          "Positive q is real; negative q is virtual; m=−q/p tracks orientation."
+        ],
+        "representation_ids": [
+          "MIR-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MIR-CP-EXPLANATION",
+        "source_claim_refs": [
+          "MIR-CLAIM-1",
+          "MIR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MIR-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Use both ray intersection and signed equation as cross-checks."
+        ],
+        "representation_ids": [
+          "MIR-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MIR-CP-MODEL",
+        "source_claim_refs": [
+          "MIR-CLAIM-1",
+          "MIR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MIR-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "I set mirror sign before arithmetic and verify with principal rays."
+        ],
+        "representation_ids": [
+          "MIR-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MIR-CP-THINK",
+        "source_claim_refs": [
+          "MIR-CLAIM-1",
+          "MIR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MIR-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "f=10,p=30 gives q=15 real.",
+          "A convex mirror gives negative q and a virtual upright image."
+        ],
+        "representation_ids": [
+          "MIR-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MIR-CP-WORKED",
+        "source_claim_refs": [
+          "MIR-CLAIM-1",
+          "MIR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MIR-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Set f and p signs before solving."
+        ],
+        "representation_ids": [
+          "MIR-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "MIR-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "MIR-CP-GUIDED",
+        "source_claim_refs": [
+          "MIR-CLAIM-1",
+          "MIR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MIR-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Convert radius to focal length."
+        ],
+        "representation_ids": [
+          "MIR-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "MIR-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "MIR-CP-LIGHT",
+        "source_claim_refs": [
+          "MIR-CLAIM-1",
+          "MIR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MIR-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Select principal rays."
+        ],
+        "representation_ids": [
+          "MIR-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "MIR-ACT-SOLO"
+        ],
+        "checkpoint_ref": "MIR-CP-SOLO",
+        "source_claim_refs": [
+          "MIR-CLAIM-1",
+          "MIR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MIR-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Do not use R as f or swap lens/mirror signs silently."
+        ],
+        "representation_ids": [
+          "MIR-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MIR-CP-CONTRAST",
+        "source_claim_refs": [
+          "MIR-CLAIM-1",
+          "MIR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MIR-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: solve an inside-focus concave mirror."
+        ],
+        "representation_ids": [
+          "MIR-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "MIR-ACT-NEAR"
+        ],
+        "checkpoint_ref": "MIR-CP-NEAR",
+        "source_claim_refs": [
+          "MIR-CLAIM-1",
+          "MIR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MIR-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: transfer principal rays to a new object location."
+        ],
+        "representation_ids": [
+          "MIR-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "MIR-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "MIR-CP-CHANGED",
+        "source_claim_refs": [
+          "MIR-CLAIM-1",
+          "MIR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MIR-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair curvature and sign conventions."
+        ],
+        "representation_ids": [
+          "MIR-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "MIR-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "MIR-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "MIR-CLAIM-1",
+          "MIR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MIR-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly solve a mirror."
+        ],
+        "representation_ids": [
+          "MIR-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "MIR-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "MIR-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "MIR-CLAIM-1",
+          "MIR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MIR-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair reversed principal rays."
+        ],
+        "representation_ids": [
+          "MIR-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "MIR-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "MIR-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "MIR-CLAIM-1",
+          "MIR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MIR-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly transfer the concave-mirror principal-ray construction."
+        ],
+        "representation_ids": [
+          "MIR-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "MIR-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "MIR-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "MIR-CLAIM-1",
+          "MIR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "MIR-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Type sets f sign; equations and rays jointly determine real or virtual images."
+        ],
+        "representation_ids": [
+          "MIR-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MIR-CP-RECAP",
+        "source_claim_refs": [
+          "MIR-CLAIM-1",
+          "MIR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LEN-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Low-stakes check: classify lens and set signs. It neither selects a route nor awards exit credit."
+        ],
+        "representation_ids": [
+          "LEN-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "LEN-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "LEN-CP-ENTRY",
+        "source_claim_refs": [
+          "LEN-CLAIM-1",
+          "LEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LEN-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Converging lenses have positive f; diverging lenses negative f; P=1/f in meters."
+        ],
+        "representation_ids": [
+          "LEN-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LEN-CP-ORIENTATION",
+        "source_claim_refs": [
+          "LEN-CLAIM-1",
+          "LEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LEN-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Use 1/p+1/q=1/f and m=−q/p.",
+          "Positive q is real; negative q is virtual under the stated convention."
+        ],
+        "representation_ids": [
+          "LEN-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LEN-CP-EXPLANATION",
+        "source_claim_refs": [
+          "LEN-CLAIM-1",
+          "LEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LEN-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Cross-check signed equations with principal-ray convergence or backward extension."
+        ],
+        "representation_ids": [
+          "LEN-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LEN-CP-MODEL",
+        "source_claim_refs": [
+          "LEN-CLAIM-1",
+          "LEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LEN-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "I convert centimeters to meters only for diopters, not inside the same equation inconsistently."
+        ],
+        "representation_ids": [
+          "LEN-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LEN-CP-THINK",
+        "source_claim_refs": [
+          "LEN-CLAIM-1",
+          "LEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LEN-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "f=10,p=30 gives q=15 real.",
+          "f=0.50 m gives +2 D."
+        ],
+        "representation_ids": [
+          "LEN-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LEN-CP-WORKED",
+        "source_claim_refs": [
+          "LEN-CLAIM-1",
+          "LEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LEN-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Set element class and signs."
+        ],
+        "representation_ids": [
+          "LEN-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "LEN-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "LEN-CP-GUIDED",
+        "source_claim_refs": [
+          "LEN-CLAIM-1",
+          "LEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LEN-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Convert focal length to power."
+        ],
+        "representation_ids": [
+          "LEN-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "LEN-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "LEN-CP-LIGHT",
+        "source_claim_refs": [
+          "LEN-CLAIM-1",
+          "LEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LEN-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Convert power back to focal length."
+        ],
+        "representation_ids": [
+          "LEN-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "LEN-ACT-SOLO"
+        ],
+        "checkpoint_ref": "LEN-CP-SOLO",
+        "source_claim_refs": [
+          "LEN-CLAIM-1",
+          "LEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LEN-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Power uses meters, and a diverging lens is not assigned positive f."
+        ],
+        "representation_ids": [
+          "LEN-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LEN-CP-CONTRAST",
+        "source_claim_refs": [
+          "LEN-CLAIM-1",
+          "LEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LEN-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: solve inside-focus converging lens."
+        ],
+        "representation_ids": [
+          "LEN-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "LEN-ACT-NEAR"
+        ],
+        "checkpoint_ref": "LEN-CP-NEAR",
+        "source_claim_refs": [
+          "LEN-CLAIM-1",
+          "LEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LEN-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: locate a beyond-2f image by rays."
+        ],
+        "representation_ids": [
+          "LEN-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "LEN-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "LEN-CP-CHANGED",
+        "source_claim_refs": [
+          "LEN-CLAIM-1",
+          "LEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LEN-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the inside-focus converging-lens prediction."
+        ],
+        "representation_ids": [
+          "LEN-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "LEN-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "LEN-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "LEN-CLAIM-1",
+          "LEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LEN-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly predict an inside-focus converging-lens image."
+        ],
+        "representation_ids": [
+          "LEN-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "LEN-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "LEN-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "LEN-CLAIM-1",
+          "LEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LEN-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair principal-ray location."
+        ],
+        "representation_ids": [
+          "LEN-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "LEN-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "LEN-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "LEN-CLAIM-1",
+          "LEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LEN-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly transfer the converging-lens ray model."
+        ],
+        "representation_ids": [
+          "LEN-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "LEN-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "LEN-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "LEN-CLAIM-1",
+          "LEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LEN-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Class, signs, equation, ray diagram, and diopters must agree."
+        ],
+        "representation_ids": [
+          "LEN-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LEN-CP-RECAP",
+        "source_claim_refs": [
+          "LEN-CLAIM-1",
+          "LEN-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CMP-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Low-stakes check: identify the intermediate image. It neither selects a route nor awards exit credit."
+        ],
+        "representation_ids": [
+          "CMP-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "CMP-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "CMP-CP-ENTRY",
+        "source_claim_refs": [
+          "CMP-CLAIM-1",
+          "CMP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CMP-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "In a compound system, each element receives the prior element’s image as its object relation."
+        ],
+        "representation_ids": [
+          "CMP-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CMP-CP-ORIENTATION",
+        "source_claim_refs": [
+          "CMP-CLAIM-1",
+          "CMP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CMP-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Solve elements sequentially and translate each image position into the next signed object distance.",
+          "At listed depth, track aberration, instrument, and eye parameters without replacing propagation."
+        ],
+        "representation_ids": [
+          "CMP-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CMP-CP-EXPLANATION",
+        "source_claim_refs": [
+          "CMP-CLAIM-1",
+          "CMP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CMP-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Pass a signed image-location baton from one optical element to the next."
+        ],
+        "representation_ids": [
+          "CMP-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CMP-CP-MODEL",
+        "source_claim_refs": [
+          "CMP-CLAIM-1",
+          "CMP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CMP-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "I never restart from the original object at lens two and never add arbitrary separated focal lengths."
+        ],
+        "representation_ids": [
+          "CMP-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CMP-CP-THINK",
+        "source_claim_refs": [
+          "CMP-CLAIM-1",
+          "CMP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CMP-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Image one becomes object two.",
+          "The eye forms a real inverted retinal image."
+        ],
+        "representation_ids": [
+          "CMP-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CMP-CP-WORKED",
+        "source_claim_refs": [
+          "CMP-CLAIM-1",
+          "CMP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CMP-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Propagate one element at a time."
+        ],
+        "representation_ids": [
+          "CMP-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "CMP-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "CMP-CP-GUIDED",
+        "source_claim_refs": [
+          "CMP-CLAIM-1",
+          "CMP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CMP-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Relate the eye to a retinal detector."
+        ],
+        "representation_ids": [
+          "CMP-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "CMP-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "CMP-CP-LIGHT",
+        "source_claim_refs": [
+          "CMP-CLAIM-1",
+          "CMP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CMP-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Choose the sequential workflow."
+        ],
+        "representation_ids": [
+          "CMP-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "CMP-ACT-SOLO"
+        ],
+        "checkpoint_ref": "CMP-CP-SOLO",
+        "source_claim_refs": [
+          "CMP-CLAIM-1",
+          "CMP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CMP-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Chromatic aberration varies with wavelength; spherical aberration varies with ray height."
+        ],
+        "representation_ids": [
+          "CMP-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CMP-CP-CONTRAST",
+        "source_claim_refs": [
+          "CMP-CLAIM-1",
+          "CMP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CMP-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: translate an intermediate image."
+        ],
+        "representation_ids": [
+          "CMP-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "CMP-ACT-NEAR"
+        ],
+        "checkpoint_ref": "CMP-CP-NEAR",
+        "source_claim_refs": [
+          "CMP-CLAIM-1",
+          "CMP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CMP-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: identify wavelength-dependent aberration."
+        ],
+        "representation_ids": [
+          "CMP-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "CMP-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "CMP-CP-CHANGED",
+        "source_claim_refs": [
+          "CMP-CLAIM-1",
+          "CMP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CMP-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair intermediate-image propagation."
+        ],
+        "representation_ids": [
+          "CMP-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "CMP-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "CMP-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "CMP-CLAIM-1",
+          "CMP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CMP-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly propagate a virtual intermediate image."
+        ],
+        "representation_ids": [
+          "CMP-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "CMP-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "CMP-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "CMP-CLAIM-1",
+          "CMP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CMP-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair chromatic versus spherical aberration."
+        ],
+        "representation_ids": [
+          "CMP-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "CMP-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "CMP-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "CMP-CLAIM-1",
+          "CMP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CMP-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly classify wavelength-dependent focal separation."
+        ],
+        "representation_ids": [
+          "CMP-REP-OPTICS"
+        ],
+        "activity_ids": [
+          "CMP-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "CMP-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "CMP-CLAIM-1",
+          "CMP-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CMP-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Propagate images sequentially; treat aberration, instruments, and the eye as bounded system parameters."
+        ],
+        "representation_ids": [
+          "CMP-REP-OPTICS"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CMP-CP-RECAP",
+        "source_claim_refs": [
+          "CMP-CLAIM-1",
+          "CMP-CLAIM-2"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "REF-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-599193",
+        "item_binding_id": "REF-ITEM-ENTRY",
+        "learner_operation": "APPLY_REFLECTION_EQUALITY",
+        "authorized_next_node_ids": [
+          "REF-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "REF-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-599193",
+        "item_binding_id": "REF-ITEM-GUIDED",
+        "learner_operation": "SELECT_REFLECTION_REFERENCE",
+        "authorized_next_node_ids": [
+          "REF-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "REF-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-599193",
+        "item_binding_id": "REF-ITEM-LIGHT",
+        "learner_operation": "CONVERT_SURFACE_TO_NORMAL",
+        "authorized_next_node_ids": [
+          "REF-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "REF-ACT-SOLO",
+        "primary_kc_id": "V3-KC-599193",
+        "item_binding_id": "REF-ITEM-SOLO",
+        "learner_operation": "PREDICT_NORMAL_INCIDENCE",
+        "authorized_next_node_ids": [
+          "REF-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "REF-ACT-NEAR",
+        "primary_kc_id": "V3-KC-599193",
+        "item_binding_id": "REF-ITEM-NEAR",
+        "learner_operation": "PREDICT_PLANE_REFLECTION",
+        "authorized_next_node_ids": [
+          "REF-NODE-CHANGED",
+          "REF-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "REF-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-599193",
+        "item_binding_id": "REF-ITEM-CHANGED",
+        "learner_operation": "PREDICT_ROTATED_MIRROR",
+        "authorized_next_node_ids": [
+          "REF-NODE-RECAP",
+          "REF-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "REF-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-599193",
+        "item_binding_id": "REF-ITEM-REPAIR-NEAR",
+        "learner_operation": "PREDICT_PLANE_REFLECTION",
+        "authorized_next_node_ids": [
+          "REF-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "REF-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-599193",
+        "item_binding_id": "REF-ITEM-REENTRY-NEAR",
+        "learner_operation": "PREDICT_PLANE_REFLECTION",
+        "authorized_next_node_ids": [
+          "REF-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "REF-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-599193",
+        "item_binding_id": "REF-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REPAIR_MIRROR_ROTATION",
+        "authorized_next_node_ids": [
+          "REF-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "REF-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-599193",
+        "item_binding_id": "REF-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_MIRROR_ROTATION",
+        "authorized_next_node_ids": [
+          "REF-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "SNL-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-493500",
+        "item_binding_id": "SNL-ITEM-ENTRY",
+        "learner_operation": "PREDICT_REFRACTION_DIRECTION",
+        "authorized_next_node_ids": [
+          "SNL-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "SNL-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-493500",
+        "item_binding_id": "SNL-ITEM-GUIDED",
+        "learner_operation": "PREDICT_LOW_INDEX_EXIT",
+        "authorized_next_node_ids": [
+          "SNL-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "SNL-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-493500",
+        "item_binding_id": "SNL-ITEM-LIGHT",
+        "learner_operation": "RELATE_INDEX_SPEED_WAVELENGTH",
+        "authorized_next_node_ids": [
+          "SNL-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "SNL-ACT-SOLO",
+        "primary_kc_id": "V3-KC-493500",
+        "item_binding_id": "SNL-ITEM-SOLO",
+        "learner_operation": "APPLY_SNELL_QUALITATIVELY",
+        "authorized_next_node_ids": [
+          "SNL-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "SNL-ACT-NEAR",
+        "primary_kc_id": "V3-KC-493500",
+        "item_binding_id": "SNL-ITEM-NEAR",
+        "learner_operation": "IDENTIFY_TIR",
+        "authorized_next_node_ids": [
+          "SNL-NODE-CHANGED",
+          "SNL-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "SNL-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-493500",
+        "item_binding_id": "SNL-ITEM-CHANGED",
+        "learner_operation": "PREDICT_DISPERSION",
+        "authorized_next_node_ids": [
+          "SNL-NODE-RECAP",
+          "SNL-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "SNL-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-493500",
+        "item_binding_id": "SNL-ITEM-REPAIR-NEAR",
+        "learner_operation": "REPAIR_TIR_CONDITIONS",
+        "authorized_next_node_ids": [
+          "SNL-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "SNL-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-493500",
+        "item_binding_id": "SNL-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_TIR",
+        "authorized_next_node_ids": [
+          "SNL-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "SNL-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-493500",
+        "item_binding_id": "SNL-ITEM-REPAIR-CHANGED",
+        "learner_operation": "PREDICT_DISPERSION",
+        "authorized_next_node_ids": [
+          "SNL-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "SNL-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-493500",
+        "item_binding_id": "SNL-ITEM-REENTRY-CHANGED",
+        "learner_operation": "PREDICT_DISPERSION",
+        "authorized_next_node_ids": [
+          "SNL-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "MIR-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-853697",
+        "item_binding_id": "MIR-ITEM-ENTRY",
+        "learner_operation": "SOLVE_MIRROR_IMAGE",
+        "authorized_next_node_ids": [
+          "MIR-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "MIR-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-853697",
+        "item_binding_id": "MIR-ITEM-GUIDED",
+        "learner_operation": "SOLVE_CONVEX_MIRROR",
+        "authorized_next_node_ids": [
+          "MIR-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "MIR-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-853697",
+        "item_binding_id": "MIR-ITEM-LIGHT",
+        "learner_operation": "RELATE_RADIUS_FOCUS",
+        "authorized_next_node_ids": [
+          "MIR-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "MIR-ACT-SOLO",
+        "primary_kc_id": "V3-KC-853697",
+        "item_binding_id": "MIR-ITEM-SOLO",
+        "learner_operation": "SELECT_MIRROR_RAYS",
+        "authorized_next_node_ids": [
+          "MIR-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "MIR-ACT-NEAR",
+        "primary_kc_id": "V3-KC-853697",
+        "item_binding_id": "MIR-ITEM-NEAR",
+        "learner_operation": "PREDICT_INSIDE_FOCUS_MIRROR",
+        "authorized_next_node_ids": [
+          "MIR-NODE-CHANGED",
+          "MIR-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "MIR-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-853697",
+        "item_binding_id": "MIR-ITEM-CHANGED",
+        "learner_operation": "TRANSFER_MIRROR_RAY_CONSTRUCTION",
+        "authorized_next_node_ids": [
+          "MIR-NODE-RECAP",
+          "MIR-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "MIR-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-853697",
+        "item_binding_id": "MIR-ITEM-REPAIR-NEAR",
+        "learner_operation": "REPAIR_MIRROR_CURVATURE",
+        "authorized_next_node_ids": [
+          "MIR-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "MIR-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-853697",
+        "item_binding_id": "MIR-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_MIRROR_EQUATION",
+        "authorized_next_node_ids": [
+          "MIR-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "MIR-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-853697",
+        "item_binding_id": "MIR-ITEM-REPAIR-CHANGED",
+        "learner_operation": "TRANSFER_MIRROR_RAY_CONSTRUCTION",
+        "authorized_next_node_ids": [
+          "MIR-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "MIR-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-853697",
+        "item_binding_id": "MIR-ITEM-REENTRY-CHANGED",
+        "learner_operation": "TRANSFER_MIRROR_RAY_CONSTRUCTION",
+        "authorized_next_node_ids": [
+          "MIR-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "LEN-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-393396",
+        "item_binding_id": "LEN-ITEM-ENTRY",
+        "learner_operation": "SOLVE_CONVERGING_LENS",
+        "authorized_next_node_ids": [
+          "LEN-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "LEN-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-393396",
+        "item_binding_id": "LEN-ITEM-GUIDED",
+        "learner_operation": "SOLVE_DIVERGING_LENS",
+        "authorized_next_node_ids": [
+          "LEN-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "LEN-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-393396",
+        "item_binding_id": "LEN-ITEM-LIGHT",
+        "learner_operation": "CALCULATE_DIOPTERS",
+        "authorized_next_node_ids": [
+          "LEN-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "LEN-ACT-SOLO",
+        "primary_kc_id": "V3-KC-393396",
+        "item_binding_id": "LEN-ITEM-SOLO",
+        "learner_operation": "CONVERT_POWER_TO_FOCUS",
+        "authorized_next_node_ids": [
+          "LEN-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "LEN-ACT-NEAR",
+        "primary_kc_id": "V3-KC-393396",
+        "item_binding_id": "LEN-ITEM-NEAR",
+        "learner_operation": "PREDICT_INSIDE_FOCUS_LENS",
+        "authorized_next_node_ids": [
+          "LEN-NODE-CHANGED",
+          "LEN-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "LEN-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-393396",
+        "item_binding_id": "LEN-ITEM-CHANGED",
+        "learner_operation": "TRANSFER_LENS_RAY_MODEL",
+        "authorized_next_node_ids": [
+          "LEN-NODE-RECAP",
+          "LEN-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "LEN-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-393396",
+        "item_binding_id": "LEN-ITEM-REPAIR-NEAR",
+        "learner_operation": "PREDICT_INSIDE_FOCUS_LENS",
+        "authorized_next_node_ids": [
+          "LEN-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "LEN-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-393396",
+        "item_binding_id": "LEN-ITEM-REENTRY-NEAR",
+        "learner_operation": "PREDICT_INSIDE_FOCUS_LENS",
+        "authorized_next_node_ids": [
+          "LEN-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "LEN-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-393396",
+        "item_binding_id": "LEN-ITEM-REPAIR-CHANGED",
+        "learner_operation": "TRANSFER_LENS_RAY_MODEL",
+        "authorized_next_node_ids": [
+          "LEN-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "LEN-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-393396",
+        "item_binding_id": "LEN-ITEM-REENTRY-CHANGED",
+        "learner_operation": "TRANSFER_LENS_RAY_MODEL",
+        "authorized_next_node_ids": [
+          "LEN-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "CMP-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-729762",
+        "item_binding_id": "CMP-ITEM-ENTRY",
+        "learner_operation": "PROPAGATE_INTERMEDIATE_IMAGE",
+        "authorized_next_node_ids": [
+          "CMP-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "CMP-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-729762",
+        "item_binding_id": "CMP-ITEM-GUIDED",
+        "learner_operation": "ANALYZE_TWO_LENS_SYSTEM",
+        "authorized_next_node_ids": [
+          "CMP-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "CMP-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-729762",
+        "item_binding_id": "CMP-ITEM-LIGHT",
+        "learner_operation": "RELATE_EYE_TO_IMAGE",
+        "authorized_next_node_ids": [
+          "CMP-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "CMP-ACT-SOLO",
+        "primary_kc_id": "V3-KC-729762",
+        "item_binding_id": "CMP-ITEM-SOLO",
+        "learner_operation": "SELECT_COMPOUND_WORKFLOW",
+        "authorized_next_node_ids": [
+          "CMP-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "CMP-ACT-NEAR",
+        "primary_kc_id": "V3-KC-729762",
+        "item_binding_id": "CMP-ITEM-NEAR",
+        "learner_operation": "PROPAGATE_SIGNED_OBJECT",
+        "authorized_next_node_ids": [
+          "CMP-NODE-CHANGED",
+          "CMP-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "CMP-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-729762",
+        "item_binding_id": "CMP-ITEM-CHANGED",
+        "learner_operation": "IDENTIFY_CHROMATIC_ABERRATION",
+        "authorized_next_node_ids": [
+          "CMP-NODE-RECAP",
+          "CMP-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "CMP-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-729762",
+        "item_binding_id": "CMP-ITEM-REPAIR-NEAR",
+        "learner_operation": "REPAIR_COMPOUND_PROPAGATION",
+        "authorized_next_node_ids": [
+          "CMP-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "CMP-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-729762",
+        "item_binding_id": "CMP-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_COMPOUND_PROPAGATION",
+        "authorized_next_node_ids": [
+          "CMP-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "CMP-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-729762",
+        "item_binding_id": "CMP-ITEM-REPAIR-CHANGED",
+        "learner_operation": "IDENTIFY_CHROMATIC_ABERRATION",
+        "authorized_next_node_ids": [
+          "CMP-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "CMP-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-729762",
+        "item_binding_id": "CMP-ITEM-REENTRY-CHANGED",
+        "learner_operation": "IDENTIFY_CHROMATIC_ABERRATION",
+        "authorized_next_node_ids": [
+          "CMP-NODE-RECAP"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-599193",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-599193",
+        "scope_in_refs": [
+          "V3-KC-599193:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-599193:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "REF-CLAIM-1",
+          "REF-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "REF-NODE-ENTRY",
+        "orientation_node_id": "REF-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "REF-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "REF-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "REF-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "REF-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "REF-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "REF-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "REF-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "REF-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "REF-NODE-NEAR",
+          "activity_ids": [
+            "REF-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "REF-NODE-CHANGED",
+          "activity_ids": [
+            "REF-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "REF-FEATURE-NEAR-1",
+          "REF-FEATURE-NEAR-2",
+          "REF-FEATURE-NEAR-3",
+          "REF-FEATURE-CHANGED-0",
+          "REF-FEATURE-CHANGED-2",
+          "REF-FEATURE-CHANGED-3"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "REF-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "REF-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "REF-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "REF-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "REF-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "REF-ACT-REENTRY-NEAR",
+            "success_next_node_id": "REF-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "REF-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "REF-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "REF-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "REF-REP-OPTICS"
+        ],
+        "accessibility_equivalent_ids": [
+          "REF-REP-OPTICS-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "REF-NODE-ENTRY",
+            "REF-NODE-RECAP"
+          ],
+          "standard": [
+            "REF-NODE-ENTRY",
+            "REF-NODE-ORIENTATION",
+            "REF-NODE-EXPLANATION",
+            "REF-NODE-MODEL",
+            "REF-NODE-THINK",
+            "REF-NODE-WORKED",
+            "REF-NODE-GUIDED",
+            "REF-NODE-LIGHT",
+            "REF-NODE-SOLO",
+            "REF-NODE-CONTRAST",
+            "REF-NODE-NEAR",
+            "REF-NODE-CHANGED",
+            "REF-NODE-REPAIR-NEAR",
+            "REF-NODE-REENTRY-NEAR",
+            "REF-NODE-REPAIR-CHANGED",
+            "REF-NODE-REENTRY-CHANGED",
+            "REF-NODE-RECAP"
+          ],
+          "misconception": [
+            "REF-NODE-ENTRY",
+            "REF-NODE-REPAIR-NEAR",
+            "REF-NODE-REPAIR-CHANGED",
+            "REF-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "REF-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-493500",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-493500",
+        "scope_in_refs": [
+          "V3-KC-493500:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-493500:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "SNL-CLAIM-1",
+          "SNL-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "SNL-NODE-ENTRY",
+        "orientation_node_id": "SNL-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "SNL-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "SNL-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "SNL-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "SNL-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "SNL-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "SNL-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "SNL-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "SNL-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "SNL-NODE-NEAR",
+          "activity_ids": [
+            "SNL-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "SNL-NODE-CHANGED",
+          "activity_ids": [
+            "SNL-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "SNL-FEATURE-NEAR-0",
+          "SNL-FEATURE-NEAR-1",
+          "SNL-FEATURE-NEAR-3",
+          "SNL-FEATURE-CHANGED-0",
+          "SNL-FEATURE-CHANGED-1",
+          "SNL-FEATURE-CHANGED-2"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "SNL-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "SNL-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "SNL-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "SNL-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "SNL-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "SNL-ACT-REENTRY-NEAR",
+            "success_next_node_id": "SNL-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "SNL-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "SNL-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "SNL-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "SNL-REP-OPTICS"
+        ],
+        "accessibility_equivalent_ids": [
+          "SNL-REP-OPTICS-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "SNL-NODE-ENTRY",
+            "SNL-NODE-RECAP"
+          ],
+          "standard": [
+            "SNL-NODE-ENTRY",
+            "SNL-NODE-ORIENTATION",
+            "SNL-NODE-EXPLANATION",
+            "SNL-NODE-MODEL",
+            "SNL-NODE-THINK",
+            "SNL-NODE-WORKED",
+            "SNL-NODE-GUIDED",
+            "SNL-NODE-LIGHT",
+            "SNL-NODE-SOLO",
+            "SNL-NODE-CONTRAST",
+            "SNL-NODE-NEAR",
+            "SNL-NODE-CHANGED",
+            "SNL-NODE-REPAIR-NEAR",
+            "SNL-NODE-REENTRY-NEAR",
+            "SNL-NODE-REPAIR-CHANGED",
+            "SNL-NODE-REENTRY-CHANGED",
+            "SNL-NODE-RECAP"
+          ],
+          "misconception": [
+            "SNL-NODE-ENTRY",
+            "SNL-NODE-REPAIR-NEAR",
+            "SNL-NODE-REPAIR-CHANGED",
+            "SNL-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "SNL-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-853697",
+        "canonical_ordinal": 3,
+        "objective_ref": "objective:V3-KC-853697",
+        "scope_in_refs": [
+          "V3-KC-853697:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-853697:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "MIR-CLAIM-1",
+          "MIR-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "MIR-NODE-ENTRY",
+        "orientation_node_id": "MIR-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "MIR-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "MIR-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "MIR-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "MIR-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "MIR-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "MIR-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "MIR-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "MIR-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "MIR-NODE-NEAR",
+          "activity_ids": [
+            "MIR-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "MIR-NODE-CHANGED",
+          "activity_ids": [
+            "MIR-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "MIR-FEATURE-NEAR-1",
+          "MIR-FEATURE-NEAR-2",
+          "MIR-FEATURE-NEAR-3",
+          "MIR-FEATURE-CHANGED-0",
+          "MIR-FEATURE-CHANGED-2",
+          "MIR-FEATURE-CHANGED-3"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "MIR-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "MIR-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "MIR-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "MIR-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "MIR-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "MIR-ACT-REENTRY-NEAR",
+            "success_next_node_id": "MIR-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "MIR-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "MIR-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "MIR-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "MIR-REP-OPTICS"
+        ],
+        "accessibility_equivalent_ids": [
+          "MIR-REP-OPTICS-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "MIR-NODE-ENTRY",
+            "MIR-NODE-RECAP"
+          ],
+          "standard": [
+            "MIR-NODE-ENTRY",
+            "MIR-NODE-ORIENTATION",
+            "MIR-NODE-EXPLANATION",
+            "MIR-NODE-MODEL",
+            "MIR-NODE-THINK",
+            "MIR-NODE-WORKED",
+            "MIR-NODE-GUIDED",
+            "MIR-NODE-LIGHT",
+            "MIR-NODE-SOLO",
+            "MIR-NODE-CONTRAST",
+            "MIR-NODE-NEAR",
+            "MIR-NODE-CHANGED",
+            "MIR-NODE-REPAIR-NEAR",
+            "MIR-NODE-REENTRY-NEAR",
+            "MIR-NODE-REPAIR-CHANGED",
+            "MIR-NODE-REENTRY-CHANGED",
+            "MIR-NODE-RECAP"
+          ],
+          "misconception": [
+            "MIR-NODE-ENTRY",
+            "MIR-NODE-REPAIR-NEAR",
+            "MIR-NODE-REPAIR-CHANGED",
+            "MIR-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "MIR-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-393396",
+        "canonical_ordinal": 4,
+        "objective_ref": "objective:V3-KC-393396",
+        "scope_in_refs": [
+          "V3-KC-393396:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-393396:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "LEN-CLAIM-1",
+          "LEN-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "LEN-NODE-ENTRY",
+        "orientation_node_id": "LEN-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "LEN-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "LEN-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "LEN-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "LEN-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "LEN-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "LEN-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "LEN-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "LEN-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "LEN-NODE-NEAR",
+          "activity_ids": [
+            "LEN-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "LEN-NODE-CHANGED",
+          "activity_ids": [
+            "LEN-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "LEN-FEATURE-NEAR-0",
+          "LEN-FEATURE-NEAR-1",
+          "LEN-FEATURE-NEAR-3",
+          "LEN-FEATURE-CHANGED-0",
+          "LEN-FEATURE-CHANGED-1",
+          "LEN-FEATURE-CHANGED-2"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "LEN-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "LEN-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "LEN-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "LEN-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "LEN-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "LEN-ACT-REENTRY-NEAR",
+            "success_next_node_id": "LEN-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "LEN-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "LEN-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "LEN-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "LEN-REP-OPTICS"
+        ],
+        "accessibility_equivalent_ids": [
+          "LEN-REP-OPTICS-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "LEN-NODE-ENTRY",
+            "LEN-NODE-RECAP"
+          ],
+          "standard": [
+            "LEN-NODE-ENTRY",
+            "LEN-NODE-ORIENTATION",
+            "LEN-NODE-EXPLANATION",
+            "LEN-NODE-MODEL",
+            "LEN-NODE-THINK",
+            "LEN-NODE-WORKED",
+            "LEN-NODE-GUIDED",
+            "LEN-NODE-LIGHT",
+            "LEN-NODE-SOLO",
+            "LEN-NODE-CONTRAST",
+            "LEN-NODE-NEAR",
+            "LEN-NODE-CHANGED",
+            "LEN-NODE-REPAIR-NEAR",
+            "LEN-NODE-REENTRY-NEAR",
+            "LEN-NODE-REPAIR-CHANGED",
+            "LEN-NODE-REENTRY-CHANGED",
+            "LEN-NODE-RECAP"
+          ],
+          "misconception": [
+            "LEN-NODE-ENTRY",
+            "LEN-NODE-REPAIR-NEAR",
+            "LEN-NODE-REPAIR-CHANGED",
+            "LEN-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "LEN-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-729762",
+        "canonical_ordinal": 5,
+        "objective_ref": "objective:V3-KC-729762",
+        "scope_in_refs": [
+          "V3-KC-729762:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-729762:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "CMP-CLAIM-1",
+          "CMP-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "CMP-NODE-ENTRY",
+        "orientation_node_id": "CMP-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "CMP-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "CMP-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "CMP-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "CMP-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "CMP-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "CMP-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "CMP-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "CMP-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "CMP-NODE-NEAR",
+          "activity_ids": [
+            "CMP-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "CMP-NODE-CHANGED",
+          "activity_ids": [
+            "CMP-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "CMP-FEATURE-NEAR-1",
+          "CMP-FEATURE-NEAR-2",
+          "CMP-FEATURE-NEAR-3",
+          "CMP-FEATURE-CHANGED-0",
+          "CMP-FEATURE-CHANGED-2",
+          "CMP-FEATURE-CHANGED-3"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "CMP-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "CMP-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "CMP-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "CMP-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "CMP-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "CMP-ACT-REENTRY-NEAR",
+            "success_next_node_id": "CMP-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "CMP-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "CMP-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "CMP-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "CMP-REP-OPTICS"
+        ],
+        "accessibility_equivalent_ids": [
+          "CMP-REP-OPTICS-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "CMP-NODE-ENTRY",
+            "CMP-NODE-RECAP"
+          ],
+          "standard": [
+            "CMP-NODE-ENTRY",
+            "CMP-NODE-ORIENTATION",
+            "CMP-NODE-EXPLANATION",
+            "CMP-NODE-MODEL",
+            "CMP-NODE-THINK",
+            "CMP-NODE-WORKED",
+            "CMP-NODE-GUIDED",
+            "CMP-NODE-LIGHT",
+            "CMP-NODE-SOLO",
+            "CMP-NODE-CONTRAST",
+            "CMP-NODE-NEAR",
+            "CMP-NODE-CHANGED",
+            "CMP-NODE-REPAIR-NEAR",
+            "CMP-NODE-REENTRY-NEAR",
+            "CMP-NODE-REPAIR-CHANGED",
+            "CMP-NODE-REENTRY-CHANGED",
+            "CMP-NODE-RECAP"
+          ],
+          "misconception": [
+            "CMP-NODE-ENTRY",
+            "CMP-NODE-REPAIR-NEAR",
+            "CMP-NODE-REPAIR-CHANGED",
+            "CMP-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "CMP-NODE-RECAP"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "REF-ITEM-ENTRY",
+        "activity_id": "REF-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "REF-FAMILY-ENTRY",
+        "stimulus_lineage_id": "REF-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "REF-REP-OPTICS",
+        "learner_operation": "APPLY_REFLECTION_EQUALITY",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "REF_ITEM_ENTRY",
+        "answer_authority_ref": "protected-items.json#REF-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#REF-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "REF-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "REF-FAMILY-WORKED",
+        "stimulus_lineage_id": "REF-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "REF-REP-OPTICS",
+        "learner_operation": "FOLLOW_EXPERT_SELECTION_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:REF-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "REF-ITEM-GUIDED",
+        "activity_id": "REF-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "REF-FAMILY-GUIDED",
+        "stimulus_lineage_id": "REF-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "REF-REP-OPTICS",
+        "learner_operation": "SELECT_REFLECTION_REFERENCE",
+        "hint_policy": "VISIBLE_SELECTION_CUE",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "REF_ITEM_GUIDED",
+        "answer_authority_ref": "protected-items.json#REF-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#REF-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "REF-ITEM-LIGHT",
+        "activity_id": "REF-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "REF-FAMILY-LIGHT",
+        "stimulus_lineage_id": "REF-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "REF-REP-OPTICS",
+        "learner_operation": "CONVERT_SURFACE_TO_NORMAL",
+        "hint_policy": "BRIEF_REMINDER",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "REF_ITEM_LIGHT",
+        "answer_authority_ref": "protected-items.json#REF-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#REF-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "REF-ITEM-SOLO",
+        "activity_id": "REF-ACT-SOLO",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "REF-FAMILY-SOLO",
+        "stimulus_lineage_id": "REF-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "REF-REP-OPTICS",
+        "learner_operation": "PREDICT_NORMAL_INCIDENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "REF_ITEM_SOLO",
+        "answer_authority_ref": "protected-items.json#REF-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#REF-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "REF-ITEM-NEAR",
+        "activity_id": "REF-ACT-NEAR",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "REF-FAMILY-NEAR",
+        "stimulus_lineage_id": "REF-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "REF-REP-OPTICS",
+        "learner_operation": "PREDICT_PLANE_REFLECTION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "REF_ITEM_NEAR",
+        "answer_authority_ref": "protected-items.json#REF-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#REF-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "REF-ITEM-CHANGED",
+        "activity_id": "REF-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "REF-FAMILY-CHANGED",
+        "stimulus_lineage_id": "REF-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "REF-REP-OPTICS",
+        "learner_operation": "PREDICT_ROTATED_MIRROR",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "REF_ITEM_CHANGED",
+        "answer_authority_ref": "protected-items.json#REF-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#REF-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "required_operation",
+          "representation"
+        ],
+        "changed_dimension_detail": "Changes from static reflection to mirror rotation."
+      },
+      {
+        "item_binding_id": "REF-ITEM-REPAIR-NEAR",
+        "activity_id": "REF-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "REF-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "REF-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "REF-REP-OPTICS",
+        "learner_operation": "PREDICT_PLANE_REFLECTION",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "REF_ITEM_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#REF-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#REF-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "REF-ITEM-REENTRY-NEAR",
+        "activity_id": "REF-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "REF-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "REF-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "REF-REP-OPTICS",
+        "learner_operation": "PREDICT_PLANE_REFLECTION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "REF_ITEM_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#REF-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#REF-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "REF-ITEM-REPAIR-CHANGED",
+        "activity_id": "REF-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "REF-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "REF-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "REF-REP-OPTICS",
+        "learner_operation": "REPAIR_MIRROR_ROTATION",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "REF_ITEM_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#REF-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#REF-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "REF-ITEM-REENTRY-CHANGED",
+        "activity_id": "REF-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-599193",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "REF-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "REF-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "REF-REP-OPTICS",
+        "learner_operation": "REENTER_MIRROR_ROTATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "REF_ITEM_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#REF-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#REF-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "domain_context",
+          "representation"
+        ],
+        "changed_dimension_detail": "Uses a new mirror rotation while preserving doubled direction change.",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "SNL-ITEM-ENTRY",
+        "activity_id": "SNL-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "SNL-FAMILY-ENTRY",
+        "stimulus_lineage_id": "SNL-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "SNL-REP-OPTICS",
+        "learner_operation": "PREDICT_REFRACTION_DIRECTION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SNL_ITEM_ENTRY",
+        "answer_authority_ref": "protected-items.json#SNL-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#SNL-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "SNL-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "SNL-FAMILY-WORKED",
+        "stimulus_lineage_id": "SNL-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SNL-REP-OPTICS",
+        "learner_operation": "FOLLOW_EXPERT_SELECTION_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:SNL-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "SNL-ITEM-GUIDED",
+        "activity_id": "SNL-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "SNL-FAMILY-GUIDED",
+        "stimulus_lineage_id": "SNL-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SNL-REP-OPTICS",
+        "learner_operation": "PREDICT_LOW_INDEX_EXIT",
+        "hint_policy": "VISIBLE_SELECTION_CUE",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SNL_ITEM_GUIDED",
+        "answer_authority_ref": "protected-items.json#SNL-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#SNL-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "SNL-ITEM-LIGHT",
+        "activity_id": "SNL-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "SNL-FAMILY-LIGHT",
+        "stimulus_lineage_id": "SNL-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SNL-REP-OPTICS",
+        "learner_operation": "RELATE_INDEX_SPEED_WAVELENGTH",
+        "hint_policy": "BRIEF_REMINDER",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SNL_ITEM_LIGHT",
+        "answer_authority_ref": "protected-items.json#SNL-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#SNL-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "SNL-ITEM-SOLO",
+        "activity_id": "SNL-ACT-SOLO",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "SNL-FAMILY-SOLO",
+        "stimulus_lineage_id": "SNL-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SNL-REP-OPTICS",
+        "learner_operation": "APPLY_SNELL_QUALITATIVELY",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SNL_ITEM_SOLO",
+        "answer_authority_ref": "protected-items.json#SNL-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#SNL-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "SNL-ITEM-NEAR",
+        "activity_id": "SNL-ACT-NEAR",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "SNL-FAMILY-NEAR",
+        "stimulus_lineage_id": "SNL-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SNL-REP-OPTICS",
+        "learner_operation": "IDENTIFY_TIR",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SNL_ITEM_NEAR",
+        "answer_authority_ref": "protected-items.json#SNL-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#SNL-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "SNL-ITEM-CHANGED",
+        "activity_id": "SNL-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "SNL-FAMILY-CHANGED",
+        "stimulus_lineage_id": "SNL-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SNL-REP-OPTICS",
+        "learner_operation": "PREDICT_DISPERSION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SNL_ITEM_CHANGED",
+        "answer_authority_ref": "protected-items.json#SNL-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#SNL-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "required_operation",
+          "representation"
+        ],
+        "changed_dimension_detail": "Changes from TIR conditions to wavelength-dependent dispersion."
+      },
+      {
+        "item_binding_id": "SNL-ITEM-REPAIR-NEAR",
+        "activity_id": "SNL-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SNL-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "SNL-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "SNL-REP-OPTICS",
+        "learner_operation": "REPAIR_TIR_CONDITIONS",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SNL_ITEM_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#SNL-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#SNL-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "SNL-ITEM-REENTRY-NEAR",
+        "activity_id": "SNL-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SNL-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "SNL-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SNL-REP-OPTICS",
+        "learner_operation": "REENTER_TIR",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SNL_ITEM_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#SNL-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#SNL-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "SNL-ITEM-REPAIR-CHANGED",
+        "activity_id": "SNL-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SNL-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "SNL-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "SNL-REP-OPTICS",
+        "learner_operation": "PREDICT_DISPERSION",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SNL_ITEM_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#SNL-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#SNL-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "SNL-ITEM-REENTRY-CHANGED",
+        "activity_id": "SNL-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-493500",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SNL-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "SNL-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SNL-REP-OPTICS",
+        "learner_operation": "PREDICT_DISPERSION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SNL_ITEM_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#SNL-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#SNL-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "domain_context",
+          "representation"
+        ],
+        "changed_dimension_detail": "Uses a new material and blue/red comparison while preserving the dispersion operation.",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "MIR-ITEM-ENTRY",
+        "activity_id": "MIR-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "MIR-FAMILY-ENTRY",
+        "stimulus_lineage_id": "MIR-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "MIR-REP-OPTICS",
+        "learner_operation": "SOLVE_MIRROR_IMAGE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MIR_ITEM_ENTRY",
+        "answer_authority_ref": "protected-items.json#MIR-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#MIR-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "MIR-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "MIR-FAMILY-WORKED",
+        "stimulus_lineage_id": "MIR-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MIR-REP-OPTICS",
+        "learner_operation": "FOLLOW_EXPERT_SELECTION_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:MIR-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "MIR-ITEM-GUIDED",
+        "activity_id": "MIR-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "MIR-FAMILY-GUIDED",
+        "stimulus_lineage_id": "MIR-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MIR-REP-OPTICS",
+        "learner_operation": "SOLVE_CONVEX_MIRROR",
+        "hint_policy": "VISIBLE_SELECTION_CUE",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MIR_ITEM_GUIDED",
+        "answer_authority_ref": "protected-items.json#MIR-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#MIR-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "MIR-ITEM-LIGHT",
+        "activity_id": "MIR-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "MIR-FAMILY-LIGHT",
+        "stimulus_lineage_id": "MIR-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MIR-REP-OPTICS",
+        "learner_operation": "RELATE_RADIUS_FOCUS",
+        "hint_policy": "BRIEF_REMINDER",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MIR_ITEM_LIGHT",
+        "answer_authority_ref": "protected-items.json#MIR-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#MIR-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "MIR-ITEM-SOLO",
+        "activity_id": "MIR-ACT-SOLO",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "MIR-FAMILY-SOLO",
+        "stimulus_lineage_id": "MIR-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MIR-REP-OPTICS",
+        "learner_operation": "SELECT_MIRROR_RAYS",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MIR_ITEM_SOLO",
+        "answer_authority_ref": "protected-items.json#MIR-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#MIR-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "MIR-ITEM-NEAR",
+        "activity_id": "MIR-ACT-NEAR",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "MIR-FAMILY-NEAR",
+        "stimulus_lineage_id": "MIR-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MIR-REP-OPTICS",
+        "learner_operation": "PREDICT_INSIDE_FOCUS_MIRROR",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MIR_ITEM_NEAR",
+        "answer_authority_ref": "protected-items.json#MIR-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#MIR-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "MIR-ITEM-CHANGED",
+        "activity_id": "MIR-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "MIR-FAMILY-CHANGED",
+        "stimulus_lineage_id": "MIR-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MIR-REP-OPTICS",
+        "learner_operation": "TRANSFER_MIRROR_RAY_CONSTRUCTION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MIR_ITEM_CHANGED",
+        "answer_authority_ref": "protected-items.json#MIR-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#MIR-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "required_operation",
+          "representation"
+        ],
+        "changed_dimension_detail": "Changes from signed equation to ray construction."
+      },
+      {
+        "item_binding_id": "MIR-ITEM-REPAIR-NEAR",
+        "activity_id": "MIR-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "MIR-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "MIR-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "MIR-REP-OPTICS",
+        "learner_operation": "REPAIR_MIRROR_CURVATURE",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MIR_ITEM_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#MIR-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#MIR-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "MIR-ITEM-REENTRY-NEAR",
+        "activity_id": "MIR-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "MIR-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "MIR-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MIR-REP-OPTICS",
+        "learner_operation": "REENTER_MIRROR_EQUATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MIR_ITEM_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#MIR-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#MIR-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "MIR-ITEM-REPAIR-CHANGED",
+        "activity_id": "MIR-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "MIR-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "MIR-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "MIR-REP-OPTICS",
+        "learner_operation": "TRANSFER_MIRROR_RAY_CONSTRUCTION",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MIR_ITEM_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#MIR-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#MIR-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "MIR-ITEM-REENTRY-CHANGED",
+        "activity_id": "MIR-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-853697",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "MIR-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "MIR-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "MIR-REP-OPTICS",
+        "learner_operation": "TRANSFER_MIRROR_RAY_CONSTRUCTION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MIR_ITEM_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#MIR-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#MIR-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "domain_context",
+          "representation"
+        ],
+        "changed_dimension_detail": "Uses a fresh incident ray while preserving the concave-mirror principal-ray operation.",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "LEN-ITEM-ENTRY",
+        "activity_id": "LEN-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "LEN-FAMILY-ENTRY",
+        "stimulus_lineage_id": "LEN-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "LEN-REP-OPTICS",
+        "learner_operation": "SOLVE_CONVERGING_LENS",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LEN_ITEM_ENTRY",
+        "answer_authority_ref": "protected-items.json#LEN-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#LEN-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "LEN-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "LEN-FAMILY-WORKED",
+        "stimulus_lineage_id": "LEN-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LEN-REP-OPTICS",
+        "learner_operation": "FOLLOW_EXPERT_SELECTION_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:LEN-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "LEN-ITEM-GUIDED",
+        "activity_id": "LEN-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "LEN-FAMILY-GUIDED",
+        "stimulus_lineage_id": "LEN-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LEN-REP-OPTICS",
+        "learner_operation": "SOLVE_DIVERGING_LENS",
+        "hint_policy": "VISIBLE_SELECTION_CUE",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LEN_ITEM_GUIDED",
+        "answer_authority_ref": "protected-items.json#LEN-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#LEN-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "LEN-ITEM-LIGHT",
+        "activity_id": "LEN-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "LEN-FAMILY-LIGHT",
+        "stimulus_lineage_id": "LEN-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LEN-REP-OPTICS",
+        "learner_operation": "CALCULATE_DIOPTERS",
+        "hint_policy": "BRIEF_REMINDER",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LEN_ITEM_LIGHT",
+        "answer_authority_ref": "protected-items.json#LEN-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#LEN-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "LEN-ITEM-SOLO",
+        "activity_id": "LEN-ACT-SOLO",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "LEN-FAMILY-SOLO",
+        "stimulus_lineage_id": "LEN-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LEN-REP-OPTICS",
+        "learner_operation": "CONVERT_POWER_TO_FOCUS",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LEN_ITEM_SOLO",
+        "answer_authority_ref": "protected-items.json#LEN-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#LEN-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "LEN-ITEM-NEAR",
+        "activity_id": "LEN-ACT-NEAR",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "LEN-FAMILY-NEAR",
+        "stimulus_lineage_id": "LEN-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LEN-REP-OPTICS",
+        "learner_operation": "PREDICT_INSIDE_FOCUS_LENS",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LEN_ITEM_NEAR",
+        "answer_authority_ref": "protected-items.json#LEN-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#LEN-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "LEN-ITEM-CHANGED",
+        "activity_id": "LEN-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "LEN-FAMILY-CHANGED",
+        "stimulus_lineage_id": "LEN-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LEN-REP-OPTICS",
+        "learner_operation": "TRANSFER_LENS_RAY_MODEL",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LEN_ITEM_CHANGED",
+        "answer_authority_ref": "protected-items.json#LEN-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#LEN-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "required_operation",
+          "representation"
+        ],
+        "changed_dimension_detail": "Changes from signed calculation to regional ray construction."
+      },
+      {
+        "item_binding_id": "LEN-ITEM-REPAIR-NEAR",
+        "activity_id": "LEN-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LEN-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "LEN-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "LEN-REP-OPTICS",
+        "learner_operation": "PREDICT_INSIDE_FOCUS_LENS",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LEN_ITEM_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#LEN-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#LEN-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "LEN-ITEM-REENTRY-NEAR",
+        "activity_id": "LEN-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LEN-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "LEN-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LEN-REP-OPTICS",
+        "learner_operation": "PREDICT_INSIDE_FOCUS_LENS",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LEN_ITEM_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#LEN-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#LEN-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "LEN-ITEM-REPAIR-CHANGED",
+        "activity_id": "LEN-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LEN-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "LEN-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "LEN-REP-OPTICS",
+        "learner_operation": "TRANSFER_LENS_RAY_MODEL",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LEN_ITEM_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#LEN-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#LEN-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "LEN-ITEM-REENTRY-CHANGED",
+        "activity_id": "LEN-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-393396",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LEN-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "LEN-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LEN-REP-OPTICS",
+        "learner_operation": "TRANSFER_LENS_RAY_MODEL",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LEN_ITEM_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#LEN-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#LEN-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "domain_context",
+          "representation"
+        ],
+        "changed_dimension_detail": "Uses the complementary object region while preserving the converging-lens ray-model operation.",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "CMP-ITEM-ENTRY",
+        "activity_id": "CMP-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "CMP-FAMILY-ENTRY",
+        "stimulus_lineage_id": "CMP-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "CMP-REP-OPTICS",
+        "learner_operation": "PROPAGATE_INTERMEDIATE_IMAGE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CMP_ITEM_ENTRY",
+        "answer_authority_ref": "protected-items.json#CMP-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#CMP-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CMP-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "CMP-FAMILY-WORKED",
+        "stimulus_lineage_id": "CMP-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CMP-REP-OPTICS",
+        "learner_operation": "FOLLOW_EXPERT_SELECTION_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:CMP-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CMP-ITEM-GUIDED",
+        "activity_id": "CMP-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "CMP-FAMILY-GUIDED",
+        "stimulus_lineage_id": "CMP-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CMP-REP-OPTICS",
+        "learner_operation": "ANALYZE_TWO_LENS_SYSTEM",
+        "hint_policy": "VISIBLE_SELECTION_CUE",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CMP_ITEM_GUIDED",
+        "answer_authority_ref": "protected-items.json#CMP-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#CMP-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CMP-ITEM-LIGHT",
+        "activity_id": "CMP-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "CMP-FAMILY-LIGHT",
+        "stimulus_lineage_id": "CMP-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CMP-REP-OPTICS",
+        "learner_operation": "RELATE_EYE_TO_IMAGE",
+        "hint_policy": "BRIEF_REMINDER",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CMP_ITEM_LIGHT",
+        "answer_authority_ref": "protected-items.json#CMP-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#CMP-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CMP-ITEM-SOLO",
+        "activity_id": "CMP-ACT-SOLO",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "CMP-FAMILY-SOLO",
+        "stimulus_lineage_id": "CMP-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CMP-REP-OPTICS",
+        "learner_operation": "SELECT_COMPOUND_WORKFLOW",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CMP_ITEM_SOLO",
+        "answer_authority_ref": "protected-items.json#CMP-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#CMP-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CMP-ITEM-NEAR",
+        "activity_id": "CMP-ACT-NEAR",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "CMP-FAMILY-NEAR",
+        "stimulus_lineage_id": "CMP-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CMP-REP-OPTICS",
+        "learner_operation": "PROPAGATE_SIGNED_OBJECT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CMP_ITEM_NEAR",
+        "answer_authority_ref": "protected-items.json#CMP-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#CMP-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CMP-ITEM-CHANGED",
+        "activity_id": "CMP-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "CMP-FAMILY-CHANGED",
+        "stimulus_lineage_id": "CMP-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CMP-REP-OPTICS",
+        "learner_operation": "IDENTIFY_CHROMATIC_ABERRATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CMP_ITEM_CHANGED",
+        "answer_authority_ref": "protected-items.json#CMP-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#CMP-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "required_operation",
+          "representation"
+        ],
+        "changed_dimension_detail": "Changes from sequential image propagation to aberration classification."
+      },
+      {
+        "item_binding_id": "CMP-ITEM-REPAIR-NEAR",
+        "activity_id": "CMP-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CMP-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "CMP-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "CMP-REP-OPTICS",
+        "learner_operation": "REPAIR_COMPOUND_PROPAGATION",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CMP_ITEM_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#CMP-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#CMP-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CMP-ITEM-REENTRY-NEAR",
+        "activity_id": "CMP-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CMP-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "CMP-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CMP-REP-OPTICS",
+        "learner_operation": "REENTER_COMPOUND_PROPAGATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CMP_ITEM_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#CMP-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#CMP-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "CMP-ITEM-REPAIR-CHANGED",
+        "activity_id": "CMP-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CMP-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "CMP-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "CMP-REP-OPTICS",
+        "learner_operation": "IDENTIFY_CHROMATIC_ABERRATION",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CMP_ITEM_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#CMP-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#CMP-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CMP-ITEM-REENTRY-CHANGED",
+        "activity_id": "CMP-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-729762",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CMP-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "CMP-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CMP-REP-OPTICS",
+        "learner_operation": "IDENTIFY_CHROMATIC_ABERRATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CMP_ITEM_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#CMP-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#CMP-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "domain_context",
+          "representation"
+        ],
+        "changed_dimension_detail": "Uses a camera context and different colors while preserving aberration classification.",
+        "exact_reentry_for": "CHANGED_EXIT"
+      }
+    ],
+    "transitions": [],
+    "attachment_bindings": [
+      {
+        "attachment_id": "V3-CAP-081516",
+        "attachment_type": "CAPSTONE",
+        "owner_lesson_id": "V3-LES-443492",
+        "host_scope": {
+          "kind": "MULTI_KC",
+          "kc_ids": [
+            "V3-KC-599193",
+            "V3-KC-493500",
+            "V3-KC-853697",
+            "V3-KC-393396",
+            "V3-KC-729762"
+          ]
+        },
+        "declared_host_core_ids": [
+          "V3-KC-599193",
+          "V3-KC-493500",
+          "V3-KC-853697",
+          "V3-KC-393396",
+          "V3-KC-729762"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": true,
+        "relation_ids": [
+          "R14-CAP-081516"
+        ],
+        "relation_class": "CAPSTONE_PLACEMENT",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": true
+      },
+      {
+        "attachment_id": "V3-EXT-011872",
+        "attachment_type": "EXTENSION",
+        "owner_lesson_id": "V3-LES-443492",
+        "host_scope": {
+          "kind": "SINGLE_KC",
+          "kc_id": "V3-KC-729762"
+        },
+        "declared_host_core_ids": [
+          "V3-KC-729762"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": true,
+        "relation_ids": [
+          "R14-FD-443492"
+        ],
+        "relation_class": "FIRST_DELIVERY",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": false
+      }
+    ]
+  }
+}

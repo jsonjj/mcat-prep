@@ -1,0 +1,357 @@
+{
+  "artifact_type": "SOURCE_CLAIM_LEDGER",
+  "artifact_id": "V3-SCLD-443492",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT_TRACE_ONLY",
+  "canonical_lesson_binding": {
+    "lesson_id": "V3-LES-443492",
+    "grouping_id": "V3-CL-443492",
+    "ordered_kc_ids": [
+      "V3-KC-599193",
+      "V3-KC-493500",
+      "V3-KC-853697",
+      "V3-KC-393396",
+      "V3-KC-729762"
+    ]
+  },
+  "authority_boundary": {
+    "source_ids": [
+      "AAMC-2020",
+      "AAMC-2020-MCAT-CONTENT"
+    ],
+    "source_class": "PUBLIC_PRIMARY_RESEARCH",
+    "source_anchor_ids": [
+      "CP-SA-016"
+    ],
+    "present_day_authority_refreshed": false,
+    "source_use_status": "PERMITTED_FOR_BOUNDED_INTERNAL_AUTHORING",
+    "human_rights_clearance_claimed": false,
+    "learner_validation_claimed": false
+  },
+  "source_trace_governance": {
+    "packet_sha256": "4b5268214efe919d292ef84d3df35e314093fe709ad3b3d3d2988ba21cf4fede",
+    "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+    "permitted_use": [
+      "DERIVED_SCOPE_METADATA",
+      "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+      "INTERNAL_HUMAN_REVIEW"
+    ],
+    "prohibited_use": [
+      "RAW_SOURCE_TEXT",
+      "QUOTATION",
+      "PASSAGE_REPRODUCTION",
+      "FIGURE_REPRODUCTION",
+      "PROPRIETARY_ITEM_REUSE",
+      "PRIVATE_COMPARISON_CONTENT"
+    ],
+    "expressive_copy_flag": false
+  },
+  "source_records": [
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100090",
+      "source_occurrence_id": "V3-SRC-100090",
+      "source_id": "AAMC-2020",
+      "official_topic": "Geometrical Optics",
+      "printed_pages": [
+        63
+      ],
+      "source_anchor_ids": [
+        "CP-SA-016"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-200065",
+      "source_occurrence_id": "V3-SRC-200065",
+      "source_id": "AAMC-2020-MCAT-CONTENT",
+      "official_topic": null,
+      "printed_pages": [
+        62,
+        63
+      ],
+      "source_anchor_ids": [
+        "CP-SA-016"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    }
+  ],
+  "source_claims": [
+    {
+      "claim_id": "REF-CLAIM-1",
+      "target_kc_id": "V3-KC-599193",
+      "authorial_claim": "A learner may construct plane-reflected ray paths using equal normal-based angles.",
+      "scope_in_refs": [
+        "V3-KC-599193:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-599193:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-016"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100090",
+        "V3-SRC-200065"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600142",
+        "V3-MAP-600312"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "REF-CLAIM-2",
+      "target_kc_id": "V3-KC-599193",
+      "authorial_claim": "A learner may predict the doubled reflected-direction change for a rotated plane mirror with fixed incidence.",
+      "scope_in_refs": [
+        "V3-KC-599193:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-599193:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-016"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100090",
+        "V3-SRC-200065"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600142",
+        "V3-MAP-600312"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "SNL-CLAIM-1",
+      "target_kc_id": "V3-KC-493500",
+      "authorial_claim": "A learner may predict refracted direction, speed/wavelength changes, and dispersion from refractive indices.",
+      "scope_in_refs": [
+        "V3-KC-493500:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-493500:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-016"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100090",
+        "V3-SRC-200065"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600143",
+        "V3-MAP-601390"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "SNL-CLAIM-2",
+      "target_kc_id": "V3-KC-493500",
+      "authorial_claim": "A learner may identify total internal reflection and critical-angle changes from the required conditions.",
+      "scope_in_refs": [
+        "V3-KC-493500:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-493500:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-016"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100090",
+        "V3-SRC-200065"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600143",
+        "V3-MAP-601390"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "MIR-CLAIM-1",
+      "target_kc_id": "V3-KC-853697",
+      "authorial_claim": "A learner may use f=R/2, mirror signs, and the mirror equation to classify images.",
+      "scope_in_refs": [
+        "V3-KC-853697:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-853697:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-016"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100090",
+        "V3-SRC-200065"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600144",
+        "V3-MAP-601383"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "MIR-CLAIM-2",
+      "target_kc_id": "V3-KC-853697",
+      "authorial_claim": "A learner may construct spherical-mirror images with principal rays and cross-check real or virtual status.",
+      "scope_in_refs": [
+        "V3-KC-853697:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-853697:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-016"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100090",
+        "V3-SRC-200065"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600144",
+        "V3-MAP-601383"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "LEN-CLAIM-1",
+      "target_kc_id": "V3-KC-393396",
+      "authorial_claim": "A learner may use thin-lens signs and equations to classify real and virtual images.",
+      "scope_in_refs": [
+        "V3-KC-393396:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-393396:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-016"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100090",
+        "V3-SRC-200065"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600145",
+        "V3-MAP-601436"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "LEN-CLAIM-2",
+      "target_kc_id": "V3-KC-393396",
+      "authorial_claim": "A learner may convert signed focal length and optical power in diopters and cross-check ray constructions.",
+      "scope_in_refs": [
+        "V3-KC-393396:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-393396:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-016"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100090",
+        "V3-SRC-200065"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600145",
+        "V3-MAP-601436"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "CMP-CLAIM-1",
+      "target_kc_id": "V3-KC-729762",
+      "authorial_claim": "A learner may propagate signed object-image relations through separated thin optical elements.",
+      "scope_in_refs": [
+        "V3-KC-729762:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-729762:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-016"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100090",
+        "V3-SRC-200065"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600146",
+        "V3-MAP-600892"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "CMP-CLAIM-2",
+      "target_kc_id": "V3-KC-729762",
+      "authorial_claim": "A learner may identify bounded aberration, instrument, and human-eye parameters without replacing sequential propagation.",
+      "scope_in_refs": [
+        "V3-KC-729762:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-729762:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-016"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100090",
+        "V3-SRC-200065"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600146",
+        "V3-MAP-600892"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    }
+  ],
+  "canonical_context": {
+    "placements": {
+      "phase_ids": [
+        "V3-PHS-462809",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-230689",
+        "V3-MOD-273816"
+      ],
+      "pathway_relation_ids": [
+        "R14-PL-581402-099",
+        "R14-PL-904137-099",
+        "R14-PL-749320-044"
+      ],
+      "first_delivery_relation_id": "R14-FD-443492",
+      "revisit_relation_ids": [
+        "R14-RV-443492"
+      ]
+    },
+    "hard_prerequisite_relation_ids": [],
+    "required_attachment_relation_ids": [
+      "R14-CAP-081516"
+    ],
+    "route_scope_code": "STANDARD_ONLY"
+  },
+  "lineage_and_limits": {
+    "open_hold_ids": [
+      "V3-HOLD-110001",
+      "V3-HOLD-110003",
+      "V3-HOLD-110005",
+      "V3-HOLD-110008",
+      "V3-HOLD-110009"
+    ],
+    "nonclaims": [
+      "NO_PRESENT_DAY_AUTHORITY_REFRESH",
+      "NO_LEARNER_VALIDATION",
+      "NO_EFFICACY",
+      "NO_MASTERY_CALIBRATION",
+      "NO_READINESS_VALIDATION",
+      "NO_PRODUCTION_PUBLICATION"
+    ]
+  }
+}

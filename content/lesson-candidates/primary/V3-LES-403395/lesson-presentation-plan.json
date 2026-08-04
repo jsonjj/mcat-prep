@@ -1,0 +1,1489 @@
+{
+  "artifact_type": "LESSON_PRESENTATION_PLAN",
+  "artifact_id": "V3-LPPL-403395",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "84474ffb7f462d71d5a73cf202c4f4d5eb10faeb672ce56f95c75d965f186ad9",
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-403395",
+    "lesson_script_sha256": "44cc36ff9c062c768cdb35e7d7269f3353b0fc1e83dfbb9094b9736d2758bda4",
+    "kc_coverage_matrix_id": "V3-KCOV-403395",
+    "kc_coverage_matrix_sha256": "81099e12f9ed6d2794432c47003e6fb4c7198cfea429ba14a326e14abb28c896"
+  },
+  "payload": {
+    "lesson_id": "V3-LES-403395",
+    "lesson_script_id": "V3-LSCR-403395",
+    "lesson_script_sha256": "44cc36ff9c062c768cdb35e7d7269f3353b0fc1e83dfbb9094b9736d2758bda4",
+    "kc_coverage_matrix_id": "V3-KCOV-403395",
+    "kc_coverage_matrix_sha256": "81099e12f9ed6d2794432c47003e6fb4c7198cfea429ba14a326e14abb28c896",
+    "learner_rhythm": [
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "RECAP",
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "RECAP"
+    ],
+    "screens": [
+      {
+        "screen_id": "MSC-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "MSC-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Meaning lenses: Starting check",
+        "progress_label": "Starting check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MSC-REP-INTERACTION-MEANING",
+          "MSC-REP-CONSTRUCTION-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MSC-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "MSC-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Meaning lenses: What this lens helps you notice",
+        "progress_label": "What this lens helps you notice",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MSC-REP-INTERACTION-MEANING",
+          "MSC-REP-CONSTRUCTION-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MSC-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "MSC-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Meaning lenses: Build the selection rule",
+        "progress_label": "Build the selection rule",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MSC-REP-INTERACTION-MEANING",
+          "MSC-REP-CONSTRUCTION-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MSC-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "MSC-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Meaning lenses: Keep the lens and cue together",
+        "progress_label": "Keep the lens and cue together",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MSC-REP-INTERACTION-MEANING",
+          "MSC-REP-CONSTRUCTION-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MSC-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "MSC-NODE-THINK"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Meaning lenses: Watch the lens selection",
+        "progress_label": "Watch the lens selection",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MSC-REP-INTERACTION-MEANING",
+          "MSC-REP-CONSTRUCTION-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MSC-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "MSC-NODE-WORKED"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Meaning lenses: Worked comparison",
+        "progress_label": "Worked comparison",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MSC-REP-INTERACTION-MEANING",
+          "MSC-REP-CONSTRUCTION-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MSC-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "MSC-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Meaning lenses: Choose with support",
+        "progress_label": "Choose with support",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MSC-REP-INTERACTION-MEANING",
+          "MSC-REP-CONSTRUCTION-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MSC-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "MSC-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Meaning lenses: Choose with less support",
+        "progress_label": "Choose with less support",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MSC-REP-INTERACTION-MEANING",
+          "MSC-REP-CONSTRUCTION-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MSC-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "MSC-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Meaning lenses: Choose independently",
+        "progress_label": "Choose independently",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MSC-REP-INTERACTION-MEANING",
+          "MSC-REP-CONSTRUCTION-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MSC-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "MSC-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Meaning lenses: Mark the boundary",
+        "progress_label": "Mark the boundary",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MSC-REP-INTERACTION-MEANING",
+          "MSC-REP-CONSTRUCTION-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MSC-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "MSC-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Meaning lenses: Near-use check",
+        "progress_label": "Near-use check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MSC-REP-INTERACTION-MEANING",
+          "MSC-REP-CONSTRUCTION-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MSC-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "MSC-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Meaning lenses: Changed-task check",
+        "progress_label": "Changed-task check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MSC-REP-INTERACTION-MEANING",
+          "MSC-REP-CONSTRUCTION-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MSC-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "MSC-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Meaning lenses: Repair the near-use function",
+        "progress_label": "Repair the near-use function",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MSC-REP-INTERACTION-MEANING",
+          "MSC-REP-CONSTRUCTION-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MSC-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "MSC-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Meaning lenses: Fresh near-use re-entry",
+        "progress_label": "Fresh near-use re-entry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MSC-REP-INTERACTION-MEANING",
+          "MSC-REP-CONSTRUCTION-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MSC-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "MSC-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Meaning lenses: Repair the changed-task function",
+        "progress_label": "Repair the changed-task function",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MSC-REP-INTERACTION-MEANING",
+          "MSC-REP-CONSTRUCTION-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MSC-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "MSC-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Meaning lenses: Fresh changed-task re-entry",
+        "progress_label": "Fresh changed-task re-entry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MSC-REP-INTERACTION-MEANING",
+          "MSC-REP-CONSTRUCTION-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MSC-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "MSC-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Meaning lenses: Keep the decision rule",
+        "progress_label": "Keep the decision rule",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MSC-REP-INTERACTION-MEANING",
+          "MSC-REP-CONSTRUCTION-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "EXR-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "EXR-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Exchange lenses: Starting check",
+        "progress_label": "Starting check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "EXR-REP-COST-BENEFIT",
+          "EXR-REP-POWER-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "EXR-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "EXR-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Exchange lenses: What this lens helps you notice",
+        "progress_label": "What this lens helps you notice",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "EXR-REP-COST-BENEFIT",
+          "EXR-REP-POWER-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "EXR-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "EXR-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Exchange lenses: Build the selection rule",
+        "progress_label": "Build the selection rule",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "EXR-REP-COST-BENEFIT",
+          "EXR-REP-POWER-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "EXR-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "EXR-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Exchange lenses: Keep the lens and cue together",
+        "progress_label": "Keep the lens and cue together",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "EXR-REP-COST-BENEFIT",
+          "EXR-REP-POWER-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "EXR-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "EXR-NODE-THINK"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Exchange lenses: Watch the lens selection",
+        "progress_label": "Watch the lens selection",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "EXR-REP-COST-BENEFIT",
+          "EXR-REP-POWER-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "EXR-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "EXR-NODE-WORKED"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Exchange lenses: Worked comparison",
+        "progress_label": "Worked comparison",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "EXR-REP-COST-BENEFIT",
+          "EXR-REP-POWER-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "EXR-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "EXR-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Exchange lenses: Choose with support",
+        "progress_label": "Choose with support",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "EXR-REP-COST-BENEFIT",
+          "EXR-REP-POWER-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "EXR-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "EXR-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Exchange lenses: Choose with less support",
+        "progress_label": "Choose with less support",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "EXR-REP-COST-BENEFIT",
+          "EXR-REP-POWER-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "EXR-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "EXR-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Exchange lenses: Choose independently",
+        "progress_label": "Choose independently",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "EXR-REP-COST-BENEFIT",
+          "EXR-REP-POWER-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "EXR-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "EXR-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Exchange lenses: Mark the boundary",
+        "progress_label": "Mark the boundary",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "EXR-REP-COST-BENEFIT",
+          "EXR-REP-POWER-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "EXR-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "EXR-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Exchange lenses: Near-use check",
+        "progress_label": "Near-use check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "EXR-REP-COST-BENEFIT",
+          "EXR-REP-POWER-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "EXR-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "EXR-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Exchange lenses: Changed-task check",
+        "progress_label": "Changed-task check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "EXR-REP-COST-BENEFIT",
+          "EXR-REP-POWER-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "EXR-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "EXR-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Exchange lenses: Repair the near-use function",
+        "progress_label": "Repair the near-use function",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "EXR-REP-COST-BENEFIT",
+          "EXR-REP-POWER-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "EXR-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "EXR-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Exchange lenses: Fresh near-use re-entry",
+        "progress_label": "Fresh near-use re-entry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "EXR-REP-COST-BENEFIT",
+          "EXR-REP-POWER-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "EXR-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "EXR-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Exchange lenses: Repair the changed-task function",
+        "progress_label": "Repair the changed-task function",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "EXR-REP-COST-BENEFIT",
+          "EXR-REP-POWER-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "EXR-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "EXR-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Exchange lenses: Fresh changed-task re-entry",
+        "progress_label": "Fresh changed-task re-entry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "EXR-REP-COST-BENEFIT",
+          "EXR-REP-POWER-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "EXR-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "EXR-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Exchange lenses: Keep the decision rule",
+        "progress_label": "Keep the decision rule",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "EXR-REP-COST-BENEFIT",
+          "EXR-REP-POWER-CASE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      }
+    ],
+    "representation_plans": [
+      {
+        "representation_id": "MSC-REP-INTERACTION-MEANING",
+        "target_kc_id": "V3-KC-682857",
+        "representation_type": "INTERACTION_MEANING_DIAGRAM",
+        "learner_operation": "Trace how an interpreted symbol changes an interaction and is reinforced or revised.",
+        "text_nonvisual_equivalent": "State the participants, the symbol, each interpretation, and the resulting action in reading order without naming the best lens."
+      },
+      {
+        "representation_id": "MSC-REP-CONSTRUCTION-CASE",
+        "target_kc_id": "V3-KC-682857",
+        "representation_type": "SOCIAL_CONSTRUCTION_CASE",
+        "learner_operation": "Locate the shared practices that create and stabilize a category.",
+        "text_nonvisual_equivalent": "List the category, the groups using it, and the institutional practices that maintain it without selecting the lens."
+      },
+      {
+        "representation_id": "EXR-REP-COST-BENEFIT",
+        "target_kc_id": "V3-KC-174089",
+        "representation_type": "COST_BENEFIT_RELATION",
+        "learner_operation": "Identify the actor, alternatives, expected rewards, expected costs, and selected option.",
+        "text_nonvisual_equivalent": "List each available option with its expected benefit and expected cost without calculating or naming the preferred option."
+      },
+      {
+        "representation_id": "EXR-REP-POWER-CASE",
+        "target_kc_id": "V3-KC-174089",
+        "representation_type": "POWER_INEQUALITY_CASE",
+        "learner_operation": "Compare each exchange partner’s dependence and access to alternatives.",
+        "text_nonvisual_equivalent": "State what each partner receives, gives, and could obtain elsewhere without naming which partner has more power."
+      }
+    ],
+    "learner_reviewer_separation": {
+      "learner_projection": "NORMALIZED_LEARNER_SAFE_ONLY",
+      "reviewer_projection": "SEPARATE_SERVER_AUTHORITY",
+      "prohibited_learner_fields": [
+        "ANSWER_KEY",
+        "CORRECT_RESPONSE",
+        "RATIONALE",
+        "RESPONSE_AUTHORITY",
+        "ROUTE_METADATA"
+      ]
+    },
+    "accessibility_acceptance": {
+      "keyboard_required": true,
+      "visible_focus_required": true,
+      "text_equivalent_required": true,
+      "human_accessibility_review_status": "BLOCKED"
+    },
+    "authoring_evidence": {
+      "route_profile": {
+        "route": "STANDARD",
+        "learner_profile": "DECLARED_PREREQUISITES_PRESENT_TARGET_KCS_NOT_YET_LEARNED",
+        "route_selection_authority": "FROZEN_RELEASE_POLICY_STANDARD_ONLY",
+        "observable_selection_state": "STANDARD_ONLY_POLICY_SCOPE"
+      },
+      "demand_inventory": [
+        {
+          "demand_id": "MSC-DEMAND-INTERACTION",
+          "kc_id": "V3-KC-682857",
+          "description": "Select symbolic interactionism when the explanatory work occurs through interpretation and negotiated meaning in interaction.",
+          "instruction_node_ids": [
+            "MSC-NODE-EXPLANATION",
+            "MSC-NODE-MODEL",
+            "MSC-NODE-THINK",
+            "MSC-NODE-WORKED",
+            "MSC-NODE-CONTRAST"
+          ]
+        },
+        {
+          "demand_id": "MSC-DEMAND-CONSTRUCTION",
+          "kc_id": "V3-KC-682857",
+          "description": "Select social constructionism when shared definitions are created and stabilized by collective or institutional practices.",
+          "instruction_node_ids": [
+            "MSC-NODE-EXPLANATION",
+            "MSC-NODE-MODEL",
+            "MSC-NODE-THINK",
+            "MSC-NODE-WORKED",
+            "MSC-NODE-CONTRAST"
+          ]
+        },
+        {
+          "demand_id": "MSC-DEMAND-PREDICTION",
+          "kc_id": "V3-KC-682857",
+          "description": "Predict the evidence each meaning lens would foreground while keeping cost-benefit lenses separate.",
+          "instruction_node_ids": [
+            "MSC-NODE-THINK",
+            "MSC-NODE-WORKED",
+            "MSC-NODE-CONTRAST"
+          ]
+        },
+        {
+          "demand_id": "EXR-DEMAND-RATIONAL",
+          "kc_id": "V3-KC-174089",
+          "description": "Select rational choice when one actor chooses among alternatives by expected benefits, costs, and constraints.",
+          "instruction_node_ids": [
+            "EXR-NODE-EXPLANATION",
+            "EXR-NODE-MODEL",
+            "EXR-NODE-THINK",
+            "EXR-NODE-WORKED",
+            "EXR-NODE-CONTRAST"
+          ]
+        },
+        {
+          "demand_id": "EXR-DEMAND-EXCHANGE",
+          "kc_id": "V3-KC-174089",
+          "description": "Select exchange theory when an ongoing relationship depends on reciprocal rewards, costs, and comparison with alternatives.",
+          "instruction_node_ids": [
+            "EXR-NODE-EXPLANATION",
+            "EXR-NODE-MODEL",
+            "EXR-NODE-THINK",
+            "EXR-NODE-WORKED",
+            "EXR-NODE-CONTRAST"
+          ]
+        },
+        {
+          "demand_id": "EXR-DEMAND-POWER",
+          "kc_id": "V3-KC-174089",
+          "description": "Predict greater exchange power for the less dependent partner with better alternatives.",
+          "instruction_node_ids": [
+            "EXR-NODE-THINK",
+            "EXR-NODE-WORKED",
+            "EXR-NODE-CONTRAST"
+          ]
+        }
+      ],
+      "item_to_instruction_trace": [
+        {
+          "item_binding_id": "MSC-ITEM-ENTRY",
+          "kc_id": "V3-KC-682857",
+          "demand_ids": [
+            "MSC-DEMAND-INTERACTION"
+          ],
+          "prior_instruction_node_ids": [
+            "MSC-NODE-EXPLANATION",
+            "MSC-NODE-MODEL"
+          ]
+        },
+        {
+          "item_binding_id": "MSC-ITEM-GUIDED",
+          "kc_id": "V3-KC-682857",
+          "demand_ids": [
+            "MSC-DEMAND-CONSTRUCTION"
+          ],
+          "prior_instruction_node_ids": [
+            "MSC-NODE-EXPLANATION",
+            "MSC-NODE-THINK",
+            "MSC-NODE-WORKED"
+          ]
+        },
+        {
+          "item_binding_id": "MSC-ITEM-LIGHT",
+          "kc_id": "V3-KC-682857",
+          "demand_ids": [
+            "MSC-DEMAND-INTERACTION"
+          ],
+          "prior_instruction_node_ids": [
+            "MSC-NODE-EXPLANATION",
+            "MSC-NODE-MODEL",
+            "MSC-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "MSC-ITEM-SOLO",
+          "kc_id": "V3-KC-682857",
+          "demand_ids": [
+            "MSC-DEMAND-CONSTRUCTION"
+          ],
+          "prior_instruction_node_ids": [
+            "MSC-NODE-EXPLANATION",
+            "MSC-NODE-WORKED",
+            "MSC-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "MSC-ITEM-NEAR",
+          "kc_id": "V3-KC-682857",
+          "demand_ids": [
+            "MSC-DEMAND-INTERACTION",
+            "MSC-DEMAND-PREDICTION"
+          ],
+          "prior_instruction_node_ids": [
+            "MSC-NODE-EXPLANATION",
+            "MSC-NODE-MODEL",
+            "MSC-NODE-THINK",
+            "MSC-NODE-WORKED",
+            "MSC-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "MSC-ITEM-CHANGED",
+          "kc_id": "V3-KC-682857",
+          "demand_ids": [
+            "MSC-DEMAND-CONSTRUCTION",
+            "MSC-DEMAND-PREDICTION"
+          ],
+          "prior_instruction_node_ids": [
+            "MSC-NODE-EXPLANATION",
+            "MSC-NODE-MODEL",
+            "MSC-NODE-THINK",
+            "MSC-NODE-WORKED",
+            "MSC-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "MSC-ITEM-REPAIR-NEAR",
+          "kc_id": "V3-KC-682857",
+          "demand_ids": [
+            "MSC-DEMAND-INTERACTION"
+          ],
+          "prior_instruction_node_ids": [
+            "MSC-NODE-EXPLANATION",
+            "MSC-NODE-MODEL",
+            "MSC-NODE-REPAIR-NEAR"
+          ]
+        },
+        {
+          "item_binding_id": "MSC-ITEM-REENTRY-NEAR",
+          "kc_id": "V3-KC-682857",
+          "demand_ids": [
+            "MSC-DEMAND-INTERACTION"
+          ],
+          "prior_instruction_node_ids": [
+            "MSC-NODE-EXPLANATION",
+            "MSC-NODE-MODEL",
+            "MSC-NODE-REPAIR-NEAR"
+          ]
+        },
+        {
+          "item_binding_id": "MSC-ITEM-REPAIR-CHANGED",
+          "kc_id": "V3-KC-682857",
+          "demand_ids": [
+            "MSC-DEMAND-CONSTRUCTION"
+          ],
+          "prior_instruction_node_ids": [
+            "MSC-NODE-EXPLANATION",
+            "MSC-NODE-MODEL",
+            "MSC-NODE-REPAIR-CHANGED"
+          ]
+        },
+        {
+          "item_binding_id": "MSC-ITEM-REENTRY-CHANGED",
+          "kc_id": "V3-KC-682857",
+          "demand_ids": [
+            "MSC-DEMAND-CONSTRUCTION"
+          ],
+          "prior_instruction_node_ids": [
+            "MSC-NODE-EXPLANATION",
+            "MSC-NODE-MODEL",
+            "MSC-NODE-REPAIR-CHANGED"
+          ]
+        },
+        {
+          "item_binding_id": "EXR-ITEM-ENTRY",
+          "kc_id": "V3-KC-174089",
+          "demand_ids": [
+            "EXR-DEMAND-RATIONAL"
+          ],
+          "prior_instruction_node_ids": [
+            "EXR-NODE-EXPLANATION",
+            "EXR-NODE-MODEL"
+          ]
+        },
+        {
+          "item_binding_id": "EXR-ITEM-GUIDED",
+          "kc_id": "V3-KC-174089",
+          "demand_ids": [
+            "EXR-DEMAND-EXCHANGE"
+          ],
+          "prior_instruction_node_ids": [
+            "EXR-NODE-EXPLANATION",
+            "EXR-NODE-THINK",
+            "EXR-NODE-WORKED"
+          ]
+        },
+        {
+          "item_binding_id": "EXR-ITEM-LIGHT",
+          "kc_id": "V3-KC-174089",
+          "demand_ids": [
+            "EXR-DEMAND-RATIONAL"
+          ],
+          "prior_instruction_node_ids": [
+            "EXR-NODE-EXPLANATION",
+            "EXR-NODE-MODEL",
+            "EXR-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "EXR-ITEM-SOLO",
+          "kc_id": "V3-KC-174089",
+          "demand_ids": [
+            "EXR-DEMAND-POWER"
+          ],
+          "prior_instruction_node_ids": [
+            "EXR-NODE-EXPLANATION",
+            "EXR-NODE-THINK",
+            "EXR-NODE-WORKED",
+            "EXR-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "EXR-ITEM-NEAR",
+          "kc_id": "V3-KC-174089",
+          "demand_ids": [
+            "EXR-DEMAND-EXCHANGE",
+            "EXR-DEMAND-POWER"
+          ],
+          "prior_instruction_node_ids": [
+            "EXR-NODE-EXPLANATION",
+            "EXR-NODE-MODEL",
+            "EXR-NODE-THINK",
+            "EXR-NODE-WORKED",
+            "EXR-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "EXR-ITEM-CHANGED",
+          "kc_id": "V3-KC-174089",
+          "demand_ids": [
+            "EXR-DEMAND-RATIONAL"
+          ],
+          "prior_instruction_node_ids": [
+            "EXR-NODE-EXPLANATION",
+            "EXR-NODE-MODEL",
+            "EXR-NODE-THINK",
+            "EXR-NODE-WORKED",
+            "EXR-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "EXR-ITEM-REPAIR-NEAR",
+          "kc_id": "V3-KC-174089",
+          "demand_ids": [
+            "EXR-DEMAND-EXCHANGE",
+            "EXR-DEMAND-POWER"
+          ],
+          "prior_instruction_node_ids": [
+            "EXR-NODE-EXPLANATION",
+            "EXR-NODE-MODEL",
+            "EXR-NODE-REPAIR-NEAR"
+          ]
+        },
+        {
+          "item_binding_id": "EXR-ITEM-REENTRY-NEAR",
+          "kc_id": "V3-KC-174089",
+          "demand_ids": [
+            "EXR-DEMAND-EXCHANGE"
+          ],
+          "prior_instruction_node_ids": [
+            "EXR-NODE-EXPLANATION",
+            "EXR-NODE-MODEL",
+            "EXR-NODE-REPAIR-NEAR"
+          ]
+        },
+        {
+          "item_binding_id": "EXR-ITEM-REPAIR-CHANGED",
+          "kc_id": "V3-KC-174089",
+          "demand_ids": [
+            "EXR-DEMAND-RATIONAL"
+          ],
+          "prior_instruction_node_ids": [
+            "EXR-NODE-EXPLANATION",
+            "EXR-NODE-MODEL",
+            "EXR-NODE-REPAIR-CHANGED"
+          ]
+        },
+        {
+          "item_binding_id": "EXR-ITEM-REENTRY-CHANGED",
+          "kc_id": "V3-KC-174089",
+          "demand_ids": [
+            "EXR-DEMAND-RATIONAL"
+          ],
+          "prior_instruction_node_ids": [
+            "EXR-NODE-EXPLANATION",
+            "EXR-NODE-MODEL",
+            "EXR-NODE-REPAIR-CHANGED"
+          ]
+        }
+      ],
+      "assistance_affordance_inventory": [
+        {
+          "kc_id": "V3-KC-682857",
+          "sequence": [
+            {
+              "role": "GUIDED_PRACTICE",
+              "assistance": "VISIBLE_SELECTION_CUE"
+            },
+            {
+              "role": "LIGHT_SUPPORT_PRACTICE",
+              "assistance": "BRIEF_SELECTION_REMINDER"
+            },
+            {
+              "role": "SOLO_PRACTICE",
+              "assistance": "NONE_BEFORE_COMMIT"
+            },
+            {
+              "role": "NEAR_EXIT",
+              "assistance": "NONE_BEFORE_COMMIT"
+            },
+            {
+              "role": "CHANGED_EXIT",
+              "assistance": "NONE_BEFORE_COMMIT"
+            }
+          ],
+          "strictly_less_at_exit": true
+        },
+        {
+          "kc_id": "V3-KC-174089",
+          "sequence": [
+            {
+              "role": "GUIDED_PRACTICE",
+              "assistance": "VISIBLE_SELECTION_CUE"
+            },
+            {
+              "role": "LIGHT_SUPPORT_PRACTICE",
+              "assistance": "BRIEF_SELECTION_REMINDER"
+            },
+            {
+              "role": "SOLO_PRACTICE",
+              "assistance": "NONE_BEFORE_COMMIT"
+            },
+            {
+              "role": "NEAR_EXIT",
+              "assistance": "NONE_BEFORE_COMMIT"
+            },
+            {
+              "role": "CHANGED_EXIT",
+              "assistance": "NONE_BEFORE_COMMIT"
+            }
+          ],
+          "strictly_less_at_exit": true
+        }
+      ],
+      "changed_task_decision_points": [
+        {
+          "kc_id": "V3-KC-682857",
+          "near_item_id": "MSC-ITEM-NEAR",
+          "changed_item_id": "MSC-ITEM-CHANGED",
+          "decision_point": "The near task asks whether meaning is negotiated during an encounter; the changed task asks whether a category is stabilized across rules and records. Carrying the encounter-level choice forward misses the institutional maintenance cue.",
+          "near_trace": [
+            "Identify the outcome that needs explanation.",
+            "Locate repeated interpretation of a symbol during face-to-face exchanges.",
+            "Select the lens whose mechanism is negotiated meaning in interaction."
+          ],
+          "changed_trace": [
+            "Identify the outcome that needs explanation.",
+            "Locate coordinated rules, records, and repeated public use that stabilize a category.",
+            "Select the lens whose mechanism is collective construction of shared reality."
+          ],
+          "changed_dimensions": [
+            "domain_context",
+            "required_operation"
+          ]
+        },
+        {
+          "kc_id": "V3-KC-174089",
+          "near_item_id": "EXR-ITEM-NEAR",
+          "changed_item_id": "EXR-ITEM-CHANGED",
+          "decision_point": "The near task asks how reciprocity sustains an ongoing relationship; the changed task asks how one actor selects a standalone alternative by expected payoff. Carrying the relationship ledger into the changed task invents a partner who is not present.",
+          "near_trace": [
+            "Identify whether the outcome concerns an ongoing relationship.",
+            "Locate reciprocal rewards, costs, and dependence between partners.",
+            "Select the exchange lens and predict continued interaction when the relation remains rewarding."
+          ],
+          "changed_trace": [
+            "Identify the actor and the available alternatives.",
+            "Compare the actor’s expected benefits, costs, and constraints for each option.",
+            "Select the rational-choice lens for the individual selection."
+          ],
+          "changed_dimensions": [
+            "domain_context",
+            "required_operation"
+          ]
+        }
+      ],
+      "repair_graphs": [
+        {
+          "kc_id": "V3-KC-682857",
+          "failed_function": "NEAR_USE",
+          "triggering_response_feature_ids": [
+            "MSC-FEATURE-NEAR-1",
+            "MSC-FEATURE-NEAR-2",
+            "MSC-FEATURE-NEAR-3"
+          ],
+          "repair_node_id": "MSC-NODE-REPAIR-NEAR",
+          "repair_confirmation_item_id": "MSC-ITEM-REPAIR-NEAR",
+          "fresh_reentry_item_id": "MSC-ITEM-REENTRY-NEAR",
+          "fresh_semantic_family_id": "MSC-FAMILY-REENTRY-NEAR",
+          "maximum_repair_cycles": 1,
+          "exhaustion_disposition": "RETURN_TO_PLANNER_WITHOUT_EXIT_CREDIT"
+        },
+        {
+          "kc_id": "V3-KC-682857",
+          "failed_function": "CHANGED_TASK",
+          "triggering_response_feature_ids": [
+            "MSC-FEATURE-CHANGED-0",
+            "MSC-FEATURE-CHANGED-2",
+            "MSC-FEATURE-CHANGED-3"
+          ],
+          "repair_node_id": "MSC-NODE-REPAIR-CHANGED",
+          "repair_confirmation_item_id": "MSC-ITEM-REPAIR-CHANGED",
+          "fresh_reentry_item_id": "MSC-ITEM-REENTRY-CHANGED",
+          "fresh_semantic_family_id": "MSC-FAMILY-REENTRY-CHANGED",
+          "maximum_repair_cycles": 1,
+          "exhaustion_disposition": "RETURN_TO_PLANNER_WITHOUT_EXIT_CREDIT"
+        },
+        {
+          "kc_id": "V3-KC-174089",
+          "failed_function": "NEAR_USE",
+          "triggering_response_feature_ids": [
+            "EXR-FEATURE-NEAR-0",
+            "EXR-FEATURE-NEAR-1",
+            "EXR-FEATURE-NEAR-3"
+          ],
+          "repair_node_id": "EXR-NODE-REPAIR-NEAR",
+          "repair_confirmation_item_id": "EXR-ITEM-REPAIR-NEAR",
+          "fresh_reentry_item_id": "EXR-ITEM-REENTRY-NEAR",
+          "fresh_semantic_family_id": "EXR-FAMILY-REENTRY-NEAR",
+          "maximum_repair_cycles": 1,
+          "exhaustion_disposition": "RETURN_TO_PLANNER_WITHOUT_EXIT_CREDIT"
+        },
+        {
+          "kc_id": "V3-KC-174089",
+          "failed_function": "CHANGED_TASK",
+          "triggering_response_feature_ids": [
+            "EXR-FEATURE-CHANGED-0",
+            "EXR-FEATURE-CHANGED-1",
+            "EXR-FEATURE-CHANGED-2"
+          ],
+          "repair_node_id": "EXR-NODE-REPAIR-CHANGED",
+          "repair_confirmation_item_id": "EXR-ITEM-REPAIR-CHANGED",
+          "fresh_reentry_item_id": "EXR-ITEM-REENTRY-CHANGED",
+          "fresh_semantic_family_id": "EXR-FAMILY-REENTRY-CHANGED",
+          "maximum_repair_cycles": 1,
+          "exhaustion_disposition": "RETURN_TO_PLANNER_WITHOUT_EXIT_CREDIT"
+        }
+      ],
+      "prerequisite_handoffs": [],
+      "hard_prerequisite_relation_ids": [],
+      "item_level_dok_labels_authored": false,
+      "item_dok_claims_made": false
+    },
+    "presentation_status": "CONTENT_CANDIDATE_RUNTIME_AND_BROWSER_QA_PENDING"
+  }
+}

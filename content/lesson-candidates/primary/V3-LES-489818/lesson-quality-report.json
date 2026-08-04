@@ -1,0 +1,135 @@
+{
+  "artifact_type": "LESSON_QUALITY_REPORT",
+  "artifact_id": "V3-LQRP-489818",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "86bb7aabcd8ff31a2ea1050d9c7856da8295b9033f6663c5fa67f77a35bd3580",
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-489818",
+    "lesson_script_sha256": "875365929e5c8467598544d1cc1d5be44fe0299ccb76a858687cab97031b151f",
+    "kc_coverage_matrix_id": "V3-KCOV-489818",
+    "kc_coverage_matrix_sha256": "3c095405e53cfb49ffdd92e236712fe9d90bf14f927e8762ec88027e8688b3e9",
+    "lesson_presentation_plan_id": "V3-LPPL-489818",
+    "lesson_presentation_plan_sha256": "23be92df7f61c434b7ac9c9506c3a92010a2b55ea0aa3597db4f7120b07f9206"
+  },
+  "payload": {
+    "lesson_id": "V3-LES-489818",
+    "review_scope": "STANDARD_CANDIDATE_AUTHOR_SELF_SCREEN",
+    "check_results": [
+      {
+        "check_id": "PACKET-KC-SCOPE-COVERAGE",
+        "status": "PASS",
+        "evidence_refs": [
+          "source-claim-ledger.json"
+        ]
+      },
+      {
+        "check_id": "FIFTEEN-FUNCTION-MICROCYCLES",
+        "status": "PASS",
+        "evidence_refs": [
+          "kc-coverage-matrix.json"
+        ]
+      },
+      {
+        "check_id": "FUNCTION-SPECIFIC-REPAIR-AND-FRESH-REENTRY",
+        "status": "PASS",
+        "evidence_refs": [
+          "lesson-presentation-plan.json#/payload/authoring_evidence/repair_graphs"
+        ]
+      },
+      {
+        "check_id": "DISTRACTOR-RATIONALE-AUTHORING",
+        "status": "PASS",
+        "evidence_refs": [
+          "protected-items.json"
+        ]
+      },
+      {
+        "check_id": "ITEM-DOK-NONCLAIM",
+        "status": "PASS",
+        "evidence_refs": [
+          "lesson-presentation-plan.json#/payload/authoring_evidence/item_level_dok_labels_authored"
+        ]
+      },
+      {
+        "check_id": "EXACT-PREREQUISITE-HANDOFF",
+        "status": "PASS",
+        "evidence_refs": [
+          "lesson-presentation-plan.json#/payload/authoring_evidence/prerequisite_handoffs"
+        ]
+      },
+      {
+        "check_id": "STRUCTURAL-VALIDATION",
+        "status": "PASS",
+        "evidence_refs": [
+          "validation/lesson-validate.json"
+        ]
+      },
+      {
+        "check_id": "CANONICAL-NORMALIZATION",
+        "status": "PASS",
+        "evidence_refs": [
+          "validation/normalization-smoke.json"
+        ]
+      },
+      {
+        "check_id": "PROTECTED-BOUNDARY",
+        "status": "PASS",
+        "evidence_refs": [
+          "validation/protected-scan.json"
+        ]
+      },
+      {
+        "check_id": "INDEPENDENT-DOMAIN-REVIEW",
+        "status": "BLOCKED",
+        "blocker_code": "BLOCKER_NO_DOMAIN_SME_RECEIPT"
+      },
+      {
+        "check_id": "ACCESSIBILITY-AND-BROWSER-QA",
+        "status": "BLOCKED",
+        "blocker_code": "BLOCKER_NO_ACCESSIBILITY_REVIEW"
+      },
+      {
+        "check_id": "INDEPENDENT-JUDGE-PRE-SCREEN",
+        "status": "BLOCKED",
+        "blocker_code": "JUDGE_PRE_SCREEN_REQUIRED"
+      }
+    ],
+    "findings": [
+      {
+        "finding_id": "V3-LES-489818-HUMAN-EVIDENCE",
+        "severity": "P1",
+        "status": "BLOCKED",
+        "required_correction": "Obtain independent judge, domain, accessibility, browser, novice, and platform evidence for this exact revision."
+      },
+      {
+        "finding_id": "V3-LES-489818-KIT-CLOSURE",
+        "severity": "P1",
+        "status": "BLOCKED",
+        "required_correction": "Provide the pinned team KIT-MANIFEST.json before the kit validate-one command can produce a trusted closure receipt."
+      }
+    ],
+    "author_quality_inventory": {
+      "kc_count": 5,
+      "required_node_kinds_per_kc": 15,
+      "authored_nodes_per_kc": 17,
+      "measurable_items_per_kc": 10,
+      "repair_functions_per_kc": 2,
+      "fresh_reentries_per_kc": 2,
+      "specific_incorrect_option_rationales_authored": true,
+      "item_level_dok_labels_authored": false,
+      "official_quality_verdict_authored": false
+    },
+    "claim_limits": {
+      "learner_validated": false,
+      "efficacy_established": false,
+      "mastery_calibrated": false,
+      "readiness_validated": false,
+      "production_published": false,
+      "calibrated_thresholds_available": false
+    },
+    "final_gate_status": "BLOCKED",
+    "release_eligibility": "INTERNAL_DRAFT_ONLY",
+    "production_golden_status": "BLOCKED"
+  }
+}

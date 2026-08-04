@@ -1,0 +1,2608 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "CAR-ITEM-ENTRY",
+      "learner_prompt_key": "CAR_ITEM_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "Systemic venous return enters the right heart and leaves through pulmonary arteries for the lungs.",
+      "post_commitment_feedback": "Systemic venous return enters the right heart and leaves through pulmonary arteries for the lungs.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CAR-FEATURE-ENTRY-0",
+          "observable_feature": "Selects circulation result right",
+          "post_commitment_feedback": "Systemic venous return enters the right heart and leaves through pulmonary arteries for the lungs.",
+          "accepted": true
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CAR-FEATURE-ENTRY-1",
+          "observable_feature": "Selects circulation result left",
+          "post_commitment_feedback": "This is the correct oxygenated-blood route from lungs to systemic output Decisive cue: the starting point is systemic return to the right atrium.",
+          "accepted": false,
+          "rejection_rationale": "This is the correct oxygenated-blood route from lungs to systemic output Decisive cue: the starting point is systemic return to the right atrium."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CAR-FEATURE-ENTRY-2",
+          "observable_feature": "Selects circulation result reverse",
+          "post_commitment_feedback": "This sequence reverses chamber and vessel flow directions Decisive cue: the starting point is systemic return to the right atrium.",
+          "accepted": false,
+          "rejection_rationale": "This sequence reverses chamber and vessel flow directions Decisive cue: the starting point is systemic return to the right atrium."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CAR-FEATURE-ENTRY-3",
+          "observable_feature": "Selects circulation result oxygenrule",
+          "post_commitment_feedback": "Artery and vein names depend on direction relative to the heart, not oxygen content Decisive cue: the starting point is systemic return to the right atrium.",
+          "accepted": false,
+          "rejection_rationale": "Artery and vein names depend on direction relative to the heart, not oxygen content Decisive cue: the starting point is systemic return to the right atrium."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          54,
+          55,
+          55,
+          53
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CAR-ITEM-GUIDED",
+      "learner_prompt_key": "CAR_ITEM_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Pulmonary veins return blood to the left heart, which ejects through the aorta.",
+      "post_commitment_feedback": "Pulmonary veins return blood to the left heart, which ejects through the aorta.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CAR-FEATURE-GUIDED-0",
+          "observable_feature": "Selects circulation result right",
+          "post_commitment_feedback": "This is the correct deoxygenated-blood route from systemic return to the lungs Decisive cue: the starting point is oxygenated pulmonary venous return.",
+          "accepted": false,
+          "rejection_rationale": "This is the correct deoxygenated-blood route from systemic return to the lungs Decisive cue: the starting point is oxygenated pulmonary venous return."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CAR-FEATURE-GUIDED-1",
+          "observable_feature": "Selects circulation result left",
+          "post_commitment_feedback": "Pulmonary veins return blood to the left heart, which ejects through the aorta.",
+          "accepted": true
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CAR-FEATURE-GUIDED-2",
+          "observable_feature": "Selects circulation result reverse",
+          "post_commitment_feedback": "This sequence reverses chamber and vessel flow directions Decisive cue: the starting point is oxygenated pulmonary venous return.",
+          "accepted": false,
+          "rejection_rationale": "This sequence reverses chamber and vessel flow directions Decisive cue: the starting point is oxygenated pulmonary venous return."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CAR-FEATURE-GUIDED-3",
+          "observable_feature": "Selects circulation result oxygenrule",
+          "post_commitment_feedback": "Artery and vein names depend on direction relative to the heart, not oxygen content Decisive cue: the starting point is oxygenated pulmonary venous return.",
+          "accepted": false,
+          "rejection_rationale": "Artery and vein names depend on direction relative to the heart, not oxygen content Decisive cue: the starting point is oxygenated pulmonary venous return."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          54,
+          55,
+          55,
+          53
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CAR-ITEM-LIGHT",
+      "learner_prompt_key": "CAR_ITEM_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Arteries carry blood away from the heart; veins carry blood toward it, including pulmonary exceptions to the oxygen shortcut.",
+      "post_commitment_feedback": "Arteries carry blood away from the heart; veins carry blood toward it, including pulmonary exceptions to the oxygen shortcut.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CAR-FEATURE-LIGHT-0",
+          "observable_feature": "Selects circulation result oxygenrule",
+          "post_commitment_feedback": "Artery and vein names depend on direction relative to the heart, not oxygen content Decisive cue: the task asks for the governing vessel-name rule.",
+          "accepted": false,
+          "rejection_rationale": "Artery and vein names depend on direction relative to the heart, not oxygen content Decisive cue: the task asks for the governing vessel-name rule."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CAR-FEATURE-LIGHT-1",
+          "observable_feature": "Selects circulation result right",
+          "post_commitment_feedback": "This is the correct deoxygenated-blood route from systemic return to the lungs Decisive cue: the task asks for the governing vessel-name rule.",
+          "accepted": false,
+          "rejection_rationale": "This is the correct deoxygenated-blood route from systemic return to the lungs Decisive cue: the task asks for the governing vessel-name rule."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CAR-FEATURE-LIGHT-2",
+          "observable_feature": "Selects circulation result awaytoward",
+          "post_commitment_feedback": "Arteries carry blood away from the heart; veins carry blood toward it, including pulmonary exceptions to the oxygen shortcut.",
+          "accepted": true
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CAR-FEATURE-LIGHT-3",
+          "observable_feature": "Selects circulation result left",
+          "post_commitment_feedback": "This is the correct oxygenated-blood route from lungs to systemic output Decisive cue: the task asks for the governing vessel-name rule.",
+          "accepted": false,
+          "rejection_rationale": "This is the correct oxygenated-blood route from lungs to systemic output Decisive cue: the task asks for the governing vessel-name rule."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          53,
+          54,
+          57,
+          55
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CAR-ITEM-SOLO",
+      "learner_prompt_key": "CAR_ITEM_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Systolic pressure is the peak arterial pressure associated with ventricular contraction.",
+      "post_commitment_feedback": "Systolic pressure is the peak arterial pressure associated with ventricular contraction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CAR-FEATURE-SOLO-0",
+          "observable_feature": "Selects circulation result diastole",
+          "post_commitment_feedback": "Diastolic pressure corresponds to ventricular relaxation and lower arterial pressure Decisive cue: the ventricle is contracting.",
+          "accepted": false,
+          "rejection_rationale": "Diastolic pressure corresponds to ventricular relaxation and lower arterial pressure Decisive cue: the ventricle is contracting."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CAR-FEATURE-SOLO-1",
+          "observable_feature": "Selects circulation result swap",
+          "post_commitment_feedback": "This option swaps the physiological meanings of systolic and diastolic pressure Decisive cue: the ventricle is contracting.",
+          "accepted": false,
+          "rejection_rationale": "This option swaps the physiological meanings of systolic and diastolic pressure Decisive cue: the ventricle is contracting."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CAR-FEATURE-SOLO-2",
+          "observable_feature": "Selects circulation result awaytoward",
+          "post_commitment_feedback": "Vessel naming is correctly based on direction away from or toward the heart Decisive cue: the ventricle is contracting.",
+          "accepted": false,
+          "rejection_rationale": "Vessel naming is correctly based on direction away from or toward the heart Decisive cue: the ventricle is contracting."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CAR-FEATURE-SOLO-3",
+          "observable_feature": "Selects circulation result systole",
+          "post_commitment_feedback": "Systolic pressure is the peak arterial pressure associated with ventricular contraction.",
+          "accepted": true
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          62,
+          61,
+          57,
+          63
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CAR-ITEM-NEAR",
+      "learner_prompt_key": "CAR_ITEM_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The pulmonary artery is an artery because it carries blood away from the heart despite being relatively deoxygenated.",
+      "post_commitment_feedback": "The pulmonary artery is an artery because it carries blood away from the heart despite being relatively deoxygenated.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CAR-FEATURE-NEAR-0",
+          "observable_feature": "Selects circulation result awaytoward",
+          "post_commitment_feedback": "The pulmonary artery is an artery because it carries blood away from the heart despite being relatively deoxygenated.",
+          "accepted": true
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CAR-FEATURE-NEAR-1",
+          "observable_feature": "Selects circulation result oxygenrule",
+          "post_commitment_feedback": "Artery and vein names depend on direction relative to the heart, not oxygen content Decisive cue: the pulmonary artery tests direction versus oxygenation.",
+          "accepted": false,
+          "rejection_rationale": "Artery and vein names depend on direction relative to the heart, not oxygen content Decisive cue: the pulmonary artery tests direction versus oxygenation."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CAR-FEATURE-NEAR-2",
+          "observable_feature": "Selects circulation result left",
+          "post_commitment_feedback": "This is the correct oxygenated-blood route from lungs to systemic output Decisive cue: the pulmonary artery tests direction versus oxygenation.",
+          "accepted": false,
+          "rejection_rationale": "This is the correct oxygenated-blood route from lungs to systemic output Decisive cue: the pulmonary artery tests direction versus oxygenation."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CAR-FEATURE-NEAR-3",
+          "observable_feature": "Selects circulation result reverse",
+          "post_commitment_feedback": "This sequence reverses chamber and vessel flow directions Decisive cue: the pulmonary artery tests direction versus oxygenation.",
+          "accepted": false,
+          "rejection_rationale": "This sequence reverses chamber and vessel flow directions Decisive cue: the pulmonary artery tests direction versus oxygenation."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          57,
+          53,
+          55,
+          55
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CAR-ITEM-CHANGED",
+      "learner_prompt_key": "CAR_ITEM_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Diastolic pressure is measured during ventricular relaxation and is the lower arterial value.",
+      "post_commitment_feedback": "Diastolic pressure is measured during ventricular relaxation and is the lower arterial value.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CAR-FEATURE-CHANGED-0",
+          "observable_feature": "Selects circulation result systole",
+          "post_commitment_feedback": "Systolic pressure corresponds to ventricular contraction and peak arterial pressure Decisive cue: the changed task maps cardiac state to pressure rather than tracing flow.",
+          "accepted": false,
+          "rejection_rationale": "Systolic pressure corresponds to ventricular contraction and peak arterial pressure Decisive cue: the changed task maps cardiac state to pressure rather than tracing flow."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CAR-FEATURE-CHANGED-1",
+          "observable_feature": "Selects circulation result diastole",
+          "post_commitment_feedback": "Diastolic pressure is measured during ventricular relaxation and is the lower arterial value.",
+          "accepted": true
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CAR-FEATURE-CHANGED-2",
+          "observable_feature": "Selects circulation result swap",
+          "post_commitment_feedback": "This option swaps the physiological meanings of systolic and diastolic pressure Decisive cue: the changed task maps cardiac state to pressure rather than tracing flow.",
+          "accepted": false,
+          "rejection_rationale": "This option swaps the physiological meanings of systolic and diastolic pressure Decisive cue: the changed task maps cardiac state to pressure rather than tracing flow."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CAR-FEATURE-CHANGED-3",
+          "observable_feature": "Selects circulation result oxygenrule",
+          "post_commitment_feedback": "Artery and vein names depend on direction relative to the heart, not oxygen content Decisive cue: the changed task maps cardiac state to pressure rather than tracing flow.",
+          "accepted": false,
+          "rejection_rationale": "Artery and vein names depend on direction relative to the heart, not oxygen content Decisive cue: the changed task maps cardiac state to pressure rather than tracing flow."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          63,
+          62,
+          61,
+          53
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CAR-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "CAR_ITEM_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Pulmonary veins are veins because they carry blood toward the heart.",
+      "post_commitment_feedback": "Pulmonary veins are veins because they carry blood toward the heart.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CAR-FEATURE-REPAIR-NEAR-0",
+          "observable_feature": "Selects circulation result oxygenrule",
+          "post_commitment_feedback": "Artery and vein names depend on direction relative to the heart, not oxygen content Decisive cue: the failed feature used oxygenation instead of direction.",
+          "accepted": false,
+          "rejection_rationale": "Artery and vein names depend on direction relative to the heart, not oxygen content Decisive cue: the failed feature used oxygenation instead of direction."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CAR-FEATURE-REPAIR-NEAR-1",
+          "observable_feature": "Selects circulation result right",
+          "post_commitment_feedback": "This is the correct deoxygenated-blood route from systemic return to the lungs Decisive cue: the failed feature used oxygenation instead of direction.",
+          "accepted": false,
+          "rejection_rationale": "This is the correct deoxygenated-blood route from systemic return to the lungs Decisive cue: the failed feature used oxygenation instead of direction."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CAR-FEATURE-REPAIR-NEAR-2",
+          "observable_feature": "Selects circulation result awaytoward",
+          "post_commitment_feedback": "Pulmonary veins are veins because they carry blood toward the heart.",
+          "accepted": true
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CAR-FEATURE-REPAIR-NEAR-3",
+          "observable_feature": "Selects circulation result reverse",
+          "post_commitment_feedback": "This sequence reverses chamber and vessel flow directions Decisive cue: the failed feature used oxygenation instead of direction.",
+          "accepted": false,
+          "rejection_rationale": "This sequence reverses chamber and vessel flow directions Decisive cue: the failed feature used oxygenation instead of direction."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          53,
+          54,
+          57,
+          55
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CAR-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "CAR_ITEM_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Direction away from the heart makes it an artery; oxygen content does not set the name.",
+      "post_commitment_feedback": "Direction away from the heart makes it an artery; oxygen content does not set the name.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CAR-FEATURE-REENTRY-NEAR-0",
+          "observable_feature": "Selects circulation result oxygenrule",
+          "post_commitment_feedback": "Artery and vein names depend on direction relative to the heart, not oxygen content Decisive cue: the fresh case again separates direction from oxygenation.",
+          "accepted": false,
+          "rejection_rationale": "Artery and vein names depend on direction relative to the heart, not oxygen content Decisive cue: the fresh case again separates direction from oxygenation."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CAR-FEATURE-REENTRY-NEAR-1",
+          "observable_feature": "Selects circulation result left",
+          "post_commitment_feedback": "This is the correct oxygenated-blood route from lungs to systemic output Decisive cue: the fresh case again separates direction from oxygenation.",
+          "accepted": false,
+          "rejection_rationale": "This is the correct oxygenated-blood route from lungs to systemic output Decisive cue: the fresh case again separates direction from oxygenation."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CAR-FEATURE-REENTRY-NEAR-2",
+          "observable_feature": "Selects circulation result reverse",
+          "post_commitment_feedback": "This sequence reverses chamber and vessel flow directions Decisive cue: the fresh case again separates direction from oxygenation.",
+          "accepted": false,
+          "rejection_rationale": "This sequence reverses chamber and vessel flow directions Decisive cue: the fresh case again separates direction from oxygenation."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CAR-FEATURE-REENTRY-NEAR-3",
+          "observable_feature": "Selects circulation result awaytoward",
+          "post_commitment_feedback": "Direction away from the heart makes it an artery; oxygen content does not set the name.",
+          "accepted": true
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          53,
+          55,
+          55,
+          57
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CAR-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "CAR_ITEM_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Peak arterial pressure aligns with ventricular contraction and is systolic.",
+      "post_commitment_feedback": "Peak arterial pressure aligns with ventricular contraction and is systolic.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CAR-FEATURE-REPAIR-CHANGED-0",
+          "observable_feature": "Selects circulation result systole",
+          "post_commitment_feedback": "Peak arterial pressure aligns with ventricular contraction and is systolic.",
+          "accepted": true
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CAR-FEATURE-REPAIR-CHANGED-1",
+          "observable_feature": "Selects circulation result diastole",
+          "post_commitment_feedback": "Diastolic pressure corresponds to ventricular relaxation and lower arterial pressure Decisive cue: the failed feature swapped contraction and relaxation.",
+          "accepted": false,
+          "rejection_rationale": "Diastolic pressure corresponds to ventricular relaxation and lower arterial pressure Decisive cue: the failed feature swapped contraction and relaxation."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CAR-FEATURE-REPAIR-CHANGED-2",
+          "observable_feature": "Selects circulation result swap",
+          "post_commitment_feedback": "This option swaps the physiological meanings of systolic and diastolic pressure Decisive cue: the failed feature swapped contraction and relaxation.",
+          "accepted": false,
+          "rejection_rationale": "This option swaps the physiological meanings of systolic and diastolic pressure Decisive cue: the failed feature swapped contraction and relaxation."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CAR-FEATURE-REPAIR-CHANGED-3",
+          "observable_feature": "Selects circulation result oxygenrule",
+          "post_commitment_feedback": "Artery and vein names depend on direction relative to the heart, not oxygen content Decisive cue: the failed feature swapped contraction and relaxation.",
+          "accepted": false,
+          "rejection_rationale": "Artery and vein names depend on direction relative to the heart, not oxygen content Decisive cue: the failed feature swapped contraction and relaxation."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          63,
+          62,
+          61,
+          53
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CAR-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "CAR_ITEM_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The lower pressure during ventricular relaxation is diastolic.",
+      "post_commitment_feedback": "The lower pressure during ventricular relaxation is diastolic.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CAR-FEATURE-REENTRY-CHANGED-0",
+          "observable_feature": "Selects circulation result systole",
+          "post_commitment_feedback": "Systolic pressure corresponds to ventricular contraction and peak arterial pressure Decisive cue: the fresh state is ventricular relaxation.",
+          "accepted": false,
+          "rejection_rationale": "Systolic pressure corresponds to ventricular contraction and peak arterial pressure Decisive cue: the fresh state is ventricular relaxation."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CAR-FEATURE-REENTRY-CHANGED-1",
+          "observable_feature": "Selects circulation result diastole",
+          "post_commitment_feedback": "The lower pressure during ventricular relaxation is diastolic.",
+          "accepted": true
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CAR-FEATURE-REENTRY-CHANGED-2",
+          "observable_feature": "Selects circulation result swap",
+          "post_commitment_feedback": "This option swaps the physiological meanings of systolic and diastolic pressure Decisive cue: the fresh state is ventricular relaxation.",
+          "accepted": false,
+          "rejection_rationale": "This option swaps the physiological meanings of systolic and diastolic pressure Decisive cue: the fresh state is ventricular relaxation."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CAR-FEATURE-REENTRY-CHANGED-3",
+          "observable_feature": "Selects circulation result awaytoward",
+          "post_commitment_feedback": "Vessel naming is correctly based on direction away from or toward the heart Decisive cue: the fresh state is ventricular relaxation.",
+          "accepted": false,
+          "rejection_rationale": "Vessel naming is correctly based on direction away from or toward the heart Decisive cue: the fresh state is ventricular relaxation."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          63,
+          62,
+          61,
+          57
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "VSL-ITEM-ENTRY",
+      "learner_prompt_key": "VSL_ITEM_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "A thick elastic muscular arterial wall tolerates and smooths higher-pressure pulsatile flow.",
+      "post_commitment_feedback": "A thick elastic muscular arterial wall tolerates and smooths higher-pressure pulsatile flow.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "VSL-FEATURE-ENTRY-0",
+          "observable_feature": "Selects circulation result vein",
+          "post_commitment_feedback": "Veins operate at lower pressure, store volume, and use valves to limit backflow Decisive cue: the vessel receives blood directly from the pumping heart.",
+          "accepted": false,
+          "rejection_rationale": "Veins operate at lower pressure, store volume, and use valves to limit backflow Decisive cue: the vessel receives blood directly from the pumping heart."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "VSL-FEATURE-ENTRY-1",
+          "observable_feature": "Selects circulation result capillary",
+          "post_commitment_feedback": "Capillaries use a thin endothelial barrier and large total area for exchange Decisive cue: the vessel receives blood directly from the pumping heart.",
+          "accepted": false,
+          "rejection_rationale": "Capillaries use a thin endothelial barrier and large total area for exchange Decisive cue: the vessel receives blood directly from the pumping heart."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "VSL-FEATURE-ENTRY-2",
+          "observable_feature": "Selects circulation result artery",
+          "post_commitment_feedback": "A thick elastic muscular arterial wall tolerates and smooths higher-pressure pulsatile flow.",
+          "accepted": true
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "VSL-FEATURE-ENTRY-3",
+          "observable_feature": "Selects circulation result radius",
+          "post_commitment_feedback": "Narrower radius strongly raises resistance and lowers flow at fixed pressure difference Decisive cue: the vessel receives blood directly from the pumping heart.",
+          "accepted": false,
+          "rejection_rationale": "Narrower radius strongly raises resistance and lowers flow at fixed pressure difference Decisive cue: the vessel receives blood directly from the pumping heart."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          59,
+          57,
+          60,
+          58
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "VSL-ITEM-GUIDED",
+      "learner_prompt_key": "VSL_ITEM_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "Capillaries have thin endothelial walls and extensive total surface area for exchange.",
+      "post_commitment_feedback": "Capillaries have thin endothelial walls and extensive total surface area for exchange.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "VSL-FEATURE-GUIDED-0",
+          "observable_feature": "Selects circulation result artery",
+          "post_commitment_feedback": "Arteries are structured for pulsatile higher-pressure flow rather than primary exchange Decisive cue: the requested function is trans-wall exchange.",
+          "accepted": false,
+          "rejection_rationale": "Arteries are structured for pulsatile higher-pressure flow rather than primary exchange Decisive cue: the requested function is trans-wall exchange."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "VSL-FEATURE-GUIDED-1",
+          "observable_feature": "Selects circulation result vein",
+          "post_commitment_feedback": "Veins operate at lower pressure, store volume, and use valves to limit backflow Decisive cue: the requested function is trans-wall exchange.",
+          "accepted": false,
+          "rejection_rationale": "Veins operate at lower pressure, store volume, and use valves to limit backflow Decisive cue: the requested function is trans-wall exchange."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "VSL-FEATURE-GUIDED-2",
+          "observable_feature": "Selects circulation result radius",
+          "post_commitment_feedback": "Narrower radius strongly raises resistance and lowers flow at fixed pressure difference Decisive cue: the requested function is trans-wall exchange.",
+          "accepted": false,
+          "rejection_rationale": "Narrower radius strongly raises resistance and lowers flow at fixed pressure difference Decisive cue: the requested function is trans-wall exchange."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "VSL-FEATURE-GUIDED-3",
+          "observable_feature": "Selects circulation result capillary",
+          "post_commitment_feedback": "Capillaries have thin endothelial walls and extensive total surface area for exchange.",
+          "accepted": true
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          60,
+          59,
+          58,
+          57
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "VSL-ITEM-LIGHT",
+      "learner_prompt_key": "VSL_ITEM_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "A smaller radius strongly increases resistance and lowers flow.",
+      "post_commitment_feedback": "A smaller radius strongly increases resistance and lowers flow.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "VSL-FEATURE-LIGHT-0",
+          "observable_feature": "Selects circulation result radius",
+          "post_commitment_feedback": "A smaller radius strongly increases resistance and lowers flow.",
+          "accepted": true
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "VSL-FEATURE-LIGHT-1",
+          "observable_feature": "Selects circulation result gradient",
+          "post_commitment_feedback": "Flow rises with pressure difference when resistance is held fixed Decisive cue: radius decreases while pressure difference is fixed.",
+          "accepted": false,
+          "rejection_rationale": "Flow rises with pressure difference when resistance is held fixed Decisive cue: radius decreases while pressure difference is fixed."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "VSL-FEATURE-LIGHT-2",
+          "observable_feature": "Selects circulation result artery",
+          "post_commitment_feedback": "Arteries are structured for pulsatile higher-pressure flow rather than primary exchange Decisive cue: radius decreases while pressure difference is fixed.",
+          "accepted": false,
+          "rejection_rationale": "Arteries are structured for pulsatile higher-pressure flow rather than primary exchange Decisive cue: radius decreases while pressure difference is fixed."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "VSL-FEATURE-LIGHT-3",
+          "observable_feature": "Selects circulation result vein",
+          "post_commitment_feedback": "Veins operate at lower pressure, store volume, and use valves to limit backflow Decisive cue: radius decreases while pressure difference is fixed.",
+          "accepted": false,
+          "rejection_rationale": "Veins operate at lower pressure, store volume, and use valves to limit backflow Decisive cue: radius decreases while pressure difference is fixed."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          58,
+          59,
+          60,
+          59
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "VSL-ITEM-SOLO",
+      "learner_prompt_key": "VSL_ITEM_SOLO",
+      "correct_option_index": 1,
+      "rationale": "Veins commonly use one-way valves to support return under lower pressure.",
+      "post_commitment_feedback": "Veins commonly use one-way valves to support return under lower pressure.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "VSL-FEATURE-SOLO-0",
+          "observable_feature": "Selects circulation result capillary",
+          "post_commitment_feedback": "Capillaries use a thin endothelial barrier and large total area for exchange Decisive cue: the case is low-pressure return with backflow risk.",
+          "accepted": false,
+          "rejection_rationale": "Capillaries use a thin endothelial barrier and large total area for exchange Decisive cue: the case is low-pressure return with backflow risk."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "VSL-FEATURE-SOLO-1",
+          "observable_feature": "Selects circulation result vein",
+          "post_commitment_feedback": "Veins commonly use one-way valves to support return under lower pressure.",
+          "accepted": true
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "VSL-FEATURE-SOLO-2",
+          "observable_feature": "Selects circulation result artery",
+          "post_commitment_feedback": "Arteries are structured for pulsatile higher-pressure flow rather than primary exchange Decisive cue: the case is low-pressure return with backflow risk.",
+          "accepted": false,
+          "rejection_rationale": "Arteries are structured for pulsatile higher-pressure flow rather than primary exchange Decisive cue: the case is low-pressure return with backflow risk."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "VSL-FEATURE-SOLO-3",
+          "observable_feature": "Selects circulation result gradient",
+          "post_commitment_feedback": "Flow rises with pressure difference when resistance is held fixed Decisive cue: the case is low-pressure return with backflow risk.",
+          "accepted": false,
+          "rejection_rationale": "Flow rises with pressure difference when resistance is held fixed Decisive cue: the case is low-pressure return with backflow risk."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          57,
+          59,
+          60,
+          59
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "VSL-ITEM-NEAR",
+      "learner_prompt_key": "VSL_ITEM_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Flow increases with pressure difference when resistance is unchanged.",
+      "post_commitment_feedback": "Flow increases with pressure difference when resistance is unchanged.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "VSL-FEATURE-NEAR-0",
+          "observable_feature": "Selects circulation result wrongflow",
+          "post_commitment_feedback": "At fixed pressure difference, greater resistance reduces rather than increases flow Decisive cue: the task holds resistance constant.",
+          "accepted": false,
+          "rejection_rationale": "At fixed pressure difference, greater resistance reduces rather than increases flow Decisive cue: the task holds resistance constant."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "VSL-FEATURE-NEAR-1",
+          "observable_feature": "Selects circulation result radius",
+          "post_commitment_feedback": "Narrower radius strongly raises resistance and lowers flow at fixed pressure difference Decisive cue: the task holds resistance constant.",
+          "accepted": false,
+          "rejection_rationale": "Narrower radius strongly raises resistance and lowers flow at fixed pressure difference Decisive cue: the task holds resistance constant."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "VSL-FEATURE-NEAR-2",
+          "observable_feature": "Selects circulation result gradient",
+          "post_commitment_feedback": "Flow increases with pressure difference when resistance is unchanged.",
+          "accepted": true
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "VSL-FEATURE-NEAR-3",
+          "observable_feature": "Selects circulation result capillary",
+          "post_commitment_feedback": "Capillaries use a thin endothelial barrier and large total area for exchange Decisive cue: the task holds resistance constant.",
+          "accepted": false,
+          "rejection_rationale": "Capillaries use a thin endothelial barrier and large total area for exchange Decisive cue: the task holds resistance constant."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          67,
+          58,
+          59,
+          57
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "VSL-ITEM-CHANGED",
+      "learner_prompt_key": "VSL_ITEM_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Cutaneous vasodilation raises skin blood flow and increases heat loss.",
+      "post_commitment_feedback": "Cutaneous vasodilation raises skin blood flow and increases heat loss.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "VSL-FEATURE-CHANGED-0",
+          "observable_feature": "Selects circulation result constrict",
+          "post_commitment_feedback": "Cutaneous vasoconstriction lowers skin flow and conserves core heat Decisive cue: the changed task links vessel caliber to body heat exchange.",
+          "accepted": false,
+          "rejection_rationale": "Cutaneous vasoconstriction lowers skin flow and conserves core heat Decisive cue: the changed task links vessel caliber to body heat exchange."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "VSL-FEATURE-CHANGED-1",
+          "observable_feature": "Selects circulation result radius",
+          "post_commitment_feedback": "Narrower radius strongly raises resistance and lowers flow at fixed pressure difference Decisive cue: the changed task links vessel caliber to body heat exchange.",
+          "accepted": false,
+          "rejection_rationale": "Narrower radius strongly raises resistance and lowers flow at fixed pressure difference Decisive cue: the changed task links vessel caliber to body heat exchange."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "VSL-FEATURE-CHANGED-2",
+          "observable_feature": "Selects circulation result vein",
+          "post_commitment_feedback": "Veins operate at lower pressure, store volume, and use valves to limit backflow Decisive cue: the changed task links vessel caliber to body heat exchange.",
+          "accepted": false,
+          "rejection_rationale": "Veins operate at lower pressure, store volume, and use valves to limit backflow Decisive cue: the changed task links vessel caliber to body heat exchange."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "VSL-FEATURE-CHANGED-3",
+          "observable_feature": "Selects circulation result dilate",
+          "post_commitment_feedback": "Cutaneous vasodilation raises skin blood flow and increases heat loss.",
+          "accepted": true
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          61,
+          58,
+          59,
+          60
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "VSL-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "VSL_ITEM_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Higher resistance lowers flow; a smaller radius is a major way resistance rises.",
+      "post_commitment_feedback": "Higher resistance lowers flow; a smaller radius is a major way resistance rises.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "VSL-FEATURE-REPAIR-NEAR-0",
+          "observable_feature": "Selects circulation result radius",
+          "post_commitment_feedback": "Higher resistance lowers flow; a smaller radius is a major way resistance rises.",
+          "accepted": true
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "VSL-FEATURE-REPAIR-NEAR-1",
+          "observable_feature": "Selects circulation result wrongflow",
+          "post_commitment_feedback": "At fixed pressure difference, greater resistance reduces rather than increases flow Decisive cue: the failed relation reverses resistance and flow.",
+          "accepted": false,
+          "rejection_rationale": "At fixed pressure difference, greater resistance reduces rather than increases flow Decisive cue: the failed relation reverses resistance and flow."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "VSL-FEATURE-REPAIR-NEAR-2",
+          "observable_feature": "Selects circulation result gradient",
+          "post_commitment_feedback": "Flow rises with pressure difference when resistance is held fixed Decisive cue: the failed relation reverses resistance and flow.",
+          "accepted": false,
+          "rejection_rationale": "Flow rises with pressure difference when resistance is held fixed Decisive cue: the failed relation reverses resistance and flow."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "VSL-FEATURE-REPAIR-NEAR-3",
+          "observable_feature": "Selects circulation result capillary",
+          "post_commitment_feedback": "Capillaries use a thin endothelial barrier and large total area for exchange Decisive cue: the failed relation reverses resistance and flow.",
+          "accepted": false,
+          "rejection_rationale": "Capillaries use a thin endothelial barrier and large total area for exchange Decisive cue: the failed relation reverses resistance and flow."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          58,
+          67,
+          59,
+          57
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "VSL-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "VSL_ITEM_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Narrowing raises resistance and lowers flow.",
+      "post_commitment_feedback": "Narrowing raises resistance and lowers flow.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "VSL-FEATURE-REENTRY-NEAR-0",
+          "observable_feature": "Selects circulation result gradient",
+          "post_commitment_feedback": "Flow rises with pressure difference when resistance is held fixed Decisive cue: the new case again changes radius at fixed driving pressure.",
+          "accepted": false,
+          "rejection_rationale": "Flow rises with pressure difference when resistance is held fixed Decisive cue: the new case again changes radius at fixed driving pressure."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "VSL-FEATURE-REENTRY-NEAR-1",
+          "observable_feature": "Selects circulation result radius",
+          "post_commitment_feedback": "Narrowing raises resistance and lowers flow.",
+          "accepted": true
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "VSL-FEATURE-REENTRY-NEAR-2",
+          "observable_feature": "Selects circulation result wrongflow",
+          "post_commitment_feedback": "At fixed pressure difference, greater resistance reduces rather than increases flow Decisive cue: the new case again changes radius at fixed driving pressure.",
+          "accepted": false,
+          "rejection_rationale": "At fixed pressure difference, greater resistance reduces rather than increases flow Decisive cue: the new case again changes radius at fixed driving pressure."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "VSL-FEATURE-REENTRY-NEAR-3",
+          "observable_feature": "Selects circulation result vein",
+          "post_commitment_feedback": "Veins operate at lower pressure, store volume, and use valves to limit backflow Decisive cue: the new case again changes radius at fixed driving pressure.",
+          "accepted": false,
+          "rejection_rationale": "Veins operate at lower pressure, store volume, and use valves to limit backflow Decisive cue: the new case again changes radius at fixed driving pressure."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          59,
+          58,
+          67,
+          59
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "VSL-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "VSL_ITEM_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Widening cutaneous vessels increases skin flow and heat transfer.",
+      "post_commitment_feedback": "Widening cutaneous vessels increases skin flow and heat transfer.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "VSL-FEATURE-REPAIR-CHANGED-0",
+          "observable_feature": "Selects circulation result constrict",
+          "post_commitment_feedback": "Cutaneous vasoconstriction lowers skin flow and conserves core heat Decisive cue: the repair condition is heat exposure with vessel widening.",
+          "accepted": false,
+          "rejection_rationale": "Cutaneous vasoconstriction lowers skin flow and conserves core heat Decisive cue: the repair condition is heat exposure with vessel widening."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "VSL-FEATURE-REPAIR-CHANGED-1",
+          "observable_feature": "Selects circulation result radius",
+          "post_commitment_feedback": "Narrower radius strongly raises resistance and lowers flow at fixed pressure difference Decisive cue: the repair condition is heat exposure with vessel widening.",
+          "accepted": false,
+          "rejection_rationale": "Narrower radius strongly raises resistance and lowers flow at fixed pressure difference Decisive cue: the repair condition is heat exposure with vessel widening."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "VSL-FEATURE-REPAIR-CHANGED-2",
+          "observable_feature": "Selects circulation result dilate",
+          "post_commitment_feedback": "Widening cutaneous vessels increases skin flow and heat transfer.",
+          "accepted": true
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "VSL-FEATURE-REPAIR-CHANGED-3",
+          "observable_feature": "Selects circulation result artery",
+          "post_commitment_feedback": "Arteries are structured for pulsatile higher-pressure flow rather than primary exchange Decisive cue: the repair condition is heat exposure with vessel widening.",
+          "accepted": false,
+          "rejection_rationale": "Arteries are structured for pulsatile higher-pressure flow rather than primary exchange Decisive cue: the repair condition is heat exposure with vessel widening."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          61,
+          58,
+          60,
+          60
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "VSL-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "VSL_ITEM_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Cutaneous vasoconstriction reduces skin blood flow and conserves heat.",
+      "post_commitment_feedback": "Cutaneous vasoconstriction reduces skin blood flow and conserves heat.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "VSL-FEATURE-REENTRY-CHANGED-0",
+          "observable_feature": "Selects circulation result dilate",
+          "post_commitment_feedback": "Cutaneous vasodilation raises skin blood flow and promotes heat transfer to the environment Decisive cue: the fresh condition is cold-driven skin-vessel narrowing.",
+          "accepted": false,
+          "rejection_rationale": "Cutaneous vasodilation raises skin blood flow and promotes heat transfer to the environment Decisive cue: the fresh condition is cold-driven skin-vessel narrowing."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "VSL-FEATURE-REENTRY-CHANGED-1",
+          "observable_feature": "Selects circulation result gradient",
+          "post_commitment_feedback": "Flow rises with pressure difference when resistance is held fixed Decisive cue: the fresh condition is cold-driven skin-vessel narrowing.",
+          "accepted": false,
+          "rejection_rationale": "Flow rises with pressure difference when resistance is held fixed Decisive cue: the fresh condition is cold-driven skin-vessel narrowing."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "VSL-FEATURE-REENTRY-CHANGED-2",
+          "observable_feature": "Selects circulation result capillary",
+          "post_commitment_feedback": "Capillaries use a thin endothelial barrier and large total area for exchange Decisive cue: the fresh condition is cold-driven skin-vessel narrowing.",
+          "accepted": false,
+          "rejection_rationale": "Capillaries use a thin endothelial barrier and large total area for exchange Decisive cue: the fresh condition is cold-driven skin-vessel narrowing."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "VSL-FEATURE-REENTRY-CHANGED-3",
+          "observable_feature": "Selects circulation result constrict",
+          "post_commitment_feedback": "Cutaneous vasoconstriction reduces skin blood flow and conserves heat.",
+          "accepted": true
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          60,
+          59,
+          57,
+          61
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "BLD-ITEM-ENTRY",
+      "learner_prompt_key": "BLD_ITEM_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "Plasma is the liquid phase that carries dissolved substances and suspended formed elements.",
+      "post_commitment_feedback": "Plasma is the liquid phase that carries dissolved substances and suspended formed elements.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "BLD-FEATURE-ENTRY-0",
+          "observable_feature": "Selects circulation result plasma",
+          "post_commitment_feedback": "Plasma is the liquid phase that carries dissolved substances and suspended formed elements.",
+          "accepted": true
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "BLD-FEATURE-ENTRY-1",
+          "observable_feature": "Selects circulation result rbc",
+          "post_commitment_feedback": "Erythrocytes carry hemoglobin and most blood oxygen but are not the liquid phase Decisive cue: the question asks for the liquid transport medium.",
+          "accepted": false,
+          "rejection_rationale": "Erythrocytes carry hemoglobin and most blood oxygen but are not the liquid phase Decisive cue: the question asks for the liquid transport medium."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "BLD-FEATURE-ENTRY-2",
+          "observable_feature": "Selects circulation result wbc",
+          "post_commitment_feedback": "Leukocytes support immune functions rather than bulk oxygen transport or volume Decisive cue: the question asks for the liquid transport medium.",
+          "accepted": false,
+          "rejection_rationale": "Leukocytes support immune functions rather than bulk oxygen transport or volume Decisive cue: the question asks for the liquid transport medium."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "BLD-FEATURE-ENTRY-3",
+          "observable_feature": "Selects circulation result platelet",
+          "post_commitment_feedback": "Platelets contribute to hemostasis rather than carrying most oxygen Decisive cue: the question asks for the liquid transport medium.",
+          "accepted": false,
+          "rejection_rationale": "Platelets contribute to hemostasis rather than carrying most oxygen Decisive cue: the question asks for the liquid transport medium."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          62,
+          59,
+          55,
+          63
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "BLD-ITEM-GUIDED",
+      "learner_prompt_key": "BLD_ITEM_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Erythrocytes contain hemoglobin and carry most blood oxygen.",
+      "post_commitment_feedback": "Erythrocytes contain hemoglobin and carry most blood oxygen.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "BLD-FEATURE-GUIDED-0",
+          "observable_feature": "Selects circulation result plasma",
+          "post_commitment_feedback": "Plasma is the liquid transport medium for dissolved chemicals and proteins Decisive cue: the component contains hemoglobin.",
+          "accepted": false,
+          "rejection_rationale": "Plasma is the liquid transport medium for dissolved chemicals and proteins Decisive cue: the component contains hemoglobin."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "BLD-FEATURE-GUIDED-1",
+          "observable_feature": "Selects circulation result rbc",
+          "post_commitment_feedback": "Erythrocytes contain hemoglobin and carry most blood oxygen.",
+          "accepted": true
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "BLD-FEATURE-GUIDED-2",
+          "observable_feature": "Selects circulation result wbc",
+          "post_commitment_feedback": "Leukocytes support immune functions rather than bulk oxygen transport or volume Decisive cue: the component contains hemoglobin.",
+          "accepted": false,
+          "rejection_rationale": "Leukocytes support immune functions rather than bulk oxygen transport or volume Decisive cue: the component contains hemoglobin."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "BLD-FEATURE-GUIDED-3",
+          "observable_feature": "Selects circulation result platelet",
+          "post_commitment_feedback": "Platelets contribute to hemostasis rather than carrying most oxygen Decisive cue: the component contains hemoglobin.",
+          "accepted": false,
+          "rejection_rationale": "Platelets contribute to hemostasis rather than carrying most oxygen Decisive cue: the component contains hemoglobin."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          62,
+          59,
+          55,
+          63
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "BLD-ITEM-LIGHT",
+      "learner_prompt_key": "BLD_ITEM_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Bone marrow supplies new erythrocytes while aged erythrocytes are removed, including by the spleen.",
+      "post_commitment_feedback": "Bone marrow supplies new erythrocytes while aged erythrocytes are removed, including by the spleen.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "BLD-FEATURE-LIGHT-0",
+          "observable_feature": "Selects circulation result volume",
+          "post_commitment_feedback": "Plasma-volume regulation changes the liquid circulating volume through water and solute balance Decisive cue: the task asks for production and removal sites.",
+          "accepted": false,
+          "rejection_rationale": "Plasma-volume regulation changes the liquid circulating volume through water and solute balance Decisive cue: the task asks for production and removal sites."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "BLD-FEATURE-LIGHT-1",
+          "observable_feature": "Selects circulation result catalog",
+          "post_commitment_feedback": "A disease or factor catalog is outside this KC’s bounded composition and turnover model Decisive cue: the task asks for production and removal sites.",
+          "accepted": false,
+          "rejection_rationale": "A disease or factor catalog is outside this KC’s bounded composition and turnover model Decisive cue: the task asks for production and removal sites."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "BLD-FEATURE-LIGHT-2",
+          "observable_feature": "Selects circulation result turnover",
+          "post_commitment_feedback": "Bone marrow supplies new erythrocytes while aged erythrocytes are removed, including by the spleen.",
+          "accepted": true
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "BLD-FEATURE-LIGHT-3",
+          "observable_feature": "Selects circulation result whole",
+          "post_commitment_feedback": "Whole blood includes the liquid plasma and all formed cellular elements Decisive cue: the task asks for production and removal sites.",
+          "accepted": false,
+          "rejection_rationale": "Whole blood includes the liquid plasma and all formed cellular elements Decisive cue: the task asks for production and removal sites."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          61,
+          67,
+          60,
+          64
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "BLD-ITEM-SOLO",
+      "learner_prompt_key": "BLD_ITEM_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Whole blood consists of plasma plus erythrocytes, leukocytes, and platelets.",
+      "post_commitment_feedback": "Whole blood consists of plasma plus erythrocytes, leukocytes, and platelets.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "BLD-FEATURE-SOLO-0",
+          "observable_feature": "Selects circulation result plasma",
+          "post_commitment_feedback": "Plasma is the liquid transport medium for dissolved chemicals and proteins Decisive cue: the task asks for the complete circulating mixture.",
+          "accepted": false,
+          "rejection_rationale": "Plasma is the liquid transport medium for dissolved chemicals and proteins Decisive cue: the task asks for the complete circulating mixture."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "BLD-FEATURE-SOLO-1",
+          "observable_feature": "Selects circulation result rbc",
+          "post_commitment_feedback": "Erythrocytes carry hemoglobin and most blood oxygen but are not the liquid phase Decisive cue: the task asks for the complete circulating mixture.",
+          "accepted": false,
+          "rejection_rationale": "Erythrocytes carry hemoglobin and most blood oxygen but are not the liquid phase Decisive cue: the task asks for the complete circulating mixture."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "BLD-FEATURE-SOLO-2",
+          "observable_feature": "Selects circulation result catalog",
+          "post_commitment_feedback": "A disease or factor catalog is outside this KC’s bounded composition and turnover model Decisive cue: the task asks for the complete circulating mixture.",
+          "accepted": false,
+          "rejection_rationale": "A disease or factor catalog is outside this KC’s bounded composition and turnover model Decisive cue: the task asks for the complete circulating mixture."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "BLD-FEATURE-SOLO-3",
+          "observable_feature": "Selects circulation result whole",
+          "post_commitment_feedback": "Whole blood consists of plasma plus erythrocytes, leukocytes, and platelets.",
+          "accepted": true
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          62,
+          59,
+          67,
+          64
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "BLD-ITEM-NEAR",
+      "learner_prompt_key": "BLD_ITEM_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Loss of plasma water reduces plasma volume and therefore circulating volume.",
+      "post_commitment_feedback": "Loss of plasma water reduces plasma volume and therefore circulating volume.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "BLD-FEATURE-NEAR-0",
+          "observable_feature": "Selects circulation result volume",
+          "post_commitment_feedback": "Loss of plasma water reduces plasma volume and therefore circulating volume.",
+          "accepted": true
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "BLD-FEATURE-NEAR-1",
+          "observable_feature": "Selects circulation result turnover",
+          "post_commitment_feedback": "Erythrocyte turnover links marrow production with removal of aged cells including in the spleen Decisive cue: the changed quantity is liquid water rather than cell production.",
+          "accepted": false,
+          "rejection_rationale": "Erythrocyte turnover links marrow production with removal of aged cells including in the spleen Decisive cue: the changed quantity is liquid water rather than cell production."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "BLD-FEATURE-NEAR-2",
+          "observable_feature": "Selects circulation result rbc",
+          "post_commitment_feedback": "Erythrocytes carry hemoglobin and most blood oxygen but are not the liquid phase Decisive cue: the changed quantity is liquid water rather than cell production.",
+          "accepted": false,
+          "rejection_rationale": "Erythrocytes carry hemoglobin and most blood oxygen but are not the liquid phase Decisive cue: the changed quantity is liquid water rather than cell production."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "BLD-FEATURE-NEAR-3",
+          "observable_feature": "Selects circulation result platelet",
+          "post_commitment_feedback": "Platelets contribute to hemostasis rather than carrying most oxygen Decisive cue: the changed quantity is liquid water rather than cell production.",
+          "accepted": false,
+          "rejection_rationale": "Platelets contribute to hemostasis rather than carrying most oxygen Decisive cue: the changed quantity is liquid water rather than cell production."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          61,
+          60,
+          59,
+          63
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "BLD-ITEM-CHANGED",
+      "learner_prompt_key": "BLD_ITEM_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The case links marrow production with removal of aged erythrocytes, including splenic clearance.",
+      "post_commitment_feedback": "The case links marrow production with removal of aged erythrocytes, including splenic clearance.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "BLD-FEATURE-CHANGED-0",
+          "observable_feature": "Selects circulation result volume",
+          "post_commitment_feedback": "Plasma-volume regulation changes the liquid circulating volume through water and solute balance Decisive cue: the changed task follows a cell across its life cycle.",
+          "accepted": false,
+          "rejection_rationale": "Plasma-volume regulation changes the liquid circulating volume through water and solute balance Decisive cue: the changed task follows a cell across its life cycle."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "BLD-FEATURE-CHANGED-1",
+          "observable_feature": "Selects circulation result turnover",
+          "post_commitment_feedback": "The case links marrow production with removal of aged erythrocytes, including splenic clearance.",
+          "accepted": true
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "BLD-FEATURE-CHANGED-2",
+          "observable_feature": "Selects circulation result plasma",
+          "post_commitment_feedback": "Plasma is the liquid transport medium for dissolved chemicals and proteins Decisive cue: the changed task follows a cell across its life cycle.",
+          "accepted": false,
+          "rejection_rationale": "Plasma is the liquid transport medium for dissolved chemicals and proteins Decisive cue: the changed task follows a cell across its life cycle."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "BLD-FEATURE-CHANGED-3",
+          "observable_feature": "Selects circulation result catalog",
+          "post_commitment_feedback": "A disease or factor catalog is outside this KC’s bounded composition and turnover model Decisive cue: the changed task follows a cell across its life cycle.",
+          "accepted": false,
+          "rejection_rationale": "A disease or factor catalog is outside this KC’s bounded composition and turnover model Decisive cue: the changed task follows a cell across its life cycle."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          61,
+          60,
+          62,
+          67
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "BLD-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "BLD_ITEM_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Plasma is the liquid medium; erythrocytes are the hemoglobin-bearing cells.",
+      "post_commitment_feedback": "Plasma is the liquid medium; erythrocytes are the hemoglobin-bearing cells.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "BLD-FEATURE-REPAIR-NEAR-0",
+          "observable_feature": "Selects circulation result rbc",
+          "post_commitment_feedback": "Erythrocytes carry hemoglobin and most blood oxygen but are not the liquid phase Decisive cue: the failed feature confuses liquid phase with formed cells.",
+          "accepted": false,
+          "rejection_rationale": "Erythrocytes carry hemoglobin and most blood oxygen but are not the liquid phase Decisive cue: the failed feature confuses liquid phase with formed cells."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "BLD-FEATURE-REPAIR-NEAR-1",
+          "observable_feature": "Selects circulation result wbc",
+          "post_commitment_feedback": "Leukocytes support immune functions rather than bulk oxygen transport or volume Decisive cue: the failed feature confuses liquid phase with formed cells.",
+          "accepted": false,
+          "rejection_rationale": "Leukocytes support immune functions rather than bulk oxygen transport or volume Decisive cue: the failed feature confuses liquid phase with formed cells."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "BLD-FEATURE-REPAIR-NEAR-2",
+          "observable_feature": "Selects circulation result plasma",
+          "post_commitment_feedback": "Plasma is the liquid medium; erythrocytes are the hemoglobin-bearing cells.",
+          "accepted": true
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "BLD-FEATURE-REPAIR-NEAR-3",
+          "observable_feature": "Selects circulation result platelet",
+          "post_commitment_feedback": "Platelets contribute to hemostasis rather than carrying most oxygen Decisive cue: the failed feature confuses liquid phase with formed cells.",
+          "accepted": false,
+          "rejection_rationale": "Platelets contribute to hemostasis rather than carrying most oxygen Decisive cue: the failed feature confuses liquid phase with formed cells."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          59,
+          55,
+          62,
+          63
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "BLD-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "BLD_ITEM_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The cell-free upper liquid is plasma.",
+      "post_commitment_feedback": "The cell-free upper liquid is plasma.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "BLD-FEATURE-REENTRY-NEAR-0",
+          "observable_feature": "Selects circulation result rbc",
+          "post_commitment_feedback": "Erythrocytes carry hemoglobin and most blood oxygen but are not the liquid phase Decisive cue: the new representation separates liquid from formed elements.",
+          "accepted": false,
+          "rejection_rationale": "Erythrocytes carry hemoglobin and most blood oxygen but are not the liquid phase Decisive cue: the new representation separates liquid from formed elements."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "BLD-FEATURE-REENTRY-NEAR-1",
+          "observable_feature": "Selects circulation result wbc",
+          "post_commitment_feedback": "Leukocytes support immune functions rather than bulk oxygen transport or volume Decisive cue: the new representation separates liquid from formed elements.",
+          "accepted": false,
+          "rejection_rationale": "Leukocytes support immune functions rather than bulk oxygen transport or volume Decisive cue: the new representation separates liquid from formed elements."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "BLD-FEATURE-REENTRY-NEAR-2",
+          "observable_feature": "Selects circulation result platelet",
+          "post_commitment_feedback": "Platelets contribute to hemostasis rather than carrying most oxygen Decisive cue: the new representation separates liquid from formed elements.",
+          "accepted": false,
+          "rejection_rationale": "Platelets contribute to hemostasis rather than carrying most oxygen Decisive cue: the new representation separates liquid from formed elements."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "BLD-FEATURE-REENTRY-NEAR-3",
+          "observable_feature": "Selects circulation result plasma",
+          "post_commitment_feedback": "The cell-free upper liquid is plasma.",
+          "accepted": true
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          59,
+          55,
+          63,
+          62
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "BLD-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "BLD_ITEM_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Turnover requires both marrow production and removal of aged cells, including splenic clearance.",
+      "post_commitment_feedback": "Turnover requires both marrow production and removal of aged cells, including splenic clearance.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "BLD-FEATURE-REPAIR-CHANGED-0",
+          "observable_feature": "Selects circulation result turnover",
+          "post_commitment_feedback": "Turnover requires both marrow production and removal of aged cells, including splenic clearance.",
+          "accepted": true
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "BLD-FEATURE-REPAIR-CHANGED-1",
+          "observable_feature": "Selects circulation result volume",
+          "post_commitment_feedback": "Plasma-volume regulation changes the liquid circulating volume through water and solute balance Decisive cue: the repair adds the missing removal side.",
+          "accepted": false,
+          "rejection_rationale": "Plasma-volume regulation changes the liquid circulating volume through water and solute balance Decisive cue: the repair adds the missing removal side."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "BLD-FEATURE-REPAIR-CHANGED-2",
+          "observable_feature": "Selects circulation result catalog",
+          "post_commitment_feedback": "A disease or factor catalog is outside this KC’s bounded composition and turnover model Decisive cue: the repair adds the missing removal side.",
+          "accepted": false,
+          "rejection_rationale": "A disease or factor catalog is outside this KC’s bounded composition and turnover model Decisive cue: the repair adds the missing removal side."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "BLD-FEATURE-REPAIR-CHANGED-3",
+          "observable_feature": "Selects circulation result whole",
+          "post_commitment_feedback": "Whole blood includes the liquid plasma and all formed cellular elements Decisive cue: the repair adds the missing removal side.",
+          "accepted": false,
+          "rejection_rationale": "Whole blood includes the liquid plasma and all formed cellular elements Decisive cue: the repair adds the missing removal side."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          60,
+          61,
+          67,
+          64
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "BLD-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "BLD_ITEM_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The balanced production-and-removal trace represents erythrocyte turnover.",
+      "post_commitment_feedback": "The balanced production-and-removal trace represents erythrocyte turnover.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "BLD-FEATURE-REENTRY-CHANGED-0",
+          "observable_feature": "Selects circulation result volume",
+          "post_commitment_feedback": "Plasma-volume regulation changes the liquid circulating volume through water and solute balance Decisive cue: the fresh trace contains both life-cycle directions.",
+          "accepted": false,
+          "rejection_rationale": "Plasma-volume regulation changes the liquid circulating volume through water and solute balance Decisive cue: the fresh trace contains both life-cycle directions."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "BLD-FEATURE-REENTRY-CHANGED-1",
+          "observable_feature": "Selects circulation result turnover",
+          "post_commitment_feedback": "The balanced production-and-removal trace represents erythrocyte turnover.",
+          "accepted": true
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "BLD-FEATURE-REENTRY-CHANGED-2",
+          "observable_feature": "Selects circulation result plasma",
+          "post_commitment_feedback": "Plasma is the liquid transport medium for dissolved chemicals and proteins Decisive cue: the fresh trace contains both life-cycle directions.",
+          "accepted": false,
+          "rejection_rationale": "Plasma is the liquid transport medium for dissolved chemicals and proteins Decisive cue: the fresh trace contains both life-cycle directions."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "BLD-FEATURE-REENTRY-CHANGED-3",
+          "observable_feature": "Selects circulation result catalog",
+          "post_commitment_feedback": "A disease or factor catalog is outside this KC’s bounded composition and turnover model Decisive cue: the fresh trace contains both life-cycle directions.",
+          "accepted": false,
+          "rejection_rationale": "A disease or factor catalog is outside this KC’s bounded composition and turnover model Decisive cue: the fresh trace contains both life-cycle directions."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          61,
+          60,
+          62,
+          67
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CLT-ITEM-ENTRY",
+      "learner_prompt_key": "CLT_ITEM_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "Platelets adhere and aggregate at the injury to form an initial plug.",
+      "post_commitment_feedback": "Platelets adhere and aggregate at the injury to form an initial plug.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CLT-FEATURE-ENTRY-0",
+          "observable_feature": "Selects circulation result fibrin",
+          "post_commitment_feedback": "Fibrin produced through plasma coagulation reactions stabilizes the platelet plug Decisive cue: the task asks for the initial cellular response.",
+          "accepted": false,
+          "rejection_rationale": "Fibrin produced through plasma coagulation reactions stabilizes the platelet plug Decisive cue: the task asks for the initial cellular response."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CLT-FEATURE-ENTRY-1",
+          "observable_feature": "Selects circulation result rbc",
+          "post_commitment_feedback": "Erythrocytes can be trapped in a clot but do not initiate the bounded hemostatic sequence Decisive cue: the task asks for the initial cellular response.",
+          "accepted": false,
+          "rejection_rationale": "Erythrocytes can be trapped in a clot but do not initiate the bounded hemostatic sequence Decisive cue: the task asks for the initial cellular response."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CLT-FEATURE-ENTRY-2",
+          "observable_feature": "Selects circulation result platelet",
+          "post_commitment_feedback": "Platelets adhere and aggregate at the injury to form an initial plug.",
+          "accepted": true
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CLT-FEATURE-ENTRY-3",
+          "observable_feature": "Selects circulation result volume",
+          "post_commitment_feedback": "Water retention can alter volume but does not directly seal a vessel injury Decisive cue: the task asks for the initial cellular response.",
+          "accepted": false,
+          "rejection_rationale": "Water retention can alter volume but does not directly seal a vessel injury Decisive cue: the task asks for the initial cellular response."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          63,
+          65,
+          60,
+          66
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CLT-ITEM-GUIDED",
+      "learner_prompt_key": "CLT_ITEM_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "Coagulation reactions generate fibrin that reinforces the local platelet plug.",
+      "post_commitment_feedback": "Coagulation reactions generate fibrin that reinforces the local platelet plug.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CLT-FEATURE-GUIDED-0",
+          "observable_feature": "Selects circulation result platelet",
+          "post_commitment_feedback": "Platelets adhere and aggregate early at injury to form a local plug Decisive cue: the initial plug already exists and needs stabilization.",
+          "accepted": false,
+          "rejection_rationale": "Platelets adhere and aggregate early at injury to form a local plug Decisive cue: the initial plug already exists and needs stabilization."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CLT-FEATURE-GUIDED-1",
+          "observable_feature": "Selects circulation result rbc",
+          "post_commitment_feedback": "Erythrocytes can be trapped in a clot but do not initiate the bounded hemostatic sequence Decisive cue: the initial plug already exists and needs stabilization.",
+          "accepted": false,
+          "rejection_rationale": "Erythrocytes can be trapped in a clot but do not initiate the bounded hemostatic sequence Decisive cue: the initial plug already exists and needs stabilization."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CLT-FEATURE-GUIDED-2",
+          "observable_feature": "Selects circulation result catalog",
+          "post_commitment_feedback": "A complete named-factor catalog is outside the required mechanistic depth Decisive cue: the initial plug already exists and needs stabilization.",
+          "accepted": false,
+          "rejection_rationale": "A complete named-factor catalog is outside the required mechanistic depth Decisive cue: the initial plug already exists and needs stabilization."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CLT-FEATURE-GUIDED-3",
+          "observable_feature": "Selects circulation result fibrin",
+          "post_commitment_feedback": "Coagulation reactions generate fibrin that reinforces the local platelet plug.",
+          "accepted": true
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          60,
+          65,
+          58,
+          63
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CLT-ITEM-LIGHT",
+      "learner_prompt_key": "CLT_ITEM_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Hemostasis is localized to limit blood loss and is later constrained or resolved to preserve circulation.",
+      "post_commitment_feedback": "Hemostasis is localized to limit blood loss and is later constrained or resolved to preserve circulation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CLT-FEATURE-LIGHT-0",
+          "observable_feature": "Selects circulation result limit",
+          "post_commitment_feedback": "Hemostasis is localized to limit blood loss and is later constrained or resolved to preserve circulation.",
+          "accepted": true
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CLT-FEATURE-LIGHT-1",
+          "observable_feature": "Selects circulation result global",
+          "post_commitment_feedback": "Spreading clotting through intact circulation contradicts the bounded protective response Decisive cue: the response must protect without occluding all intact vessels.",
+          "accepted": false,
+          "rejection_rationale": "Spreading clotting through intact circulation contradicts the bounded protective response Decisive cue: the response must protect without occluding all intact vessels."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CLT-FEATURE-LIGHT-2",
+          "observable_feature": "Selects circulation result catalog",
+          "post_commitment_feedback": "A complete named-factor catalog is outside the required mechanistic depth Decisive cue: the response must protect without occluding all intact vessels.",
+          "accepted": false,
+          "rejection_rationale": "A complete named-factor catalog is outside the required mechanistic depth Decisive cue: the response must protect without occluding all intact vessels."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CLT-FEATURE-LIGHT-3",
+          "observable_feature": "Selects circulation result volume",
+          "post_commitment_feedback": "Water retention can alter volume but does not directly seal a vessel injury Decisive cue: the response must protect without occluding all intact vessels.",
+          "accepted": false,
+          "rejection_rationale": "Water retention can alter volume but does not directly seal a vessel injury Decisive cue: the response must protect without occluding all intact vessels."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          63,
+          66,
+          58,
+          66
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CLT-ITEM-SOLO",
+      "learner_prompt_key": "CLT_ITEM_SOLO",
+      "correct_option_index": 1,
+      "rationale": "Erythrocytes can become trapped in the clot, while platelets initiate the cellular plug.",
+      "post_commitment_feedback": "Erythrocytes can become trapped in the clot, while platelets initiate the cellular plug.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CLT-FEATURE-SOLO-0",
+          "observable_feature": "Selects circulation result platelet",
+          "post_commitment_feedback": "Platelets adhere and aggregate early at injury to form a local plug Decisive cue: the question distinguishes trapped cells from initiating fragments.",
+          "accepted": false,
+          "rejection_rationale": "Platelets adhere and aggregate early at injury to form a local plug Decisive cue: the question distinguishes trapped cells from initiating fragments."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CLT-FEATURE-SOLO-1",
+          "observable_feature": "Selects circulation result rbc",
+          "post_commitment_feedback": "Erythrocytes can become trapped in the clot, while platelets initiate the cellular plug.",
+          "accepted": true
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CLT-FEATURE-SOLO-2",
+          "observable_feature": "Selects circulation result fibrin",
+          "post_commitment_feedback": "Fibrin produced through plasma coagulation reactions stabilizes the platelet plug Decisive cue: the question distinguishes trapped cells from initiating fragments.",
+          "accepted": false,
+          "rejection_rationale": "Fibrin produced through plasma coagulation reactions stabilizes the platelet plug Decisive cue: the question distinguishes trapped cells from initiating fragments."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CLT-FEATURE-SOLO-3",
+          "observable_feature": "Selects circulation result volume",
+          "post_commitment_feedback": "Water retention can alter volume but does not directly seal a vessel injury Decisive cue: the question distinguishes trapped cells from initiating fragments.",
+          "accepted": false,
+          "rejection_rationale": "Water retention can alter volume but does not directly seal a vessel injury Decisive cue: the question distinguishes trapped cells from initiating fragments."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          60,
+          65,
+          63,
+          66
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CLT-ITEM-NEAR",
+      "learner_prompt_key": "CLT_ITEM_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Failure of platelet adhesion impairs formation of the initial local plug.",
+      "post_commitment_feedback": "Failure of platelet adhesion impairs formation of the initial local plug.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CLT-FEATURE-NEAR-0",
+          "observable_feature": "Selects circulation result fibrin",
+          "post_commitment_feedback": "Fibrin produced through plasma coagulation reactions stabilizes the platelet plug Decisive cue: the defect occurs before plug formation.",
+          "accepted": false,
+          "rejection_rationale": "Fibrin produced through plasma coagulation reactions stabilizes the platelet plug Decisive cue: the defect occurs before plug formation."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CLT-FEATURE-NEAR-1",
+          "observable_feature": "Selects circulation result limit",
+          "post_commitment_feedback": "Protective hemostasis is localized and bounded so intact circulation remains open Decisive cue: the defect occurs before plug formation.",
+          "accepted": false,
+          "rejection_rationale": "Protective hemostasis is localized and bounded so intact circulation remains open Decisive cue: the defect occurs before plug formation."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CLT-FEATURE-NEAR-2",
+          "observable_feature": "Selects circulation result platelet",
+          "post_commitment_feedback": "Failure of platelet adhesion impairs formation of the initial local plug.",
+          "accepted": true
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CLT-FEATURE-NEAR-3",
+          "observable_feature": "Selects circulation result volume",
+          "post_commitment_feedback": "Water retention can alter volume but does not directly seal a vessel injury Decisive cue: the defect occurs before plug formation.",
+          "accepted": false,
+          "rejection_rationale": "Water retention can alter volume but does not directly seal a vessel injury Decisive cue: the defect occurs before plug formation."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          63,
+          63,
+          60,
+          66
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CLT-ITEM-CHANGED",
+      "learner_prompt_key": "CLT_ITEM_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Failure to form fibrin leaves the platelet plug less stably reinforced.",
+      "post_commitment_feedback": "Failure to form fibrin leaves the platelet plug less stably reinforced.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CLT-FEATURE-CHANGED-0",
+          "observable_feature": "Selects circulation result platelet",
+          "post_commitment_feedback": "Platelets adhere and aggregate early at injury to form a local plug Decisive cue: the changed task isolates the stabilization stage after a normal plug.",
+          "accepted": false,
+          "rejection_rationale": "Platelets adhere and aggregate early at injury to form a local plug Decisive cue: the changed task isolates the stabilization stage after a normal plug."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CLT-FEATURE-CHANGED-1",
+          "observable_feature": "Selects circulation result rbc",
+          "post_commitment_feedback": "Erythrocytes can be trapped in a clot but do not initiate the bounded hemostatic sequence Decisive cue: the changed task isolates the stabilization stage after a normal plug.",
+          "accepted": false,
+          "rejection_rationale": "Erythrocytes can be trapped in a clot but do not initiate the bounded hemostatic sequence Decisive cue: the changed task isolates the stabilization stage after a normal plug."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CLT-FEATURE-CHANGED-2",
+          "observable_feature": "Selects circulation result global",
+          "post_commitment_feedback": "Spreading clotting through intact circulation contradicts the bounded protective response Decisive cue: the changed task isolates the stabilization stage after a normal plug.",
+          "accepted": false,
+          "rejection_rationale": "Spreading clotting through intact circulation contradicts the bounded protective response Decisive cue: the changed task isolates the stabilization stage after a normal plug."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CLT-FEATURE-CHANGED-3",
+          "observable_feature": "Selects circulation result fibrin",
+          "post_commitment_feedback": "Failure to form fibrin leaves the platelet plug less stably reinforced.",
+          "accepted": true
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          60,
+          65,
+          66,
+          63
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CLT-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "CLT_ITEM_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Restore the early platelet plug before the later fibrin reinforcement step.",
+      "post_commitment_feedback": "Restore the early platelet plug before the later fibrin reinforcement step.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CLT-FEATURE-REPAIR-NEAR-0",
+          "observable_feature": "Selects circulation result platelet",
+          "post_commitment_feedback": "Restore the early platelet plug before the later fibrin reinforcement step.",
+          "accepted": true
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CLT-FEATURE-REPAIR-NEAR-1",
+          "observable_feature": "Selects circulation result fibrin",
+          "post_commitment_feedback": "Fibrin produced through plasma coagulation reactions stabilizes the platelet plug Decisive cue: the failed feature reverses stage order.",
+          "accepted": false,
+          "rejection_rationale": "Fibrin produced through plasma coagulation reactions stabilizes the platelet plug Decisive cue: the failed feature reverses stage order."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CLT-FEATURE-REPAIR-NEAR-2",
+          "observable_feature": "Selects circulation result global",
+          "post_commitment_feedback": "Spreading clotting through intact circulation contradicts the bounded protective response Decisive cue: the failed feature reverses stage order.",
+          "accepted": false,
+          "rejection_rationale": "Spreading clotting through intact circulation contradicts the bounded protective response Decisive cue: the failed feature reverses stage order."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CLT-FEATURE-REPAIR-NEAR-3",
+          "observable_feature": "Selects circulation result catalog",
+          "post_commitment_feedback": "A complete named-factor catalog is outside the required mechanistic depth Decisive cue: the failed feature reverses stage order.",
+          "accepted": false,
+          "rejection_rationale": "A complete named-factor catalog is outside the required mechanistic depth Decisive cue: the failed feature reverses stage order."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          60,
+          63,
+          66,
+          58
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CLT-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "CLT_ITEM_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The observed early adhesion and aggregation is platelet-plug formation.",
+      "post_commitment_feedback": "The observed early adhesion and aggregation is platelet-plug formation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CLT-FEATURE-REENTRY-NEAR-0",
+          "observable_feature": "Selects circulation result fibrin",
+          "post_commitment_feedback": "Fibrin produced through plasma coagulation reactions stabilizes the platelet plug Decisive cue: the new observation is explicitly pre-fibrin.",
+          "accepted": false,
+          "rejection_rationale": "Fibrin produced through plasma coagulation reactions stabilizes the platelet plug Decisive cue: the new observation is explicitly pre-fibrin."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CLT-FEATURE-REENTRY-NEAR-1",
+          "observable_feature": "Selects circulation result platelet",
+          "post_commitment_feedback": "The observed early adhesion and aggregation is platelet-plug formation.",
+          "accepted": true
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CLT-FEATURE-REENTRY-NEAR-2",
+          "observable_feature": "Selects circulation result rbc",
+          "post_commitment_feedback": "Erythrocytes can be trapped in a clot but do not initiate the bounded hemostatic sequence Decisive cue: the new observation is explicitly pre-fibrin.",
+          "accepted": false,
+          "rejection_rationale": "Erythrocytes can be trapped in a clot but do not initiate the bounded hemostatic sequence Decisive cue: the new observation is explicitly pre-fibrin."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CLT-FEATURE-REENTRY-NEAR-3",
+          "observable_feature": "Selects circulation result volume",
+          "post_commitment_feedback": "Water retention can alter volume but does not directly seal a vessel injury Decisive cue: the new observation is explicitly pre-fibrin.",
+          "accepted": false,
+          "rejection_rationale": "Water retention can alter volume but does not directly seal a vessel injury Decisive cue: the new observation is explicitly pre-fibrin."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          63,
+          60,
+          65,
+          66
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CLT-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "CLT_ITEM_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Protective coagulation must remain localized and bounded to preserve flow elsewhere.",
+      "post_commitment_feedback": "Protective coagulation must remain localized and bounded to preserve flow elsewhere.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CLT-FEATURE-REPAIR-CHANGED-0",
+          "observable_feature": "Selects circulation result global",
+          "post_commitment_feedback": "Spreading clotting through intact circulation contradicts the bounded protective response Decisive cue: the failed model lacks spatial and temporal limits.",
+          "accepted": false,
+          "rejection_rationale": "Spreading clotting through intact circulation contradicts the bounded protective response Decisive cue: the failed model lacks spatial and temporal limits."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CLT-FEATURE-REPAIR-CHANGED-1",
+          "observable_feature": "Selects circulation result catalog",
+          "post_commitment_feedback": "A complete named-factor catalog is outside the required mechanistic depth Decisive cue: the failed model lacks spatial and temporal limits.",
+          "accepted": false,
+          "rejection_rationale": "A complete named-factor catalog is outside the required mechanistic depth Decisive cue: the failed model lacks spatial and temporal limits."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CLT-FEATURE-REPAIR-CHANGED-2",
+          "observable_feature": "Selects circulation result limit",
+          "post_commitment_feedback": "Protective coagulation must remain localized and bounded to preserve flow elsewhere.",
+          "accepted": true
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CLT-FEATURE-REPAIR-CHANGED-3",
+          "observable_feature": "Selects circulation result volume",
+          "post_commitment_feedback": "Water retention can alter volume but does not directly seal a vessel injury Decisive cue: the failed model lacks spatial and temporal limits.",
+          "accepted": false,
+          "rejection_rationale": "Water retention can alter volume but does not directly seal a vessel injury Decisive cue: the failed model lacks spatial and temporal limits."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          66,
+          58,
+          63,
+          66
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "CLT-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "CLT_ITEM_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "A local clot that later resolves is bounded protective hemostasis.",
+      "post_commitment_feedback": "A local clot that later resolves is bounded protective hemostasis.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "CLT-FEATURE-REENTRY-CHANGED-0",
+          "observable_feature": "Selects circulation result global",
+          "post_commitment_feedback": "Spreading clotting through intact circulation contradicts the bounded protective response Decisive cue: the fresh case includes localization and resolution.",
+          "accepted": false,
+          "rejection_rationale": "Spreading clotting through intact circulation contradicts the bounded protective response Decisive cue: the fresh case includes localization and resolution."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "CLT-FEATURE-REENTRY-CHANGED-1",
+          "observable_feature": "Selects circulation result fibrin",
+          "post_commitment_feedback": "Fibrin produced through plasma coagulation reactions stabilizes the platelet plug Decisive cue: the fresh case includes localization and resolution.",
+          "accepted": false,
+          "rejection_rationale": "Fibrin produced through plasma coagulation reactions stabilizes the platelet plug Decisive cue: the fresh case includes localization and resolution."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "CLT-FEATURE-REENTRY-CHANGED-2",
+          "observable_feature": "Selects circulation result catalog",
+          "post_commitment_feedback": "A complete named-factor catalog is outside the required mechanistic depth Decisive cue: the fresh case includes localization and resolution.",
+          "accepted": false,
+          "rejection_rationale": "A complete named-factor catalog is outside the required mechanistic depth Decisive cue: the fresh case includes localization and resolution."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "CLT-FEATURE-REENTRY-CHANGED-3",
+          "observable_feature": "Selects circulation result limit",
+          "post_commitment_feedback": "A local clot that later resolves is bounded protective hemostasis.",
+          "accepted": true
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          66,
+          63,
+          58,
+          63
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "GAS-ITEM-ENTRY",
+      "learner_prompt_key": "GAS_ITEM_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "Most blood oxygen content is bound to hemoglobin in erythrocytes.",
+      "post_commitment_feedback": "Most blood oxygen content is bound to hemoglobin in erythrocytes.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "GAS-FEATURE-ENTRY-0",
+          "observable_feature": "Selects circulation result hemoglobin",
+          "post_commitment_feedback": "Most blood oxygen content is bound to hemoglobin in erythrocytes.",
+          "accepted": true
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "GAS-FEATURE-ENTRY-1",
+          "observable_feature": "Selects circulation result dissolved",
+          "post_commitment_feedback": "Dissolved oxygen is a smaller content fraction although it determines partial pressure Decisive cue: the question asks about total oxygen content rather than partial pressure.",
+          "accepted": false,
+          "rejection_rationale": "Dissolved oxygen is a smaller content fraction although it determines partial pressure Decisive cue: the question asks about total oxygen content rather than partial pressure."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "GAS-FEATURE-ENTRY-2",
+          "observable_feature": "Selects circulation result bicarbonate",
+          "post_commitment_feedback": "Most carbon dioxide is carried after conversion to bicarbonate in plasma Decisive cue: the question asks about total oxygen content rather than partial pressure.",
+          "accepted": false,
+          "rejection_rationale": "Most carbon dioxide is carried after conversion to bicarbonate in plasma Decisive cue: the question asks about total oxygen content rather than partial pressure."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "GAS-FEATURE-ENTRY-3",
+          "observable_feature": "Selects circulation result carbamino",
+          "post_commitment_feedback": "Some carbon dioxide binds hemoglobin, but this is not the largest carriage form Decisive cue: the question asks about total oxygen content rather than partial pressure.",
+          "accepted": false,
+          "rejection_rationale": "Some carbon dioxide binds hemoglobin, but this is not the largest carriage form Decisive cue: the question asks about total oxygen content rather than partial pressure."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          54,
+          59,
+          57,
+          55
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "GAS-ITEM-GUIDED",
+      "learner_prompt_key": "GAS_ITEM_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Most carbon dioxide is transported as bicarbonate in plasma.",
+      "post_commitment_feedback": "Most carbon dioxide is transported as bicarbonate in plasma.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "GAS-FEATURE-GUIDED-0",
+          "observable_feature": "Selects circulation result carbamino",
+          "post_commitment_feedback": "Some carbon dioxide binds hemoglobin, but this is not the largest carriage form Decisive cue: the question asks for the largest carbon-dioxide fraction.",
+          "accepted": false,
+          "rejection_rationale": "Some carbon dioxide binds hemoglobin, but this is not the largest carriage form Decisive cue: the question asks for the largest carbon-dioxide fraction."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "GAS-FEATURE-GUIDED-1",
+          "observable_feature": "Selects circulation result bicarbonate",
+          "post_commitment_feedback": "Most carbon dioxide is transported as bicarbonate in plasma.",
+          "accepted": true
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "GAS-FEATURE-GUIDED-2",
+          "observable_feature": "Selects circulation result dissolved",
+          "post_commitment_feedback": "Dissolved oxygen is a smaller content fraction although it determines partial pressure Decisive cue: the question asks for the largest carbon-dioxide fraction.",
+          "accepted": false,
+          "rejection_rationale": "Dissolved oxygen is a smaller content fraction although it determines partial pressure Decisive cue: the question asks for the largest carbon-dioxide fraction."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "GAS-FEATURE-GUIDED-3",
+          "observable_feature": "Selects circulation result hemoglobin",
+          "post_commitment_feedback": "Most oxygen content is carried bound to hemoglobin inside erythrocytes Decisive cue: the question asks for the largest carbon-dioxide fraction.",
+          "accepted": false,
+          "rejection_rationale": "Most oxygen content is carried bound to hemoglobin inside erythrocytes Decisive cue: the question asks for the largest carbon-dioxide fraction."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          55,
+          57,
+          59,
+          54
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "GAS-ITEM-LIGHT",
+      "learner_prompt_key": "GAS_ITEM_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "A higher hematocrit provides more erythrocyte and hemoglobin volume per blood volume.",
+      "post_commitment_feedback": "A higher hematocrit provides more erythrocyte and hemoglobin volume per blood volume.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "GAS-FEATURE-LIGHT-0",
+          "observable_feature": "Selects circulation result dissolved",
+          "post_commitment_feedback": "Dissolved oxygen is a smaller content fraction although it determines partial pressure Decisive cue: saturation is held equal while red-cell fraction changes.",
+          "accepted": false,
+          "rejection_rationale": "Dissolved oxygen is a smaller content fraction although it determines partial pressure Decisive cue: saturation is held equal while red-cell fraction changes."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "GAS-FEATURE-LIGHT-1",
+          "observable_feature": "Selects circulation result bicarbonate",
+          "post_commitment_feedback": "Most carbon dioxide is carried after conversion to bicarbonate in plasma Decisive cue: saturation is held equal while red-cell fraction changes.",
+          "accepted": false,
+          "rejection_rationale": "Most carbon dioxide is carried after conversion to bicarbonate in plasma Decisive cue: saturation is held equal while red-cell fraction changes."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "GAS-FEATURE-LIGHT-2",
+          "observable_feature": "Selects circulation result hematocrit",
+          "post_commitment_feedback": "A higher hematocrit provides more erythrocyte and hemoglobin volume per blood volume.",
+          "accepted": true
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "GAS-FEATURE-LIGHT-3",
+          "observable_feature": "Selects circulation result control",
+          "post_commitment_feedback": "Detailed nervous and endocrine control is a bounded external parameter rather than the gas-carriage mechanism asked for Decisive cue: saturation is held equal while red-cell fraction changes.",
+          "accepted": false,
+          "rejection_rationale": "Detailed nervous and endocrine control is a bounded external parameter rather than the gas-carriage mechanism asked for Decisive cue: saturation is held equal while red-cell fraction changes."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          59,
+          57,
+          62,
+          73
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "GAS-ITEM-SOLO",
+      "learner_prompt_key": "GAS_ITEM_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Higher local CO2 and acidity reduce hemoglobin oxygen affinity and support unloading.",
+      "post_commitment_feedback": "Higher local CO2 and acidity reduce hemoglobin oxygen affinity and support unloading.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "GAS-FEATURE-SOLO-0",
+          "observable_feature": "Selects circulation result load",
+          "post_commitment_feedback": "At pulmonary exchange surfaces, blood loads oxygen and unloads carbon dioxide Decisive cue: the environment is an active systemic tissue.",
+          "accepted": false,
+          "rejection_rationale": "At pulmonary exchange surfaces, blood loads oxygen and unloads carbon dioxide Decisive cue: the environment is an active systemic tissue."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "GAS-FEATURE-SOLO-1",
+          "observable_feature": "Selects circulation result hemoglobin",
+          "post_commitment_feedback": "Most oxygen content is carried bound to hemoglobin inside erythrocytes Decisive cue: the environment is an active systemic tissue.",
+          "accepted": false,
+          "rejection_rationale": "Most oxygen content is carried bound to hemoglobin inside erythrocytes Decisive cue: the environment is an active systemic tissue."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "GAS-FEATURE-SOLO-2",
+          "observable_feature": "Selects circulation result control",
+          "post_commitment_feedback": "Detailed nervous and endocrine control is a bounded external parameter rather than the gas-carriage mechanism asked for Decisive cue: the environment is an active systemic tissue.",
+          "accepted": false,
+          "rejection_rationale": "Detailed nervous and endocrine control is a bounded external parameter rather than the gas-carriage mechanism asked for Decisive cue: the environment is an active systemic tissue."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "GAS-FEATURE-SOLO-3",
+          "observable_feature": "Selects circulation result unload",
+          "post_commitment_feedback": "Higher local CO2 and acidity reduce hemoglobin oxygen affinity and support unloading.",
+          "accepted": true
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          63,
+          54,
+          73,
+          67
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "GAS-ITEM-NEAR",
+      "learner_prompt_key": "GAS_ITEM_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Dissolved oxygen determines partial pressure, while hemoglobin-bound oxygen dominates content.",
+      "post_commitment_feedback": "Dissolved oxygen determines partial pressure, while hemoglobin-bound oxygen dominates content.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "GAS-FEATURE-NEAR-0",
+          "observable_feature": "Selects circulation result dissolved",
+          "post_commitment_feedback": "Dissolved oxygen determines partial pressure, while hemoglobin-bound oxygen dominates content.",
+          "accepted": true
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "GAS-FEATURE-NEAR-1",
+          "observable_feature": "Selects circulation result hemoglobin",
+          "post_commitment_feedback": "Most oxygen content is carried bound to hemoglobin inside erythrocytes Decisive cue: the task contrasts partial pressure with total content.",
+          "accepted": false,
+          "rejection_rationale": "Most oxygen content is carried bound to hemoglobin inside erythrocytes Decisive cue: the task contrasts partial pressure with total content."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "GAS-FEATURE-NEAR-2",
+          "observable_feature": "Selects circulation result bicarbonate",
+          "post_commitment_feedback": "Most carbon dioxide is carried after conversion to bicarbonate in plasma Decisive cue: the task contrasts partial pressure with total content.",
+          "accepted": false,
+          "rejection_rationale": "Most carbon dioxide is carried after conversion to bicarbonate in plasma Decisive cue: the task contrasts partial pressure with total content."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "GAS-FEATURE-NEAR-3",
+          "observable_feature": "Selects circulation result carbamino",
+          "post_commitment_feedback": "Some carbon dioxide binds hemoglobin, but this is not the largest carriage form Decisive cue: the task contrasts partial pressure with total content.",
+          "accepted": false,
+          "rejection_rationale": "Some carbon dioxide binds hemoglobin, but this is not the largest carriage form Decisive cue: the task contrasts partial pressure with total content."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          59,
+          54,
+          57,
+          55
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "GAS-ITEM-CHANGED",
+      "learner_prompt_key": "GAS_ITEM_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "At the lungs, blood loads oxygen and unloads carbon dioxide.",
+      "post_commitment_feedback": "At the lungs, blood loads oxygen and unloads carbon dioxide.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "GAS-FEATURE-CHANGED-0",
+          "observable_feature": "Selects circulation result unload",
+          "post_commitment_feedback": "Higher tissue carbon dioxide and acidity favor lower hemoglobin oxygen affinity and unloading Decisive cue: the changed task follows both gases at the pulmonary interface.",
+          "accepted": false,
+          "rejection_rationale": "Higher tissue carbon dioxide and acidity favor lower hemoglobin oxygen affinity and unloading Decisive cue: the changed task follows both gases at the pulmonary interface."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "GAS-FEATURE-CHANGED-1",
+          "observable_feature": "Selects circulation result load",
+          "post_commitment_feedback": "At the lungs, blood loads oxygen and unloads carbon dioxide.",
+          "accepted": true
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "GAS-FEATURE-CHANGED-2",
+          "observable_feature": "Selects circulation result control",
+          "post_commitment_feedback": "Detailed nervous and endocrine control is a bounded external parameter rather than the gas-carriage mechanism asked for Decisive cue: the changed task follows both gases at the pulmonary interface.",
+          "accepted": false,
+          "rejection_rationale": "Detailed nervous and endocrine control is a bounded external parameter rather than the gas-carriage mechanism asked for Decisive cue: the changed task follows both gases at the pulmonary interface."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "GAS-FEATURE-CHANGED-3",
+          "observable_feature": "Selects circulation result hematocrit",
+          "post_commitment_feedback": "At equal saturation, more erythrocyte volume can raise blood oxygen-carrying capacity Decisive cue: the changed task follows both gases at the pulmonary interface.",
+          "accepted": false,
+          "rejection_rationale": "At equal saturation, more erythrocyte volume can raise blood oxygen-carrying capacity Decisive cue: the changed task follows both gases at the pulmonary interface."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          67,
+          63,
+          73,
+          62
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "GAS-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "GAS_ITEM_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Dissolved oxygen sets partial pressure; hemoglobin-bound oxygen supplies most content.",
+      "post_commitment_feedback": "Dissolved oxygen sets partial pressure; hemoglobin-bound oxygen supplies most content.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "GAS-FEATURE-REPAIR-NEAR-0",
+          "observable_feature": "Selects circulation result hemoglobin",
+          "post_commitment_feedback": "Most oxygen content is carried bound to hemoglobin inside erythrocytes Decisive cue: the repair separates pressure from carriage capacity.",
+          "accepted": false,
+          "rejection_rationale": "Most oxygen content is carried bound to hemoglobin inside erythrocytes Decisive cue: the repair separates pressure from carriage capacity."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "GAS-FEATURE-REPAIR-NEAR-1",
+          "observable_feature": "Selects circulation result bicarbonate",
+          "post_commitment_feedback": "Most carbon dioxide is carried after conversion to bicarbonate in plasma Decisive cue: the repair separates pressure from carriage capacity.",
+          "accepted": false,
+          "rejection_rationale": "Most carbon dioxide is carried after conversion to bicarbonate in plasma Decisive cue: the repair separates pressure from carriage capacity."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "GAS-FEATURE-REPAIR-NEAR-2",
+          "observable_feature": "Selects circulation result dissolved",
+          "post_commitment_feedback": "Dissolved oxygen sets partial pressure; hemoglobin-bound oxygen supplies most content.",
+          "accepted": true
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "GAS-FEATURE-REPAIR-NEAR-3",
+          "observable_feature": "Selects circulation result carbamino",
+          "post_commitment_feedback": "Some carbon dioxide binds hemoglobin, but this is not the largest carriage form Decisive cue: the repair separates pressure from carriage capacity.",
+          "accepted": false,
+          "rejection_rationale": "Some carbon dioxide binds hemoglobin, but this is not the largest carriage form Decisive cue: the repair separates pressure from carriage capacity."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          54,
+          57,
+          59,
+          55
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "GAS-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "GAS_ITEM_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Lower hemoglobin can reduce total oxygen content even when dissolved oxygen is unchanged.",
+      "post_commitment_feedback": "Lower hemoglobin can reduce total oxygen content even when dissolved oxygen is unchanged.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "GAS-FEATURE-REENTRY-NEAR-0",
+          "observable_feature": "Selects circulation result dissolved",
+          "post_commitment_feedback": "Dissolved oxygen is a smaller content fraction although it determines partial pressure Decisive cue: the new case holds the dissolved fraction fixed.",
+          "accepted": false,
+          "rejection_rationale": "Dissolved oxygen is a smaller content fraction although it determines partial pressure Decisive cue: the new case holds the dissolved fraction fixed."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "GAS-FEATURE-REENTRY-NEAR-1",
+          "observable_feature": "Selects circulation result bicarbonate",
+          "post_commitment_feedback": "Most carbon dioxide is carried after conversion to bicarbonate in plasma Decisive cue: the new case holds the dissolved fraction fixed.",
+          "accepted": false,
+          "rejection_rationale": "Most carbon dioxide is carried after conversion to bicarbonate in plasma Decisive cue: the new case holds the dissolved fraction fixed."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "GAS-FEATURE-REENTRY-NEAR-2",
+          "observable_feature": "Selects circulation result control",
+          "post_commitment_feedback": "Detailed nervous and endocrine control is a bounded external parameter rather than the gas-carriage mechanism asked for Decisive cue: the new case holds the dissolved fraction fixed.",
+          "accepted": false,
+          "rejection_rationale": "Detailed nervous and endocrine control is a bounded external parameter rather than the gas-carriage mechanism asked for Decisive cue: the new case holds the dissolved fraction fixed."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "GAS-FEATURE-REENTRY-NEAR-3",
+          "observable_feature": "Selects circulation result hemoglobin",
+          "post_commitment_feedback": "Lower hemoglobin can reduce total oxygen content even when dissolved oxygen is unchanged.",
+          "accepted": true
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          59,
+          57,
+          73,
+          54
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "GAS-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "GAS_ITEM_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Bicarbonate is the major carbon-dioxide transport form; carbamino binding is smaller.",
+      "post_commitment_feedback": "Bicarbonate is the major carbon-dioxide transport form; carbamino binding is smaller.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "GAS-FEATURE-REPAIR-CHANGED-0",
+          "observable_feature": "Selects circulation result bicarbonate",
+          "post_commitment_feedback": "Bicarbonate is the major carbon-dioxide transport form; carbamino binding is smaller.",
+          "accepted": true
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "GAS-FEATURE-REPAIR-CHANGED-1",
+          "observable_feature": "Selects circulation result carbamino",
+          "post_commitment_feedback": "Some carbon dioxide binds hemoglobin, but this is not the largest carriage form Decisive cue: the failed feature misranked carbon-dioxide forms.",
+          "accepted": false,
+          "rejection_rationale": "Some carbon dioxide binds hemoglobin, but this is not the largest carriage form Decisive cue: the failed feature misranked carbon-dioxide forms."
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "GAS-FEATURE-REPAIR-CHANGED-2",
+          "observable_feature": "Selects circulation result dissolved",
+          "post_commitment_feedback": "Dissolved oxygen is a smaller content fraction although it determines partial pressure Decisive cue: the failed feature misranked carbon-dioxide forms.",
+          "accepted": false,
+          "rejection_rationale": "Dissolved oxygen is a smaller content fraction although it determines partial pressure Decisive cue: the failed feature misranked carbon-dioxide forms."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "GAS-FEATURE-REPAIR-CHANGED-3",
+          "observable_feature": "Selects circulation result hemoglobin",
+          "post_commitment_feedback": "Most oxygen content is carried bound to hemoglobin inside erythrocytes Decisive cue: the failed feature misranked carbon-dioxide forms.",
+          "accepted": false,
+          "rejection_rationale": "Most oxygen content is carried bound to hemoglobin inside erythrocytes Decisive cue: the failed feature misranked carbon-dioxide forms."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          57,
+          55,
+          59,
+          54
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    },
+    {
+      "answer_record_id": "GAS-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "GAS_ITEM_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The local change lowers oxygen affinity and promotes oxygen unloading.",
+      "post_commitment_feedback": "The local change lowers oxygen affinity and promotes oxygen unloading.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "response_feature_id": "GAS-FEATURE-REENTRY-CHANGED-0",
+          "observable_feature": "Selects circulation result load",
+          "post_commitment_feedback": "At pulmonary exchange surfaces, blood loads oxygen and unloads carbon dioxide Decisive cue: the fresh context is active systemic tissue rather than lung.",
+          "accepted": false,
+          "rejection_rationale": "At pulmonary exchange surfaces, blood loads oxygen and unloads carbon dioxide Decisive cue: the fresh context is active systemic tissue rather than lung."
+        },
+        {
+          "option_index": 1,
+          "response_feature_id": "GAS-FEATURE-REENTRY-CHANGED-1",
+          "observable_feature": "Selects circulation result unload",
+          "post_commitment_feedback": "The local change lowers oxygen affinity and promotes oxygen unloading.",
+          "accepted": true
+        },
+        {
+          "option_index": 2,
+          "response_feature_id": "GAS-FEATURE-REENTRY-CHANGED-2",
+          "observable_feature": "Selects circulation result control",
+          "post_commitment_feedback": "Detailed nervous and endocrine control is a bounded external parameter rather than the gas-carriage mechanism asked for Decisive cue: the fresh context is active systemic tissue rather than lung.",
+          "accepted": false,
+          "rejection_rationale": "Detailed nervous and endocrine control is a bounded external parameter rather than the gas-carriage mechanism asked for Decisive cue: the fresh context is active systemic tissue rather than lung."
+        },
+        {
+          "option_index": 3,
+          "response_feature_id": "GAS-FEATURE-REENTRY-CHANGED-3",
+          "observable_feature": "Selects circulation result hematocrit",
+          "post_commitment_feedback": "At equal saturation, more erythrocyte volume can raise blood oxygen-carrying capacity Decisive cue: the fresh context is active systemic tissue rather than lung.",
+          "accepted": false,
+          "rejection_rationale": "At equal saturation, more erythrocyte volume can raise blood oxygen-carrying capacity Decisive cue: the fresh context is active systemic tissue rather than lung."
+        }
+      ],
+      "option_presentation_review": {
+        "option_character_lengths": [
+          63,
+          67,
+          73,
+          62
+        ],
+        "grammatical_parallelism_reviewed": true,
+        "fixed_key_position_avoided_across_lesson": true,
+        "answer_bearing_formatting_absent": true
+      }
+    }
+  ]
+}

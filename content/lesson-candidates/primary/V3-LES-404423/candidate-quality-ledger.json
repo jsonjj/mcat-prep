@@ -1,0 +1,67 @@
+{
+  "format": "lesson-generation-candidate-quality-ledger/1",
+  "lessonId": "V3-LES-404423",
+  "route": "STANDARD",
+  "lifecycle": "CANDIDATE_VALIDATION_BLOCKED",
+  "statusKind": "MACHINE_SCREEN_ONLY",
+  "hardGateResults": {
+    "R1_R15_STRUCTURAL": "PASS",
+    "NORMALIZATION": "PASS",
+    "SOURCE_RIGHTS": "PASS",
+    "PROTECTED_SEPARATION": "PASS",
+    "HASH_CHAIN_INTEGRITY": "PASS",
+    "DEADLINE_MACHINE_SCREEN": "BLOCKED"
+  },
+  "evidenceClassResults": {
+    "BROWSER_RENDERED": {
+      "state": "BLOCKED",
+      "blockerCode": "BLOCKER_NO_BROWSER_RENDERED_EVIDENCE"
+    },
+    "ACCESSIBILITY": {
+      "state": "BLOCKED",
+      "blockerCode": "BLOCKER_NO_ACCESSIBILITY_REVIEW"
+    },
+    "DOMAIN_SME": {
+      "state": "BLOCKED",
+      "blockerCode": "BLOCKER_NO_DOMAIN_SME_RECEIPT"
+    },
+    "NOVICE_WALKTHROUGH": {
+      "state": "BLOCKED",
+      "blockerCode": "BLOCKER_NO_NOVICE_WALKTHROUGH_RECEIPT"
+    },
+    "PLATFORM_RELIABILITY": {
+      "state": "BLOCKED",
+      "blockerCode": "BLOCKER_NO_PLATFORM_RELIABILITY_RECEIPT"
+    },
+    "HUMAN_DECISION": {
+      "state": "BLOCKED",
+      "blockerCode": "BLOCKER_NO_HUMAN_DECISION_RECEIPT"
+    }
+  },
+  "officialQualityResult": {
+    "evaluationAvailable": false,
+    "humanGateStatus": "PENDING",
+    "approvalWithheld": true
+  },
+  "authorDiagnostics": {
+    "revisionCyclesUsed": 0,
+    "structuralRulesChecked": true,
+    "kcCoverageChecked": true,
+    "sourceRightsChecked": true,
+    "protectedMaterialSeparated": true,
+    "renderedCheckPerformed": false,
+    "independentReviewPerformed": false,
+    "learnerExposureOccurred": false
+  },
+  "finalGateStatus": "BLOCKED",
+  "releaseEligibility": "INTERNAL_DRAFT_ONLY",
+  "blockerCodes": [
+    "JUDGE_PRE_SCREEN_REQUIRED",
+    "KIT_MANIFEST_MISSING"
+  ],
+  "nonclaims": {
+    "humanApproved": false,
+    "officialRubricPass": false,
+    "publicationApproved": false
+  }
+}
