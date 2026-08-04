@@ -87,8 +87,6 @@ const VALIDATOR_AUTHORITY_PATHS = Object.freeze([
 const SMOKE_ENVIRONMENT = Object.freeze({
   CI: '1',
   NO_COLOR: '1',
-  PATH: dirname(process.execPath),
-  REPOSITORY_ROOT: ADMISSION_REPOSITORY_ROOT,
 });
 const AUTHORITY_SOURCE_PATHS = Object.freeze([
   'packages/content/src/lesson-factory/kit-production.ts',
@@ -4705,13 +4703,18 @@ async function runRealSmokeCommand(
     throw new PipelineFailure('SMOKE_EXECUTABLE_HASH_MISMATCH');
   }
   return new Promise((resolvePromise, rejectPromise) => {
-    const child = spawn(executable, argv, {
-      cwd,
-      env: SMOKE_ENVIRONMENT,
-      shell: false,
-      detached: true,
-      stdio: ['ignore', 'pipe', 'pipe'],
-    });
+    const nodeScript = executable.endsWith('.mjs');
+    const child = spawn(
+      nodeScript ? process.execPath : executable,
+      nodeScript ? [executable, ...argv] : argv,
+      {
+        cwd,
+        env: SMOKE_ENVIRONMENT,
+        shell: false,
+        detached: true,
+        stdio: ['ignore', 'pipe', 'pipe'],
+      },
+    );
     let stdoutBytes = 0;
     let stderrBytes = 0;
     let settled = false;
@@ -4794,6 +4797,7 @@ async function runPackagedKitCommand(
       env: {
         ...SMOKE_ENVIRONMENT,
         KIT_ROOT: kitRoot,
+        PATH: dirname(process.execPath),
         REPOSITORY_ROOT: repositoryRoot,
       },
       shell: false,
@@ -6861,7 +6865,12 @@ async function runReviewScenario(
         );
         const manifest = JSON.parse(
           await readFile(join(extraction.directory, 'KIT-MANIFEST.json'), 'utf8'),
-        ) as { files: { path: string; kind: string }[] };
+        ) as {
+          files: { path: string; kind: string }[];
+          repositoryCommit: string;
+          pins: { repositoryCommit: string };
+          validatorAuthority: { repositoryCommit: string };
+        };
         const validatorPath = join(
           ADMISSION_REPOSITORY_ROOT,
           'packages/content/src/lesson-validator/validate.ts',
@@ -6879,8 +6888,10 @@ async function runReviewScenario(
             PRODUCTION_AUTHORITY.smokeCommands[2].argv,
             extraction.directory,
           );
-        } catch {
-          validatorMutationRejected = true;
+        } catch (error) {
+          validatorMutationRejected =
+            error instanceof PipelineFailure &&
+            error.message.includes('VALIDATOR_SOURCE_HASH_MISMATCH');
         } finally {
           await writeFile(validatorPath, validatorBefore);
         }
@@ -6921,6 +6932,51 @@ async function runReviewScenario(
           await rm(malformedManifestRoot.directory, { recursive: true, force: true });
           await rm(malformedPacketRoot.directory, { recursive: true, force: true });
         }
+        const relocatedExecutable = join(root.path, 'relocated-kit-smoke.mjs');
+        await writeFile(relocatedExecutable, await readFile(SMOKE_EXECUTABLE_PATH), {
+          mode: 0o755,
+        });
+        let relocatedExecutableRejected = false;
+        try {
+          await runRealSmokeCommand(
+            relocatedExecutable,
+            runtime.smokeExecutableSha256,
+            PRODUCTION_AUTHORITY.smokeCommands[0].argv,
+            extraction.directory,
+          );
+        } catch (error) {
+          relocatedExecutableRejected =
+            error instanceof PipelineFailure && error.message.includes('REPOSITORY_ROOT_INVALID');
+        } finally {
+          await rm(relocatedExecutable, { force: true });
+        }
+        const wrongRepositoryRoot = await extractZipToIsolatedDirectory(
+          actual.teams[0].archiveBytes,
+          scratch,
+        );
+        let wrongRepositoryRejected = false;
+        try {
+          const wrongManifestPath = join(wrongRepositoryRoot.directory, 'KIT-MANIFEST.json');
+          const wrongManifest = JSON.parse(
+            await readFile(wrongManifestPath, 'utf8'),
+          ) as typeof manifest;
+          wrongManifest.repositoryCommit = '0'.repeat(40);
+          wrongManifest.pins.repositoryCommit = '0'.repeat(40);
+          wrongManifest.validatorAuthority.repositoryCommit = '0'.repeat(40);
+          await writeFile(wrongManifestPath, `${canonicalKitJson(wrongManifest)}\n`);
+          await runRealSmokeCommand(
+            SMOKE_EXECUTABLE_PATH,
+            runtime.smokeExecutableSha256,
+            PRODUCTION_AUTHORITY.smokeCommands[0].argv,
+            wrongRepositoryRoot.directory,
+          );
+        } catch (error) {
+          wrongRepositoryRejected =
+            error instanceof PipelineFailure &&
+            error.message.includes('VALIDATOR_REPOSITORY_COMMIT_MISMATCH');
+        } finally {
+          await rm(wrongRepositoryRoot.directory, { recursive: true, force: true });
+        }
         return {
           status: 'READY',
           evidence: {
@@ -6939,6 +6995,14 @@ async function runReviewScenario(
             temporaryStateCleaned: (await readdir(tmpdir()))
               .filter((name) => name.startsWith('wp03-kit-smoke-'))
               .every((name) => temporaryBefore.has(name)),
+            minimalProductionEnvironment:
+              canonicalKitJson(Object.keys(SMOKE_ENVIRONMENT).sort()) ===
+              canonicalKitJson(['CI', 'NO_COLOR']),
+            anchoredRepositoryRoot: outputs.every((output) => output.startsWith('KIT_SMOKE_OK')),
+            validatorBlobClosureVerified: validatorMutationRejected,
+            independentArchiveEntryCount: readZipEntries(actual.teams[0].archiveBytes).length,
+            relocatedExecutableRejected,
+            wrongRepositoryRejected,
           },
         };
       } finally {

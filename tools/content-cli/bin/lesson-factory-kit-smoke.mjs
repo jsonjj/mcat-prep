@@ -2,9 +2,20 @@
 
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
-import { mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
+import {
+  lstat,
+  mkdir,
+  mkdtemp,
+  readFile,
+  readdir,
+  realpath,
+  rm,
+  stat,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const MODES = new Set(['bootstrap', 'install', 'one-template']);
 const GENERATION_TWO_STATIC_PATHS = [
@@ -141,7 +152,49 @@ if (
 
 const mode = args[3];
 const root = resolve(process.cwd());
-const repositoryRoot = resolve(process.env.REPOSITORY_ROOT ?? '');
+const executablePath = fileURLToPath(import.meta.url);
+const repositoryRoot = resolve(dirname(executablePath), '../../..');
+const expectedExecutablePath = join(
+  repositoryRoot,
+  'tools/content-cli/bin/lesson-factory-kit-smoke.mjs',
+);
+const rootPackagePath = join(repositoryRoot, 'package.json');
+const cliPackagePath = join(repositoryRoot, 'tools/content-cli/package.json');
+const workspacePath = join(repositoryRoot, 'pnpm-workspace.yaml');
+try {
+  const [actualExecutable, actualRoot, executableInfo, rootInfo, workspaceInfo] = await Promise.all(
+    [
+      realpath(executablePath),
+      realpath(repositoryRoot),
+      lstat(executablePath),
+      lstat(repositoryRoot),
+      lstat(workspacePath),
+    ],
+  );
+  const [rootPackage, cliPackage] = await Promise.all([
+    readJson(rootPackagePath, 'REPOSITORY_ROOT_INVALID'),
+    readJson(cliPackagePath, 'REPOSITORY_ROOT_INVALID'),
+  ]);
+  if (
+    actualExecutable !== expectedExecutablePath ||
+    actualRoot !== repositoryRoot ||
+    executableInfo.isSymbolicLink() ||
+    !executableInfo.isFile() ||
+    rootInfo.isSymbolicLink() ||
+    !rootInfo.isDirectory() ||
+    workspaceInfo.isSymbolicLink() ||
+    !workspaceInfo.isFile() ||
+    rootPackage.name !== 'mcat-mastery' ||
+    rootPackage.private !== true ||
+    rootPackage.packageManager !== 'pnpm@9.15.9' ||
+    cliPackage.name !== '@mcat/content-cli' ||
+    cliPackage.private !== true
+  ) {
+    fail('REPOSITORY_ROOT_INVALID');
+  }
+} catch {
+  fail('REPOSITORY_ROOT_INVALID');
+}
 const manifestPath = resolve(root, 'KIT-MANIFEST.json');
 const manifestBytes = await readFile(manifestPath).catch(() => fail('MANIFEST_MISSING'));
 const manifest = await readJson(manifestPath, 'MANIFEST_INVALID');
@@ -207,6 +260,23 @@ if (generationTwo) {
   ) {
     fail('GENERATION_TWO_AUTHORITY_INVALID');
   }
+  const gitRoot = run('/usr/bin/git', ['-C', repositoryRoot, 'rev-parse', '--show-toplevel']);
+  const gitHead = run('/usr/bin/git', ['-C', repositoryRoot, 'rev-parse', 'HEAD']);
+  if (
+    gitRoot.code !== 0 ||
+    resolve(gitRoot.stdout.trim()) !== repositoryRoot ||
+    gitHead.code !== 0 ||
+    gitHead.stdout.trim() !== manifest.validatorAuthority.repositoryCommit
+  ) {
+    fail('VALIDATOR_REPOSITORY_COMMIT_MISMATCH');
+  }
+  const authorityPaths = manifest.validatorAuthority.files.map((validator) => validator.path);
+  if (
+    canonical(authorityPaths) !== canonical([...authorityPaths].sort()) ||
+    new Set(authorityPaths).size !== authorityPaths.length
+  ) {
+    fail('VALIDATOR_BLOB_CLOSURE_MISMATCH');
+  }
   const byPath = new Map(manifest.files.map((file) => [file.path, file]));
   for (const mapping of manifest.sourceMappings) {
     const file = byPath.get(mapping.archivePath);
@@ -224,7 +294,13 @@ if (generationTwo) {
     const bytes = await readFile(confined(repositoryRoot, validator.path)).catch(() =>
       fail('VALIDATOR_SOURCE_MISSING'),
     );
-    if (digest(bytes) !== validator.sha256 || validator.gitBlobSha256 !== validator.sha256) {
+    const committed = run('/usr/bin/git', ['-C', repositoryRoot, 'show', `HEAD:${validator.path}`]);
+    if (
+      committed.code !== 0 ||
+      digest(Buffer.from(committed.stdout)) !== validator.gitBlobSha256 ||
+      digest(bytes) !== validator.sha256 ||
+      validator.gitBlobSha256 !== validator.sha256
+    ) {
       fail('VALIDATOR_SOURCE_HASH_MISMATCH');
     }
   }
@@ -299,8 +375,8 @@ if (mode === 'install') {
   if (generationTwo) {
     const corepack = join(dirname(process.execPath), 'corepack');
     const install = run(
-      corepack,
-      ['pnpm', 'install', '--frozen-lockfile', '--offline', '--ignore-scripts'],
+      process.execPath,
+      [corepack, 'pnpm', 'install', '--frozen-lockfile', '--offline', '--ignore-scripts'],
       {
         cwd: repositoryRoot,
         env: { ...process.env, CI: '1', COREPACK_ENABLE_DOWNLOAD_PROMPT: '0' },

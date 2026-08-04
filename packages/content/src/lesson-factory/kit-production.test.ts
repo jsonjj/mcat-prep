@@ -401,6 +401,12 @@ describe('WP-03 production authority boundary', () => {
         controlledHandoffFailures: true,
         validatorMutationRejected: true,
         temporaryStateCleaned: true,
+        minimalProductionEnvironment: true,
+        anchoredRepositoryRoot: true,
+        validatorBlobClosureVerified: true,
+        independentArchiveEntryCount: 76,
+        relocatedExecutableRejected: true,
+        wrongRepositoryRejected: true,
       },
     });
   }, 30_000);
