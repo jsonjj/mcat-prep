@@ -2,7 +2,9 @@ import { useEffect, useRef, useState, type RefObject } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button, Callout, Card, Eyebrow, Inline, Stack } from '@mcat/ui-web';
+import { useBootstrap } from '../app/queries';
 import { fetchTodaysPassage, gradePassage } from './passage/passage-client';
+import { isPassageDone, markPassageDone } from './passage/passage-status';
 import type {
   PassageChoiceId,
   PassageGrade,
@@ -134,13 +136,27 @@ function PassageQuestionCard({
  * only one shows at a time. Keyed by passage id upstream, so a new day's passage
  * mounts fresh rather than inheriting yesterday's answers.
  */
-function PassageRunner({ passage }: { passage: PassageTodayView }) {
+function PassageRunner({
+  passage,
+  learnerId,
+}: {
+  passage: PassageTodayView;
+  learnerId: string | null;
+}) {
   const navigate = useNavigate();
   const total = passage.questions.length;
 
   const [index, setIndex] = useState(0);
   const [choices, setChoices] = useState<Record<string, PassageChoiceId>>({});
   const [grades, setGrades] = useState<Record<string, PassageGrade>>({});
+
+  // Once every question has been checked, the day's rep is done: remember it so
+  // the passage closes until tomorrow rather than being repeatable. The learner
+  // still sees the full result in this session; the gate only applies on return.
+  const answered = Object.keys(grades).length;
+  useEffect(() => {
+    if (total > 0 && answered >= total) markPassageDone(learnerId, passage.localDate);
+  }, [answered, total, learnerId, passage.localDate]);
 
   const headingRef = useRef<HTMLHeadingElement>(null);
   // Move focus to the new stem on Back/Next (so keyboard and screen-reader users
@@ -235,6 +251,8 @@ function PassageRunner({ passage }: { passage: PassageTodayView }) {
 
 export function PassageOfDay() {
   const navigate = useNavigate();
+  const bootstrap = useBootstrap();
+  const learnerId = bootstrap.data?.authenticated === true ? bootstrap.data.learnerId : null;
   const today = useQuery({ queryKey: ['passage-today'], queryFn: fetchTodaysPassage });
 
   if (today.isLoading) {
@@ -284,7 +302,32 @@ export function PassageOfDay() {
     );
   }
 
+  // Once-a-day rep: if this learner already finished today's passage, it's closed
+  // until tomorrow's rotates in — show a calm "done" state instead of re-serving it.
+  if (isPassageDone(learnerId, passage.localDate)) {
+    return (
+      <div className="mc-screen mc-study mc-potd">
+        <header className="mc-potd__head">
+          <Eyebrow>Passage of the day</Eyebrow>
+          <h1 className="mc-h1">You’re done for today.</h1>
+          <p className="mc-muted mc-fineprint">
+            You’ve finished today’s reading rep — “{passage.title}.” It’s formative only, so there’s
+            nothing to redo. A fresh passage rotates in tomorrow.
+          </p>
+        </header>
+        <Callout tone="info" title="Come back tomorrow">
+          The Passage of the Day is once a day. Your next one will be here after the daily reset.
+        </Callout>
+        <div className="mc-potd__foot">
+          <Button variant="primary" onClick={() => navigate('/app')}>
+            Back to Home
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   // Keyed by passage id so the runner's per-question state resets cleanly when
   // the day (and passage) changes.
-  return <PassageRunner key={passage.id} passage={passage} />;
+  return <PassageRunner key={passage.id} passage={passage} learnerId={learnerId} />;
 }

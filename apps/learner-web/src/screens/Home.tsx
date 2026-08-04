@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { useMasterySkills } from '../app/queries';
+import { useBootstrap, useMasterySkills } from '../app/queries';
 import {
   useConsumeCompletedActivity,
   useEnsureTodaysPath,
@@ -10,6 +10,7 @@ import { EvidenceAtlas } from '../components/EvidenceAtlas';
 import { WrappedCard } from '../components/WrappedCard';
 import { IconCarsDuel, IconPlay, IconPractice, IconToday } from '../components/icons';
 import { fetchTodaysPassage } from './passage/passage-client';
+import { isPassageDone } from './passage/passage-status';
 
 function greeting(): string {
   const h = new Date().getHours();
@@ -46,6 +47,12 @@ export function Home() {
   // generic copy so Home never surfaces a failure of this optional feature.
   const passage = useQuery({ queryKey: ['passage-today'], queryFn: fetchTodaysPassage });
   const potd = passage.data ?? null;
+  // Once-a-day: reflect whether this learner already finished today's passage, so
+  // the hero card reads "done" instead of inviting a repeat (it opens the closed
+  // state either way — see PassageOfDay).
+  const bootstrap = useBootstrap();
+  const learnerId = bootstrap.data?.authenticated === true ? bootstrap.data.learnerId : null;
+  const passageDone = potd ? isPassageDone(learnerId, potd.localDate) : false;
 
   // Read the "Day N of M" straight from the plan (getTodaysPath) — the SAME source
   // the Today's Path screen shows — so Home and Today can never disagree on the day.
@@ -110,9 +117,11 @@ export function Home() {
 
       <Link
         to="/app/passage"
-        className="mc-upnext mc-passage mc-passage--hero"
+        className={`mc-upnext mc-passage mc-passage--hero${passageDone ? ' mc-passage--done' : ''}`}
         aria-label={
-          potd ? `Passage of the Day: ${potd.title}` : 'Passage of the Day'
+          potd
+            ? `Passage of the Day: ${potd.title}${passageDone ? ' (done for today)' : ''}`
+            : 'Passage of the Day'
         }
       >
         <div className="mc-upnext__text">
@@ -121,9 +130,11 @@ export function Home() {
           </span>
           <span className="mc-upnext__title">{potd ? potd.title : 'Read, reason, decide'}</span>
           <span className="mc-upnext__meta">
-            {potd
-              ? 'A short CARS-style reading rep · formative, never counts toward mastery'
-              : 'A short CARS-style reading rep to keep your stamina warm.'}
+            {passageDone
+              ? 'Done for today · a fresh passage arrives tomorrow'
+              : potd
+                ? 'A short CARS-style reading rep · formative, never counts toward mastery'
+                : 'A short CARS-style reading rep to keep your stamina warm.'}
           </span>
         </div>
         <span className="mc-upnext__play mc-passage__play" aria-hidden="true">
