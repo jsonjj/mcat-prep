@@ -24,6 +24,8 @@ type Scenario =
   | 'AUTHORITY_EXECUTION_REPLAY'
   | 'PREFLIGHT_STATE_MACHINE'
   | 'STALE_AUTHORITY_REFRESH'
+  | 'GENERATION_TWO_PACKAGE'
+  | 'REAL_VALIDATE_ONE_GATES'
   | 'REAL_SMOKE_EXECUTABLE'
   | 'KIT_CLI_SEPARATION'
   | 'STRICT_NESTED_RECORDS'
@@ -141,6 +143,125 @@ describe('WP-03 scratch hygiene', () => {
 });
 
 describe('WP-03 production authority boundary', () => {
+  it('runs real two-stage candidate validation without fabricating review authority', async () => {
+    expect(await harness.run('REAL_VALIDATE_ONE_GATES')).toMatchObject({
+      status: 'READY',
+      evidence: {
+        structuralFailureRejected: true,
+        normalizationFailureRejected: true,
+        protectedLeakRejected: true,
+        missingJudgeRejectedAfterMechanicalReceipts: true,
+        invalidStaleSelfJudgeRejected: true,
+        blockedSelfAuditRejected: true,
+        independentJudgeFinalizedComplete: true,
+        tamperAfterJudgeRejected: true,
+        noReviewReceiptFabricated: true,
+        realCommandReceiptsBound: true,
+        sameCandidateTwoStage: true,
+      },
+    });
+  }, 120_000);
+
+  it('builds the exact plan-mandated generation-two teammate package', async () => {
+    expect(await harness.run('GENERATION_TWO_PACKAGE')).toMatchObject({
+      status: 'READY',
+      evidence: {
+        generation: 2,
+        oldInventoryCount: 46,
+        newInventoryCount: 76,
+        staticInventory: [
+          'AUTHOR-INSTRUCTIONS.md',
+          'JUDGE-INSTRUCTIONS.md',
+          'README.md',
+          'commands/bootstrap.txt',
+          'commands/kit-command.mjs',
+          'commands/package-handoff.txt',
+          'commands/validate-assignment.txt',
+          'commands/validate-one.txt',
+          'deadline-profile/lifecycle-and-nonclaims.json',
+          'deadline-profile/rubric-profile.json',
+          'deadline-profile/source-use-receipt.json',
+          'deadline-profile/standard-only-release-policy.json',
+          'docs/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md',
+          'docs/06-LESSON-AUTHORING-WORKFLOW.md',
+          'docs/autonomous-lesson-authoring-context.md',
+          'docs/lesson-evidence-mastery-contract.md',
+          'docs/lesson-quality-author-protocol.md',
+          'docs/lesson-quality-rubric.md',
+          'handoff/LESSON-HANDOFF-TEMPLATE.json',
+          'handoff/TEAM-HANDOFF-TEMPLATE.json',
+          'handoff/WAVE-HANDOFF-TEMPLATE.json',
+          'judge-docs/lesson-quality-evidence-protocol.md',
+          'judge-docs/lesson-quality-judge-protocol.md',
+          'schemas/assignment-manifest.schema.json',
+          'schemas/assignment-partition-proof.schema.json',
+          'schemas/candidate-quality-ledger.schema.json',
+          'schemas/deadline-profile.schema.json',
+          'schemas/kit-manifest.schema.json',
+          'schemas/lesson-bundle.schema.json',
+          'schemas/lesson-handoff.schema.json',
+          'schemas/lifecycle-nonclaims.schema.json',
+          'schemas/owner-source-use-receipt.schema.json',
+          'schemas/release-policy.schema.json',
+          'schemas/shared-vocabulary.schema.json',
+          'schemas/task-source-packet.schema.json',
+          'schemas/team-handoff.schema.json',
+          'template/v3-les-000000/README.md',
+          'template/v3-les-000000/artifact-manifest.json',
+          'template/v3-les-000000/kc-coverage-matrix.json',
+          'template/v3-les-000000/learner-safe-items.json',
+          'template/v3-les-000000/lesson-presentation-plan.json',
+          'template/v3-les-000000/lesson-quality-report.json',
+          'template/v3-les-000000/lesson-script.json',
+          'template/v3-les-000000/protected-items.json',
+        ],
+        assignmentCount: 1,
+        packetCount: 30,
+        sourceMappingsComplete: true,
+        authorInstructionsComplete: true,
+        judgeInstructionsComplete: true,
+        commandModes: ['0755', '0755', '0755', '0755', '0755'],
+        commandsReproducible: true,
+        commandsExecuted: [
+          'KIT_COMMAND_OK bootstrap FROZEN_INSTALL_OK',
+          'KIT_COMMAND_OK validate-one',
+          'KIT_COMMAND_OK package-handoff',
+          'KIT_COMMAND_OK validate-assignment',
+        ],
+        commandEffects: {
+          bootstrapReceipt: true,
+          frozenInstallPerformed: true,
+          lessonReceiptsRecorded: true,
+          assignmentValidated30: true,
+          waveArchiveProduced: true,
+          noOpRejected: true,
+          exitZeroNoOpRejected: true,
+          forbiddenWriteRejected: true,
+          honestBlockedRowAccepted: true,
+        },
+        manifestAuthorityComplete: true,
+        validatorAuthorityClosure: true,
+        forbiddenValidatorWrites: true,
+        packageableStructuralBlocked: true,
+        packageableNormalizationFailed: true,
+        packageableProtectedBlocked: true,
+        packageableSelfAuditBlocked: true,
+        packageableJudgeFailed: true,
+        launderingRejected: true,
+        candidateWorkflowSource: true,
+        returnLayoutComplete: true,
+        handoffTemplatesClosed: true,
+        fullSmokePassed: true,
+        everyRequiredFileRemovalRejected: true,
+        protectedLeakFree: true,
+        deterministic: true,
+        coreParity: true,
+        generationOneImmutable: true,
+        generationTwoSupersedesOne: true,
+      },
+    });
+  }, 120_000);
+
   it('returns a closed preflight union and never BLOCKED with no blockers', async () => {
     expect(await harness.run('PREFLIGHT_STATE_MACHINE')).toMatchObject({
       status: 'READY',
@@ -238,6 +359,10 @@ describe('WP-03 production authority boundary', () => {
         malformedPacketRejected: true,
         executableMode: '0755',
         executableHashBound: true,
+        semanticTemplateValidation: true,
+        controlledHandoffFailures: true,
+        validatorMutationRejected: true,
+        temporaryStateCleaned: true,
       },
     });
   }, 30_000);

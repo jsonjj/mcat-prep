@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcat-mastery.internal/lesson-generation-kit/v1/lesson-bundle.schema.json",
+  "title": "Lesson generation candidate bundle closure",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "lessonId", "lifecycle", "artifacts", "evidence", "nonclaims"],
+  "properties": {
+    "format": { "const": "lesson-generation-candidate-bundle/1" },
+    "lessonId": { "type": "string", "pattern": "^V3-LES-[0-9]{6}$" },
+    "lifecycle": {
+      "enum": ["CANDIDATE_VALIDATION_BLOCKED", "CANDIDATE_RUBRIC_SCREENED"]
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lesson-script.json",
+        "kc-coverage-matrix.json",
+        "lesson-presentation-plan.json",
+        "lesson-quality-report.json",
+        "learner-safe-items.json",
+        "protected-items.json",
+        "source-claim-ledger.json",
+        "artifact-manifest.json",
+        "candidate-quality-ledger.json",
+        "LESSON-HANDOFF.json"
+      ],
+      "properties": {
+        "lesson-script.json": { "$ref": "#/$defs/hash" },
+        "kc-coverage-matrix.json": { "$ref": "#/$defs/hash" },
+        "lesson-presentation-plan.json": { "$ref": "#/$defs/hash" },
+        "lesson-quality-report.json": { "$ref": "#/$defs/hash" },
+        "learner-safe-items.json": { "$ref": "#/$defs/hash" },
+        "protected-items.json": { "$ref": "#/$defs/hash" },
+        "source-claim-ledger.json": { "$ref": "#/$defs/hash" },
+        "artifact-manifest.json": { "$ref": "#/$defs/hash" },
+        "candidate-quality-ledger.json": { "$ref": "#/$defs/hash" },
+        "LESSON-HANDOFF.json": { "$ref": "#/$defs/hash" }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inputs/task-source-packet.json",
+        "validation/lesson-validate.json",
+        "validation/computed-quality.json",
+        "validation/normalization-smoke.json",
+        "validation/protected-scan.json",
+        "reviews/author-self-audit.json",
+        "reviews/judge-pre-screen.json"
+      ],
+      "properties": {
+        "inputs/task-source-packet.json": { "$ref": "#/$defs/hash" },
+        "validation/lesson-validate.json": { "$ref": "#/$defs/hash" },
+        "validation/computed-quality.json": { "$ref": "#/$defs/hash" },
+        "validation/normalization-smoke.json": { "$ref": "#/$defs/hash" },
+        "validation/protected-scan.json": { "$ref": "#/$defs/hash" },
+        "reviews/author-self-audit.json": { "$ref": "#/$defs/hash" },
+        "reviews/judge-pre-screen.json": { "$ref": "#/$defs/hash" }
+      }
+    },
+    "nonclaims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["officialRubricPass", "humanApproved", "publicationApproved"],
+      "properties": {
+        "officialRubricPass": { "const": false },
+        "humanApproved": { "const": false },
+        "publicationApproved": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

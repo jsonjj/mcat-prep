@@ -43,6 +43,7 @@ import {
   type KitAllowedInventoryEntry,
   type KitArchiveFile,
   type KitIdentityPins,
+  type KitValidatorAuthority,
   type TeamKitInput,
   type ValidatedAssignmentProjection,
   type ValidatedPacketProjection,
@@ -63,10 +64,28 @@ const SMOKE_EXECUTABLE_PATH = join(
   'tools/content-cli/bin/lesson-factory-kit-smoke.mjs',
 );
 const GIT_EXECUTABLE_PATH = '/usr/bin/git';
+const VALIDATOR_AUTHORITY_PATHS = Object.freeze([
+  'tools/content-cli/src/entry.ts',
+  'tools/content-cli/src/main.ts',
+  'tools/content-cli/package.json',
+  'packages/content/package.json',
+  'packages/content/src/lesson-validator/index.ts',
+  'packages/content/src/lesson-validator/types.ts',
+  'packages/content/src/lesson-validator/validate.ts',
+  'packages/content/src/lesson-validator/rules.ts',
+  'packages/content/src/lesson-validator/canonical.ts',
+  'packages/content/src/lesson-validator/rehash.ts',
+  'packages/content/src/lesson-validator/computed-quality.ts',
+  'packages/content/src/lesson-validator/resolvable.ts',
+  'packages/content/src/lesson-normalization/index.ts',
+  'packages/content/src/lesson-normalization/types.ts',
+  'packages/content/src/lesson-normalization/normalize.ts',
+] as const);
 const SMOKE_ENVIRONMENT = Object.freeze({
   CI: '1',
   NO_COLOR: '1',
   PATH: dirname(process.execPath),
+  REPOSITORY_ROOT: ADMISSION_REPOSITORY_ROOT,
 });
 const AUTHORITY_SOURCE_PATHS = Object.freeze([
   'packages/content/src/lesson-factory/kit-production.ts',
@@ -80,6 +99,24 @@ const AUTHORITY_SOURCE_PATHS = Object.freeze([
   'tools/content-cli/src/kit-result.ts',
   'tools/content-cli/src/kit-result.test.ts',
   'tools/content-cli/package.json',
+  'content/lesson-factory/kit-v1/source-map.json',
+  ...VALIDATOR_AUTHORITY_PATHS,
+] as const);
+const KIT_SOURCE_MAP_PATH = 'content/lesson-factory/kit-v1/source-map.json';
+const GENERATION_TWO_FORBIDDEN_SHARED_PATHS = Object.freeze([
+  'apps',
+  'content/curriculum',
+  'content/lesson-factory/assignments',
+  'content/lesson-factory/packets',
+  'content/lesson-factory/schemas',
+  'content/lessons',
+  'docs/lesson-registration.md',
+  'package.json',
+  'packages',
+  'pnpm-lock.yaml',
+  'services',
+  'tests/architecture',
+  'tools',
 ] as const);
 
 const PRODUCTION_AUTHORITY = Object.freeze({
@@ -101,6 +138,7 @@ const PRODUCTION_AUTHORITY = Object.freeze({
   ] as const),
   packetRoot: 'content/lesson-factory/packets',
   proofPath: 'content/lesson-factory/assignments/partition-proof.json',
+  sourceMapPath: KIT_SOURCE_MAP_PATH,
   corePaths: Object.freeze([
     'key-docs/lesson-quality-rubric.md',
     'content/lesson-factory/deadline-profile/deadline-profile.json',
@@ -291,12 +329,75 @@ interface LoadedTeamInput {
   readonly lessonIds: readonly string[];
 }
 
+interface ProductionKitSourceMapping {
+  readonly archivePath: string;
+  readonly sourcePath: string;
+  readonly mode?: number;
+  readonly transform?: 'PINNED_TEAM_README';
+}
+
 interface LoadedProductionInputs {
   readonly proofBytes: Uint8Array;
   readonly assembledAt: string;
   readonly coreFiles: readonly KitArchiveFile[];
   readonly teams: readonly [LoadedTeamInput, LoadedTeamInput];
   readonly snapshotSha256: string;
+}
+
+async function loadProductionKitSourceMap(): Promise<readonly ProductionKitSourceMapping[]> {
+  let value: unknown;
+  try {
+    value = JSON.parse(
+      await readFile(join(ADMISSION_REPOSITORY_ROOT, KIT_SOURCE_MAP_PATH), 'utf8'),
+    );
+  } catch {
+    throw new PipelineFailure('KIT_SOURCE_MAP_INVALID');
+  }
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    throw new PipelineFailure('KIT_SOURCE_MAP_INVALID');
+  }
+  const record = value as Record<string, unknown>;
+  if (
+    record.format !== 'lesson-generation-kit-source-map/1' ||
+    !Array.isArray(record.mappings) ||
+    record.mappings.length !== 44
+  ) {
+    throw new PipelineFailure('KIT_SOURCE_MAP_INVALID');
+  }
+  const mappings = record.mappings.map((item): ProductionKitSourceMapping => {
+    if (item === null || typeof item !== 'object' || Array.isArray(item)) {
+      throw new PipelineFailure('KIT_SOURCE_MAP_INVALID');
+    }
+    const mapping = item as Record<string, unknown>;
+    const keys = Object.keys(mapping).sort();
+    if (
+      (canonicalKitJson(keys) !== canonicalKitJson(['archivePath', 'sourcePath']) &&
+        canonicalKitJson(keys) !== canonicalKitJson(['archivePath', 'mode', 'sourcePath']) &&
+        canonicalKitJson(keys) !== canonicalKitJson(['archivePath', 'sourcePath', 'transform'])) ||
+      typeof mapping.archivePath !== 'string' ||
+      typeof mapping.sourcePath !== 'string' ||
+      (mapping.mode !== undefined && mapping.mode !== 0o755) ||
+      (mapping.transform !== undefined && mapping.transform !== 'PINNED_TEAM_README')
+    ) {
+      throw new PipelineFailure('KIT_SOURCE_MAP_INVALID');
+    }
+    return {
+      archivePath: mapping.archivePath,
+      sourcePath: mapping.sourcePath,
+      ...(mapping.mode === undefined ? {} : { mode: mapping.mode }),
+      ...(mapping.transform === undefined
+        ? {}
+        : { transform: mapping.transform as 'PINNED_TEAM_README' }),
+    };
+  });
+  const archivePaths = mappings.map((mapping) => mapping.archivePath);
+  if (
+    new Set(archivePaths).size !== 44 ||
+    canonicalKitJson(archivePaths) !== canonicalKitJson([...archivePaths].sort())
+  ) {
+    throw new PipelineFailure('KIT_SOURCE_MAP_INVALID');
+  }
+  return mappings;
 }
 
 interface RuntimePins {
@@ -569,21 +670,46 @@ async function gitOutput(args: readonly string[]): Promise<string> {
   });
 }
 
+async function validatorAuthority(repositoryCommit: string): Promise<KitValidatorAuthority> {
+  const files = await Promise.all(
+    [...VALIDATOR_AUTHORITY_PATHS].sort().map(async (path) => {
+      const bytes = await readFile(join(ADMISSION_REPOSITORY_ROOT, path));
+      const sourceSha256 = sha256(bytes);
+      return {
+        path,
+        sha256: sourceSha256,
+        gitBlobSha256: sourceSha256,
+      };
+    }),
+  );
+  return {
+    repositoryCommit,
+    aggregateSha256: sha256(canonicalKitJson(files)),
+    files,
+  };
+}
+
 async function authoritySourceIdentity(): Promise<{
   readonly head: string;
   readonly blobClosureSha256: string;
 }> {
+  const authoritySourcePaths = [
+    ...new Set([
+      ...AUTHORITY_SOURCE_PATHS,
+      ...(await loadProductionKitSourceMap()).map((mapping) => mapping.sourcePath),
+    ]),
+  ].sort();
   if (reviewAuthorityHead !== undefined) {
     if (reviewAuthorityDirty) throw new PipelineFailure('AUTHORITY_SOURCE_DIRTY');
     return {
       head: reviewAuthorityHead,
-      blobClosureSha256: sha256(canonicalKitJson(AUTHORITY_SOURCE_PATHS)),
+      blobClosureSha256: sha256(canonicalKitJson(authoritySourcePaths)),
     };
   }
-  const status = await gitOutput(['status', '--porcelain', '--', ...AUTHORITY_SOURCE_PATHS]);
+  const status = await gitOutput(['status', '--porcelain', '--', ...authoritySourcePaths]);
   if (status !== '') throw new PipelineFailure('AUTHORITY_SOURCE_DIRTY');
   const blobs: { path: string; blob: string }[] = [];
-  for (const path of AUTHORITY_SOURCE_PATHS) {
+  for (const path of authoritySourcePaths) {
     try {
       blobs.push({ path, blob: await gitOutput(['rev-parse', `HEAD:${path}`]) });
     } catch {
@@ -1258,7 +1384,7 @@ export async function prepareProductionAuthority(): Promise<
       smokeExecutable: SMOKE_EXECUTABLE_PATH,
       smokeExecutableSha256,
     };
-    const generation = await nextPublicationGeneration(root);
+    const generation = Math.max(2, await nextPublicationGeneration(root));
     const candidates = await buildAndVerifyProductionCandidates(loaded, root, generation, runtime);
     if (!(await pathExists(paths.key))) {
       await writeExclusiveNoFollow(paths.key, `${randomBytes(32).toString('hex')}\n`);
@@ -1512,13 +1638,19 @@ async function loadCanonicalProductionInputs(): Promise<LoadedProductionInputs> 
     }
   }
 
+  const sourceMappings = await loadProductionKitSourceMap();
   const coreFiles = await Promise.all(
-    PRODUCTION_AUTHORITY.corePaths.map(
-      async (path): Promise<KitArchiveFile> => ({
-        path,
-        bytes: await readFile(join(ADMISSION_REPOSITORY_ROOT, path)),
-      }),
-    ),
+    sourceMappings.map(async (mapping): Promise<KitArchiveFile> => {
+      const bytes = await readFile(join(ADMISSION_REPOSITORY_ROOT, mapping.sourcePath));
+      return {
+        path: mapping.archivePath,
+        bytes,
+        ...(mapping.mode === undefined ? {} : { mode: mapping.mode }),
+        sourcePath: mapping.sourcePath,
+        sourceSha256: sha256(bytes),
+        ...(mapping.transform === undefined ? {} : { parityClass: 'team-metadata' as const }),
+      };
+    }),
   );
   const snapshotSha256 = sha256(
     canonicalKitJson({
@@ -1558,8 +1690,7 @@ async function productionPins(
   const byPath = new Map(loaded.coreFiles.map((file) => [file.path, sha256(file.bytes)] as const));
   return {
     proofSha256: sha256(loaded.proofBytes),
-    profileSha256:
-      byPath.get('content/lesson-factory/deadline-profile/deadline-profile.json') ?? '',
+    profileSha256: byPath.get('deadline-profile/rubric-profile.json') ?? '',
     schemaSha256: sha256(
       canonicalKitJson(
         [...byPath]
@@ -1597,7 +1728,7 @@ function productionKitPins(
   }
   return {
     repositoryCommit: pins.repositoryCommit,
-    kitSha256: byPath.get('content/lesson-factory/schemas/kit-manifest.schema.json') ?? '',
+    kitSha256: byPath.get('schemas/kit-manifest.schema.json') ?? '',
     profileSha256: pins.profileSha256,
     schemaSha256: pins.schemaSha256,
     templateSha256: pins.templateSha256,
@@ -1616,12 +1747,39 @@ function productionTeamInput(
   pins: KitIdentityPins,
   generation: number,
   assembledAt: string,
+  approvedValidators: KitValidatorAuthority,
 ): {
   readonly input: TeamKitInput;
   readonly assignmentProjection: ValidatedAssignmentProjection;
   readonly packetProjections: ReadonlyMap<string, ValidatedPacketProjection>;
 } {
   const assignmentBindingId = sha256(loaded.assignmentBytes);
+  const kitContentSha256 = sha256(
+    canonicalKitJson({
+      generation,
+      repositoryCommit: pins.repositoryCommit,
+      teamId: loaded.teamId,
+      assignmentSha256: assignmentBindingId,
+      lessonIds: [...loaded.lessonIds].sort(),
+      sources: coreFiles.map((file) => ({
+        archivePath: file.path,
+        sourcePath: file.sourcePath,
+        sourceSha256: file.sourceSha256,
+      })),
+    }),
+  );
+  const teamCoreFiles = coreFiles.map((file): KitArchiveFile => {
+    if (file.path !== 'README.md') return file;
+    const template =
+      typeof file.bytes === 'string' ? file.bytes : Buffer.from(file.bytes).toString('utf8');
+    const bytes = template
+      .replaceAll('{{REPOSITORY_COMMIT}}', pins.repositoryCommit)
+      .replaceAll('{{KIT_CONTENT_SHA256}}', kitContentSha256)
+      .replaceAll('{{TEAM_ID}}', loaded.teamId)
+      .replaceAll('{{ASSIGNMENT_SHA256}}', assignmentBindingId);
+    if (bytes.includes('{{')) throw new PipelineFailure('KIT_README_TEMPLATE_INVALID');
+    return { ...file, bytes, parityClass: 'team-metadata' };
+  });
   const contractVersion = requiredString(
     loaded.assignmentDocument,
     'contract_version',
@@ -1691,13 +1849,26 @@ function productionTeamInput(
   const assignmentPath = `assignments/${loaded.teamId}-30.json`;
   return {
     input: {
+      kitFormat: 'lesson-generation-kit-v1/2',
+      repositoryUrl: 'https://github.com/jsonjj/mcat-prep.git',
+      allowedOutputRoot: `content/lesson-candidates/${loaded.teamId}`,
+      forbiddenSharedPaths: GENERATION_TWO_FORBIDDEN_SHARED_PATHS,
+      runtimeRequirements: {
+        nodeMajorMinimum: 20,
+        packageManager: 'pnpm@9.15.9',
+        installPolicy: 'FROZEN_OFFLINE_IGNORE_SCRIPTS',
+      },
+      deterministicInstallCommand:
+        'corepack pnpm install --frozen-lockfile --offline --ignore-scripts',
+      handoffEndpoint: `branches:lesson-factory/${loaded.teamId}/wave-<nn>`,
+      validatorAuthority: approvedValidators,
       runId: RUN_ID,
       teamId: loaded.teamId,
       laneId: loaded.laneId,
       assembledAt,
-      lifecycle: 'TEAMMATE_AUTHORING',
+      lifecycle: 'CANDIDATE_RUBRIC_SCREENED',
       deadline: '2026-08-04T09:30:00-05:00',
-      branchConvention: 'lesson-factory/{team}/{lesson-id}',
+      branchConvention: `lesson-factory/${loaded.teamId}/wave-<nn>`,
       expectedPins: pins,
       expectedCohort: {
         assignmentId: loaded.assignmentId,
@@ -1706,9 +1877,9 @@ function productionTeamInput(
         schemaVersion,
         generation,
       },
-      requiredCorePaths: coreFiles.map((file) => file.path),
+      requiredCorePaths: teamCoreFiles.map((file) => file.path),
       allowedInventory: [
-        ...coreFiles.map(inventoryEntry),
+        ...teamCoreFiles.map(inventoryEntry),
         {
           path: assignmentPath,
           sha256: sha256(loaded.assignmentBytes),
@@ -1720,7 +1891,7 @@ function productionTeamInput(
           mediaType: 'application/json' as const,
         })),
       ],
-      coreFiles,
+      coreFiles: teamCoreFiles,
       assignment: {
         path: assignmentPath,
         bytes: loaded.assignmentBytes,
@@ -1742,12 +1913,14 @@ async function buildAndVerifyProductionCandidates(
 ): Promise<CandidateSet> {
   const pins = await productionPins(loaded, runtime);
   const kitPins = productionKitPins(loaded, pins);
+  const approvedValidators = await validatorAuthority(await checkoutCommit());
   const teamA = productionTeamInput(
     loaded.teams[0],
     loaded.coreFiles,
     kitPins,
     generation,
     loaded.assembledAt,
+    approvedValidators,
   );
   const teamB = productionTeamInput(
     loaded.teams[1],
@@ -1755,6 +1928,7 @@ async function buildAndVerifyProductionCandidates(
     kitPins,
     generation,
     loaded.assembledAt,
+    approvedValidators,
   );
   const assignments = new Map([
     [sha256(loaded.teams[0].assignmentBytes), teamA.assignmentProjection],
@@ -2035,7 +2209,7 @@ async function runPrivateProductionPipeline(): Promise<
     if ((reviewAuthorityHead ?? (await checkoutCommit())) !== authority.runtime.repositoryCommit) {
       throw new PipelineFailure('CHECKOUT_COMMIT_MISMATCH');
     }
-    const generation = await nextPublicationGeneration(root);
+    const generation = Math.max(2, await nextPublicationGeneration(root));
     const candidates = await buildAndVerifyProductionCandidates(
       loaded,
       root,
@@ -2203,7 +2377,7 @@ function createReviewCandidate(teamId: TeamId, first: number): TeamCandidate {
   ]);
   const entries = readZipEntries(archiveBytes);
   if (
-    entries.length !== PRODUCTION_AUTHORITY.corePaths.length + 32 ||
+    entries.length !== payload.length + 1 ||
     !entries.some((entry) => entry.path === 'KIT-MANIFEST.json')
   ) {
     throw new PipelineFailure('CANDIDATE_CLOSURE_FAILED');
@@ -3118,6 +3292,7 @@ function strictStatus(value: unknown): Record<string, unknown> {
       canonicalKitJson(Object.keys(record).sort()) ===
         canonicalKitJson([
           'archiveSha256',
+          'generation',
           'manifestSha256',
           'status',
           'supersededByVersion',
@@ -3126,6 +3301,9 @@ function strictStatus(value: unknown): Record<string, unknown> {
         ]) &&
       (record.teamId === 'team-A' || record.teamId === 'team-B') &&
       record.status === 'SUPERSEDED' &&
+      Number.isInteger(record.generation) &&
+      (record.generation as number) >= 1 &&
+      (record.generation as number) < (status.generation as number) &&
       typeof record.archiveSha256 === 'string' &&
       hash.test(record.archiveSha256) &&
       typeof record.manifestSha256 === 'string' &&
@@ -3435,6 +3613,7 @@ function statusPayload(
       ...priorHistory,
       ...priorCurrent.map((entry) => ({
         ...(entry as Record<string, unknown>),
+        generation: priorStatus?.generation,
         status: 'SUPERSEDED',
         supersededByVersion: versionDirectory,
       })),
@@ -3802,7 +3981,13 @@ async function verifyCandidateExtraction(root: OwnedRoot, candidates: CandidateS
       const extraction = await extractZipToIsolatedDirectory(team.archiveBytes, scratchParent);
       try {
         if (
-          extraction.entries.length !== PRODUCTION_AUTHORITY.corePaths.length + 32 ||
+          extraction.entries.length !==
+            (
+              JSON.parse(Buffer.from(team.manifestBytes).toString('utf8')) as {
+                files: unknown[];
+              }
+            ).files.length +
+              1 ||
           !extraction.entries.some((entry) => entry.path === 'KIT-MANIFEST.json')
         ) {
           throw new PipelineFailure('EXTRACTION_CLOSURE_FAILED');
@@ -3914,6 +4099,377 @@ async function runRealSmokeCommand(
     });
     child.once('close', finish);
   });
+}
+
+async function runPackagedKitCommand(
+  commandPath: string,
+  kitRoot: string,
+  repositoryRoot: string,
+  args: readonly string[] = [],
+  expectedOutput?: string,
+): Promise<string> {
+  return new Promise((resolvePromise, rejectPromise) => {
+    const child = spawn(commandPath, args, {
+      cwd: kitRoot,
+      env: {
+        ...SMOKE_ENVIRONMENT,
+        KIT_ROOT: kitRoot,
+        REPOSITORY_ROOT: repositoryRoot,
+      },
+      shell: false,
+      detached: true,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    const stdout: Buffer[] = [];
+    const stderr: Buffer[] = [];
+    let outputBytes = 0;
+    const timer = setTimeout(() => {
+      if (child.pid !== undefined) {
+        try {
+          process.kill(-child.pid, 'SIGKILL');
+        } catch {
+          child.kill('SIGKILL');
+        }
+      }
+    }, 30_000);
+    child.stdout.on('data', (chunk: Buffer) => {
+      outputBytes += chunk.byteLength;
+      if (outputBytes <= 1024 * 1024) stdout.push(Buffer.from(chunk));
+    });
+    child.stderr.on('data', (chunk: Buffer) => {
+      outputBytes += chunk.byteLength;
+      if (outputBytes <= 1024 * 1024) stderr.push(Buffer.from(chunk));
+    });
+    child.once('error', (error) => {
+      clearTimeout(timer);
+      rejectPromise(error);
+    });
+    child.once('close', (code, signal) => {
+      clearTimeout(timer);
+      if (code !== 0 || signal !== null || outputBytes > 1024 * 1024) {
+        rejectPromise(
+          new PipelineFailure(
+            'PACKAGED_COMMAND_FAILED',
+            Buffer.concat(stderr).toString('utf8').trim(),
+          ),
+        );
+        return;
+      }
+      const output = Buffer.concat(stdout).toString('utf8').trim();
+      if (expectedOutput !== undefined && output !== expectedOutput) {
+        rejectPromise(new PipelineFailure('PACKAGED_COMMAND_NO_OP'));
+        return;
+      }
+      resolvePromise(output);
+    });
+  });
+}
+
+async function runFixtureGit(repositoryRoot: string, args: readonly string[]): Promise<string> {
+  return new Promise((resolvePromise, rejectPromise) => {
+    const child = spawn(GIT_EXECUTABLE_PATH, ['-C', repositoryRoot, ...args], {
+      env: {
+        ...process.env,
+        GIT_AUTHOR_EMAIL: 'wp03-fixture@example.invalid',
+        GIT_AUTHOR_NAME: 'WP03 Fixture',
+        GIT_COMMITTER_EMAIL: 'wp03-fixture@example.invalid',
+        GIT_COMMITTER_NAME: 'WP03 Fixture',
+      },
+      shell: false,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    const stdout: Buffer[] = [];
+    const stderr: Buffer[] = [];
+    child.stdout.on('data', (chunk: Buffer) => stdout.push(Buffer.from(chunk)));
+    child.stderr.on('data', (chunk: Buffer) => stderr.push(Buffer.from(chunk)));
+    child.once('error', rejectPromise);
+    child.once('close', (code) => {
+      if (code === 0) resolvePromise(Buffer.concat(stdout).toString('utf8').trim());
+      else rejectPromise(new Error(Buffer.concat(stderr).toString('utf8').trim()));
+    });
+  });
+}
+
+async function runFixtureCandidateValidator(
+  repositoryRoot: string,
+  lessonDirectory: string,
+): Promise<{ readonly exitCode: number; readonly stdout: string; readonly stderr: string }> {
+  return new Promise((resolvePromise, rejectPromise) => {
+    const child = spawn(
+      process.execPath,
+      [
+        join(repositoryRoot, 'tools/content-cli/node_modules/tsx/dist/cli.mjs'),
+        join(repositoryRoot, 'tools/content-cli/src/entry.ts'),
+        'candidate-validate',
+        lessonDirectory,
+        '--json',
+      ],
+      {
+        cwd: repositoryRoot,
+        env: process.env,
+        shell: false,
+        stdio: ['ignore', 'pipe', 'pipe'],
+      },
+    );
+    const stdout: Buffer[] = [];
+    const stderr: Buffer[] = [];
+    child.stdout.on('data', (chunk: Buffer) => stdout.push(Buffer.from(chunk)));
+    child.stderr.on('data', (chunk: Buffer) => stderr.push(Buffer.from(chunk)));
+    child.once('error', rejectPromise);
+    child.once('close', (code) =>
+      resolvePromise({
+        exitCode: code ?? 1,
+        stdout: Buffer.concat(stdout).toString('utf8'),
+        stderr: Buffer.concat(stderr).toString('utf8'),
+      }),
+    );
+  });
+}
+
+async function fixtureEvidenceRefs(
+  lessonDirectory: string,
+  paths: readonly string[],
+): Promise<readonly { readonly path: string; readonly sha256: string }[]> {
+  return Promise.all(
+    paths.map(async (path) => ({
+      path,
+      sha256: sha256(await readFile(join(lessonDirectory, path))),
+    })),
+  );
+}
+
+async function writeFixtureReviewRecords(
+  extractionRoot: string,
+  lessonDirectory: string,
+  lessonId: string,
+  options: {
+    readonly auditStatus?: 'PASS' | 'BLOCKED' | 'FAILED';
+    readonly includeJudge?: boolean;
+    readonly reviewerRunId?: string;
+  } = {},
+): Promise<void> {
+  const primaryPaths = [
+    'lesson-script.json',
+    'kc-coverage-matrix.json',
+    'lesson-presentation-plan.json',
+    'lesson-quality-report.json',
+  ] as const;
+  const evidenceRefs = await fixtureEvidenceRefs(lessonDirectory, [
+    ...primaryPaths,
+    'inputs/task-source-packet.json',
+  ]);
+  const reviewedPrimaryArtifacts = await Promise.all(
+    primaryPaths.map(async (path) => {
+      const bytes = await readFile(join(lessonDirectory, path));
+      return { path, sha256: sha256(bytes), size: bytes.length };
+    }),
+  );
+  await writeFile(
+    join(lessonDirectory, 'reviews/author-self-audit.json'),
+    canonicalBytes({
+      authorRunId: `author-${lessonId}`,
+      evidenceRefs,
+      findingCodes: [],
+      format: 'lesson-generation-author-self-audit/2',
+      lessonId,
+      nonclaims: {
+        humanApproved: false,
+        officialRubricPass: false,
+        publicationApproved: false,
+      },
+      revisionCycle: 0,
+      status: options.auditStatus ?? 'PASS',
+    }),
+    { mode: 0o600 },
+  );
+  if (options.includeJudge !== false) {
+    await writeFile(
+      join(lessonDirectory, 'reviews/judge-pre-screen.json'),
+      canonicalBytes({
+        authorVerdictReceived: false,
+        evidenceRefs,
+        findingCodes: [],
+        format: 'lesson-generation-judge-pre-screen/2',
+        lessonId,
+        nonclaims: {
+          humanApproved: false,
+          officialRubricPass: false,
+          publicationApproved: false,
+        },
+        reviewedPrimaryArtifacts,
+        reviewerRole: 'INDEPENDENT_JUDGE',
+        reviewerRunId: options.reviewerRunId ?? `independent-judge-${lessonId}`,
+        rubricProfileSha256: sha256(
+          await readFile(join(extractionRoot, 'deadline-profile/rubric-profile.json')),
+        ),
+        status: 'SCREENED',
+      }),
+      { mode: 0o600 },
+    );
+  }
+}
+
+async function createGenerationTwoCommandFixture(
+  root: OwnedRoot,
+  extractionRoot: string,
+  options: { readonly lessonLimit?: number; readonly prepareReviews?: boolean } = {},
+): Promise<{
+  readonly repositoryRoot: string;
+  readonly lessonDirectories: readonly string[];
+  readonly manifest: Record<string, unknown>;
+}> {
+  const repositoryRoot = join(root.path, 'generation-two-command-repository');
+  await mkdir(repositoryRoot, { mode: 0o700 });
+  await writeFile(
+    join(repositoryRoot, 'package.json'),
+    `${canonicalKitJson({
+      name: 'wp03-generation-two-command-fixture',
+      packageManager: 'pnpm@9.15.9',
+      private: true,
+    })}\n`,
+    { mode: 0o600 },
+  );
+  await writeFile(join(repositoryRoot, 'pnpm-lock.yaml'), 'lockfileVersion: 9.0\n', {
+    mode: 0o600,
+  });
+  await mkdir(join(repositoryRoot, 'tools'), { mode: 0o700 });
+  await symlink(
+    join(ADMISSION_REPOSITORY_ROOT, 'tools/content-cli'),
+    join(repositoryRoot, 'tools/content-cli'),
+  );
+  await runFixtureGit(repositoryRoot, ['init', '--initial-branch=main']);
+  await runFixtureGit(repositoryRoot, [
+    'remote',
+    'add',
+    'origin',
+    'https://github.com/jsonjj/mcat-prep.git',
+  ]);
+  await runFixtureGit(repositoryRoot, [
+    'add',
+    'package.json',
+    'pnpm-lock.yaml',
+    'tools/content-cli',
+  ]);
+  await runFixtureGit(repositoryRoot, ['commit', '-m', 'fixture baseline']);
+  const repositoryCommit = await runFixtureGit(repositoryRoot, ['rev-parse', 'HEAD']);
+
+  const manifestPath = join(extractionRoot, 'KIT-MANIFEST.json');
+  const manifest = JSON.parse(await readFile(manifestPath, 'utf8')) as Record<string, unknown>;
+  const pins = manifest.pins as Record<string, unknown>;
+  const priorCommit = pins.repositoryCommit as string;
+  pins.repositoryCommit = repositoryCommit;
+  manifest.repositoryCommit = repositoryCommit;
+  (manifest.validatorAuthority as Record<string, unknown>).repositoryCommit =
+    await checkoutCommit();
+  const readmePath = join(extractionRoot, 'README.md');
+  const readme = (await readFile(readmePath, 'utf8')).replaceAll(priorCommit, repositoryCommit);
+  await writeFile(readmePath, readme, { mode: 0o644 });
+  const readmeSha256 = sha256(readme);
+  const readmeSize = Buffer.byteLength(readme);
+  for (const key of ['coreFiles', 'files'] as const) {
+    const files = manifest[key] as Array<Record<string, unknown>>;
+    const readmeFile = files.find((file) => file.path === 'README.md');
+    if (readmeFile === undefined) throw new PipelineFailure('COMMAND_FIXTURE_INVALID');
+    readmeFile.sha256 = readmeSha256;
+    readmeFile.size = readmeSize;
+  }
+  const mappings = manifest.sourceMappings as Array<Record<string, unknown>>;
+  const readmeMapping = mappings.find((mapping) => mapping.archivePath === 'README.md');
+  if (readmeMapping === undefined) throw new PipelineFailure('COMMAND_FIXTURE_INVALID');
+  readmeMapping.archiveSha256 = readmeSha256;
+  manifest.filesSha256 = sha256(canonicalKitJson(manifest.files));
+  await writeFile(manifestPath, canonicalBytes(manifest), { mode: 0o644 });
+  await runPackagedKitCommand(
+    join(extractionRoot, 'commands/bootstrap.txt'),
+    extractionRoot,
+    repositoryRoot,
+  );
+
+  const teamId = manifest.teamId as TeamId;
+  const lessonIds = manifest.allowedLessonIds as string[];
+  const outputRoot = join(repositoryRoot, 'content', 'lesson-candidates', teamId);
+  await mkdir(join(outputRoot, 'waves'), { recursive: true, mode: 0o700 });
+  const sourceLessonId = 'V3-LES-789208';
+  const sourceLessonDirectory = join(
+    ADMISSION_REPOSITORY_ROOT,
+    'content',
+    'lessons',
+    sourceLessonId.toLowerCase(),
+  );
+  const sourceNames = (await readdir(sourceLessonDirectory))
+    .filter((name) => name.endsWith('.json'))
+    .sort();
+  const lessonDirectories: string[] = [];
+  for (const lessonId of lessonIds.slice(0, options.lessonLimit ?? lessonIds.length)) {
+    const lessonDirectory = join(outputRoot, lessonId);
+    lessonDirectories.push(lessonDirectory);
+    await mkdir(join(lessonDirectory, 'inputs'), { recursive: true, mode: 0o700 });
+    await mkdir(join(lessonDirectory, 'validation'), { recursive: true, mode: 0o700 });
+    await mkdir(join(lessonDirectory, 'reviews'), { recursive: true, mode: 0o700 });
+    for (const name of sourceNames) {
+      const source = await readFile(join(sourceLessonDirectory, name), 'utf8');
+      await writeFile(
+        join(lessonDirectory, name),
+        source
+          .replaceAll(sourceLessonId, lessonId)
+          .replaceAll(sourceLessonId.toLowerCase(), lessonId.toLowerCase()),
+        { mode: 0o600 },
+      );
+    }
+    for (const [name, value] of [
+      [
+        'source-claim-ledger.json',
+        { format: 'lesson-generation-source-claim-ledger/1', lessonId, claims: [] },
+      ],
+      [
+        'candidate-quality-ledger.json',
+        {
+          format: 'lesson-generation-candidate-quality-ledger/1',
+          lessonId,
+          lifecycle: 'CANDIDATE_VALIDATION_PENDING',
+        },
+      ],
+      [
+        'LESSON-HANDOFF.json',
+        {
+          artifactHashes: {},
+          authorSelfAuditRef: 'reviews/author-self-audit.json',
+          computedQualityRef: 'validation/computed-quality.json',
+          format: 'lesson-generation-lesson-handoff/2',
+          judgePreScreenRef: 'reviews/judge-pre-screen.json',
+          lessonId,
+          requestedStatus: 'COMPLETE',
+          status: 'BLOCKED',
+          toolAndSchemaVersions: {},
+          unresolvedBlockerCodes: ['VALIDATION_PENDING'],
+          validationRefs: {
+            lessonValidate: 'validation/lesson-validate.json',
+            normalizationSmoke: 'validation/normalization-smoke.json',
+            protectedScan: 'validation/protected-scan.json',
+          },
+        },
+      ],
+    ] as const) {
+      await writeFile(join(lessonDirectory, name), canonicalBytes(value), { mode: 0o600 });
+    }
+    const packetPath = `packets/${lessonId}/task-source-packet.json`;
+    await writeFile(
+      join(lessonDirectory, 'inputs', 'task-source-packet.json'),
+      await readFile(join(extractionRoot, packetPath)),
+      { mode: 0o600 },
+    );
+    const mechanical = await runFixtureCandidateValidator(repositoryRoot, lessonDirectory);
+    if (mechanical.exitCode !== 0) {
+      throw new PipelineFailure(
+        'COMMAND_FIXTURE_REAL_VALIDATOR_FAILED',
+        `${mechanical.stdout}\n${mechanical.stderr}`,
+      );
+    }
+    if (options.prepareReviews !== false) {
+      await writeFixtureReviewRecords(extractionRoot, lessonDirectory, lessonId);
+    }
+  }
+  return { repositoryRoot, lessonDirectories, manifest };
 }
 
 async function runSigkillReviewScenario(
@@ -4041,6 +4597,8 @@ async function runReviewScenario(
     | 'AUTHORITY_EXECUTION_REPLAY'
     | 'PREFLIGHT_STATE_MACHINE'
     | 'STALE_AUTHORITY_REFRESH'
+    | 'GENERATION_TWO_PACKAGE'
+    | 'REAL_VALIDATE_ONE_GATES'
     | 'REAL_SMOKE_EXECUTABLE'
     | 'KIT_CLI_SEPARATION'
     | 'STRICT_NESTED_RECORDS'
@@ -4064,6 +4622,784 @@ async function runReviewScenario(
     | 'WRONG_MANIFEST_PATHS'
     | 'EXECUTABLE_HASH_MISMATCH',
 ): Promise<ScenarioResult> {
+  if (scenario === 'REAL_VALIDATE_ONE_GATES') {
+    const loaded = await loadCanonicalProductionInputsForPreflight();
+    const root = await createOwnedRoot();
+    const commandScratch = join(root.path, '.real-validator-command-smoke');
+    let extractionDirectory: string | undefined;
+    try {
+      const runtime: RuntimePins = {
+        repositoryCommit: await checkoutCommit(),
+        smokeExecutable: SMOKE_EXECUTABLE_PATH,
+        smokeExecutableSha256: sha256(await readFile(SMOKE_EXECUTABLE_PATH)),
+      };
+      const generationTwo = await buildAndVerifyProductionCandidates(loaded, root, 2, runtime);
+      await mkdir(commandScratch, { mode: 0o700 });
+      const extraction = await extractZipToIsolatedDirectory(
+        generationTwo.teams[0].archiveBytes,
+        commandScratch,
+      );
+      extractionDirectory = extraction.directory;
+      const fixture = await createGenerationTwoCommandFixture(root, extraction.directory, {
+        lessonLimit: 8,
+        prepareReviews: false,
+      });
+      const validateCommand = join(extraction.directory, 'commands/validate-one.txt');
+      const runOne = (directory: string): Promise<string> =>
+        runPackagedKitCommand(validateCommand, extraction.directory, fixture.repositoryRoot, [
+          directory,
+        ]);
+      const rejects = async (directory: string): Promise<boolean> => {
+        try {
+          await runOne(directory);
+          return false;
+        } catch {
+          return true;
+        }
+      };
+      const directories = fixture.lessonDirectories;
+
+      const structuralScriptPath = join(directories[0]!, 'lesson-script.json');
+      const structuralScript = JSON.parse(await readFile(structuralScriptPath, 'utf8')) as Record<
+        string,
+        unknown
+      >;
+      structuralScript.payload = {};
+      await writeFile(structuralScriptPath, canonicalBytes(structuralScript));
+      const structuralFailureRejected = await rejects(directories[0]!);
+      const noReviewReceiptFabricated =
+        !(await pathExists(join(directories[0]!, 'reviews/author-self-audit.json'))) &&
+        !(await pathExists(join(directories[0]!, 'reviews/judge-pre-screen.json')));
+
+      const normalizationPath = join(directories[1]!, 'learner-safe-items.json');
+      await writeFile(normalizationPath, canonicalBytes({ malformedProjection: true }));
+      const normalizationRejected = await rejects(directories[1]!);
+      const normalizationReceipt = JSON.parse(
+        await readFile(join(directories[1]!, 'validation/normalization-smoke.json'), 'utf8'),
+      ) as Record<string, unknown>;
+
+      const leakPath = join(directories[2]!, 'learner-safe-items.json');
+      const leak = JSON.parse(await readFile(leakPath, 'utf8')) as Record<string, unknown>;
+      leak.correct_answer = 'LEAK';
+      await writeFile(leakPath, canonicalBytes(leak));
+      const leakRejected = await rejects(directories[2]!);
+      const leakReceipt = JSON.parse(
+        await readFile(join(directories[2]!, 'validation/protected-scan.json'), 'utf8'),
+      ) as Record<string, unknown>;
+
+      await writeFixtureReviewRecords(
+        extraction.directory,
+        directories[3]!,
+        basename(directories[3]!),
+        { includeJudge: false },
+      );
+      const missingJudgeRejected = await rejects(directories[3]!);
+      const mechanicalReceiptsPresent = (
+        await Promise.all(
+          [
+            'lesson-validate.json',
+            'computed-quality.json',
+            'normalization-smoke.json',
+            'protected-scan.json',
+          ].map((name) => pathExists(join(directories[3]!, 'validation', name))),
+        )
+      ).every(Boolean);
+      const judgeAbsentAfterFirstStage = !(await pathExists(
+        join(directories[3]!, 'reviews/judge-pre-screen.json'),
+      ));
+      await writeFixtureReviewRecords(
+        extraction.directory,
+        directories[3]!,
+        basename(directories[3]!),
+      );
+      const sameCandidateSuccessfulOutput = await runOne(directories[3]!);
+      const sameCandidateSuccessfulHandoff = JSON.parse(
+        await readFile(join(directories[3]!, 'LESSON-HANDOFF.json'), 'utf8'),
+      ) as Record<string, unknown>;
+      await writeFile(join(directories[3]!, 'lesson-quality-report.json'), '\n', {
+        flag: 'a',
+      });
+      const sameCandidateTamperRejected = await rejects(directories[3]!);
+
+      const selfLessonId = basename(directories[4]!);
+      await writeFixtureReviewRecords(extraction.directory, directories[4]!, selfLessonId, {
+        reviewerRunId: `author-${selfLessonId}`,
+      });
+      const selfJudgeRejected = await rejects(directories[4]!);
+      await writeFixtureReviewRecords(extraction.directory, directories[4]!, selfLessonId);
+      const staleJudgePath = join(directories[4]!, 'reviews/judge-pre-screen.json');
+      const staleJudge = JSON.parse(await readFile(staleJudgePath, 'utf8')) as Record<
+        string,
+        unknown
+      >;
+      const reviewed = staleJudge.reviewedPrimaryArtifacts as Array<Record<string, unknown>>;
+      reviewed[0]!.sha256 = '0'.repeat(64);
+      await writeFile(staleJudgePath, canonicalBytes(staleJudge));
+      const staleJudgeRejected = await rejects(directories[4]!);
+
+      await writeFixtureReviewRecords(
+        extraction.directory,
+        directories[5]!,
+        basename(directories[5]!),
+        { auditStatus: 'BLOCKED' },
+      );
+      const blockedSelfAuditRejected = await rejects(directories[5]!);
+
+      await writeFixtureReviewRecords(
+        extraction.directory,
+        directories[6]!,
+        basename(directories[6]!),
+      );
+      const successfulOutput = await runOne(directories[6]!);
+      const successfulHandoff = JSON.parse(
+        await readFile(join(directories[6]!, 'LESSON-HANDOFF.json'), 'utf8'),
+      ) as Record<string, unknown>;
+      const validationReceipt = JSON.parse(
+        await readFile(join(directories[6]!, 'validation/lesson-validate.json'), 'utf8'),
+      ) as Record<string, unknown>;
+      const commandReceipt = validationReceipt.command as Record<string, unknown>;
+
+      await writeFixtureReviewRecords(
+        extraction.directory,
+        directories[7]!,
+        basename(directories[7]!),
+      );
+      await writeFile(join(directories[7]!, 'lesson-quality-report.json'), '\n', {
+        flag: 'a',
+      });
+      const tamperAfterJudgeRejected = await rejects(directories[7]!);
+
+      return {
+        status: 'READY',
+        evidence: {
+          structuralFailureRejected,
+          normalizationFailureRejected:
+            normalizationRejected && normalizationReceipt.status === 'FAILED',
+          protectedLeakRejected: leakRejected && leakReceipt.status === 'FAILED',
+          missingJudgeRejectedAfterMechanicalReceipts:
+            missingJudgeRejected && mechanicalReceiptsPresent && judgeAbsentAfterFirstStage,
+          invalidStaleSelfJudgeRejected: selfJudgeRejected && staleJudgeRejected,
+          blockedSelfAuditRejected,
+          independentJudgeFinalizedComplete:
+            successfulOutput === 'KIT_COMMAND_OK validate-one' &&
+            successfulHandoff.status === 'COMPLETE' &&
+            successfulHandoff.lifecycle === 'CANDIDATE_RUBRIC_SCREENED',
+          tamperAfterJudgeRejected,
+          sameCandidateTwoStage:
+            missingJudgeRejected &&
+            sameCandidateSuccessfulOutput === 'KIT_COMMAND_OK validate-one' &&
+            sameCandidateSuccessfulHandoff.status === 'COMPLETE' &&
+            sameCandidateTamperRejected,
+          noReviewReceiptFabricated,
+          realCommandReceiptsBound:
+            validationReceipt.status === 'PASS' &&
+            commandReceipt.exitCode === 0 &&
+            typeof commandReceipt.cliMainSha256 === 'string' &&
+            typeof commandReceipt.executableSha256 === 'string' &&
+            typeof commandReceipt.stdoutSha256 === 'string' &&
+            (validationReceipt.results as unknown[]).length >= 15,
+        },
+      };
+    } finally {
+      if (extractionDirectory !== undefined) {
+        await rm(extractionDirectory, { recursive: true, force: true });
+      }
+      await rm(commandScratch, { recursive: true, force: true });
+      await rm(join(root.path, 'generation-two-command-repository'), {
+        recursive: true,
+        force: true,
+      });
+      await cleanupOwnedRoot(root);
+    }
+  }
+  if (scenario === 'GENERATION_TWO_PACKAGE') {
+    const loaded = await loadCanonicalProductionInputsForPreflight();
+    const root = await createOwnedRoot();
+    try {
+      const runtime: RuntimePins = {
+        repositoryCommit: await checkoutCommit(),
+        smokeExecutable: SMOKE_EXECUTABLE_PATH,
+        smokeExecutableSha256: sha256(await readFile(SMOKE_EXECUTABLE_PATH)),
+      };
+      const generationTwo = await buildAndVerifyProductionCandidates(loaded, root, 2, runtime);
+      const deterministicRoot = await createOwnedRoot();
+      let deterministic = false;
+      try {
+        const repeated = await buildAndVerifyProductionCandidates(
+          loaded,
+          deterministicRoot,
+          2,
+          runtime,
+        );
+        deterministic =
+          canonicalKitJson(repeated.teams.map((team) => team.archiveSha256)) ===
+          canonicalKitJson(generationTwo.teams.map((team) => team.archiveSha256));
+      } finally {
+        await cleanupOwnedRoot(deterministicRoot);
+      }
+      const teamEntries = [
+        readZipEntries(generationTwo.teams[0].archiveBytes),
+        readZipEntries(generationTwo.teams[1].archiveBytes),
+      ] as const;
+      const teamManifests = generationTwo.teams.map(
+        (team) =>
+          JSON.parse(Buffer.from(team.manifestBytes).toString('utf8')) as Record<string, unknown>,
+      );
+      const staticInventory = (await loadProductionKitSourceMap()).map(
+        (mapping) => mapping.archivePath,
+      );
+      const expectedInventory = [
+        'KIT-MANIFEST.json',
+        ...staticInventory,
+        `assignments/team-A-30.json`,
+        ...loaded.teams[0].packetFiles.map((file) => file.path),
+      ].sort();
+      const observedInventory = teamEntries[0].map((entry) => entry.path).sort();
+      const sourceMappings = teamManifests.map((manifest) => manifest.sourceMappings);
+      const authorInstructions = Buffer.from(
+        teamEntries[0].find((entry) => entry.path === 'AUTHOR-INSTRUCTIONS.md')!.bytes,
+      ).toString('utf8');
+      const judgeInstructions = Buffer.from(
+        teamEntries[0].find((entry) => entry.path === 'JUDGE-INSTRUCTIONS.md')!.bytes,
+      ).toString('utf8');
+      const commandEntries = teamEntries[0]
+        .filter((entry) => entry.path.startsWith('commands/'))
+        .sort((left, right) => left.path.localeCompare(right.path));
+      const commandScratch = join(root.path, '.packaged-command-smoke');
+      await mkdir(commandScratch, { mode: 0o700 });
+      const commandExtraction = await extractZipToIsolatedDirectory(
+        generationTwo.teams[0].archiveBytes,
+        commandScratch,
+      );
+      const commandsExecuted: string[] = [];
+      let commandEffects = {
+        bootstrapReceipt: false,
+        frozenInstallPerformed: false,
+        lessonReceiptsRecorded: false,
+        assignmentValidated30: false,
+        waveArchiveProduced: false,
+        noOpRejected: false,
+        exitZeroNoOpRejected: false,
+        forbiddenWriteRejected: false,
+        honestBlockedRowAccepted: false,
+      };
+      let returnLayoutComplete = false;
+      let honestFailurePackaging = {
+        structural: false,
+        normalization: false,
+        protected: false,
+        selfAudit: false,
+        judge: false,
+        launderingRejected: false,
+      };
+      try {
+        const fixture = await createGenerationTwoCommandFixture(root, commandExtraction.directory);
+        const shellCommand = (name: string): string =>
+          join(commandExtraction.directory, 'commands', `${name}.txt`);
+        commandsExecuted.push(
+          await runPackagedKitCommand(
+            shellCommand('bootstrap'),
+            commandExtraction.directory,
+            fixture.repositoryRoot,
+          ),
+        );
+        const firstLessonReceipt = join(
+          fixture.lessonDirectories[0]!,
+          'validation',
+          'lesson-validate.json',
+        );
+        const receiptBefore = await readFile(firstLessonReceipt, 'utf8').catch(() => '');
+        let lastValidateOne = '';
+        for (const lessonDirectory of fixture.lessonDirectories) {
+          lastValidateOne = await runPackagedKitCommand(
+            shellCommand('validate-one'),
+            commandExtraction.directory,
+            fixture.repositoryRoot,
+            [lessonDirectory],
+          );
+        }
+        commandsExecuted.push(lastValidateOne);
+        const failedDirectories = fixture.lessonDirectories.slice(0, 5);
+        const structuralPath = join(failedDirectories[0]!, 'lesson-script.json');
+        const structural = JSON.parse(await readFile(structuralPath, 'utf8')) as Record<
+          string,
+          unknown
+        >;
+        structural.payload = {};
+        await writeFile(structuralPath, canonicalBytes(structural));
+        await writeFile(
+          join(failedDirectories[1]!, 'learner-safe-items.json'),
+          canonicalBytes({ malformedProjection: true }),
+        );
+        const protectedPath = join(failedDirectories[2]!, 'learner-safe-items.json');
+        const protectedLeak = JSON.parse(await readFile(protectedPath, 'utf8')) as Record<
+          string,
+          unknown
+        >;
+        protectedLeak.correct_answer = 'LEAK';
+        await writeFile(protectedPath, canonicalBytes(protectedLeak));
+        const blockedAuditPath = join(failedDirectories[3]!, 'reviews/author-self-audit.json');
+        const blockedAudit = JSON.parse(await readFile(blockedAuditPath, 'utf8')) as Record<
+          string,
+          unknown
+        >;
+        blockedAudit.status = 'BLOCKED';
+        blockedAudit.findingCodes = ['AUTHOR_EVIDENCE_BLOCKED'];
+        await writeFile(blockedAuditPath, canonicalBytes(blockedAudit));
+        const failedJudgePath = join(failedDirectories[4]!, 'reviews/judge-pre-screen.json');
+        const failedJudge = JSON.parse(await readFile(failedJudgePath, 'utf8')) as Record<
+          string,
+          unknown
+        >;
+        failedJudge.status = 'FAILED';
+        failedJudge.findingCodes = ['JUDGE_HARD_GATE_FAILED'];
+        await writeFile(failedJudgePath, canonicalBytes(failedJudge));
+        for (const directory of failedDirectories) {
+          try {
+            await runPackagedKitCommand(
+              shellCommand('validate-one'),
+              commandExtraction.directory,
+              fixture.repositoryRoot,
+              [directory],
+            );
+            throw new PipelineFailure('EXPECTED_FAILED_LESSON_VALIDATION');
+          } catch (error) {
+            if (
+              error instanceof PipelineFailure &&
+              error.code === 'EXPECTED_FAILED_LESSON_VALIDATION'
+            ) {
+              throw error;
+            }
+          }
+        }
+        commandsExecuted.push(
+          await runPackagedKitCommand(
+            shellCommand('package-handoff'),
+            commandExtraction.directory,
+            fixture.repositoryRoot,
+          ),
+        );
+        commandsExecuted.push(
+          await runPackagedKitCommand(
+            shellCommand('validate-assignment'),
+            commandExtraction.directory,
+            fixture.repositoryRoot,
+          ),
+        );
+        const teamId = fixture.manifest.teamId as TeamId;
+        const outputRoot = join(fixture.repositoryRoot, 'content', 'lesson-candidates', teamId);
+        const teamHandoff = JSON.parse(
+          await readFile(join(outputRoot, 'TEAM-HANDOFF.json'), 'utf8'),
+        ) as { rows: unknown[] };
+        const blockedFacts = await Promise.all(
+          failedDirectories.map(async (directory) => ({
+            handoff: JSON.parse(
+              await readFile(join(directory, 'LESSON-HANDOFF.json'), 'utf8'),
+            ) as Record<string, unknown>,
+            normalization: JSON.parse(
+              await readFile(join(directory, 'validation/normalization-smoke.json'), 'utf8'),
+            ) as Record<string, unknown>,
+            protected: JSON.parse(
+              await readFile(join(directory, 'validation/protected-scan.json'), 'utf8'),
+            ) as Record<string, unknown>,
+            structural: JSON.parse(
+              await readFile(join(directory, 'validation/lesson-validate.json'), 'utf8'),
+            ) as Record<string, unknown>,
+          })),
+        );
+        const rejectsAssignmentMutation = async (
+          path: string,
+          mutate: (value: Record<string, unknown>) => void,
+        ): Promise<boolean> => {
+          const original = await readFile(path);
+          const value = JSON.parse(original.toString('utf8')) as Record<string, unknown>;
+          mutate(value);
+          await writeFile(path, canonicalBytes(value));
+          try {
+            await runPackagedKitCommand(
+              shellCommand('validate-assignment'),
+              commandExtraction.directory,
+              fixture.repositoryRoot,
+            );
+            return false;
+          } catch {
+            return true;
+          } finally {
+            await writeFile(path, original);
+          }
+        };
+        const launderingDirectory = failedDirectories[0]!;
+        const launderingHandoffPath = join(launderingDirectory, 'LESSON-HANDOFF.json');
+        const launderingReceiptPath = join(launderingDirectory, 'validation/lesson-validate.json');
+        const launderingChecks = [
+          await rejectsAssignmentMutation(launderingHandoffPath, (value) => {
+            value.status = 'COMPLETE';
+            value.lifecycle = 'CANDIDATE_RUBRIC_SCREENED';
+            value.unresolvedBlockerCodes = [];
+          }),
+          await rejectsAssignmentMutation(launderingReceiptPath, (value) => {
+            value.status = 'PASS';
+          }),
+          await rejectsAssignmentMutation(launderingHandoffPath, (value) => {
+            value.unresolvedBlockerCodes = [];
+          }),
+        ];
+        const originalReceipt = await readFile(launderingReceiptPath);
+        await writeFile(launderingReceiptPath, Buffer.concat([originalReceipt, Buffer.from(' ')]));
+        let staleHashRejected = false;
+        try {
+          await runPackagedKitCommand(
+            shellCommand('validate-assignment'),
+            commandExtraction.directory,
+            fixture.repositoryRoot,
+          );
+        } catch {
+          staleHashRejected = true;
+        } finally {
+          await writeFile(launderingReceiptPath, originalReceipt);
+        }
+        honestFailurePackaging = {
+          structural:
+            blockedFacts[0]!.structural.status === 'FAILED' &&
+            (blockedFacts[0]!.handoff.unresolvedBlockerCodes as string[]).includes(
+              'STRUCTURAL_VALIDATION_FAILED',
+            ),
+          normalization:
+            blockedFacts[1]!.normalization.status === 'FAILED' &&
+            (blockedFacts[1]!.handoff.unresolvedBlockerCodes as string[]).includes(
+              'NORMALIZATION_FAILED',
+            ),
+          protected:
+            blockedFacts[2]!.protected.status === 'FAILED' &&
+            (blockedFacts[2]!.handoff.unresolvedBlockerCodes as string[]).includes(
+              'PROTECTED_BOUNDARY_FAILED',
+            ),
+          selfAudit: (blockedFacts[3]!.handoff.unresolvedBlockerCodes as string[]).includes(
+            'AUTHOR_SELF_AUDIT_BLOCKED',
+          ),
+          judge: (blockedFacts[4]!.handoff.unresolvedBlockerCodes as string[]).includes(
+            'JUDGE_PRE_SCREEN_FAILED',
+          ),
+          launderingRejected: [...launderingChecks, staleHashRejected].every(Boolean),
+        };
+        const forbidden = join(fixture.repositoryRoot, 'content', 'lessons');
+        await mkdir(forbidden, { recursive: true, mode: 0o700 });
+        await writeFile(join(forbidden, 'forbidden.json'), '{}\n', { mode: 0o600 });
+        let forbiddenWriteRejected = false;
+        try {
+          await runPackagedKitCommand(
+            shellCommand('bootstrap'),
+            commandExtraction.directory,
+            fixture.repositoryRoot,
+          );
+        } catch {
+          forbiddenWriteRejected = true;
+        }
+        await rm(forbidden, { recursive: true, force: true });
+        const noOpPath = join(commandExtraction.directory, 'commands', 'no-op.txt');
+        await writeFile(noOpPath, '#!/bin/sh\nexit 0\n', { mode: 0o755 });
+        let exitZeroNoOpRejected = false;
+        try {
+          await runPackagedKitCommand(
+            noOpPath,
+            commandExtraction.directory,
+            fixture.repositoryRoot,
+            [],
+            'KIT_COMMAND_OK bootstrap',
+          );
+        } catch {
+          exitZeroNoOpRejected = true;
+        }
+        await rm(noOpPath, { force: true });
+        const lessonLayout = [
+          'LESSON-HANDOFF.json',
+          'artifact-manifest.json',
+          'candidate-quality-ledger.json',
+          'inputs/task-source-packet.json',
+          'kc-coverage-matrix.json',
+          'learner-safe-items.json',
+          'lesson-presentation-plan.json',
+          'lesson-quality-report.json',
+          'lesson-script.json',
+          'protected-items.json',
+          'reviews/author-self-audit.json',
+          'reviews/judge-pre-screen.json',
+          'source-claim-ledger.json',
+          'validation/computed-quality.json',
+          'validation/lesson-validate.json',
+          'validation/normalization-smoke.json',
+          'validation/protected-scan.json',
+        ];
+        returnLayoutComplete = (
+          await Promise.all(
+            fixture.lessonDirectories.flatMap((directory) =>
+              lessonLayout.map((path) => pathExists(join(directory, path))),
+            ),
+          )
+        ).every(Boolean);
+        commandEffects = {
+          bootstrapReceipt: commandsExecuted[0] === 'KIT_COMMAND_OK bootstrap FROZEN_INSTALL_OK',
+          frozenInstallPerformed: commandsExecuted[0]?.endsWith('FROZEN_INSTALL_OK') === true,
+          lessonReceiptsRecorded:
+            receiptBefore !== (await readFile(firstLessonReceipt, 'utf8')) &&
+            fixture.lessonDirectories.length === 30,
+          assignmentValidated30:
+            commandsExecuted[3] === 'KIT_COMMAND_OK validate-assignment' &&
+            teamHandoff.rows.length === 30,
+          waveArchiveProduced:
+            (await pathExists(join(outputRoot, 'waves', 'WAVE-01-HANDOFF.zip'))) &&
+            (await pathExists(join(outputRoot, 'waves', 'WAVE-01-HANDOFF.zip.sha256'))) &&
+            (await pathExists(join(outputRoot, 'waves', 'WAVE-01-SEND.json'))),
+          noOpRejected: receiptBefore !== (await readFile(firstLessonReceipt, 'utf8')),
+          exitZeroNoOpRejected,
+          forbiddenWriteRejected,
+          honestBlockedRowAccepted: teamHandoff.rows.some(
+            (row) =>
+              row !== null &&
+              typeof row === 'object' &&
+              !Array.isArray(row) &&
+              (row as Record<string, unknown>).lessonId ===
+                basename(fixture.lessonDirectories[0]!) &&
+              (row as Record<string, unknown>).status === 'BLOCKED',
+          ),
+        };
+      } finally {
+        await rm(commandExtraction.directory, { recursive: true, force: true });
+        await rm(commandScratch, { recursive: true, force: true });
+      }
+      const teamHandoff = JSON.parse(
+        Buffer.from(
+          teamEntries[0].find((entry) => entry.path === 'handoff/TEAM-HANDOFF-TEMPLATE.json')!
+            .bytes,
+        ).toString('utf8'),
+      ) as Record<string, unknown>;
+      const lessonHandoff = JSON.parse(
+        Buffer.from(
+          teamEntries[0].find((entry) => entry.path === 'handoff/LESSON-HANDOFF-TEMPLATE.json')!
+            .bytes,
+        ).toString('utf8'),
+      ) as Record<string, unknown>;
+      const corePaths = teamEntries[0]
+        .filter(
+          (entry) =>
+            entry.path !== 'README.md' &&
+            entry.path !== 'KIT-MANIFEST.json' &&
+            !entry.path.startsWith('assignments/') &&
+            !entry.path.startsWith('packets/'),
+        )
+        .map((entry) => `${entry.path}:${sha256(entry.bytes)}:${entry.mode}`)
+        .sort();
+      const removalScratch = join(root.path, '.required-file-removal-smoke');
+      await mkdir(removalScratch, { mode: 0o700 });
+      let everyRequiredFileRemovalRejected = true;
+      try {
+        for (const requiredPath of expectedInventory) {
+          const extraction = await extractZipToIsolatedDirectory(
+            generationTwo.teams[0].archiveBytes,
+            removalScratch,
+          );
+          try {
+            await rm(join(extraction.directory, requiredPath), { force: true });
+            try {
+              await runRealSmokeCommand(
+                SMOKE_EXECUTABLE_PATH,
+                runtime.smokeExecutableSha256,
+                PRODUCTION_AUTHORITY.smokeCommands[0]!.argv,
+                extraction.directory,
+              );
+              everyRequiredFileRemovalRejected = false;
+            } catch {
+              // Expected: every exact inventory member is mandatory.
+            }
+          } finally {
+            await rm(extraction.directory, { recursive: true, force: true });
+          }
+        }
+      } finally {
+        await rm(removalScratch, { recursive: true, force: true });
+      }
+      const otherCorePaths = teamEntries[1]
+        .filter(
+          (entry) =>
+            entry.path !== 'README.md' &&
+            entry.path !== 'KIT-MANIFEST.json' &&
+            !entry.path.startsWith('assignments/') &&
+            !entry.path.startsWith('packets/'),
+        )
+        .map((entry) => `${entry.path}:${sha256(entry.bytes)}:${entry.mode}`)
+        .sort();
+      const key = testDigest('generation-two-publish');
+      const generationOne = await createCoreVerifiedReviewCandidates(root, 1);
+      const generationOneBytes = generationOne.teams.map((team) => sha256(team.archiveBytes));
+      const first = await publishTransaction(
+        root,
+        generationOne,
+        signReceipt(generationOne, key),
+        'FULL',
+        key,
+      );
+      if (first.status !== 'READY') throw new PipelineFailure('GENERATION_ONE_SETUP_FAILED');
+      const firstCurrent = strictCurrent(
+        JSON.parse(await readFile(join(root.path, 'current.json'), 'utf8')),
+      );
+      const firstVersionDirectory = firstCurrent.versionDirectory as string;
+      const firstVersion = join(root.path, firstVersionDirectory);
+      const firstVersionBefore = generationOne.teams.map((team) => sha256(team.archiveBytes));
+      const second = await publishTransaction(
+        root,
+        generationTwo,
+        signReceipt(generationTwo, key),
+        'FULL',
+        key,
+      );
+      const status = strictStatus(
+        JSON.parse(await readFile(join(root.path, 'bundle-readiness.json'), 'utf8')),
+      );
+      const history = status.history as Array<Record<string, unknown>>;
+      return {
+        status: 'READY',
+        evidence: {
+          generation: generationTwo.generation,
+          oldInventoryCount: 46,
+          newInventoryCount: observedInventory.length,
+          staticInventory,
+          assignmentCount: observedInventory.filter((path) => path.startsWith('assignments/'))
+            .length,
+          packetCount: observedInventory.filter((path) => path.startsWith('packets/')).length,
+          sourceMappingsComplete:
+            sourceMappings.every(
+              (value) => Array.isArray(value) && value.length === staticInventory.length,
+            ) && canonicalKitJson(observedInventory) === canonicalKitJson(expectedInventory),
+          authorInstructionsComplete: [
+            'STANDARD',
+            'ten-artifact',
+            'at most two targeted revision cycles',
+            'CANDIDATE_RUBRIC_SCREENED',
+            'Forbidden shared paths',
+            'Return contract',
+            'R1–R15',
+            'computed-quality',
+            'normalization',
+            'protected-boundary scan',
+            'author self-audit',
+            'independent judge',
+          ].every((token) => authorInstructions.includes(token)),
+          judgeInstructionsComplete: [
+            'manifested candidate evidence only',
+            'stable finding codes',
+            'at most one targeted revision',
+            '`BLOCKED` or `FAILED`',
+          ].every((token) => judgeInstructions.includes(token)),
+          commandModes: commandEntries.map((entry) => entry.mode.toString(8).padStart(4, '0')),
+          commandsReproducible: commandEntries.every((entry) => {
+            const text = Buffer.from(entry.bytes).toString('utf8');
+            return entry.path === 'commands/kit-command.mjs'
+              ? text.startsWith('#!/usr/bin/env node\n') &&
+                  text.includes('validateOne') &&
+                  text.includes('verifyAssignment') &&
+                  text.includes('packageHandoff')
+              : text.startsWith('#!/bin/sh\nset -eu\n') &&
+                  text.includes('REPOSITORY_ROOT') &&
+                  text.includes('KIT_ROOT') &&
+                  text.includes('kit-command.mjs') &&
+                  !/curl|wget|https?:\/\//.test(text);
+          }),
+          commandsExecuted,
+          commandEffects,
+          manifestAuthorityComplete: teamManifests.every(
+            (manifest) =>
+              manifest.repositoryUrl === 'https://github.com/jsonjj/mcat-prep.git' &&
+              manifest.repositoryCommit ===
+                (manifest.pins as Record<string, unknown>).repositoryCommit &&
+              manifest.allowedOutputRoot ===
+                `content/lesson-candidates/${String(manifest.teamId)}` &&
+              manifest.branchConvention === `lesson-factory/${String(manifest.teamId)}/wave-<nn>` &&
+              manifest.lifecycle === 'CANDIDATE_RUBRIC_SCREENED',
+          ),
+          validatorAuthorityClosure: teamManifests.every((manifest) => {
+            const authority = manifest.validatorAuthority as KitValidatorAuthority | undefined;
+            return (
+              authority !== undefined &&
+              authority.files.length === VALIDATOR_AUTHORITY_PATHS.length &&
+              authority.aggregateSha256 === sha256(canonicalKitJson(authority.files)) &&
+              canonicalKitJson(authority.files.map((file) => file.path)) ===
+                canonicalKitJson([...VALIDATOR_AUTHORITY_PATHS].sort())
+            );
+          }),
+          forbiddenValidatorWrites: teamManifests.every(
+            (manifest) =>
+              (manifest.forbiddenSharedPaths as string[]).includes('tools') &&
+              (manifest.forbiddenSharedPaths as string[]).includes('packages'),
+          ),
+          packageableStructuralBlocked: honestFailurePackaging.structural,
+          packageableNormalizationFailed: honestFailurePackaging.normalization,
+          packageableProtectedBlocked: honestFailurePackaging.protected,
+          packageableSelfAuditBlocked: honestFailurePackaging.selfAudit,
+          packageableJudgeFailed: honestFailurePackaging.judge,
+          launderingRejected: honestFailurePackaging.launderingRejected,
+          candidateWorkflowSource: loaded.coreFiles.some(
+            (file) =>
+              file.path === 'docs/06-LESSON-AUTHORING-WORKFLOW.md' &&
+              file.sourcePath ===
+                'content/lesson-factory/kit-v1/docs/06-LESSON-AUTHORING-WORKFLOW.md',
+          ),
+          returnLayoutComplete,
+          handoffTemplatesClosed:
+            teamHandoff.format === 'lesson-generation-team-handoff/1' &&
+            teamHandoff.expectedRowCount === 30 &&
+            Array.isArray(teamHandoff.rows) &&
+            teamHandoff.rows.length === 30 &&
+            lessonHandoff.format === 'lesson-generation-lesson-handoff/2' &&
+            lessonHandoff.requestedStatus === 'COMPLETE' &&
+            lessonHandoff.status === 'BLOCKED',
+          fullSmokePassed: generationTwo.teams.every(
+            (team) => team.smokeReceipts.length === PRODUCTION_AUTHORITY.smokeCommands.length,
+          ),
+          everyRequiredFileRemovalRejected,
+          protectedLeakFree: generationTwo.teams.every((team, index) => {
+            const readme = Buffer.from(
+              teamEntries[index]!.find((entry) => entry.path === 'README.md')!.bytes,
+            ).toString('utf8');
+            return !/PROTECTED_CORPUS_(?:BEGIN|RECORD|FIXTURE)|"correct_answer"\s*:/.test(
+              `${readme}\n${team.sendMe}`,
+            );
+          }),
+          deterministic,
+          coreParity: canonicalKitJson(corePaths) === canonicalKitJson(otherCorePaths),
+          generationOneImmutable:
+            canonicalKitJson(generationOneBytes) ===
+              canonicalKitJson(generationOne.teams.map((team) => sha256(team.archiveBytes))) &&
+            canonicalKitJson(firstVersionBefore) ===
+              canonicalKitJson(
+                await Promise.all(
+                  generationOne.teams.map(async (team) =>
+                    sha256(
+                      await readFile(
+                        join(firstVersion, team.teamId, `${team.teamId}-complete.zip`),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          generationTwoSupersedesOne:
+            second.status === 'READY' &&
+            status.generation === 2 &&
+            history.some(
+              (entry) =>
+                entry.generation === 1 &&
+                entry.status === 'SUPERSEDED' &&
+                entry.versionDirectory === firstVersionDirectory,
+            ),
+        },
+      };
+    } finally {
+      await rm(join(root.path, 'generation-two-command-repository'), {
+        recursive: true,
+        force: true,
+      });
+      await cleanupOwnedRoot(root);
+    }
+  }
   if (scenario === 'REAL_INPUT_ADMISSION') {
     const loaded = await loadCanonicalProductionInputsForPreflight();
     const proof = JSON.parse(Buffer.from(loaded.proofBytes).toString('utf8')) as Record<
@@ -4072,14 +5408,13 @@ async function runReviewScenario(
     >;
     const reviewRoot = await createOwnedRoot();
     try {
-      await buildAndVerifyProductionCandidates(loaded, reviewRoot, 1, {
+      await buildAndVerifyProductionCandidates(loaded, reviewRoot, 2, {
         repositoryCommit: await checkoutCommit(),
         smokeExecutable: SMOKE_EXECUTABLE_PATH,
         smokeExecutableSha256: sha256(await readFile(SMOKE_EXECUTABLE_PATH)),
       });
       const policyFile = loaded.coreFiles.find(
-        (file) =>
-          file.path === 'content/lesson-factory/deadline-profile/owner-source-use-receipt.json',
+        (file) => file.path === 'deadline-profile/source-use-receipt.json',
       );
       if (policyFile === undefined) throw new PipelineFailure('POLICY_FIXTURE_MISSING');
       const mutatedPolicy = Buffer.concat([Buffer.from(policyFile.bytes), Buffer.from('\n')]);
@@ -4437,16 +5772,24 @@ async function runReviewScenario(
     }
     if (scenario === 'REAL_SMOKE_EXECUTABLE') {
       const runtime: RuntimePins = {
-        repositoryCommit: 'a'.repeat(40),
+        repositoryCommit: await checkoutCommit(),
         smokeExecutable: SMOKE_EXECUTABLE_PATH,
         smokeExecutableSha256: sha256(await readFile(SMOKE_EXECUTABLE_PATH)),
       };
-      const actual = await createCoreVerifiedReviewCandidates(root, 1);
+      const actual = await buildAndVerifyProductionCandidates(
+        await loadCanonicalProductionInputsForPreflight(),
+        root,
+        2,
+        runtime,
+      );
       const scratch = join(root.path, '.smoke-review');
       await mkdir(scratch, { mode: 0o700 });
       const extraction = await extractZipToIsolatedDirectory(actual.teams[0].archiveBytes, scratch);
       const outputs: string[] = [];
       try {
+        const temporaryBefore = new Set(
+          (await readdir(tmpdir())).filter((name) => name.startsWith('wp03-kit-smoke-')),
+        );
         const manifestBefore = sha256(
           await readFile(join(extraction.directory, 'KIT-MANIFEST.json')),
         );
@@ -4465,6 +5808,28 @@ async function runReviewScenario(
         const manifest = JSON.parse(
           await readFile(join(extraction.directory, 'KIT-MANIFEST.json'), 'utf8'),
         ) as { files: { path: string; kind: string }[] };
+        const validatorPath = join(
+          ADMISSION_REPOSITORY_ROOT,
+          'packages/content/src/lesson-validator/validate.ts',
+        );
+        const validatorBefore = await readFile(validatorPath);
+        let validatorMutationRejected = false;
+        try {
+          await writeFile(
+            validatorPath,
+            Buffer.concat([validatorBefore, Buffer.from('\n// smoke mutation\n')]),
+          );
+          await runRealSmokeCommand(
+            SMOKE_EXECUTABLE_PATH,
+            runtime.smokeExecutableSha256,
+            PRODUCTION_AUTHORITY.smokeCommands[2].argv,
+            extraction.directory,
+          );
+        } catch {
+          validatorMutationRejected = true;
+        } finally {
+          await writeFile(validatorPath, validatorBefore);
+        }
         const malformedManifestRoot = await extractZipToIsolatedDirectory(
           actual.teams[0].archiveBytes,
           scratch,
@@ -4514,6 +5879,12 @@ async function runReviewScenario(
               .toString(8)
               .padStart(4, '0'),
             executableHashBound: true,
+            semanticTemplateValidation: outputs[2] === 'KIT_SMOKE_OK one-template',
+            controlledHandoffFailures: outputs[2] === 'KIT_SMOKE_OK one-template',
+            validatorMutationRejected,
+            temporaryStateCleaned: (await readdir(tmpdir()))
+              .filter((name) => name.startsWith('wp03-kit-smoke-'))
+              .every((name) => temporaryBefore.has(name)),
           },
         };
       } finally {

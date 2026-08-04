@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+COMMAND_DIR=${0%/*}
+KIT_ROOT=$(CDPATH= cd -- "$COMMAND_DIR/.." && pwd)
+REPOSITORY_ROOT=${REPOSITORY_ROOT:-$(git -C "$PWD" rev-parse --show-toplevel)}
+exec node "$KIT_ROOT/commands/kit-command.mjs" bootstrap --repository-root "$REPOSITORY_ROOT"

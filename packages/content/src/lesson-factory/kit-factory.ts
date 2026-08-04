@@ -47,6 +47,9 @@ export interface KitArchiveFile {
   readonly path: string;
   readonly bytes: string | Uint8Array;
   readonly mode?: number;
+  readonly sourcePath?: string;
+  readonly sourceSha256?: string;
+  readonly parityClass?: 'core' | 'team-metadata';
 }
 
 export interface KitZipEntry {
@@ -180,6 +183,21 @@ export const KIT_FACTORY_RESOURCE_LIMITS: KitResourceLimits = Object.freeze({
 });
 
 export type KitTeamId = 'team-A' | 'team-B';
+const GENERATION_TWO_FORBIDDEN_SHARED_PATHS = Object.freeze([
+  'apps',
+  'content/curriculum',
+  'content/lesson-factory/assignments',
+  'content/lesson-factory/packets',
+  'content/lesson-factory/schemas',
+  'content/lessons',
+  'docs/lesson-registration.md',
+  'package.json',
+  'packages',
+  'pnpm-lock.yaml',
+  'services',
+  'tests/architecture',
+  'tools',
+]);
 
 export interface KitIdentityPins {
   readonly repositoryCommit: string;
@@ -264,6 +282,18 @@ export interface FinalInputValidators {
 }
 
 export interface TeamKitInput {
+  readonly kitFormat?: 'lesson-generation-kit-v1/2';
+  readonly repositoryUrl?: string;
+  readonly allowedOutputRoot?: string;
+  readonly forbiddenSharedPaths?: readonly string[];
+  readonly runtimeRequirements?: {
+    readonly nodeMajorMinimum: number;
+    readonly packageManager: string;
+    readonly installPolicy: 'FROZEN_OFFLINE_IGNORE_SCRIPTS';
+  };
+  readonly deterministicInstallCommand?: string;
+  readonly handoffEndpoint?: string;
+  readonly validatorAuthority?: KitValidatorAuthority;
   readonly runId: string;
   readonly teamId: KitTeamId;
   readonly laneId: string;
@@ -295,7 +325,9 @@ export class KitFactoryError extends Error {
   readonly blockers: readonly KitFactoryBlocker[];
 
   constructor(blockers: readonly KitFactoryBlocker[]) {
-    super(blockers.map((blocker) => `${blocker.code}: ${blocker.message}`).join('; '));
+    super(
+      blockers.map((blocker) => `${blocker.code}:${blocker.path}: ${blocker.message}`).join('; '),
+    );
     this.name = 'KitFactoryError';
     this.blockers = blockers;
   }
@@ -306,11 +338,20 @@ export interface KitManifestFile {
   readonly sha256: string;
   readonly size: number;
   readonly mode: number;
-  readonly kind: 'core' | 'assignment' | 'packet';
+  readonly kind: 'core' | 'team-metadata' | 'assignment' | 'packet';
+  readonly sourcePath?: string;
+  readonly sourceSha256?: string;
+}
+
+export interface KitSourceMapping {
+  readonly archivePath: string;
+  readonly archiveSha256: string;
+  readonly sourcePath: string;
+  readonly sourceSha256: string;
 }
 
 export interface KitManifest {
-  readonly format: 'wp-03-kit-manifest/1';
+  readonly format: 'wp-03-kit-manifest/1' | 'lesson-generation-kit-v1/2';
   readonly runId: string;
   readonly teamId: KitTeamId;
   readonly laneId: string;
@@ -323,15 +364,43 @@ export interface KitManifest {
   readonly lifecycle: string;
   readonly deadline: string;
   readonly branchConvention: string;
+  readonly repositoryUrl?: string;
+  readonly repositoryCommit?: string;
+  readonly allowedOutputRoot?: string;
+  readonly forbiddenSharedPaths?: readonly string[];
+  readonly runtimeRequirements?: TeamKitInput['runtimeRequirements'];
+  readonly deterministicInstallCommand?: string;
+  readonly handoffEndpoint?: string;
+  readonly validatorAuthority?: KitValidatorAuthority;
   readonly pins: KitIdentityPins;
   readonly assignmentSha256: string;
   readonly inventorySha256: string;
+  readonly filesSha256?: string;
   readonly allowedLessonIds: readonly string[];
   readonly allowedPaths: readonly string[];
   readonly packetCount: 30;
   readonly coreFiles: readonly KitManifestFile[];
   readonly files: readonly KitManifestFile[];
+  readonly sourceMappings?: readonly KitSourceMapping[];
+  readonly readOrder?: readonly string[];
+  readonly nonclaims?: {
+    readonly officialRubricPass: false;
+    readonly humanApproved: false;
+    readonly publicationApproved: false;
+  };
   readonly manifestHashRule: 'KIT-MANIFEST.json is self-excluded; READY.json pins its SHA-256';
+}
+
+export interface KitValidatorAuthorityFile {
+  readonly path: string;
+  readonly sha256: string;
+  readonly gitBlobSha256: string;
+}
+
+export interface KitValidatorAuthority {
+  readonly repositoryCommit: string;
+  readonly aggregateSha256: string;
+  readonly files: readonly KitValidatorAuthorityFile[];
 }
 
 export interface KitCandidate {
@@ -586,6 +655,57 @@ const MODULE_POLICY_VOCABULARY_HASHES = new Map([
     'docs/lesson-authoring/template/v3-les-000000/lesson-script.json',
     'cfa1f44a8da22af45ba8af8d7f898ba176a21a1cb0259bf98a9b0ca5142d8011',
   ],
+  ['JUDGE-INSTRUCTIONS.md', '49c742fa53ad22266ca9622ca6c40c09d25d79c4ea89030ea3c2f1934b91b2ae'],
+  ['AUTHOR-INSTRUCTIONS.md', '1579bfd378cf2603b7842c348e24fc32f92a8330eacbb78853458d2e23ab1827'],
+  [
+    'deadline-profile/rubric-profile.json',
+    '681d2864fbf22bfa3f947e4e21f846fe8ee5913ff91e82f56c95708cd344562c',
+  ],
+  [
+    'deadline-profile/source-use-receipt.json',
+    '04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68',
+  ],
+  [
+    'handoff/LESSON-HANDOFF-TEMPLATE.json',
+    'd66a54a45eb22cd5c8c84734b84466e9ea14e7d2ff4e2354e8f6ba1884fcd982',
+  ],
+  [
+    'judge-docs/lesson-quality-evidence-protocol.md',
+    '0834b559c1ff2b0321a60119e731c457929032ab843c65a004ebf8d3d87a80b7',
+  ],
+  [
+    'judge-docs/lesson-quality-judge-protocol.md',
+    'ec2233d5d47ecd452469ec7f9c96de32b73726bed504aedb1852ca7c73707f12',
+  ],
+  [
+    'schemas/deadline-profile.schema.json',
+    'ddbd6b89644d6de950704b3b41a0c6e4c6718fda03f153238bc62de5bd6a656f',
+  ],
+  [
+    'schemas/lesson-bundle.schema.json',
+    '564ee727259205284784d0bea9fe84f9000f98a9d0004ccf9459ea1a6fba5935',
+  ],
+  [
+    'schemas/lesson-handoff.schema.json',
+    'b854196296554e21980f8916c7de2aa9f0511c673dcf4f1792f0498322f81a86',
+  ],
+  [
+    'schemas/shared-vocabulary.schema.json',
+    '279c33afcae9ef3dd3388169c2424fe3891dee0116ba32823130602bee1a9968',
+  ],
+  [
+    'template/v3-les-000000/artifact-manifest.json',
+    '2b6441889dc5e4b4c9b38ef6865d87c37c4f0d92867a5df71159c3dfd2d9c0b2',
+  ],
+  [
+    'template/v3-les-000000/lesson-script.json',
+    'cfa1f44a8da22af45ba8af8d7f898ba176a21a1cb0259bf98a9b0ca5142d8011',
+  ],
+  [
+    'template/v3-les-000000/protected-items.json',
+    '9b3f8c4f230501b391a99b21335568eea4bbcfe3e2302f07819bee03f8f4d952',
+  ],
+  ['commands/kit-command.mjs', 'e8d8729e92eda450ace98e786840664e7675c4bbea82a12b5c348dafefa6d734'],
 ]);
 
 function structuredBoundaryKeys(value: unknown, result: Set<KitBoundaryCode>): void {
@@ -701,6 +821,8 @@ export function scanKitBoundaries(
     const inventoryMatches = inventoryByPath.get(file.path) ?? [];
     const inventoryEntry = inventoryMatches.length === 1 ? inventoryMatches[0] : undefined;
     const actualSha256 = sha256Hex(bytes);
+    const moduleAuthorizedPolicyDocument =
+      MODULE_POLICY_VOCABULARY_HASHES.get(file.path) === actualSha256;
     const moduleAllowedBinary = isModuleAllowedBinary(
       file.path,
       inventoryEntry?.mediaType,
@@ -721,18 +843,19 @@ export function scanKitBoundaries(
     }
     const normalizedPath = file.path.toLowerCase();
     const segments = normalizedPath.split('/');
+    const boundarySegments = moduleAuthorizedPolicyDocument ? [] : segments;
 
     if (pathMediaType === 'text/x-env') {
       add('ENV_FILE', file.path, 'environment files are not permitted in teammate kits');
     }
-    for (const segment of segments) {
+    for (const segment of boundarySegments) {
       const token = segment.replace(/\.[^.]*$/, '');
       for (const code of boundaryCodesForKey(token)) {
         add(code, file.path, 'normalized path token crosses a protected boundary');
       }
     }
     if (
-      segments.some(
+      boundarySegments.some(
         (segment) =>
           segment === 'private' ||
           segment === 'credentials' ||
@@ -743,11 +866,11 @@ export function scanKitBoundaries(
     ) {
       add('PRIVATE_SOURCE', file.path, 'private-source paths are outside the author boundary');
     }
-    if (segments.some((segment) => segment.includes('kaplan'))) {
+    if (boundarySegments.some((segment) => segment.includes('kaplan'))) {
       add('KAPLAN_MATERIAL', file.path, 'Kaplan-derived paths are not permitted');
     }
     if (
-      segments.some(
+      boundarySegments.some(
         (segment) =>
           segment === 'protected' ||
           segment.startsWith('protected-') ||
@@ -756,11 +879,14 @@ export function scanKitBoundaries(
     ) {
       add('PROTECTED_CORPUS', file.path, 'protected-corpus paths are not permitted');
     }
-    if (/answer[-_ ]?key|correct[-_ ]?answers?/.test(normalizedPath)) {
+    if (
+      !moduleAuthorizedPolicyDocument &&
+      /answer[-_ ]?key|correct[-_ ]?answers?/.test(normalizedPath)
+    ) {
       add('ANSWER_KEY', file.path, 'answer-key paths are outside the author boundary');
     }
     if (
-      segments.some(
+      boundarySegments.some(
         (segment) =>
           segment === 'judge' ||
           segment === 'judges' ||
@@ -814,8 +940,7 @@ export function scanKitBoundaries(
       continue;
     }
     const text = decoded.text;
-    const policyVocabularyDocument =
-      MODULE_POLICY_VOCABULARY_HASHES.get(file.path) === sha256Hex(bytes);
+    const policyVocabularyDocument = moduleAuthorizedPolicyDocument;
     if (
       /-----BEGIN (?:[A-Z0-9]+ )?PRIVATE KEY-----/.test(text) ||
       /\bAKIA[0-9A-Z]{16}\b/.test(text) ||
@@ -1394,12 +1519,13 @@ export async function runCommandSmoke(
   const environment: Record<string, string> = {};
   for (const [name, value] of Object.entries(input.environment)) {
     if (
-      !['CI', 'NO_COLOR', 'PATH'].includes(name) ||
+      !['CI', 'NO_COLOR', 'PATH', 'REPOSITORY_ROOT'].includes(name) ||
       value.includes('\0') ||
       /[\r\n]/.test(value) ||
       Buffer.byteLength(value, 'utf8') > 256 ||
       (name === 'PATH' &&
-        value.split(':').some((entry) => entry.length === 0 || !isAbsolute(entry)))
+        value.split(':').some((entry) => entry.length === 0 || !isAbsolute(entry))) ||
+      (name === 'REPOSITORY_ROOT' && !isAbsolute(value))
     ) {
       throw new Error(`UNSAFE_SMOKE_ENVIRONMENT: refused ${JSON.stringify(name)}`);
     }
@@ -1771,6 +1897,8 @@ function manifestFile(file: KitArchiveFile, kind: KitManifestFile['kind']): KitM
     size: bytes.length,
     mode: file.mode ?? 0o644,
     kind,
+    ...(file.sourcePath === undefined ? {} : { sourcePath: file.sourcePath }),
+    ...(file.sourceSha256 === undefined ? {} : { sourceSha256: file.sourceSha256 }),
   };
 }
 
@@ -2069,15 +2197,57 @@ function createKitCandidate(input: TeamKitInput, validators: FinalInputValidator
   );
   if (blockers.length > 0) throw new KitFactoryError(blockers);
   const coreFiles = input.coreFiles
-    .map((file) => manifestFile(file, 'core'))
+    .map((file) =>
+      manifestFile(file, file.parityClass === 'team-metadata' ? 'team-metadata' : 'core'),
+    )
     .sort((left, right) => compareText(left.path, right.path));
   const files = [
     ...coreFiles,
     manifestFile(input.assignment, 'assignment'),
     ...input.packets.map((file) => manifestFile(file, 'packet')),
   ].sort((left, right) => compareText(left.path, right.path));
+  const generationTwo = input.kitFormat === 'lesson-generation-kit-v1/2';
+  if (
+    generationTwo &&
+    (input.repositoryUrl !== 'https://github.com/jsonjj/mcat-prep.git' ||
+      input.allowedOutputRoot !== `content/lesson-candidates/${input.teamId}` ||
+      input.branchConvention !== `lesson-factory/${input.teamId}/wave-<nn>` ||
+      input.handoffEndpoint !== `branches:lesson-factory/${input.teamId}/wave-<nn>` ||
+      input.lifecycle !== 'CANDIDATE_RUBRIC_SCREENED' ||
+      input.deterministicInstallCommand !==
+        'corepack pnpm install --frozen-lockfile --offline --ignore-scripts' ||
+      input.runtimeRequirements?.nodeMajorMinimum !== 20 ||
+      input.runtimeRequirements.packageManager !== 'pnpm@9.15.9' ||
+      input.runtimeRequirements.installPolicy !== 'FROZEN_OFFLINE_IGNORE_SCRIPTS' ||
+      input.validatorAuthority === undefined ||
+      !/^[0-9a-f]{64}$/.test(input.validatorAuthority.aggregateSha256) ||
+      input.validatorAuthority.files.length === 0 ||
+      input.validatorAuthority.files.some(
+        (file) =>
+          !/^[a-zA-Z0-9._/-]+$/.test(file.path) ||
+          !/^[0-9a-f]{64}$/.test(file.sha256) ||
+          !/^[0-9a-f]{64}$/.test(file.gitBlobSha256),
+      ) ||
+      canonicalKitJson(input.validatorAuthority.files.map((file) => file.path)) !==
+        canonicalKitJson(
+          input.validatorAuthority.files.map((file) => file.path).toSorted(compareText),
+        ) ||
+      input.validatorAuthority.aggregateSha256 !==
+        sha256Hex(canonicalKitJson(input.validatorAuthority.files)) ||
+      !Array.isArray(input.forbiddenSharedPaths) ||
+      canonicalKitJson(input.forbiddenSharedPaths) !==
+        canonicalKitJson(GENERATION_TWO_FORBIDDEN_SHARED_PATHS))
+  ) {
+    throw new KitFactoryError([
+      {
+        code: 'GENERATION_TWO_AUTHORITY_INVALID',
+        path: 'KIT-MANIFEST.json',
+        message: 'generation-2 authority fields are incomplete or permit team substitution',
+      },
+    ]);
+  }
   const manifest: KitManifest = {
-    format: 'wp-03-kit-manifest/1',
+    format: generationTwo ? 'lesson-generation-kit-v1/2' : 'wp-03-kit-manifest/1',
     runId: input.runId,
     teamId: input.teamId,
     laneId: input.laneId,
@@ -2090,14 +2260,65 @@ function createKitCandidate(input: TeamKitInput, validators: FinalInputValidator
     lifecycle: input.lifecycle,
     deadline: input.deadline,
     branchConvention: input.branchConvention,
+    ...(generationTwo
+      ? {
+          repositoryUrl: input.repositoryUrl,
+          repositoryCommit: input.expectedPins.repositoryCommit,
+          allowedOutputRoot: input.allowedOutputRoot,
+          forbiddenSharedPaths: input.forbiddenSharedPaths,
+          runtimeRequirements: input.runtimeRequirements,
+          deterministicInstallCommand: input.deterministicInstallCommand,
+          handoffEndpoint: input.handoffEndpoint,
+          validatorAuthority: structuredClone(input.validatorAuthority),
+        }
+      : {}),
     pins: structuredClone(input.expectedPins),
     assignmentSha256: sha256Hex(archiveBytes(input.assignment.bytes)),
     inventorySha256: sha256Hex(canonicalKitJson(allowedInventory)),
+    ...(generationTwo ? { filesSha256: sha256Hex(canonicalKitJson(files)) } : {}),
     allowedLessonIds: packets.map((packet) => packet.lessonId).sort(compareText),
     allowedPaths: files.map((file) => file.path),
     packetCount: 30,
     coreFiles,
     files,
+    ...(generationTwo
+      ? {
+          sourceMappings: coreFiles.map((file) => {
+            if (file.sourcePath === undefined || file.sourceSha256 === undefined) {
+              throw new KitFactoryError([
+                {
+                  code: 'SOURCE_MAPPING_MISSING',
+                  path: file.path,
+                  message: 'generation-2 core files require pinned source and archive identities',
+                },
+              ]);
+            }
+            return {
+              archivePath: file.path,
+              archiveSha256: file.sha256,
+              sourcePath: file.sourcePath,
+              sourceSha256: file.sourceSha256,
+            };
+          }),
+          readOrder: [
+            'AUTHOR-INSTRUCTIONS.md',
+            'docs/autonomous-lesson-authoring-context.md',
+            'docs/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md',
+            'docs/06-LESSON-AUTHORING-WORKFLOW.md',
+            'docs/lesson-evidence-mastery-contract.md',
+            'docs/lesson-quality-author-protocol.md',
+            'deadline-profile/rubric-profile.json',
+            'docs/lesson-quality-rubric.md',
+            'template/v3-les-000000/',
+            `packets/<one-assigned-lesson-id>/task-source-packet.json`,
+          ],
+          nonclaims: {
+            officialRubricPass: false,
+            humanApproved: false,
+            publicationApproved: false,
+          },
+        }
+      : {}),
     manifestHashRule: 'KIT-MANIFEST.json is self-excluded; READY.json pins its SHA-256',
   };
   const manifestBytes = `${canonicalKitJson(manifest)}\n`;
@@ -2168,7 +2389,10 @@ export function createFederatedKitCandidates(
     ...input.teamB,
     allowedInventory: preflightTeamKitSource(input.teamB),
   };
-  if (coreFingerprint(teamAInput.coreFiles) !== coreFingerprint(teamBInput.coreFiles)) {
+  if (
+    coreFingerprint(teamAInput.coreFiles.filter((file) => file.parityClass !== 'team-metadata')) !==
+    coreFingerprint(teamBInput.coreFiles.filter((file) => file.parityClass !== 'team-metadata'))
+  ) {
     throw new KitFactoryError([
       {
         code: 'CORE_FILE_PARITY_MISMATCH',
@@ -2297,7 +2521,7 @@ export async function verifyKitCandidate(
       ...input.source,
       coreFiles: input.source.coreFiles.map((file) => {
         const entry = requiredEntry(file.path);
-        return { path: entry.path, bytes: entry.bytes, mode: entry.mode };
+        return { ...file, path: entry.path, bytes: entry.bytes, mode: entry.mode };
       }),
       assignment: {
         ...input.source.assignment,

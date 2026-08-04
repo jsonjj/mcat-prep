@@ -1,0 +1,40 @@
+{
+  "format": "lesson-generation-lesson-handoff/2",
+  "assignmentId": "<ASSIGNMENT_ID>",
+  "artifactHashes": {
+    "artifact-manifest.json": "<SHA256>",
+    "candidate-quality-ledger.json": "<SHA256>",
+    "kc-coverage-matrix.json": "<SHA256>",
+    "learner-safe-items.json": "<SHA256>",
+    "lesson-presentation-plan.json": "<SHA256>",
+    "lesson-quality-report.json": "<SHA256>",
+    "lesson-script.json": "<SHA256>",
+    "protected-items.json": "<SHA256>",
+    "source-claim-ledger.json": "<SHA256>"
+  },
+  "authorSelfAuditRef": "reviews/author-self-audit.json",
+  "computedQualityRef": "validation/computed-quality.json",
+  "judgePreScreenRef": "reviews/judge-pre-screen.json",
+  "lessonId": "<LESSON_ID>",
+  "lifecycle": "CANDIDATE_VALIDATION_BLOCKED",
+  "nonclaims": {
+    "humanApproved": false,
+    "officialRubricPass": false,
+    "publicationApproved": false
+  },
+  "packetSha256": "<SHA256>",
+  "repositoryCommit": "<COMMIT_SHA>",
+  "requestedStatus": "COMPLETE",
+  "status": "BLOCKED",
+  "toolAndSchemaVersions": {
+    "kit": "lesson-generation-kit-v1/generation-2",
+    "schemaSetSha256": "<SHA256>",
+    "toolSha256": "<SHA256>"
+  },
+  "unresolvedBlockerCodes": ["VALIDATION_PENDING"],
+  "validationRefs": {
+    "lessonValidate": "validation/lesson-validate.json",
+    "normalizationSmoke": "validation/normalization-smoke.json",
+    "protectedScan": "validation/protected-scan.json"
+  }
+}

@@ -28,6 +28,7 @@ import {
   validateV7Question,
   type ValidationIssue,
 } from '@mcat/content';
+import { compileCanonicalLesson } from '@mcat/content/lesson-normalization';
 import {
   buildResolvableIds,
   computeQuality,
@@ -35,6 +36,7 @@ import {
   planLessonRehash,
   planProposedKcs,
   validateCatalog,
+  validateLesson,
   type LessonKcRefs,
   type LessonValidationInput,
   type RehashFile,
@@ -598,8 +600,12 @@ function cmdProposedKcs(): void {
 function cmdComputedQuality(): void {
   const jsonOut = args.includes('--json');
   const lessonsRoot = join(REPO_ROOT, 'content', 'lessons');
-  const reports = readdirSync(lessonsRoot)
-    .map((name) => join(lessonsRoot, name))
+  const positional = args.slice(1).find((value) => !value.startsWith('--'));
+  const candidateDirectories =
+    positional === undefined
+      ? readdirSync(lessonsRoot).map((name) => join(lessonsRoot, name))
+      : [isAbsolute(positional) ? positional : join(REPO_ROOT, positional)];
+  const reports = candidateDirectories
     .filter((d) => {
       try {
         return statSync(d).isDirectory() && existsSync(join(d, 'lesson-script.json'));
@@ -629,6 +635,164 @@ function cmdComputedQuality(): void {
     );
   }
   if (reports.some((r) => !r.ok)) process.exit(1);
+}
+
+function commandSha256(path: string): string {
+  return createHash('sha256').update(readFileSync(path)).digest('hex');
+}
+
+function cmdCandidateValidate(): void {
+  const offered = args.slice(1).find((value) => !value.startsWith('--'));
+  if (offered === undefined) {
+    console.log(JSON.stringify({ ok: false, code: 'CANDIDATE_DIRECTORY_REQUIRED' }));
+    process.exit(1);
+    return;
+  }
+  const directory = isAbsolute(offered) ? offered : join(REPO_ROOT, offered);
+  const lessonId = basename(directory).toUpperCase();
+  try {
+    const readFiles = (): RehashFile[] =>
+      readdirSync(directory)
+        .filter((name) => name.endsWith('.json') && name !== 'artifact-manifest.json')
+        .sort()
+        .map((relPath) => ({
+          relPath,
+          rawText: readFileSync(join(directory, relPath), 'utf8'),
+        }));
+    const manifestPath = join(directory, 'artifact-manifest.json');
+    const readManifest = (): string | null =>
+      existsSync(manifestPath) ? readFileSync(manifestPath, 'utf8') : null;
+    const rehash = planLessonRehash(readFiles(), readManifest());
+    for (const write of rehash.writes) {
+      writeFileSync(join(directory, write.relPath), write.newText);
+    }
+    const rehashVerify = planLessonRehash(readFiles(), readManifest());
+    if (rehashVerify.changed) throw new Error('REHASH_VERIFY_FAILED');
+
+    const files: LessonValidationInput['files'] = readFiles().map((file) => ({
+      relPath: file.relPath,
+      rawBytes: file.rawText,
+      json: JSON.parse(file.rawText) as unknown,
+    }));
+    const curriculumPath = join(REPO_ROOT, 'curriculum', 'v3', 'v3-lesson-authoring-manifest.json');
+    const resolvableIds = existsSync(curriculumPath)
+      ? buildResolvableIds(JSON.parse(readFileSync(curriculumPath, 'utf8')) as unknown)
+      : null;
+    const structural = validateLesson({
+      lessonId,
+      files,
+      manifest: readManifest() === null ? null : (JSON.parse(readManifest() as string) as unknown),
+      resolvableIds,
+      browserEvidence: null,
+    });
+    const script = JSON.parse(
+      readFileSync(join(directory, 'lesson-script.json'), 'utf8'),
+    ) as unknown;
+    const computedQuality = computeQuality(lessonId, script);
+    let normalization:
+      | {
+          readonly ok: true;
+          readonly artifactSha256: Readonly<Record<string, string>>;
+          readonly protectedProjectionSha256: string;
+          readonly definitionHash: string;
+          readonly grammar: string;
+          readonly itemCount: number;
+          readonly learnerProjectionSha256: string;
+          readonly reentryItemCount: number;
+          readonly repairBindingCount: number;
+          readonly responseControlKinds: Readonly<Record<string, number>>;
+        }
+      | { readonly ok: false; readonly code: 'NORMALIZATION_FAILED'; readonly errorSha256: string };
+    try {
+      const artifactPaths = {
+        learnerSafeItems: 'learner-safe-items.json',
+        presentationPlan: 'lesson-presentation-plan.json',
+        protectedItems: 'protected-items.json',
+        script: 'lesson-script.json',
+      } as const;
+      const parsed = Object.fromEntries(
+        Object.entries(artifactPaths).map(([key, path]) => [
+          key,
+          JSON.parse(readFileSync(join(directory, path), 'utf8')) as unknown,
+        ]),
+      ) as Record<keyof typeof artifactPaths, unknown>;
+      const compilation = compileCanonicalLesson(parsed);
+      const responseControlKinds: Record<string, number> = {};
+      for (const item of compilation.lesson.items) {
+        const kind = item.projection.responseControl?.kind ?? 'NONE';
+        responseControlKinds[kind] = (responseControlKinds[kind] ?? 0) + 1;
+      }
+      const artifactSha256 = Object.fromEntries(
+        Object.entries(artifactPaths).map(([key, path]) => [
+          key,
+          commandSha256(join(directory, path)),
+        ]),
+      );
+      normalization = {
+        ok: true,
+        artifactSha256,
+        protectedProjectionSha256: createHash('sha256')
+          .update(JSON.stringify(compilation.answerKey))
+          .digest('hex'),
+        definitionHash: compilation.lesson.definitionHash,
+        grammar: compilation.lesson.grammar,
+        itemCount: compilation.lesson.items.length,
+        learnerProjectionSha256: createHash('sha256')
+          .update(JSON.stringify(compilation.lesson))
+          .digest('hex'),
+        reentryItemCount: compilation.lesson.items.filter((item) => item.isReentry).length,
+        repairBindingCount: compilation.lesson.kcs.reduce(
+          (count, kc) => count + kc.branchBindings.length,
+          0,
+        ),
+        responseControlKinds,
+      };
+    } catch (error) {
+      normalization = {
+        ok: false,
+        code: 'NORMALIZATION_FAILED',
+        errorSha256: createHash('sha256')
+          .update(error instanceof Error ? error.message : String(error))
+          .digest('hex'),
+      };
+    }
+    const report = {
+      command: 'candidate-validate',
+      commandVersion: '1',
+      computedQuality,
+      lessonId,
+      normalization,
+      ok: structural.ok && computedQuality.ok && normalization.ok,
+      rehash: {
+        changed: rehash.changed,
+        primaryContentSha: rehash.primaryContentSha,
+        verifyNoOp: !rehashVerify.changed,
+      },
+      structural: {
+        ...structural,
+        results: structural.results.map(({ detail, ...result }) => ({
+          ...result,
+          detailSha256: createHash('sha256').update(detail).digest('hex'),
+        })),
+      },
+    };
+    console.log(JSON.stringify(report));
+    if (!report.ok) process.exit(1);
+  } catch (error) {
+    console.log(
+      JSON.stringify({
+        command: 'candidate-validate',
+        commandVersion: '1',
+        lessonId,
+        ok: false,
+        code: 'CANDIDATE_VALIDATION_FAILED',
+        errorSha256: createHash('sha256')
+          .update(error instanceof Error ? error.message : String(error))
+          .digest('hex'),
+      }),
+    );
+    process.exit(1);
+  }
 }
 
 /**
@@ -813,6 +977,9 @@ switch (command) {
   case 'computed-quality':
     cmdComputedQuality();
     break;
+  case 'candidate-validate':
+    cmdCandidateValidate();
+    break;
   case 'assignment-partition':
     cmdAssignmentPartition();
     break;
@@ -832,6 +999,7 @@ switch (command) {
         '  lesson-validate [dir] [--json]  Structural R1–R15 gate over content/lessons/ (non-zero exit on failure; CI merge gate)\n' +
         '  proposed-kcs [--write]  Advisory queue of lesson KCs absent from the curriculum catalog (mirrors R14; never gates)\n' +
         '  computed-quality [--json]  estimatedMinutes plausibility + difficulty distribution (N/A when uncalibrated; FAIL gates)\n' +
+        '  candidate-validate <dir>  Rehash + R1–R15 + computed-quality + canonical normalization for one isolated candidate\n' +
         '  assignment-partition  Generate deterministic lesson-factory 51/30/30 allocation proof (removes stale manifests)\n' +
         '  assignment-finalize <packet-ref-map.json>  Finalize assignment manifests after WP-04 packet generation\n' +
         '  packet publication uses the isolated `pnpm packets -- lesson-factory packets emit [--publish]` entry\n',
