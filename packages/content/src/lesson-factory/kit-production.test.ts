@@ -18,6 +18,12 @@ type Scenario =
   | 'PRODUCTION_ROOT_REJECTIONS'
   | 'INTENTIONAL_RESIDUE'
   | 'SCRATCH_HYGIENE'
+  | 'RECONCILE_OWNED_SCRATCH'
+  | 'REAL_INPUT_ADMISSION'
+  | 'AUTHORITY_STORE_GATES'
+  | 'AUTHORITY_EXECUTION_REPLAY'
+  | 'REAL_SMOKE_EXECUTABLE'
+  | 'KIT_CLI_SEPARATION'
   | 'STRICT_NESTED_RECORDS'
   | 'FORBIDDEN_TEST_ROOTS'
   | 'CHECKOUT_COMMIT_MISMATCH'
@@ -50,6 +56,10 @@ interface InternalReviewHarness {
 }
 
 interface ProductionModule {
+  readonly prepareProductionAuthority: () => Promise<{
+    readonly status: 'BLOCKED' | 'PREPARED';
+    readonly blockers?: readonly { readonly code: string }[];
+  }>;
   readonly preflightProductionKits: () => Promise<{
     readonly status: 'BLOCKED';
     readonly blockers: readonly { readonly code: string }[];
@@ -92,6 +102,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  await harness.run('RECONCILE_OWNED_SCRATCH');
   const result = await harness.run('SCRATCH_HYGIENE');
   expect(result).toMatchObject({
     status: 'READY',
@@ -123,9 +134,126 @@ describe('WP-03 scratch hygiene', () => {
 });
 
 describe('WP-03 production authority boundary', () => {
-  it('exports only the two zero-argument production entrypoints', async () => {
+  it('exports only zero-argument reviewed production entrypoints', async () => {
     const exports = Object.keys(await import('./kit-production')).sort();
-    expect(exports).toEqual(['executeProductionKits', 'preflightProductionKits']);
+    expect(exports).toEqual([
+      'executeProductionKits',
+      'preflightProductionKits',
+      'prepareProductionAuthority',
+    ]);
+    expect(production.prepareProductionAuthority).toHaveLength(0);
+  });
+
+  it('derives and verifies the closed authority store without caller authority', async () => {
+    expect(await harness.run('AUTHORITY_STORE_GATES')).toMatchObject({
+      status: 'READY',
+      evidence: {
+        rootDerivation: 'WORKSPACE_PARENT_FIXED',
+        keyMode: '0600',
+        canonicalHmacRecords: true,
+        prepareWithoutArm: 'BLOCKED',
+        prepareWithArm: 'PREPARED',
+        noArchivesPublished: true,
+        missingKey: 'AUTHORITY_ISSUER_KEY_MISSING',
+        wrongKeyMode: 'AUTHORITY_ISSUER_KEY_MODE_INVALID',
+        symlinkKey: 'AUTHORITY_ISSUER_KEY_SYMLINK',
+        malformedReceipt: 'AUTHORITY_RECEIPT_INVALID',
+        forgedReceipt: 'AUTHORITY_RECEIPT_SIGNATURE_INVALID',
+        staleReceipt: 'AUTHORITY_RECEIPT_STALE',
+        wrongCommit: 'AUTHORITY_COMMIT_MISMATCH',
+        wrongRoot: 'AUTHORITY_ROOT_MISMATCH',
+        wrongExecutable: 'AUTHORITY_EXECUTABLE_MISMATCH',
+        wrongPacket: 'AUTHORITY_PACKET_AGGREGATE_MISMATCH',
+        dirtySource: 'AUTHORITY_SOURCE_DIRTY',
+        replay: 'AUTHORIZATION_REPLAYED',
+        approvalNonclaims: true,
+      },
+    });
+  }, 30_000);
+
+  it('consumes one arming receipt under the publication lock and rejects replay', async () => {
+    expect(await harness.run('AUTHORITY_EXECUTION_REPLAY')).toMatchObject({
+      status: 'READY',
+      evidence: {
+        firstExecution: 'READY',
+        armingConsumed: true,
+        replayLedgerPersisted: true,
+        replayExecution: 'BLOCKED',
+        replayCode: 'AUTHORIZATION_REPLAYED',
+      },
+    });
+  }, 30_000);
+
+  it('executes every committed smoke mode and rejects malformed extracted kits', async () => {
+    expect(await harness.run('REAL_SMOKE_EXECUTABLE')).toMatchObject({
+      status: 'READY',
+      evidence: {
+        modes: ['bootstrap', 'install', 'one-template'],
+        fixedOutputs: [
+          'KIT_SMOKE_OK bootstrap',
+          'KIT_SMOKE_OK install',
+          'KIT_SMOKE_OK one-template',
+        ],
+        noWrites: true,
+        malformedManifestRejected: true,
+        malformedPacketRejected: true,
+        executableMode: '0755',
+        executableHashBound: true,
+      },
+    });
+  }, 30_000);
+
+  it('keeps kit CLI commands narrow and separate from packet runtime authority', async () => {
+    expect(await harness.run('KIT_CLI_SEPARATION')).toMatchObject({
+      status: 'READY',
+      evidence: {
+        preflightDryRun: true,
+        prepareRequiresArm: true,
+        publishRequiresArming: true,
+        arbitraryPathRejected: true,
+        packetDispatcherUnchanged: true,
+        protectedSafeJson: true,
+      },
+    });
+  }, 30_000);
+
+  it('admits both finalized manifests from the current proof cohort before configuration gates', async () => {
+    expect(await harness.run('REAL_INPUT_ADMISSION')).toMatchObject({
+      status: 'READY',
+      evidence: {
+        proofRunId: 'lesson-factory-deadline-2026-08-03',
+        assignmentLocators: [
+          'lesson-factory-deadline-2026-08-03/assignment-02',
+          'lesson-factory-deadline-2026-08-03/assignment-03',
+        ],
+        admittedTeams: ['team-A', 'team-B'],
+        lessonCounts: [30, 30],
+        proofClosure: 'PASS',
+        fullCandidateBuild: 'PASS',
+        smokeModes: ['bootstrap', 'install', 'one-template'],
+        policyHashMutationRejected: true,
+      },
+    });
+  }, 15_000);
+
+  it('reports only production configuration receipt and arming blockers for real inputs', async () => {
+    const preflight = await production.preflightProductionKits();
+    expect(preflight.blockers.map((blocker) => blocker.code)).toEqual([
+      'ARMING_RECEIPT_MISSING',
+      'AUTHORITY_ISSUER_KEY_MISSING',
+      'AUTHORITY_ROOT_MARKER_MISSING',
+      'AUTHORITY_ROOT_MODE_INVALID',
+      'FINALIZATION_RECEIPT_MISSING',
+    ]);
+  });
+
+  it('exports only the reviewed zero-argument production entrypoints', async () => {
+    const exports = Object.keys(await import('./kit-production')).sort();
+    expect(exports).toEqual([
+      'executeProductionKits',
+      'preflightProductionKits',
+      'prepareProductionAuthority',
+    ]);
     expect(production.preflightProductionKits).toHaveLength(0);
     expect(production.executeProductionKits).toHaveLength(0);
   });
@@ -134,15 +262,11 @@ describe('WP-03 production authority boundary', () => {
     const preflight = await production.preflightProductionKits();
     const codes = preflight.blockers.map((blocker) => blocker.code);
     expect(preflight.status).toBe('BLOCKED');
-    expect(codes).toEqual(
-      expect.arrayContaining([
-        'PRODUCTION_EXECUTION_NOT_ARMED',
-        'FINAL_TEAM_A_MANIFEST_MISSING',
-        'FINAL_TEAM_B_MANIFEST_MISSING',
-        'FINALIZATION_ISSUER_KEY_NOT_CONFIGURED',
-        'EXTERNAL_HANDOFF_ROOT_NOT_CONFIGURED',
-      ]),
-    );
+    expect(codes).toContain('ARMING_RECEIPT_MISSING');
+    expect(codes).not.toContain('FINAL_TEAM_A_MANIFEST_MISSING');
+    expect(codes).not.toContain('FINAL_TEAM_B_MANIFEST_MISSING');
+    expect(codes).not.toContain('FINAL_TEAM_MANIFEST_INVALID');
+    expect(codes).not.toContain('CANONICAL_INPUT_ADMISSION_FAILED');
     expect(codes).not.toContain('PRODUCTION_PIPELINE_NOT_IMPLEMENTED');
   });
 

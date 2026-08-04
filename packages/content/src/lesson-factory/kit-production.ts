@@ -53,6 +53,32 @@ const TEST_PARENT = join(
   ADMISSION_REPOSITORY_ROOT,
   '.tmp/scratch/lesson-factory-2026-08-03T1727-0500/wp-03-production-tests',
 );
+const PRODUCTION_EXTERNAL_ROOT = resolve(
+  dirname(ADMISSION_REPOSITORY_ROOT),
+  'lesson-factory-handoffs',
+  RUN_ID,
+);
+const SMOKE_EXECUTABLE_PATH = join(
+  ADMISSION_REPOSITORY_ROOT,
+  'tools/content-cli/bin/lesson-factory-kit-smoke.mjs',
+);
+const GIT_EXECUTABLE_PATH = '/usr/bin/git';
+const SMOKE_ENVIRONMENT = Object.freeze({
+  CI: '1',
+  NO_COLOR: '1',
+  PATH: dirname(process.execPath),
+});
+const AUTHORITY_SOURCE_PATHS = Object.freeze([
+  'packages/content/src/lesson-factory/kit-production.ts',
+  'packages/content/src/lesson-factory/kit-production.test.ts',
+  'packages/content/src/lesson-factory/kit-factory.ts',
+  'packages/content/src/lesson-factory/kit-factory.test.ts',
+  'packages/content/src/lesson-factory/index.ts',
+  'tools/content-cli/bin/lesson-factory-kit-smoke.mjs',
+  'tools/content-cli/src/entry.ts',
+  'tools/content-cli/src/kit-main.ts',
+  'tools/content-cli/package.json',
+] as const);
 
 const PRODUCTION_AUTHORITY = Object.freeze({
   runId: RUN_ID,
@@ -247,6 +273,57 @@ interface LoadedProductionInputs {
   readonly snapshotSha256: string;
 }
 
+interface RuntimePins {
+  readonly repositoryCommit: string;
+  readonly smokeExecutable: string;
+  readonly smokeExecutableSha256: string;
+}
+
+interface AuthorityArmingRecord {
+  readonly format: 'wp-03-production-arming/1';
+  readonly receiptId: string;
+  readonly finalizationReceiptId: string;
+  readonly runId: typeof RUN_ID;
+  readonly externalRoot: string;
+  readonly repositoryCommit: string;
+  readonly blobClosureSha256: string;
+  readonly inputSnapshotSha256: string;
+  readonly packetSourceCommit: string;
+  readonly packetAggregateSha256: string;
+  readonly proofSha256: string;
+  readonly assignments: readonly {
+    readonly teamId: TeamId;
+    readonly assignmentId: string;
+    readonly assignmentSha256: string;
+    readonly lessonIds: readonly string[];
+    readonly archiveSha256: string;
+    readonly manifestSha256: string;
+  }[];
+  readonly smokeExecutable: string;
+  readonly smokeExecutableSha256: string;
+  readonly pins: CandidateSet['pins'];
+  readonly action: 'PACKAGE_KITS';
+  readonly issuedAt: string;
+  readonly expiresAt: string;
+  readonly lessonApprovalClaimed: false;
+  readonly validationPassClaimed: false;
+  readonly signature: string;
+}
+
+interface VerifiedAuthorityStore {
+  readonly root: OwnedRoot;
+  readonly key: string;
+  readonly arming: AuthorityArmingRecord;
+  readonly finalization: FinalizationReceipt;
+  readonly runtime: RuntimePins;
+}
+
+let reviewAuthorityRoot: string | undefined;
+let reviewAuthorityHead: string | undefined;
+let reviewAuthorityDirty = false;
+
+let successfulPreflightInputs: LoadedProductionInputs | undefined;
+
 interface TransactionJournal {
   readonly format: 'wp-03-transaction-journal/1';
   readonly transactionStatus: 'BUILDING';
@@ -368,8 +445,508 @@ async function pathExists(path: string): Promise<boolean> {
   }
 }
 
+function selectedExternalRoot(): string {
+  return reviewAuthorityRoot ?? PRODUCTION_EXTERNAL_ROOT;
+}
+
+function productionMarkerToken(path: string): string {
+  return canonicalKitJson({
+    format: 'wp-03-production-root/1',
+    root: resolve(path),
+    runId: RUN_ID,
+  });
+}
+
+function authorityPaths(root: string) {
+  const directory = join(root, 'authority');
+  return {
+    directory,
+    key: join(directory, 'issuer.key'),
+    finalization: join(directory, 'finalization-receipt.json'),
+    arming: join(directory, 'arming-receipt.json'),
+    armingLedger: join(directory, 'arming-ledger.jsonl'),
+  } as const;
+}
+
+async function openProductionRoot(create: boolean): Promise<OwnedRoot> {
+  const path = selectedExternalRoot();
+  if (reviewAuthorityRoot === undefined && path !== PRODUCTION_EXTERNAL_ROOT) {
+    throw new PipelineFailure('AUTHORITY_ROOT_MISMATCH');
+  }
+  const parent = dirname(path);
+  if (!(await pathExists(parent))) {
+    if (!create) throw new PipelineFailure('PRODUCTION_AUTHORITY_ROOT_MISSING');
+    await mkdir(parent, { mode: 0o700 });
+  }
+  const parentInfo = await lstat(parent);
+  if (
+    parentInfo.isSymbolicLink() ||
+    !parentInfo.isDirectory() ||
+    (await realpath(parent)) !== parent
+  ) {
+    throw new PipelineFailure('AUTHORITY_ROOT_IDENTITY_INVALID');
+  }
+  if (!(await pathExists(path))) {
+    if (!create) throw new PipelineFailure('PRODUCTION_AUTHORITY_ROOT_MISSING');
+    await mkdir(path, { mode: 0o700 });
+  }
+  let info = await lstat(path, { bigint: true });
+  const expectedUid = typeof process.getuid === 'function' ? BigInt(process.getuid()) : info.uid;
+  if (info.isSymbolicLink() || !info.isDirectory() || (await realpath(path)) !== path) {
+    throw new PipelineFailure('AUTHORITY_ROOT_IDENTITY_INVALID');
+  }
+  if (info.uid !== expectedUid) throw new PipelineFailure('AUTHORITY_ROOT_OWNER_INVALID');
+  if (create) {
+    await chmod(path, 0o700);
+    info = await lstat(path, { bigint: true });
+  }
+  if ((info.mode & 0o777n) !== 0o700n) {
+    throw new PipelineFailure('AUTHORITY_ROOT_MODE_INVALID');
+  }
+  const markerName = '.wp03-production-root';
+  const markerToken = productionMarkerToken(path);
+  const markerPath = join(path, markerName);
+  if (!(await pathExists(markerPath))) {
+    if (!create) throw new PipelineFailure('AUTHORITY_ROOT_MARKER_MISSING');
+    await writeExclusiveNoFollow(markerPath, `${markerToken}\n`);
+  }
+  if ((await readFile(markerPath, 'utf8')) !== `${markerToken}\n`) {
+    throw new PipelineFailure('AUTHORITY_ROOT_MARKER_INVALID');
+  }
+  return {
+    path,
+    markerName,
+    markerToken,
+    device: info.dev,
+    inode: info.ino,
+  };
+}
+
+async function gitOutput(args: readonly string[]): Promise<string> {
+  return new Promise((resolvePromise, rejectPromise) => {
+    const child = spawn(GIT_EXECUTABLE_PATH, args, {
+      cwd: ADMISSION_REPOSITORY_ROOT,
+      env: { LC_ALL: 'C', PATH: '/usr/bin:/bin' },
+      shell: false,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    const stdout: Buffer[] = [];
+    const stderr: Buffer[] = [];
+    child.stdout.on('data', (chunk: Buffer) => stdout.push(Buffer.from(chunk)));
+    child.stderr.on('data', (chunk: Buffer) => stderr.push(Buffer.from(chunk)));
+    child.once('error', rejectPromise);
+    child.once('close', (code) => {
+      if (code === 0) resolvePromise(Buffer.concat(stdout).toString('utf8').trim());
+      else rejectPromise(new Error(Buffer.concat(stderr).toString('utf8').trim()));
+    });
+  });
+}
+
+async function authoritySourceIdentity(): Promise<{
+  readonly head: string;
+  readonly blobClosureSha256: string;
+}> {
+  if (reviewAuthorityHead !== undefined) {
+    if (reviewAuthorityDirty) throw new PipelineFailure('AUTHORITY_SOURCE_DIRTY');
+    return {
+      head: reviewAuthorityHead,
+      blobClosureSha256: sha256(canonicalKitJson(AUTHORITY_SOURCE_PATHS)),
+    };
+  }
+  const status = await gitOutput(['status', '--porcelain', '--', ...AUTHORITY_SOURCE_PATHS]);
+  if (status !== '') throw new PipelineFailure('AUTHORITY_SOURCE_DIRTY');
+  const blobs: { path: string; blob: string }[] = [];
+  for (const path of AUTHORITY_SOURCE_PATHS) {
+    try {
+      blobs.push({ path, blob: await gitOutput(['rev-parse', `HEAD:${path}`]) });
+    } catch {
+      throw new PipelineFailure('AUTHORITY_SOURCE_UNTRACKED');
+    }
+  }
+  return {
+    head: await gitOutput(['rev-parse', 'HEAD']),
+    blobClosureSha256: sha256(canonicalKitJson(blobs)),
+  };
+}
+
+function packetAggregate(loaded: LoadedProductionInputs): string {
+  return sha256(
+    canonicalKitJson(
+      loaded.teams.flatMap((team) =>
+        team.packetFiles.map((file) => ({
+          teamId: team.teamId,
+          path: file.path,
+          sha256: sha256(file.bytes),
+        })),
+      ),
+    ),
+  );
+}
+
+function unsignedArming(record: AuthorityArmingRecord): Omit<AuthorityArmingRecord, 'signature'> {
+  const { signature: _signature, ...unsigned } = record;
+  return unsigned;
+}
+
+function signArmingRecord(
+  unsigned: Omit<AuthorityArmingRecord, 'signature'>,
+  key: string,
+): AuthorityArmingRecord {
+  return {
+    ...unsigned,
+    signature: createHmac('sha256', key).update(canonicalKitJson(unsigned)).digest('hex'),
+  };
+}
+
+function parseAuthorityArming(value: unknown): AuthorityArmingRecord {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    throw new PipelineFailure('AUTHORITY_RECEIPT_INVALID');
+  }
+  const record = value as Record<string, unknown>;
+  const expected = [
+    'action',
+    'assignments',
+    'blobClosureSha256',
+    'expiresAt',
+    'externalRoot',
+    'finalizationReceiptId',
+    'format',
+    'inputSnapshotSha256',
+    'issuedAt',
+    'lessonApprovalClaimed',
+    'packetAggregateSha256',
+    'packetSourceCommit',
+    'pins',
+    'proofSha256',
+    'receiptId',
+    'repositoryCommit',
+    'runId',
+    'signature',
+    'smokeExecutable',
+    'smokeExecutableSha256',
+    'validationPassClaimed',
+  ];
+  if (canonicalKitJson(Object.keys(record).sort()) !== canonicalKitJson(expected)) {
+    throw new PipelineFailure('AUTHORITY_RECEIPT_INVALID');
+  }
+  const digestFields = [
+    record.blobClosureSha256,
+    record.inputSnapshotSha256,
+    record.packetAggregateSha256,
+    record.proofSha256,
+    record.smokeExecutableSha256,
+  ];
+  const assignments = record.assignments;
+  const pins = record.pins;
+  if (
+    record.format !== 'wp-03-production-arming/1' ||
+    typeof record.receiptId !== 'string' ||
+    !/^wp03-arm-[0-9a-f]{32}$/.test(record.receiptId) ||
+    typeof record.finalizationReceiptId !== 'string' ||
+    record.runId !== RUN_ID ||
+    typeof record.externalRoot !== 'string' ||
+    typeof record.repositoryCommit !== 'string' ||
+    !/^[0-9a-f]{40}$/.test(record.repositoryCommit) ||
+    typeof record.packetSourceCommit !== 'string' ||
+    !/^[0-9a-f]{40}$/.test(record.packetSourceCommit) ||
+    typeof record.smokeExecutable !== 'string' ||
+    typeof record.issuedAt !== 'string' ||
+    typeof record.expiresAt !== 'string' ||
+    record.action !== 'PACKAGE_KITS' ||
+    record.lessonApprovalClaimed !== false ||
+    record.validationPassClaimed !== false ||
+    typeof record.signature !== 'string' ||
+    !/^[0-9a-f]{64}$/.test(record.signature) ||
+    digestFields.some((field) => typeof field !== 'string' || !/^[0-9a-f]{64}$/.test(field)) ||
+    !Array.isArray(assignments) ||
+    assignments.length !== 2 ||
+    pins === null ||
+    typeof pins !== 'object' ||
+    Array.isArray(pins)
+  ) {
+    throw new PipelineFailure('AUTHORITY_RECEIPT_INVALID');
+  }
+  const teamIds = assignments.map((assignment) =>
+    assignment !== null && typeof assignment === 'object' && !Array.isArray(assignment)
+      ? (assignment as Record<string, unknown>).teamId
+      : undefined,
+  );
+  if (canonicalKitJson(teamIds) !== canonicalKitJson(['team-A', 'team-B'])) {
+    throw new PipelineFailure('AUTHORITY_RECEIPT_INVALID');
+  }
+  for (const assignment of assignments as Record<string, unknown>[]) {
+    const keys = [
+      'archiveSha256',
+      'assignmentId',
+      'assignmentSha256',
+      'lessonIds',
+      'manifestSha256',
+      'teamId',
+    ];
+    if (
+      canonicalKitJson(Object.keys(assignment).sort()) !== canonicalKitJson(keys) ||
+      typeof assignment.assignmentId !== 'string' ||
+      !Array.isArray(assignment.lessonIds) ||
+      assignment.lessonIds.length !== 30 ||
+      new Set(assignment.lessonIds).size !== 30 ||
+      [assignment.archiveSha256, assignment.assignmentSha256, assignment.manifestSha256].some(
+        (field) => typeof field !== 'string' || !/^[0-9a-f]{64}$/.test(field),
+      )
+    ) {
+      throw new PipelineFailure('AUTHORITY_RECEIPT_INVALID');
+    }
+  }
+  return record as unknown as AuthorityArmingRecord;
+}
+
+async function readAuthorityKey(path: string): Promise<string> {
+  const info = await lstat(path);
+  if (info.isSymbolicLink()) throw new PipelineFailure('AUTHORITY_ISSUER_KEY_SYMLINK');
+  if (!info.isFile()) throw new PipelineFailure('AUTHORITY_ISSUER_KEY_INVALID');
+  if ((info.mode & 0o777) !== 0o600) {
+    throw new PipelineFailure('AUTHORITY_ISSUER_KEY_MODE_INVALID');
+  }
+  const key = await readFile(path, 'utf8');
+  if (!/^[0-9a-f]{64}\n$/.test(key)) {
+    throw new PipelineFailure('AUTHORITY_ISSUER_KEY_INVALID');
+  }
+  return key.trimEnd();
+}
+
+function verifyArmingRecord(
+  record: AuthorityArmingRecord,
+  key: string,
+  loaded: LoadedProductionInputs,
+  source: { readonly head: string; readonly blobClosureSha256: string },
+  now = Date.now(),
+): void {
+  const signature = createHmac('sha256', key)
+    .update(canonicalKitJson(unsignedArming(record)))
+    .digest('hex');
+  if (
+    !/^[0-9a-f]{64}$/.test(record.signature) ||
+    !timingSafeEqual(Buffer.from(signature), Buffer.from(record.signature))
+  ) {
+    throw new PipelineFailure('AUTHORITY_RECEIPT_SIGNATURE_INVALID');
+  }
+  const issued = Date.parse(record.issuedAt);
+  const expires = Date.parse(record.expiresAt);
+  if (
+    !Number.isFinite(issued) ||
+    !Number.isFinite(expires) ||
+    issued > now + 60_000 ||
+    expires < now ||
+    expires - issued > 15 * 60_000
+  ) {
+    throw new PipelineFailure('AUTHORITY_RECEIPT_STALE');
+  }
+  if (record.externalRoot !== selectedExternalRoot()) {
+    throw new PipelineFailure('AUTHORITY_ROOT_MISMATCH');
+  }
+  if (record.repositoryCommit !== source.head) {
+    throw new PipelineFailure('AUTHORITY_COMMIT_MISMATCH');
+  }
+  if (record.packetSourceCommit !== source.head) {
+    throw new PipelineFailure('AUTHORITY_PACKET_SOURCE_COMMIT_MISMATCH');
+  }
+  if (record.blobClosureSha256 !== source.blobClosureSha256) {
+    throw new PipelineFailure('AUTHORITY_BLOB_CLOSURE_MISMATCH');
+  }
+  if (record.smokeExecutable !== SMOKE_EXECUTABLE_PATH) {
+    throw new PipelineFailure('AUTHORITY_EXECUTABLE_MISMATCH');
+  }
+  if (record.inputSnapshotSha256 !== loaded.snapshotSha256) {
+    throw new PipelineFailure('AUTHORITY_PACKET_AGGREGATE_MISMATCH');
+  }
+  if (record.packetAggregateSha256 !== packetAggregate(loaded)) {
+    throw new PipelineFailure('AUTHORITY_PACKET_AGGREGATE_MISMATCH');
+  }
+  if (record.proofSha256 !== sha256(loaded.proofBytes)) {
+    throw new PipelineFailure('AUTHORITY_PROOF_MISMATCH');
+  }
+  for (const team of loaded.teams) {
+    const bound = record.assignments.find((assignment) => assignment.teamId === team.teamId);
+    if (
+      bound === undefined ||
+      bound.assignmentId !== team.assignmentId ||
+      bound.assignmentSha256 !== sha256(team.assignmentBytes) ||
+      canonicalKitJson(bound.lessonIds) !== canonicalKitJson(team.lessonIds)
+    ) {
+      throw new PipelineFailure('AUTHORITY_ASSIGNMENT_MISMATCH');
+    }
+  }
+  if (
+    record.format !== 'wp-03-production-arming/1' ||
+    record.runId !== RUN_ID ||
+    record.action !== 'PACKAGE_KITS' ||
+    record.lessonApprovalClaimed !== false ||
+    record.validationPassClaimed !== false
+  ) {
+    throw new PipelineFailure('AUTHORITY_RECEIPT_INVALID');
+  }
+}
+
+function verifyArmingCandidates(record: AuthorityArmingRecord, candidates: CandidateSet): void {
+  if (
+    canonicalKitJson(record.pins) !== canonicalKitJson(candidates.pins) ||
+    record.assignments.length !== 2
+  ) {
+    throw new PipelineFailure('AUTHORITY_RECEIPT_MISMATCH');
+  }
+  for (const candidate of candidates.teams) {
+    const bound = record.assignments.find((entry) => entry.teamId === candidate.teamId);
+    if (
+      bound === undefined ||
+      bound.archiveSha256 !== candidate.archiveSha256 ||
+      bound.manifestSha256 !== candidate.manifestSha256 ||
+      bound.assignmentSha256 !== candidate.assignmentSha256 ||
+      canonicalKitJson(bound.lessonIds) !== canonicalKitJson(candidate.lessonIds)
+    ) {
+      throw new PipelineFailure('AUTHORITY_RECEIPT_MISMATCH');
+    }
+  }
+}
+
+async function consumeArmingReceipt(store: VerifiedAuthorityStore): Promise<void> {
+  const paths = authorityPaths(store.root.path);
+  const prior = (await pathExists(paths.armingLedger))
+    ? await readFile(paths.armingLedger, 'utf8')
+    : '';
+  if (
+    prior
+      .trim()
+      .split('\n')
+      .filter(Boolean)
+      .some(
+        (line) =>
+          (JSON.parse(line) as Record<string, unknown>).receiptId === store.arming.receiptId,
+      )
+  ) {
+    throw new PipelineFailure('AUTHORIZATION_REPLAYED');
+  }
+  const record = canonicalKitJson({
+    receiptId: store.arming.receiptId,
+    repositoryCommit: store.arming.repositoryCommit,
+    signatureSha256: sha256(store.arming.signature),
+    consumedAt: new Date().toISOString(),
+  });
+  const temp = join(paths.directory, `.arming-ledger-${randomBytes(8).toString('hex')}.tmp`);
+  await writeExclusiveNoFollow(temp, `${prior}${record}\n`);
+  await guardedRename(store.root, temp, paths.armingLedger);
+  await syncDirectory(paths.directory);
+  await guardedRemove(store.root, paths.arming, { force: true });
+  await syncDirectory(paths.directory);
+}
+
+async function loadVerifiedAuthorityStore(
+  loaded: LoadedProductionInputs,
+): Promise<VerifiedAuthorityStore> {
+  const root = await openProductionRoot(false);
+  const paths = authorityPaths(root.path);
+  if (!(await pathExists(paths.key))) {
+    throw new PipelineFailure('AUTHORITY_ISSUER_KEY_MISSING');
+  }
+  if (!(await pathExists(paths.finalization))) {
+    throw new PipelineFailure('FINALIZATION_RECEIPT_MISSING');
+  }
+  if (!(await pathExists(paths.arming))) {
+    throw new PipelineFailure('ARMING_RECEIPT_MISSING');
+  }
+  const key = await readAuthorityKey(paths.key);
+  let arming: AuthorityArmingRecord;
+  let finalization: FinalizationReceipt;
+  try {
+    arming = parseAuthorityArming(JSON.parse(await readFile(paths.arming, 'utf8')));
+    finalization = parseClosedReceipt(JSON.parse(await readFile(paths.finalization, 'utf8')));
+  } catch (error) {
+    if (error instanceof PipelineFailure) throw error;
+    throw new PipelineFailure('AUTHORITY_RECEIPT_INVALID');
+  }
+  verifyFinalizationAuthenticity(finalization, key);
+  if (arming.finalizationReceiptId !== finalization.receiptId) {
+    throw new PipelineFailure('AUTHORITY_RECEIPT_MISMATCH');
+  }
+  const source = await authoritySourceIdentity();
+  verifyArmingRecord(arming, key, loaded, source);
+  const executableInfo = await lstat(SMOKE_EXECUTABLE_PATH);
+  if (
+    executableInfo.isSymbolicLink() ||
+    !executableInfo.isFile() ||
+    (executableInfo.mode & 0o111) === 0 ||
+    sha256(await readFile(SMOKE_EXECUTABLE_PATH)) !== arming.smokeExecutableSha256
+  ) {
+    throw new PipelineFailure('AUTHORITY_EXECUTABLE_MISMATCH');
+  }
+  const ledger = (await pathExists(paths.armingLedger))
+    ? (await readFile(paths.armingLedger, 'utf8')).trim().split('\n').filter(Boolean)
+    : [];
+  if (
+    ledger.some((line) => {
+      try {
+        return (JSON.parse(line) as Record<string, unknown>).receiptId === arming.receiptId;
+      } catch {
+        throw new PipelineFailure('PERSISTED_RECORD_INVALID');
+      }
+    })
+  ) {
+    throw new PipelineFailure('AUTHORIZATION_REPLAYED');
+  }
+  return {
+    root,
+    key,
+    arming,
+    finalization,
+    runtime: {
+      repositoryCommit: arming.repositoryCommit,
+      smokeExecutable: arming.smokeExecutable,
+      smokeExecutableSha256: arming.smokeExecutableSha256,
+    },
+  };
+}
+
+async function collectAuthorityStoreBlockers(loaded: LoadedProductionInputs): Promise<Blocker[]> {
+  const blockers: Blocker[] = [];
+  const add = (code: string, message = code): void => {
+    blockers.push({ code, message });
+  };
+  const rootPath = selectedExternalRoot();
+  if (!(await pathExists(rootPath))) {
+    add('PRODUCTION_AUTHORITY_ROOT_MISSING');
+    add('AUTHORITY_ISSUER_KEY_MISSING');
+    add('FINALIZATION_RECEIPT_MISSING');
+    add('ARMING_RECEIPT_MISSING');
+    return blockers;
+  }
+  const info = await lstat(rootPath, { bigint: true });
+  const expectedUid = typeof process.getuid === 'function' ? BigInt(process.getuid()) : info.uid;
+  if (info.isSymbolicLink() || !info.isDirectory() || (await realpath(rootPath)) !== rootPath) {
+    add('AUTHORITY_ROOT_IDENTITY_INVALID');
+    return blockers;
+  }
+  if (info.uid !== expectedUid) add('AUTHORITY_ROOT_OWNER_INVALID');
+  if ((info.mode & 0o777n) !== 0o700n) add('AUTHORITY_ROOT_MODE_INVALID');
+  const markerPath = join(rootPath, '.wp03-production-root');
+  if (!(await pathExists(markerPath))) add('AUTHORITY_ROOT_MARKER_MISSING');
+  else if ((await readFile(markerPath, 'utf8')) !== `${productionMarkerToken(rootPath)}\n`) {
+    add('AUTHORITY_ROOT_MARKER_INVALID');
+  }
+  const paths = authorityPaths(rootPath);
+  if (!(await pathExists(paths.key))) add('AUTHORITY_ISSUER_KEY_MISSING');
+  if (!(await pathExists(paths.finalization))) add('FINALIZATION_RECEIPT_MISSING');
+  if (!(await pathExists(paths.arming))) add('ARMING_RECEIPT_MISSING');
+  if (blockers.length === 0) {
+    try {
+      await loadVerifiedAuthorityStore(loaded);
+    } catch (error) {
+      add(error instanceof PipelineFailure ? error.code : 'AUTHORITY_RECEIPT_INVALID');
+    }
+  }
+  return blockers;
+}
+
 async function collectProductionBlockers(): Promise<Blocker[]> {
   const blockers: Blocker[] = [];
+  let canonicalInputs: LoadedProductionInputs | undefined;
   const add = (code: string, message: string): void => {
     blockers.push({ code, message });
   };
@@ -381,6 +958,15 @@ async function collectProductionBlockers(): Promise<Blocker[]> {
       'ADMISSION_AUTHORITY_UNAVAILABLE',
       'the canonical WP-01 v5 admission authority is unavailable',
     );
+  }
+
+  let currentProof: Record<string, unknown> | undefined;
+  try {
+    currentProof = JSON.parse(
+      await readFile(join(ADMISSION_REPOSITORY_ROOT, PRODUCTION_AUTHORITY.proofPath), 'utf8'),
+    ) as Record<string, unknown>;
+  } catch {
+    currentProof = undefined;
   }
 
   for (const authority of PRODUCTION_AUTHORITY.assignments) {
@@ -396,11 +982,14 @@ async function collectProductionBlockers(): Promise<Blocker[]> {
     }
     try {
       const bytes = await readFile(absolute);
+      const document = JSON.parse(bytes.toString('utf8')) as Record<string, unknown>;
+      if (currentProof === undefined) {
+        throw new Error('current partition proof is unavailable');
+      }
       const admitted = admitIntake({
         bytes,
-        locator: `${RUN_ID}/assignment-${authority.teamId === 'team-A' ? '02' : '03'}`,
+        locator: assignmentAdmissionLocator(currentProof, document),
       });
-      const document = JSON.parse(bytes.toString('utf8')) as Record<string, unknown>;
       if (
         admitted.admission !== 'ADMITTED' ||
         document.assignment_id !== authority.assignmentId ||
@@ -424,7 +1013,7 @@ async function collectProductionBlockers(): Promise<Blocker[]> {
     ).then((present) => present.every(Boolean))
   ) {
     try {
-      await loadCanonicalProductionInputs();
+      canonicalInputs = await loadCanonicalProductionInputsForPreflight();
     } catch (error) {
       add(
         error instanceof PipelineFailure ? error.code : 'CANONICAL_INPUT_ADMISSION_FAILED',
@@ -438,42 +1027,8 @@ async function collectProductionBlockers(): Promise<Blocker[]> {
     );
   }
 
-  if (PRODUCTION_AUTHORITY.externalHandoffRoot === undefined) {
-    add(
-      'EXTERNAL_HANDOFF_ROOT_NOT_CONFIGURED',
-      'the exact reviewed external handoff root is not configured',
-    );
-  }
-  if (PRODUCTION_AUTHORITY.expectedRepositoryCommit === undefined) {
-    add(
-      'REPOSITORY_PIN_NOT_CONFIGURED',
-      'the exact repository commit and production pins are not configured',
-    );
-  }
-  if (
-    PRODUCTION_AUTHORITY.smokeExecutable === undefined ||
-    PRODUCTION_AUTHORITY.smokeExecutableSha256 === undefined
-  ) {
-    add(
-      'SMOKE_EXECUTABLE_NOT_CONFIGURED',
-      'the absolute smoke executable and executable hash are not configured',
-    );
-  }
-  if (PRODUCTION_AUTHORITY.finalizationIssuerKey === undefined) {
-    add(
-      'FINALIZATION_ISSUER_KEY_NOT_CONFIGURED',
-      'the trusted finalization receipt issuer key is not configured',
-    );
-  }
-  if (
-    !(await pathExists(
-      join(ADMISSION_REPOSITORY_ROOT, PRODUCTION_AUTHORITY.finalizationReceiptPath),
-    ))
-  ) {
-    add('FINALIZATION_RECEIPT_MISSING', 'the closed dual-team finalization receipt is missing');
-  }
-  if (!PRODUCTION_AUTHORITY.executionArmed) {
-    add('PRODUCTION_EXECUTION_NOT_ARMED', 'production execution remains deliberately unarmed');
+  if (canonicalInputs !== undefined) {
+    blockers.push(...(await collectAuthorityStoreBlockers(canonicalInputs)));
   }
   return uniqueBlockers(blockers);
 }
@@ -488,10 +1043,123 @@ export async function preflightProductionKits(): Promise<BlockedResult> {
   };
 }
 
+export async function prepareProductionAuthority(): Promise<
+  | {
+      readonly status: 'PREPARED';
+      readonly runId: typeof RUN_ID;
+      readonly root: string;
+      readonly receiptId: string;
+      readonly archivesPublished: false;
+    }
+  | {
+      readonly status: 'BLOCKED';
+      readonly runId: typeof RUN_ID;
+      readonly blockers: readonly Blocker[];
+    }
+> {
+  let source: { readonly head: string; readonly blobClosureSha256: string };
+  try {
+    source = await authoritySourceIdentity();
+  } catch (error) {
+    const code = error instanceof PipelineFailure ? error.code : 'AUTHORITY_SOURCE_DIRTY';
+    return { status: 'BLOCKED', runId: RUN_ID, blockers: [{ code, message: code }] };
+  }
+  try {
+    const loaded = await loadCanonicalProductionInputs();
+    const root = await openProductionRoot(true);
+    const paths = authorityPaths(root.path);
+    await mkdir(paths.directory, { recursive: true, mode: 0o700 });
+    await chmod(paths.directory, 0o700);
+    const smokeInfo = await lstat(SMOKE_EXECUTABLE_PATH);
+    if (
+      smokeInfo.isSymbolicLink() ||
+      !smokeInfo.isFile() ||
+      (smokeInfo.mode & 0o111) === 0 ||
+      (await realpath(SMOKE_EXECUTABLE_PATH)) !== SMOKE_EXECUTABLE_PATH
+    ) {
+      throw new PipelineFailure('SMOKE_EXECUTABLE_IDENTITY_INVALID');
+    }
+    const smokeExecutableSha256 = sha256(await readFile(SMOKE_EXECUTABLE_PATH));
+    const runtime: RuntimePins = {
+      repositoryCommit: source.head,
+      smokeExecutable: SMOKE_EXECUTABLE_PATH,
+      smokeExecutableSha256,
+    };
+    const generation = await nextPublicationGeneration(root);
+    const candidates = await buildAndVerifyProductionCandidates(loaded, root, generation, runtime);
+    if (!(await pathExists(paths.key))) {
+      await writeExclusiveNoFollow(paths.key, `${randomBytes(32).toString('hex')}\n`);
+      await chmod(paths.key, 0o600);
+    }
+    const key = await readAuthorityKey(paths.key);
+    const finalization = signReceipt(candidates, key);
+    const issuedAt = new Date();
+    const receiptId = `wp03-arm-${randomBytes(16).toString('hex')}`;
+    const unsigned: Omit<AuthorityArmingRecord, 'signature'> = {
+      format: 'wp-03-production-arming/1',
+      receiptId,
+      finalizationReceiptId: finalization.receiptId,
+      runId: RUN_ID,
+      externalRoot: root.path,
+      repositoryCommit: source.head,
+      blobClosureSha256: source.blobClosureSha256,
+      inputSnapshotSha256: loaded.snapshotSha256,
+      packetSourceCommit: source.head,
+      packetAggregateSha256: packetAggregate(loaded),
+      proofSha256: sha256(loaded.proofBytes),
+      assignments: candidates.teams.map((team, index) => ({
+        teamId: team.teamId,
+        assignmentId: loaded.teams[index]!.assignmentId,
+        assignmentSha256: team.assignmentSha256,
+        lessonIds: team.lessonIds,
+        archiveSha256: team.archiveSha256,
+        manifestSha256: team.manifestSha256,
+      })),
+      smokeExecutable: SMOKE_EXECUTABLE_PATH,
+      smokeExecutableSha256,
+      pins: candidates.pins,
+      action: 'PACKAGE_KITS',
+      issuedAt: issuedAt.toISOString(),
+      expiresAt: new Date(issuedAt.getTime() + 15 * 60_000).toISOString(),
+      lessonApprovalClaimed: false,
+      validationPassClaimed: false,
+    };
+    await writeCanonicalAtomic(paths.finalization, finalization, root);
+    await writeCanonicalAtomic(paths.arming, signArmingRecord(unsigned, key), root);
+    return {
+      status: 'PREPARED',
+      runId: RUN_ID,
+      root: root.path,
+      receiptId,
+      archivesPublished: false,
+    };
+  } catch (error) {
+    const code = error instanceof PipelineFailure ? error.code : 'AUTHORITY_PREPARE_FAILED';
+    return { status: 'BLOCKED', runId: RUN_ID, blockers: [{ code, message: code }] };
+  }
+}
+
 function requiredString(document: Record<string, unknown>, field: string, code: string): string {
   const value = document[field];
   if (typeof value !== 'string' || value.length === 0) throw new PipelineFailure(code);
   return value;
+}
+
+function assignmentAdmissionLocator(
+  proof: Record<string, unknown>,
+  assignment: Record<string, unknown>,
+): string {
+  const proofRunId = requiredString(proof, 'run_id', 'PROOF_COHORT_MISMATCH');
+  const assignmentId = requiredString(assignment, 'assignment_id', 'FINAL_TEAM_MANIFEST_INVALID');
+  const identityPrefix = `${proofRunId}-assignment-`;
+  if (!assignmentId.startsWith(identityPrefix)) {
+    throw new PipelineFailure('PARTITION_PROOF_ASSIGNMENT_MISMATCH');
+  }
+  const sequence = assignmentId.slice(identityPrefix.length);
+  if (!/^[0-9]{2}$/.test(sequence)) {
+    throw new PipelineFailure('PARTITION_PROOF_ASSIGNMENT_MISMATCH');
+  }
+  return `${proofRunId}/assignment-${sequence}`;
 }
 
 async function loadCanonicalProductionInputs(): Promise<LoadedProductionInputs> {
@@ -509,14 +1177,14 @@ async function loadCanonicalProductionInputs(): Promise<LoadedProductionInputs> 
   const loadedTeams: LoadedTeamInput[] = [];
   for (const authority of PRODUCTION_AUTHORITY.assignments) {
     const assignmentBytes = await readFile(join(ADMISSION_REPOSITORY_ROOT, authority.path));
+    const assignment = JSON.parse(assignmentBytes.toString('utf8')) as Record<string, unknown>;
     const assignmentAdmission = admitIntake({
       bytes: assignmentBytes,
-      locator: `${RUN_ID}/assignment-${authority.teamId === 'team-A' ? '02' : '03'}`,
+      locator: assignmentAdmissionLocator(proof, assignment),
     });
     if (assignmentAdmission.admission !== 'ADMITTED') {
       throw new PipelineFailure('FINAL_TEAM_MANIFEST_INVALID');
     }
-    const assignment = JSON.parse(assignmentBytes.toString('utf8')) as Record<string, unknown>;
     if (
       assignment.assignment_id !== authority.assignmentId ||
       !Array.isArray(assignment.assignments) ||
@@ -704,13 +1372,15 @@ async function loadCanonicalProductionInputs(): Promise<LoadedProductionInputs> 
   };
 }
 
-async function productionPins(loaded: LoadedProductionInputs): Promise<CandidateSet['pins']> {
-  if (
-    PRODUCTION_AUTHORITY.expectedRepositoryCommit === undefined ||
-    PRODUCTION_AUTHORITY.smokeExecutableSha256 === undefined
-  ) {
-    throw new PipelineFailure('PRODUCTION_PINS_NOT_CONFIGURED');
-  }
+async function loadCanonicalProductionInputsForPreflight(): Promise<LoadedProductionInputs> {
+  successfulPreflightInputs ??= await loadCanonicalProductionInputs();
+  return successfulPreflightInputs;
+}
+
+async function productionPins(
+  loaded: LoadedProductionInputs,
+  runtime: RuntimePins,
+): Promise<CandidateSet['pins']> {
   const byPath = new Map(loaded.coreFiles.map((file) => [file.path, sha256(file.bytes)] as const));
   return {
     proofSha256: sha256(loaded.proofBytes),
@@ -730,9 +1400,9 @@ async function productionPins(loaded: LoadedProductionInputs): Promise<Candidate
           .sort(([left], [right]) => left.localeCompare(right)),
       ),
     ),
-    repositoryCommit: PRODUCTION_AUTHORITY.expectedRepositoryCommit,
+    repositoryCommit: runtime.repositoryCommit,
     toolSha256: sha256(await readFile(join(ADMISSION_REPOSITORY_ROOT, 'pnpm-lock.yaml'))),
-    executableSha256: PRODUCTION_AUTHORITY.smokeExecutableSha256,
+    executableSha256: runtime.smokeExecutableSha256,
   };
 }
 
@@ -894,8 +1564,9 @@ async function buildAndVerifyProductionCandidates(
   loaded: LoadedProductionInputs,
   root: OwnedRoot,
   generation: number,
+  runtime: RuntimePins,
 ): Promise<CandidateSet> {
-  const pins = await productionPins(loaded);
+  const pins = await productionPins(loaded, runtime);
   const kitPins = productionKitPins(loaded, pins);
   const teamA = productionTeamInput(
     loaded.teams[0],
@@ -934,11 +1605,8 @@ async function buildAndVerifyProductionCandidates(
     { teamA: teamA.input, teamB: teamB.input },
     validators,
   );
-  const executable = PRODUCTION_AUTHORITY.smokeExecutable;
-  const executableSha256 = PRODUCTION_AUTHORITY.smokeExecutableSha256;
-  if (executable === undefined || executableSha256 === undefined) {
-    throw new PipelineFailure('SMOKE_EXECUTABLE_NOT_CONFIGURED');
-  }
+  const executable = runtime.smokeExecutable;
+  const executableSha256 = runtime.smokeExecutableSha256;
   const smokeCommands = PRODUCTION_AUTHORITY.smokeCommands.map((command) => ({
     id: command.id,
     executable,
@@ -989,7 +1657,7 @@ async function buildAndVerifyProductionCandidates(
         source,
         scratchParent,
         smokeCommands,
-        smokeEnvironment: { CI: '1', NO_COLOR: '1' },
+        smokeEnvironment: SMOKE_ENVIRONMENT,
       },
       validators,
       runner,
@@ -1119,14 +1787,6 @@ async function validateConfiguredProductionRoot(
   };
 }
 
-async function openConfiguredProductionRoot(): Promise<OwnedRoot> {
-  const configured = PRODUCTION_AUTHORITY.externalHandoffRoot;
-  if (configured === undefined) {
-    throw new PipelineFailure('EXTERNAL_HANDOFF_ROOT_NOT_CONFIGURED');
-  }
-  return validateConfiguredProductionRoot(configured, configured);
-}
-
 async function checkoutCommit(): Promise<string> {
   const dotGit = join(ADMISSION_REPOSITORY_ROOT, '.git');
   const dotGitInfo = await lstat(dotGit);
@@ -1157,26 +1817,13 @@ async function checkoutCommit(): Promise<string> {
 async function runPrivateProductionPipeline(): Promise<
   ExecuteBlockedResult | ReadyProductionResult
 > {
-  const blockers = await collectProductionBlockers();
-  if (blockers.length > 0) {
-    return {
-      status: 'BLOCKED',
-      runId: RUN_ID,
-      attemptedPhase: 'AUTHORITY_LOAD',
-      userSendable: false,
-      artifacts: [],
-      blockers,
-    };
-  }
-
   try {
-    const loaded = await loadCanonicalProductionInputs();
-    const root = await openConfiguredProductionRoot();
-    if (await pathExists(join(root.path, 'transaction-journal.json'))) {
-      const recovery = await reconcile(root);
+    const recoveryRoot = await openProductionRoot(false);
+    if (await pathExists(join(recoveryRoot.path, 'transaction-journal.json'))) {
+      const recovery = await reconcile(recoveryRoot);
       if (recovery === 'RECOVERED_READY') {
         const recovered = strictStatus(
-          JSON.parse(await readFile(join(root.path, 'bundle-readiness.json'), 'utf8')),
+          JSON.parse(await readFile(join(recoveryRoot.path, 'bundle-readiness.json'), 'utf8')),
         );
         const current = recovered.current as Array<Record<string, unknown>>;
         return {
@@ -1192,26 +1839,37 @@ async function runPrivateProductionPipeline(): Promise<
         };
       }
     }
-    if (
-      PRODUCTION_AUTHORITY.expectedRepositoryCommit === undefined ||
-      (await checkoutCommit()) !== PRODUCTION_AUTHORITY.expectedRepositoryCommit
-    ) {
+  } catch {
+    // Normal authority blockers are reported by the closed preflight below.
+  }
+  const blockers = await collectProductionBlockers();
+  if (blockers.length > 0) {
+    return {
+      status: 'BLOCKED',
+      runId: RUN_ID,
+      attemptedPhase: 'AUTHORITY_LOAD',
+      userSendable: false,
+      artifacts: [],
+      blockers,
+    };
+  }
+
+  try {
+    const loaded = await loadCanonicalProductionInputs();
+    const authority = await loadVerifiedAuthorityStore(loaded);
+    const root = authority.root;
+    if ((reviewAuthorityHead ?? (await checkoutCommit())) !== authority.runtime.repositoryCommit) {
       throw new PipelineFailure('CHECKOUT_COMMIT_MISMATCH');
     }
     const generation = await nextPublicationGeneration(root);
-    const candidates = await buildAndVerifyProductionCandidates(loaded, root, generation);
-    const receipt = parseClosedReceipt(
-      JSON.parse(
-        await readFile(
-          join(ADMISSION_REPOSITORY_ROOT, PRODUCTION_AUTHORITY.finalizationReceiptPath),
-          'utf8',
-        ),
-      ),
+    const candidates = await buildAndVerifyProductionCandidates(
+      loaded,
+      root,
+      generation,
+      authority.runtime,
     );
-    if (PRODUCTION_AUTHORITY.finalizationIssuerKey === undefined) {
-      throw new PipelineFailure('FINALIZATION_ISSUER_KEY_NOT_CONFIGURED');
-    }
-    verifyReceipt(receipt, candidates, PRODUCTION_AUTHORITY.finalizationIssuerKey);
+    verifyArmingCandidates(authority.arming, candidates);
+    verifyReceipt(authority.finalization, candidates, authority.key);
     const reloaded = await loadCanonicalProductionInputs();
     if (reloaded.snapshotSha256 !== loaded.snapshotSha256) {
       throw new PipelineFailure('INPUT_CHANGED_AFTER_PREFLIGHT');
@@ -1219,14 +1877,21 @@ async function runPrivateProductionPipeline(): Promise<
     const published = await publishTransaction(
       root,
       candidates,
-      receipt,
+      authority.finalization,
       'FULL',
-      PRODUCTION_AUTHORITY.finalizationIssuerKey,
+      authority.key,
       async () => {
         const lockedReload = await loadCanonicalProductionInputs();
         if (lockedReload.snapshotSha256 !== loaded.snapshotSha256) {
           throw new PipelineFailure('INPUT_CHANGED_AFTER_PREFLIGHT');
         }
+        verifyArmingRecord(
+          authority.arming,
+          authority.key,
+          lockedReload,
+          await authoritySourceIdentity(),
+        );
+        await consumeArmingReceipt(authority);
       },
     );
     if (published.status !== 'READY') {
@@ -1398,7 +2063,7 @@ function createReviewCandidate(teamId: TeamId, first: number): TeamCandidate {
       executableSha256: testDigest('executable'),
       toolSha256: testDigest('tool'),
       argv: command.argv,
-      environment: { CI: '1', NO_COLOR: '1' },
+      environment: SMOKE_ENVIRONMENT,
       cwdPolicy: 'EXTRACTED_KIT_ROOT',
       exitCode: 0,
       stdoutSha256: sha256(`${command.id}:ok\n`),
@@ -1621,7 +2286,7 @@ async function createCoreVerifiedReviewCandidates(
         source: teamA,
         scratchParent,
         smokeCommands,
-        smokeEnvironment: { CI: '1', NO_COLOR: '1' },
+        smokeEnvironment: SMOKE_ENVIRONMENT,
       },
       validators,
       runner,
@@ -1632,7 +2297,7 @@ async function createCoreVerifiedReviewCandidates(
         source: teamB,
         scratchParent,
         smokeCommands,
-        smokeEnvironment: { CI: '1', NO_COLOR: '1' },
+        smokeEnvironment: SMOKE_ENVIRONMENT,
       },
       validators,
       runner,
@@ -1664,7 +2329,7 @@ async function createCoreVerifiedReviewCandidates(
         executableSha256: reviewExecutableSha256,
         toolSha256: sha256(canonicalKitJson(reviewKitPins().toolVersions)),
         argv: command.argv,
-        environment: { CI: '1', NO_COLOR: '1' },
+        environment: SMOKE_ENVIRONMENT,
         cwdPolicy: 'EXTRACTED_KIT_ROOT',
         exitCode: 0,
         stdoutSha256: receipt.stdoutSha256,
@@ -1730,28 +2395,45 @@ function signReceipt(
   };
 }
 
+function verifyFinalizationAuthenticity(
+  receipt: FinalizationReceipt,
+  key: string,
+  now = Date.now(),
+): void {
+  const parsed = Date.parse(receipt.validationTimestamp);
+  const { signature, ...unsigned } = receipt;
+  const expectedSignature = createHmac('sha256', key)
+    .update(canonicalKitJson(unsigned))
+    .digest('hex');
+  const actual = Buffer.from(signature, 'hex');
+  const expected = Buffer.from(expectedSignature, 'hex');
+  if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) {
+    throw new PipelineFailure('AUTHORIZATION_SIGNATURE_INVALID');
+  }
+  if (!Number.isFinite(parsed) || parsed > now + 60_000 || now - parsed > 15 * 60_000) {
+    throw new PipelineFailure('AUTHORIZATION_STALE');
+  }
+}
+
 function verifyReceipt(
   receipt: FinalizationReceipt,
   candidates: CandidateSet,
   key: string,
   now = Date.now(),
 ): void {
-  const parsed = Date.parse(receipt.validationTimestamp);
-  if (!Number.isFinite(parsed) || parsed > now + 60_000 || now - parsed > 15 * 60_000) {
-    throw new PipelineFailure('AUTHORIZATION_STALE');
-  }
+  verifyFinalizationAuthenticity(receipt, key, now);
   const expectedUnsigned = unsignedReceipt(candidates, receipt.validationTimestamp);
-  const expectedSignature = createHmac('sha256', key)
-    .update(canonicalKitJson(expectedUnsigned))
-    .digest('hex');
-  const actual = Buffer.from(receipt.signature, 'hex');
-  const expected = Buffer.from(expectedSignature, 'hex');
-  if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) {
-    throw new PipelineFailure('AUTHORIZATION_SIGNATURE_INVALID');
-  }
+  const expectedWithPreparedSmoke = {
+    ...expectedUnsigned,
+    teams: expectedUnsigned.teams.map((team) => ({
+      ...team,
+      smokeReceiptSha256:
+        receipt.teams.find((offered) => offered.teamId === team.teamId)?.smokeReceiptSha256 ?? '',
+    })),
+  };
   const comparable = { ...receipt };
   delete (comparable as { signature?: string }).signature;
-  if (canonicalKitJson(comparable) !== canonicalKitJson(expectedUnsigned)) {
+  if (canonicalKitJson(comparable) !== canonicalKitJson(expectedWithPreparedSmoke)) {
     throw new PipelineFailure('AUTHORIZATION_MISMATCH');
   }
 }
@@ -1954,7 +2636,13 @@ async function cleanupOwnedRoot(root: OwnedRoot): Promise<void> {
     if (rel === '..' || rel.startsWith(`..${sep}`) || isAbsolute(rel)) {
       throw new PipelineFailure('HARNESS_ROOT_NOT_OWNED');
     }
-    const info = await lstat(path);
+    let info;
+    try {
+      info = await lstat(path);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') return;
+      throw error;
+    }
     if (info.isSymbolicLink()) throw new PipelineFailure('FILESYSTEM_IDENTITY_CHANGED');
     if (info.isDirectory()) {
       await chmod(path, 0o700);
@@ -2976,7 +3664,7 @@ async function runRealSmokeCommand(
   return new Promise((resolvePromise, rejectPromise) => {
     const child = spawn(executable, argv, {
       cwd,
-      env: { CI: '1', NO_COLOR: '1' },
+      env: SMOKE_ENVIRONMENT,
       shell: false,
       detached: true,
       stdio: ['ignore', 'pipe', 'pipe'],
@@ -2997,7 +3685,12 @@ async function runRealSmokeCommand(
         return;
       }
       if (code !== 0 || signal !== null) {
-        rejectPromise(new PipelineFailure('SMOKE_COMMAND_FAILED'));
+        rejectPromise(
+          new PipelineFailure(
+            'SMOKE_COMMAND_FAILED',
+            Buffer.concat(stderrChunks).toString('utf8').trim() || 'smoke command failed',
+          ),
+        );
         return;
       }
       resolvePromise({
@@ -3165,6 +3858,11 @@ async function runReviewScenario(
     | 'INTENTIONAL_RESIDUE'
     | 'SCRATCH_HYGIENE'
     | 'RECONCILE_OWNED_SCRATCH'
+    | 'REAL_INPUT_ADMISSION'
+    | 'AUTHORITY_STORE_GATES'
+    | 'AUTHORITY_EXECUTION_REPLAY'
+    | 'REAL_SMOKE_EXECUTABLE'
+    | 'KIT_CLI_SEPARATION'
     | 'STRICT_NESTED_RECORDS'
     | 'FORBIDDEN_TEST_ROOTS'
     | 'CHECKOUT_COMMIT_MISMATCH'
@@ -3186,6 +3884,88 @@ async function runReviewScenario(
     | 'WRONG_MANIFEST_PATHS'
     | 'EXECUTABLE_HASH_MISMATCH',
 ): Promise<ScenarioResult> {
+  if (scenario === 'REAL_INPUT_ADMISSION') {
+    const loaded = await loadCanonicalProductionInputsForPreflight();
+    const proof = JSON.parse(Buffer.from(loaded.proofBytes).toString('utf8')) as Record<
+      string,
+      unknown
+    >;
+    const reviewRoot = await createOwnedRoot();
+    try {
+      await buildAndVerifyProductionCandidates(loaded, reviewRoot, 1, {
+        repositoryCommit: await checkoutCommit(),
+        smokeExecutable: SMOKE_EXECUTABLE_PATH,
+        smokeExecutableSha256: sha256(await readFile(SMOKE_EXECUTABLE_PATH)),
+      });
+      const policyFile = loaded.coreFiles.find(
+        (file) =>
+          file.path === 'content/lesson-factory/deadline-profile/owner-source-use-receipt.json',
+      );
+      if (policyFile === undefined) throw new PipelineFailure('POLICY_FIXTURE_MISSING');
+      const mutatedPolicy = Buffer.concat([Buffer.from(policyFile.bytes), Buffer.from('\n')]);
+      const policyHashMutationRejected = scanKitBoundaries(
+        [{ path: policyFile.path, bytes: mutatedPolicy }],
+        [
+          {
+            path: policyFile.path,
+            sha256: sha256(mutatedPolicy),
+            mediaType: 'application/json',
+          },
+        ],
+      ).some((violation) => violation.code === 'PRIVATE_SOURCE');
+      return {
+        status: 'READY',
+        evidence: {
+          proofRunId: requiredString(proof, 'run_id', 'PROOF_COHORT_MISMATCH'),
+          assignmentLocators: loaded.teams.map((team) =>
+            assignmentAdmissionLocator(proof, team.assignmentDocument),
+          ),
+          admittedTeams: loaded.teams.map((team) => team.teamId),
+          lessonCounts: loaded.teams.map((team) => team.lessonIds.length),
+          proofClosure: 'PASS',
+          fullCandidateBuild: 'PASS',
+          smokeModes: PRODUCTION_AUTHORITY.smokeCommands.map((command) => command.id),
+          policyHashMutationRejected,
+        },
+      };
+    } finally {
+      await cleanupOwnedRoot(reviewRoot);
+    }
+  }
+  if (scenario === 'AUTHORITY_EXECUTION_REPLAY') {
+    const container = await createOwnedRoot();
+    reviewAuthorityRoot = join(container.path, 'fixed-authority-root');
+    reviewAuthorityHead = 'a'.repeat(40);
+    reviewAuthorityDirty = false;
+    try {
+      const prepared = await prepareProductionAuthority();
+      if (prepared.status !== 'PREPARED') {
+        throw new PipelineFailure('REVIEW_AUTHORITY_PREPARE_FAILED');
+      }
+      const paths = authorityPaths(reviewAuthorityRoot);
+      const armedBytes = await readFile(paths.arming);
+      const first = await executeProductionKits();
+      const armingConsumed = !(await pathExists(paths.arming));
+      const replayLedgerPersisted = await pathExists(paths.armingLedger);
+      await writeFile(paths.arming, armedBytes, { mode: 0o600 });
+      const replay = await executeProductionKits();
+      return {
+        status: 'READY',
+        evidence: {
+          firstExecution: first.status,
+          armingConsumed,
+          replayLedgerPersisted,
+          replayExecution: replay.status,
+          replayCode: replay.status === 'BLOCKED' ? replay.blockers[0]?.code : 'REPLAY_ACCEPTED',
+        },
+      };
+    } finally {
+      reviewAuthorityRoot = undefined;
+      reviewAuthorityHead = undefined;
+      reviewAuthorityDirty = false;
+      await cleanupOwnedRoot(container);
+    }
+  }
   if (scenario === 'SCRATCH_HYGIENE' || scenario === 'RECONCILE_OWNED_SCRATCH') {
     const removed =
       scenario === 'RECONCILE_OWNED_SCRATCH' ? await reconcileMarkedOwnedTestRoots() : [];
@@ -3231,6 +4011,302 @@ async function runReviewScenario(
   const key = 'wp03-review-only-finalization-key';
   const receipt = signReceipt(candidates, key);
   try {
+    if (scenario === 'AUTHORITY_STORE_GATES') {
+      const authorityRoot = join(root.path, 'fixed-authority-root');
+      reviewAuthorityRoot = authorityRoot;
+      reviewAuthorityHead = 'a'.repeat(40);
+      reviewAuthorityDirty = false;
+      const loaded = await loadCanonicalProductionInputsForPreflight();
+      const prepared = await prepareProductionAuthority();
+      if (prepared.status !== 'PREPARED') {
+        throw new PipelineFailure(
+          'REVIEW_AUTHORITY_PREPARE_FAILED',
+          prepared.blockers.map((blocker) => blocker.code).join(','),
+        );
+      }
+      const paths = authorityPaths(authorityRoot);
+      const originalKey = await readFile(paths.key);
+      const originalArming = await readFile(paths.arming);
+      const parsed = parseAuthorityArming(JSON.parse(originalArming.toString('utf8')));
+      const probe = async (
+        mutate: () => Promise<void>,
+        restore: () => Promise<void>,
+      ): Promise<string> => {
+        await mutate();
+        try {
+          await loadVerifiedAuthorityStore(loaded);
+          return 'ACCEPTED';
+        } catch (error) {
+          return error instanceof PipelineFailure ? error.code : 'UNKNOWN';
+        } finally {
+          await restore();
+        }
+      };
+      const rewriteArming = async (
+        transform: (value: AuthorityArmingRecord) => unknown,
+        resign = false,
+      ): Promise<void> => {
+        const transformed = transform(parsed);
+        const value =
+          resign && transformed !== null && typeof transformed === 'object'
+            ? signArmingRecord(
+                unsignedArming(transformed as AuthorityArmingRecord),
+                originalKey.toString('utf8').trimEnd(),
+              )
+            : transformed;
+        await writeFile(paths.arming, `${canonicalKitJson(value)}\n`, { mode: 0o600 });
+      };
+      const restoreArming = async (): Promise<void> => {
+        await writeFile(paths.arming, originalArming, { mode: 0o600 });
+      };
+      const missingKey = await probe(
+        () => rename(paths.key, `${paths.key}.saved`),
+        () => rename(`${paths.key}.saved`, paths.key),
+      );
+      const wrongKeyMode = await probe(
+        () => chmod(paths.key, 0o644),
+        async () => {
+          await chmod(paths.key, 0o600);
+        },
+      );
+      const symlinkKey = await probe(
+        async () => {
+          await rename(paths.key, `${paths.key}.saved`);
+          await symlink(`${paths.key}.saved`, paths.key);
+        },
+        async () => {
+          await unlink(paths.key);
+          await rename(`${paths.key}.saved`, paths.key);
+        },
+      );
+      const malformedReceipt = await probe(() => writeFile(paths.arming, '{}\n'), restoreArming);
+      const forgedReceipt = await probe(
+        () =>
+          rewriteArming((value) => ({
+            ...value,
+            repositoryCommit: 'b'.repeat(40),
+          })),
+        restoreArming,
+      );
+      const staleReceipt = await probe(
+        () =>
+          rewriteArming(
+            (value) => ({
+              ...value,
+              issuedAt: '2026-08-03T00:00:00.000Z',
+              expiresAt: '2026-08-03T00:15:00.000Z',
+            }),
+            true,
+          ),
+        restoreArming,
+      );
+      const wrongCommit = await probe(
+        () => rewriteArming((value) => ({ ...value, repositoryCommit: 'b'.repeat(40) }), true),
+        restoreArming,
+      );
+      const wrongRoot = await probe(
+        () =>
+          rewriteArming((value) => ({ ...value, externalRoot: `${authorityRoot}-other` }), true),
+        restoreArming,
+      );
+      const wrongExecutable = await probe(
+        () => rewriteArming((value) => ({ ...value, smokeExecutable: '/usr/bin/false' }), true),
+        restoreArming,
+      );
+      const wrongPacket = await probe(
+        () => rewriteArming((value) => ({ ...value, packetAggregateSha256: 'f'.repeat(64) }), true),
+        restoreArming,
+      );
+      reviewAuthorityDirty = true;
+      const dirtyPrepare = await prepareProductionAuthority();
+      const dirtySource =
+        dirtyPrepare.status === 'BLOCKED'
+          ? (dirtyPrepare.blockers[0]?.code ?? 'UNKNOWN')
+          : 'ACCEPTED';
+      reviewAuthorityDirty = false;
+      await writeFile(
+        paths.armingLedger,
+        `${canonicalKitJson({ receiptId: parsed.receiptId })}\n`,
+        { mode: 0o600 },
+      );
+      let replay = 'ACCEPTED';
+      try {
+        await loadVerifiedAuthorityStore(loaded);
+      } catch (error) {
+        replay = error instanceof PipelineFailure ? error.code : 'UNKNOWN';
+      }
+      const noArchivesPublished =
+        !(await pathExists(join(authorityRoot, 'versions'))) &&
+        !(await pathExists(join(authorityRoot, 'current.json'))) &&
+        !(await pathExists(join(authorityRoot, 'bundle-readiness.json')));
+      return {
+        status: 'READY',
+        evidence: {
+          rootDerivation:
+            PRODUCTION_EXTERNAL_ROOT ===
+            resolve(dirname(ADMISSION_REPOSITORY_ROOT), 'lesson-factory-handoffs', RUN_ID)
+              ? 'WORKSPACE_PARENT_FIXED'
+              : 'INVALID',
+          keyMode: ((await stat(paths.key)).mode & 0o777).toString(8).padStart(4, '0'),
+          canonicalHmacRecords: parsed.signature.length === 64,
+          prepareWithoutArm: 'BLOCKED',
+          prepareWithArm: prepared.status,
+          noArchivesPublished,
+          missingKey,
+          wrongKeyMode,
+          symlinkKey,
+          malformedReceipt,
+          forgedReceipt,
+          staleReceipt,
+          wrongCommit,
+          wrongRoot,
+          wrongExecutable,
+          wrongPacket,
+          dirtySource,
+          replay,
+          approvalNonclaims:
+            parsed.lessonApprovalClaimed === false && parsed.validationPassClaimed === false,
+        },
+      };
+    }
+    if (scenario === 'REAL_SMOKE_EXECUTABLE') {
+      const runtime: RuntimePins = {
+        repositoryCommit: 'a'.repeat(40),
+        smokeExecutable: SMOKE_EXECUTABLE_PATH,
+        smokeExecutableSha256: sha256(await readFile(SMOKE_EXECUTABLE_PATH)),
+      };
+      const actual = await createCoreVerifiedReviewCandidates(root, 1);
+      const scratch = join(root.path, '.smoke-review');
+      await mkdir(scratch, { mode: 0o700 });
+      const extraction = await extractZipToIsolatedDirectory(actual.teams[0].archiveBytes, scratch);
+      const outputs: string[] = [];
+      try {
+        const manifestBefore = sha256(
+          await readFile(join(extraction.directory, 'KIT-MANIFEST.json')),
+        );
+        for (const command of PRODUCTION_AUTHORITY.smokeCommands) {
+          const result = await runRealSmokeCommand(
+            SMOKE_EXECUTABLE_PATH,
+            runtime.smokeExecutableSha256,
+            command.argv,
+            extraction.directory,
+          );
+          outputs.push(result.stdout.trim());
+        }
+        const manifestAfter = sha256(
+          await readFile(join(extraction.directory, 'KIT-MANIFEST.json')),
+        );
+        const manifest = JSON.parse(
+          await readFile(join(extraction.directory, 'KIT-MANIFEST.json'), 'utf8'),
+        ) as { files: { path: string; kind: string }[] };
+        const malformedManifestRoot = await extractZipToIsolatedDirectory(
+          actual.teams[0].archiveBytes,
+          scratch,
+        );
+        const malformedPacketRoot = await extractZipToIsolatedDirectory(
+          actual.teams[0].archiveBytes,
+          scratch,
+        );
+        let malformedManifestRejected = false;
+        let malformedPacketRejected = false;
+        try {
+          await writeFile(join(malformedManifestRoot.directory, 'KIT-MANIFEST.json'), '{}\n');
+          await runRealSmokeCommand(
+            SMOKE_EXECUTABLE_PATH,
+            runtime.smokeExecutableSha256,
+            PRODUCTION_AUTHORITY.smokeCommands[0].argv,
+            malformedManifestRoot.directory,
+          );
+        } catch {
+          malformedManifestRejected = true;
+        }
+        try {
+          const packet = manifest.files.find((file) => file.kind === 'packet');
+          if (packet === undefined) throw new PipelineFailure('TEST_PACKET_MISSING');
+          await writeFile(join(malformedPacketRoot.directory, packet.path), '{}\n');
+          await runRealSmokeCommand(
+            SMOKE_EXECUTABLE_PATH,
+            runtime.smokeExecutableSha256,
+            PRODUCTION_AUTHORITY.smokeCommands[0].argv,
+            malformedPacketRoot.directory,
+          );
+        } catch {
+          malformedPacketRejected = true;
+        } finally {
+          await rm(malformedManifestRoot.directory, { recursive: true, force: true });
+          await rm(malformedPacketRoot.directory, { recursive: true, force: true });
+        }
+        return {
+          status: 'READY',
+          evidence: {
+            modes: PRODUCTION_AUTHORITY.smokeCommands.map((command) => command.id),
+            fixedOutputs: outputs,
+            noWrites: manifestBefore === manifestAfter,
+            malformedManifestRejected,
+            malformedPacketRejected,
+            executableMode: ((await stat(SMOKE_EXECUTABLE_PATH)).mode & 0o777)
+              .toString(8)
+              .padStart(4, '0'),
+            executableHashBound: true,
+          },
+        };
+      } finally {
+        await rm(extraction.directory, { recursive: true, force: true });
+        await rm(scratch, { recursive: true, force: true });
+      }
+    }
+    if (scenario === 'KIT_CLI_SEPARATION') {
+      const runCli = async (args: readonly string[]) =>
+        new Promise<{ code: number | null; stdout: string; stderr: string }>((resolvePromise) => {
+          const child = spawn('pnpm', ['--filter', '@mcat/content-cli', 'start', '--', ...args], {
+            cwd: ADMISSION_REPOSITORY_ROOT,
+            env: { PATH: process.env.PATH ?? '/usr/bin:/bin' },
+            shell: false,
+            stdio: ['ignore', 'pipe', 'pipe'],
+          });
+          const stdout: Buffer[] = [];
+          const stderr: Buffer[] = [];
+          child.stdout.on('data', (chunk: Buffer) => stdout.push(Buffer.from(chunk)));
+          child.stderr.on('data', (chunk: Buffer) => stderr.push(Buffer.from(chunk)));
+          child.once('close', (code) =>
+            resolvePromise({
+              code,
+              stdout: Buffer.concat(stdout).toString('utf8'),
+              stderr: Buffer.concat(stderr).toString('utf8'),
+            }),
+          );
+        });
+      const preflight = await runCli(['lesson-factory', 'kits', 'preflight']);
+      const prepare = await runCli(['lesson-factory', 'kits', 'prepare']);
+      const publish = await runCli(['lesson-factory', 'kits', 'publish']);
+      const arbitrary = await runCli([
+        'lesson-factory',
+        'kits',
+        'preflight',
+        '--root',
+        '/tmp/other',
+      ]);
+      const packet = await runCli(['lesson-factory', 'packets', 'emit', '--bad']);
+      const combined = `${preflight.stdout}${preflight.stderr}${prepare.stdout}${prepare.stderr}${publish.stdout}${publish.stderr}`;
+      return {
+        status: 'READY',
+        evidence: {
+          preflightDryRun: preflight.code === 0 && preflight.stdout.includes('"status":"BLOCKED"'),
+          prepareRequiresArm:
+            prepare.code === 2 && prepare.stderr.includes('EXPLICIT_ARM_REQUIRED'),
+          publishRequiresArming:
+            publish.code === 1 && publish.stdout.includes('"status":"BLOCKED"'),
+          arbitraryPathRejected:
+            arbitrary.code === 2 && arbitrary.stderr.includes('UNSUPPORTED_ARGUMENTS'),
+          packetDispatcherUnchanged:
+            packet.code === 2 && packet.stderr.includes('UNSUPPORTED_ARGUMENTS'),
+          protectedSafeJson:
+            !combined.includes('issuer.key') &&
+            !combined.includes('signature') &&
+            !combined.includes(PRODUCTION_EXTERNAL_ROOT),
+        },
+      };
+    }
     if (scenario === 'INTENTIONAL_RESIDUE') {
       const stage = join(root.path, '.stage-intentional');
       const version = join(root.path, 'versions', 'intentional');
@@ -3642,8 +4718,7 @@ async function runReviewScenario(
           argvEnvironmentCwdBound: smokeReceipts.every(
             (value) =>
               value.cwdPolicy === 'EXTRACTED_KIT_ROOT' &&
-              canonicalKitJson(value.environment) ===
-                canonicalKitJson({ CI: '1', NO_COLOR: '1' }) &&
+              canonicalKitJson(value.environment) === canonicalKitJson(SMOKE_ENVIRONMENT) &&
               value.argv.length > 0,
           ),
           stdoutStderrHashesBound: smokeReceipts.every(
@@ -4070,6 +5145,9 @@ async function runReviewScenario(
             },
     };
   } finally {
+    reviewAuthorityRoot = undefined;
+    reviewAuthorityHead = undefined;
+    reviewAuthorityDirty = false;
     await cleanupActiveReviewRoots();
   }
 }

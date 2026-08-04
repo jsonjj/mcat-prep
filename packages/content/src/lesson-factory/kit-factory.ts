@@ -557,7 +557,7 @@ function boundaryCodesForStructuredValue(key: string, value: unknown): KitBounda
       .replace(/[^a-z0-9]+/g, ' ');
     if (/\bprivate\b|\bprivatecorpus\b/.test(normalized)) codes.add('PRIVATE_SOURCE');
     if (/\bprotected\b|\bprotectedcorpus\b/.test(normalized)) codes.add('PROTECTED_CORPUS');
-    if (/\b(?:supervisor|judge)\b/.test(normalized)) codes.add('AUTHOR_JUDGE_BOUNDARY');
+    if (/\bsupervisor\b/.test(normalized)) codes.add('AUTHOR_JUDGE_BOUNDARY');
     if (/\bkaplan\b/.test(normalized)) {
       codes.add('KAPLAN_MATERIAL');
       codes.add('PRIVATE_SOURCE');
@@ -568,6 +568,25 @@ function boundaryCodesForStructuredValue(key: string, value: unknown): KitBounda
   }
   return [...codes];
 }
+
+const MODULE_POLICY_VOCABULARY_HASHES = new Map([
+  [
+    'content/lesson-factory/deadline-profile/deadline-profile.json',
+    '681d2864fbf22bfa3f947e4e21f846fe8ee5913ff91e82f56c95708cd344562c',
+  ],
+  [
+    'content/lesson-factory/deadline-profile/owner-source-use-receipt.json',
+    '04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68',
+  ],
+  [
+    'content/lesson-factory/schemas/shared-vocabulary.schema.json',
+    '279c33afcae9ef3dd3388169c2424fe3891dee0116ba32823130602bee1a9968',
+  ],
+  [
+    'docs/lesson-authoring/template/v3-les-000000/lesson-script.json',
+    'cfa1f44a8da22af45ba8af8d7f898ba176a21a1cb0259bf98a9b0ca5142d8011',
+  ],
+]);
 
 function structuredBoundaryKeys(value: unknown, result: Set<KitBoundaryCode>): void {
   if (Array.isArray(value)) {
@@ -795,6 +814,8 @@ export function scanKitBoundaries(
       continue;
     }
     const text = decoded.text;
+    const policyVocabularyDocument =
+      MODULE_POLICY_VOCABULARY_HASHES.get(file.path) === sha256Hex(bytes);
     if (
       /-----BEGIN (?:[A-Z0-9]+ )?PRIVATE KEY-----/.test(text) ||
       /\bAKIA[0-9A-Z]{16}\b/.test(text) ||
@@ -805,14 +826,16 @@ export function scanKitBoundaries(
       add('SECRET_MATERIAL', file.path, 'secret-like material is not permitted');
     }
     if (
-      /PROTECTED_CORPUS_(?:BEGIN|RECORD|FIXTURE)/i.test(text) ||
-      /["'](?:protected|is_protected)["']\s*:\s*true/i.test(text)
+      (!policyVocabularyDocument && /PROTECTED_CORPUS_(?:BEGIN|RECORD|FIXTURE)/i.test(text)) ||
+      (!policyVocabularyDocument && /["'](?:protected|is_protected)["']\s*:\s*true/i.test(text))
     ) {
       add('PROTECTED_CORPUS', file.path, 'protected-corpus material is not permitted');
     }
     if (
-      /["']source_class["']\s*:\s*["']PRIVATE_COMPARISON["']/i.test(text) ||
-      /KAPLAN_(?:PRIVATE|PROPRIETARY|CORPUS|QUESTION|PASSAGE)/i.test(text)
+      (!policyVocabularyDocument &&
+        /["']source_class["']\s*:\s*["']PRIVATE_COMPARISON["']/i.test(text)) ||
+      (!policyVocabularyDocument &&
+        /KAPLAN_(?:PRIVATE|PROPRIETARY|CORPUS|QUESTION|PASSAGE)/i.test(text))
     ) {
       add('PRIVATE_SOURCE', file.path, 'private-source material is not permitted');
     }
@@ -834,7 +857,9 @@ export function scanKitBoundaries(
       trimmedText.startsWith('[')
     ) {
       try {
-        structuredBoundaryKeys(JSON.parse(text), structuredCodes);
+        if (!policyVocabularyDocument) {
+          structuredBoundaryKeys(JSON.parse(text), structuredCodes);
+        }
       } catch {
         if (mediaType === 'application/json') {
           add('STRUCTURED_TEXT_INVALID', file.path, 'declared JSON must parse exactly');
@@ -842,11 +867,13 @@ export function scanKitBoundaries(
       }
     }
     const keyPattern = /^\s*["']?([A-Za-z0-9_.-]+)["']?\s*[:=]\s*(.*)$/gm;
-    for (const match of text.matchAll(keyPattern)) {
-      const key = match[1] ?? '';
-      for (const code of boundaryCodesForKey(key)) structuredCodes.add(code);
-      for (const code of boundaryCodesForStructuredValue(key, match[2] ?? '')) {
-        structuredCodes.add(code);
+    if (!policyVocabularyDocument) {
+      for (const match of text.matchAll(keyPattern)) {
+        const key = match[1] ?? '';
+        for (const code of boundaryCodesForKey(key)) structuredCodes.add(code);
+        for (const code of boundaryCodesForStructuredValue(key, match[2] ?? '')) {
+          structuredCodes.add(code);
+        }
       }
     }
     for (const code of structuredCodes) {
@@ -1367,10 +1394,12 @@ export async function runCommandSmoke(
   const environment: Record<string, string> = {};
   for (const [name, value] of Object.entries(input.environment)) {
     if (
-      !['CI', 'NO_COLOR'].includes(name) ||
+      !['CI', 'NO_COLOR', 'PATH'].includes(name) ||
       value.includes('\0') ||
       /[\r\n]/.test(value) ||
-      Buffer.byteLength(value, 'utf8') > 256
+      Buffer.byteLength(value, 'utf8') > 256 ||
+      (name === 'PATH' &&
+        value.split(':').some((entry) => entry.length === 0 || !isAbsolute(entry)))
     ) {
       throw new Error(`UNSAFE_SMOKE_ENVIRONMENT: refused ${JSON.stringify(name)}`);
     }

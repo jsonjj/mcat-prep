@@ -45,4 +45,8 @@ export {
   publishProductionPacketPublication,
 } from './packet-writer';
 export type { PacketPublicationSummary } from './packet-writer';
-export { executeProductionKits, preflightProductionKits } from './kit-production';
+export {
+  executeProductionKits,
+  preflightProductionKits,
+  prepareProductionAuthority,
+} from './kit-production';
