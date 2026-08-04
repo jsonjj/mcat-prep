@@ -90,7 +90,15 @@ jobs:
         run: |
           pnpm --filter @mcat/infra-cdk test
           pnpm --filter @mcat/infra-cdk typecheck
-          pnpm --filter @mcat/infra-cdk synth -- --quiet
+          # The learner CSP names the Supabase project at synth time, so the app
+          # needs a syntactically valid `supabaseProjectRef`; `cdk synth --strict`
+          # (the `synth` script) promotes the intended "no ref -> placeholder"
+          # warning to a hard failure. Invoke the cdk CLI directly rather than via
+          # `pnpm run synth -- ...`, whose `--` makes cdk treat `-c ...` as a stack
+          # selector and drop the context. This is a structural synth check, not a
+          # deploy, so a placeholder ref is sufficient; the real ref is supplied at
+          # deploy time.
+          pnpm --filter @mcat/infra-cdk exec cdk synth --strict --quiet -c supabaseProjectRef=abcdefghijklmnopqrst
 
       - name: Scan built learner artifact
         run: |

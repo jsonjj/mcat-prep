@@ -14,7 +14,7 @@ import { SeedStack } from '../lib/seed-stack.js';
  *     -c vpcId=vpc-... -c azs=us-east-1a,us-east-1b \
  *     -c isolatedSubnetIds=subnet-...,subnet-... \
  *     -c migrationSgId=sg-... -c adminSecretArn=arn:...:secret:/mcat/dev/database/admin-XXXXXX \
- *     -c appKeyArn=arn:aws:kms:... 
+ *     -c appKeyArn=arn:aws:kms:...
  *
  * The default `cdk.json` app (bin/mcat.ts) is untouched, so the reviewed
  * nine-stack deployment allowlist and CI `cdk synth` are unchanged.
