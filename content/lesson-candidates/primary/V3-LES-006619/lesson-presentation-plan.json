@@ -1,0 +1,1560 @@
+{
+  "artifact_type": "LESSON_PRESENTATION_PLAN",
+  "artifact_id": "V3-LPPL-006619",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "f4a09ed453ecdd33460d8baef8bcac3c949fea86b1802abeba15076d24b12571",
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-006619",
+    "lesson_script_sha256": "8c421b2c21c5566f394a79b1b7f7b5e31bb18912e664d96d70d0d9c333a7b8df",
+    "kc_coverage_matrix_id": "V3-KCOV-006619",
+    "kc_coverage_matrix_sha256": "0ae8369f72a8bea71905d1ff4d112ef65276decf833e6637a4337f2167b4a46d"
+  },
+  "payload": {
+    "lesson_id": "V3-LES-006619",
+    "lesson_script_id": "V3-LSCR-006619",
+    "lesson_script_sha256": "8c421b2c21c5566f394a79b1b7f7b5e31bb18912e664d96d70d0d9c333a7b8df",
+    "kc_coverage_matrix_id": "V3-KCOV-006619",
+    "kc_coverage_matrix_sha256": "0ae8369f72a8bea71905d1ff4d112ef65276decf833e6637a4337f2167b4a46d",
+    "route_scope": {
+      "route_scope_code": "STANDARD_ONLY",
+      "applicable_routes": [
+        "STANDARD"
+      ]
+    },
+    "learner_rhythm": [
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TRANSITION",
+      "RECAP",
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TRANSITION",
+      "RECAP",
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TRANSITION",
+      "RECAP",
+      "TRANSITION"
+    ],
+    "screens": [
+      {
+        "screen_id": "SIG-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "SIG-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Starting check",
+        "progress_label": "1.1",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SIG-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "SIG-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Goal: Distinguish membrane receptor and channel signaling",
+        "progress_label": "1.2",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SIG-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "SIG-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Build the mechanism",
+        "progress_label": "1.3",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES",
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SIG-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "SIG-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Use the mental model",
+        "progress_label": "1.4",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES",
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SIG-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "SIG-NODE-THINK"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Watch the selection reasoning",
+        "progress_label": "1.5",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES",
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SIG-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "SIG-NODE-WORKED"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Worked example",
+        "progress_label": "1.6",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES",
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SIG-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "SIG-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Guided practice",
+        "progress_label": "1.7",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SIG-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "SIG-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Less help",
+        "progress_label": "1.8",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SIG-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "SIG-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "On your own",
+        "progress_label": "1.9",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SIG-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "SIG-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Mark the boundary",
+        "progress_label": "1.10",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES",
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SIG-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "SIG-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Near exit",
+        "progress_label": "1.11",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SIG-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "SIG-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Changed-task exit",
+        "progress_label": "1.12",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SIG-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "SIG-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Targeted repair",
+        "progress_label": "1.13",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SIG-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "SIG-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Fresh near re-entry",
+        "progress_label": "1.14",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SIG-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "SIG-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Targeted repair",
+        "progress_label": "1.15",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SIG-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "SIG-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Fresh changed-task re-entry",
+        "progress_label": "1.16",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SIG-SCREEN-HANDOFF",
+        "screen_kind": "TRANSITION",
+        "script_node_ids": [
+          "SIG-NODE-HANDOFF"
+        ],
+        "primary_job": "Return control honestly after the bounded re-entry.",
+        "learner_heading": "Bounded support handoff",
+        "progress_label": "1.17",
+        "primary_action": "RETURN_TO_PLANNER",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "SIG-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "SIG-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Recap and exit",
+        "progress_label": "1.18",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES",
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LIP-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "LIP-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Starting check",
+        "progress_label": "2.1",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LIP-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "LIP-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Goal: Relate signaling lipids to endocrine function",
+        "progress_label": "2.2",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LIP-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "LIP-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Build the mechanism",
+        "progress_label": "2.3",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES",
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LIP-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "LIP-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Use the mental model",
+        "progress_label": "2.4",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES",
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LIP-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "LIP-NODE-THINK"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Watch the selection reasoning",
+        "progress_label": "2.5",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES",
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LIP-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "LIP-NODE-WORKED"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Worked example",
+        "progress_label": "2.6",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES",
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LIP-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "LIP-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Guided practice",
+        "progress_label": "2.7",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LIP-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "LIP-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Less help",
+        "progress_label": "2.8",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LIP-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "LIP-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "On your own",
+        "progress_label": "2.9",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LIP-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "LIP-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Mark the boundary",
+        "progress_label": "2.10",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES",
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LIP-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "LIP-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Near exit",
+        "progress_label": "2.11",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LIP-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "LIP-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Changed-task exit",
+        "progress_label": "2.12",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LIP-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "LIP-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Targeted repair",
+        "progress_label": "2.13",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LIP-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "LIP-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Fresh near re-entry",
+        "progress_label": "2.14",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LIP-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "LIP-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Targeted repair",
+        "progress_label": "2.15",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LIP-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "LIP-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Fresh changed-task re-entry",
+        "progress_label": "2.16",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LIP-SCREEN-HANDOFF",
+        "screen_kind": "TRANSITION",
+        "script_node_ids": [
+          "LIP-NODE-HANDOFF"
+        ],
+        "primary_job": "Return control honestly after the bounded re-entry.",
+        "learner_heading": "Bounded support handoff",
+        "progress_label": "2.17",
+        "primary_action": "RETURN_TO_PLANNER",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "LIP-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "LIP-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Recap and exit",
+        "progress_label": "2.18",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES",
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "END-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Starting check",
+        "progress_label": "3.1",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-BODY-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "END-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Goal: Map endocrine glands, hormones, and sources",
+        "progress_label": "3.2",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-BODY-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "END-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Build the mechanism",
+        "progress_label": "3.3",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-BODY-MAP",
+          "END-REP-SOURCE-PRODUCT",
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "END-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Use the mental model",
+        "progress_label": "3.4",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-BODY-MAP",
+          "END-REP-SOURCE-PRODUCT",
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "END-NODE-THINK"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Watch the selection reasoning",
+        "progress_label": "3.5",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-BODY-MAP",
+          "END-REP-SOURCE-PRODUCT",
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "END-NODE-WORKED"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Worked example",
+        "progress_label": "3.6",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-BODY-MAP",
+          "END-REP-SOURCE-PRODUCT",
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "END-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Guided practice",
+        "progress_label": "3.7",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-BODY-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "END-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Less help",
+        "progress_label": "3.8",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-BODY-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "END-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "On your own",
+        "progress_label": "3.9",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-BODY-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "END-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Mark the boundary",
+        "progress_label": "3.10",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-BODY-MAP",
+          "END-REP-SOURCE-PRODUCT",
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "END-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Near exit",
+        "progress_label": "3.11",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-BODY-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "END-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Changed-task exit",
+        "progress_label": "3.12",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "END-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Targeted repair",
+        "progress_label": "3.13",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-BODY-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "END-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Fresh near re-entry",
+        "progress_label": "3.14",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-BODY-MAP"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "END-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Targeted repair",
+        "progress_label": "3.15",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "END-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Fresh changed-task re-entry",
+        "progress_label": "3.16",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-HANDOFF",
+        "screen_kind": "TRANSITION",
+        "script_node_ids": [
+          "END-NODE-HANDOFF"
+        ],
+        "primary_job": "Return control to the planner for the canonical prerequisite or after unresolved bounded re-entry.",
+        "learner_heading": "Prerequisite or bounded handoff",
+        "progress_label": "3.17",
+        "primary_action": "RETURN_TO_PLANNER",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "END-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current reasoning move.",
+        "learner_heading": "Recap and exit",
+        "progress_label": "3.18",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-BODY-MAP",
+          "END-REP-SOURCE-PRODUCT",
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "END-SCREEN-CAPSTONE-EXIT",
+        "screen_kind": "TRANSITION",
+        "script_node_ids": [
+          "END-NODE-CAPSTONE-EXIT"
+        ],
+        "primary_job": "Exit the lesson and continue to required coordination work.",
+        "learner_heading": "Continue to coordination practice",
+        "progress_label": "Lesson exit",
+        "primary_action": "CONTINUE_TO_CAPSTONE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "END-REP-BODY-MAP",
+          "END-REP-SOURCE-PRODUCT",
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      }
+    ],
+    "representation_plans": [
+      {
+        "representation_id": "SIG-REP-MEMBRANE-CLASSES",
+        "target_kc_id": "V3-KC-187351",
+        "representation_type": "ORIGINAL_MEMBRANE_CLASS_COMPARISON",
+        "learner_operation": "Compare trigger, membrane-protein action, and immediate intracellular consequence.",
+        "text_nonvisual_equivalent": "A four-row text table names voltage-gated channel, ligand-gated channel, receptor enzyme, and G protein–coupled receptor with their trigger and first controlled step; it does not mark an item response."
+      },
+      {
+        "representation_id": "SIG-REP-FIRST-CONSEQUENCE",
+        "target_kc_id": "V3-KC-187351",
+        "representation_type": "ORIGINAL_CAUSAL_SEQUENCE_DIAGRAM",
+        "learner_operation": "Locate the first broken arrow in a short signaling sequence.",
+        "text_nonvisual_equivalent": "An ordered list states receptor activation, G-protein nucleotide exchange, and effector regulation without solving the current item."
+      },
+      {
+        "representation_id": "LIP-REP-STRUCTURE-CUES",
+        "target_kc_id": "V3-KC-010372",
+        "representation_type": "ORIGINAL_STRUCTURE_FEATURE_COMPARISON",
+        "learner_operation": "Distinguish a four-fused-ring steroid core from an isoprene-derived terpene or terpenoid scaffold.",
+        "text_nonvisual_equivalent": "Text identifies ring count, isoprene-unit construction, oxygen-bearing modification, and charge without naming the scored classification."
+      },
+      {
+        "representation_id": "LIP-REP-RECEPTOR-LOCATION",
+        "target_kc_id": "V3-KC-010372",
+        "representation_type": "ORIGINAL_STRUCTURE_TO_LOCATION_FLOW",
+        "learner_operation": "Relate polarity and charge to membrane passage, then use supplied receptor evidence.",
+        "text_nonvisual_equivalent": "A linear text sequence gives scaffold, polarity, membrane passage, receptor location, and cellular action as conditional steps."
+      },
+      {
+        "representation_id": "END-REP-BODY-MAP",
+        "target_kc_id": "V3-KC-376473",
+        "representation_type": "ORIGINAL_MAJOR_ENDOCRINE_LOCATION_MAP",
+        "learner_operation": "Locate a major gland before assigning a product.",
+        "text_nonvisual_equivalent": "A top-to-bottom list gives brain, neck, adrenal, pancreas, gonad, and their major gland names without highlighting an item response."
+      },
+      {
+        "representation_id": "END-REP-SOURCE-PRODUCT",
+        "target_kc_id": "V3-KC-376473",
+        "representation_type": "ORIGINAL_SOURCE_PRODUCT_TYPE_TABLE",
+        "learner_operation": "Map source tissue to hormone product and chemical type.",
+        "text_nonvisual_equivalent": "A text table lists source, representative product, and broad hormone class in logical reading order."
+      },
+      {
+        "representation_id": "END-REP-NEUROENDOCRINE",
+        "target_kc_id": "V3-KC-376473",
+        "representation_type": "ORIGINAL_SYNTHESIS_TRANSPORT_RELEASE_SEQUENCE",
+        "learner_operation": "Separate hormone synthesis from axonal transport, storage, and release.",
+        "text_nonvisual_equivalent": "An ordered text sequence states hypothalamic synthesis, axonal transport, posterior-pituitary storage, and release without identifying a scored option."
+      }
+    ],
+    "learner_reviewer_separation": {
+      "learner_projection": "NORMALIZED_LEARNER_SAFE_ONLY",
+      "reviewer_projection": "SEPARATE_SERVER_AUTHORITY",
+      "prohibited_learner_fields": [
+        "ANSWER_KEY",
+        "CORRECT_RESPONSE",
+        "RATIONALE",
+        "RESPONSE_AUTHORITY",
+        "ROUTE_METADATA"
+      ]
+    },
+    "accessibility_acceptance": {
+      "keyboard_required": true,
+      "visible_focus_required": true,
+      "text_equivalent_required": true,
+      "human_accessibility_review_status": "BLOCKED"
+    },
+    "presentation_status": "CONTENT_CANDIDATE_RUNTIME_AND_BROWSER_QA_PENDING"
+  }
+}

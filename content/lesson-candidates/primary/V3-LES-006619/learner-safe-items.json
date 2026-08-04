@@ -1,0 +1,398 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes, and a missed fresh re-entry returns control without exit credit.",
+  "items": [
+    {
+      "prompt_key": "SIG_ENTRY",
+      "title": "Starting check: first membrane event",
+      "prompt": "A plasma-membrane protein binds an extracellular neurotransmitter. Within milliseconds, its pore opens and sodium ions enter the cell. Which class best matches the first controlled step?",
+      "response_type": "single_select",
+      "options": [
+        "A receptor enzyme that phosphorylates a cytosolic target",
+        "A ligand-gated ion channel that opens an ion-conducting pore",
+        "A G protein–coupled receptor that first activates a G protein",
+        "Not sure yet"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIG_GUIDED",
+      "title": "Guided practice: identify the trigger",
+      "prompt": "Depolarization changes the conformation of a membrane protein, after which calcium ions enter the cell. Which trigger–mechanism pairing is supported?",
+      "response_type": "single_select",
+      "options": [
+        "Ligand binding opens a ligand-gated calcium channel",
+        "GTP binding opens a pore inside a G protein–coupled receptor",
+        "Ligand binding activates a receptor enzyme that transports calcium",
+        "A voltage change opens a voltage-gated calcium channel"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIG_LIGHT",
+      "title": "Less help: classify the receptor",
+      "prompt": "A ligand causes two membrane receptors to associate, and their cytosolic domains phosphorylate themselves. No ions cross through the receptors. Which class is most consistent with these observations?",
+      "response_type": "single_select",
+      "options": [
+        "Receptor enzyme",
+        "Voltage-gated ion channel",
+        "Ligand-gated ion channel",
+        "G protein–coupled receptor"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIG_SOLO",
+      "title": "On your own: order the GPCR step",
+      "prompt": "A ligand binds a seven-transmembrane receptor. Which event is expected earliest on the intracellular side in the G protein–coupled mechanism?",
+      "response_type": "single_select",
+      "options": [
+        "The ligand enters the nucleus and binds DNA",
+        "The receptor opens a pore that conducts sodium ions",
+        "G alpha releases GDP and binds GTP",
+        "The receptor directly phosphorylates every downstream target"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIG_NEAR",
+      "title": "Near exit: voltage sensor",
+      "prompt": "A mutation locks the voltage-sensing region of a voltage-gated sodium channel in its resting conformation. The membrane still depolarizes. What is the most immediate consequence?",
+      "response_type": "single_select",
+      "options": [
+        "The receptor enzyme stops phosphorylating its substrate",
+        "The channel stays closed, reducing sodium entry",
+        "G alpha fails to exchange GDP for GTP",
+        "The steroid receptor fails to enter the nucleus"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIG_CHANGED",
+      "title": "Changed exit: blocked nucleotide exchange",
+      "prompt": "A G protein–coupled receptor binds its ligand and changes conformation normally, but G alpha cannot release GDP. What is the earliest downstream consequence?",
+      "response_type": "single_select",
+      "options": [
+        "The ligand must diffuse through the plasma membrane",
+        "The receptor converts into a ligand-gated channel",
+        "The receptor directly phosphorylates nuclear DNA",
+        "G alpha stays inactive and cannot regulate its effector"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIG_REPAIR_NEAR",
+      "title": "Repair: direct membrane mechanism",
+      "prompt": "Which observation most specifically supports a gated-channel mechanism rather than a receptor enzyme or G protein–coupled receptor?",
+      "response_type": "single_select",
+      "options": [
+        "A transcriptional response appears hours after stimulation",
+        "A second messenger rises after an effector enzyme is activated",
+        "An ion current begins when the membrane protein gate opens",
+        "A cytosolic receptor domain phosphorylates a target protein"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIG_REENTRY_NEAR",
+      "title": "Fresh re-entry: ligand-gated chloride channel",
+      "prompt": "An extracellular ligand still binds its chloride channel, but a pore mutation prevents chloride passage. What immediate response is lost?",
+      "response_type": "single_select",
+      "options": [
+        "The ligand-triggered chloride current",
+        "The G-alpha nucleotide-exchange response",
+        "The receptor-enzyme phosphorylation response",
+        "The nuclear steroid-receptor response"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIG_REPAIR_CHANGED",
+      "title": "Repair: GPCR sequence",
+      "prompt": "Which sequence correctly orders the first steps of G protein–coupled receptor signaling?",
+      "response_type": "single_select",
+      "options": [
+        "Effector activation → ligand binding → GDP release → receptor change",
+        "Ligand binding → receptor change → GDP/GTP exchange → effector regulation",
+        "Pore opening → ion flow → receptor phosphorylation → DNA binding",
+        "Ligand diffusion → nuclear binding → GTP hydrolysis → pore opening"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIG_REENTRY_CHANGED",
+      "title": "Fresh re-entry: effector coupling",
+      "prompt": "A receptor activates G alpha and G alpha binds GTP, but the activated subunit cannot contact its effector enzyme. Which result is most immediate?",
+      "response_type": "single_select",
+      "options": [
+        "Extracellular ligand binding to the receptor",
+        "GDP-for-GTP exchange on activated G alpha",
+        "Effector regulation by activated G alpha",
+        "Voltage-gated ion conduction through the receptor"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LIP_ENTRY",
+      "title": "Starting check: fused-ring signal",
+      "prompt": "An endocrine signal has four fused carbon rings and few polar groups. Which early signaling behavior is most plausible from these facts?",
+      "response_type": "single_select",
+      "options": [
+        "It remains only in extracellular water because the rings are ionic",
+        "It forms an ion channel by itself in the plasma membrane",
+        "It can cross the bilayer and bind an intracellular receptor",
+        "Not sure yet"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LIP_GUIDED",
+      "title": "Guided practice: steroid sequence",
+      "prompt": "A cortisol-like steroid crosses the plasma membrane. Which sequence best matches an intracellular-receptor mechanism?",
+      "response_type": "single_select",
+      "options": [
+        "Bind intracellular receptor → receptor complex regulates transcription",
+        "Open ligand-gated pore → sodium influx → membrane depolarization",
+        "Bind receptor enzyme → receptor transports the steroid through a pore",
+        "Bind G protein directly → exchange GDP for GTP on the hormone"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LIP_LIGHT",
+      "title": "Less help: isoprene cue",
+      "prompt": "Which structural clue most directly supports classification in the terpene or terpenoid family?",
+      "response_type": "single_select",
+      "options": [
+        "A backbone built from repeating amino-acid units",
+        "A backbone built from repeating sugar-phosphate units",
+        "A core built from four fused carbon rings",
+        "A skeleton built from repeating five-carbon isoprene units"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LIP_SOLO",
+      "title": "On your own: modified terpene",
+      "prompt": "A signaling molecule retains an isoprene-derived carbon skeleton but contains added oxygen-bearing functional groups. Which classification is most appropriate?",
+      "response_type": "single_select",
+      "options": [
+        "Steroid protein",
+        "Terpenoid",
+        "Ligand-gated channel",
+        "Phospholipid bilayer"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LIP_NEAR",
+      "title": "Near exit: nuclear receptor block",
+      "prompt": "A hydrophobic four-ring hormone enters a target cell, but its nuclear receptor is blocked. Which response should be reduced most directly?",
+      "response_type": "single_select",
+      "options": [
+        "Hormone-dependent regulation of transcription",
+        "Opening of a voltage-gated sodium channel by depolarization",
+        "Diffusion of oxygen through the membrane",
+        "Ligand-triggered ion flow through a membrane pore"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LIP_CHANGED",
+      "title": "Changed exit: oxygenated isoprenoid signal",
+      "prompt": "A lipophilic, oxygenated, isoprene-derived signal still changes transcription in cells that lack the relevant membrane receptor enzyme but retain a nuclear receptor. Which relation is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "An oxygenated signal must use a membrane pore",
+        "A transcription-changing signal must be a peptide",
+        "A terpenoid-like signal can use an intracellular receptor",
+        "A nuclear receptor must be a voltage-gated channel"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LIP_REPAIR_NEAR",
+      "title": "Repair: receptor-step consequence",
+      "prompt": "A steroid hormone enters a target cell and binds its intracellular receptor, but the receptor cannot bind target DNA. Which response should decrease most directly?",
+      "response_type": "single_select",
+      "options": [
+        "Depolarization-dependent opening of a voltage-gated calcium channel",
+        "Vesicular release of an unrelated peptide hormone",
+        "Ligand-triggered autophosphorylation by a membrane receptor enzyme",
+        "Hormone-dependent regulation of transcription by the receptor complex"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LIP_REENTRY_NEAR",
+      "title": "Fresh re-entry: nuclear entry block",
+      "prompt": "A lipophilic four-ring hormone enters a target cell and binds its cytosolic receptor, but the hormone–receptor complex cannot move into the nucleus. Which response should be reduced most directly?",
+      "response_type": "single_select",
+      "options": [
+        "Ligand-triggered ion flow through a membrane pore",
+        "Receptor-dependent regulation of nuclear transcription",
+        "Depolarization-triggered sodium entry through a voltage-gated channel",
+        "Autophosphorylation by a membrane receptor enzyme"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LIP_REPAIR_CHANGED",
+      "title": "Repair: distinguish lipid-derived families",
+      "prompt": "Which statement correctly distinguishes the two structural families used in this lesson?",
+      "response_type": "single_select",
+      "options": [
+        "Steroids and terpenes are classified by receptor location",
+        "Terpenes have fused rings, while steroids have peptide repeats",
+        "Steroids have fused rings, while terpenes have isoprene units",
+        "Terpenoids form ion channels, while steroids form receptor enzymes"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LIP_REENTRY_CHANGED",
+      "title": "Fresh re-entry: classify and locate",
+      "prompt": "A new messenger is an oxygenated derivative of an isoprene-built scaffold. Experiments show that it crosses the membrane and binds a nuclear receptor. Which description is best?",
+      "response_type": "single_select",
+      "options": [
+        "A terpenoid with an intracellular signaling role",
+        "A steroid defined solely by its nuclear receptor",
+        "A ligand-gated channel with a terpenoid pore",
+        "A peptide hormone with an isoprene backbone"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "END_ENTRY",
+      "title": "Prerequisite check: control-loop order",
+      "prompt": "A sensory neuron detects a change, the central nervous system integrates the information, and an autonomic output changes an organ’s activity. Which order preserves the prior sensor–integration–effector model?",
+      "response_type": "single_select",
+      "options": [
+        "Effector → sensor → integration",
+        "Integration → effector → sensor",
+        "Effector → integration → sensor",
+        "Sensor → integration → effector"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "END_GUIDED",
+      "title": "Guided practice: target is not source",
+      "prompt": "A pituitary hormone stimulates the thyroid gland. Which source–product pair is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Thyroid gland produces TSH",
+        "Anterior pituitary produces TSH",
+        "Posterior pituitary synthesizes thyroid hormone",
+        "Hypothalamus releases TSH into the systemic circulation"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "END_LIGHT",
+      "title": "Less help: synthesis and release",
+      "prompt": "Which mapping correctly describes vasopressin (ADH) associated with the posterior pituitary?",
+      "response_type": "single_select",
+      "options": [
+        "Synthesized and released by the thyroid gland",
+        "Synthesized by the posterior pituitary and released by the hypothalamus",
+        "Synthesized in the hypothalamus and released from the posterior pituitary",
+        "Synthesized by the adrenal cortex and released from the adrenal medulla"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "END_SOLO",
+      "title": "On your own: adrenal region",
+      "prompt": "Which source and chemical type correctly map to cortisol?",
+      "response_type": "single_select",
+      "options": [
+        "Adrenal cortex; steroid hormone",
+        "Adrenal medulla; peptide hormone",
+        "Posterior pituitary; catecholamine",
+        "Pancreatic beta cell; thyroid hormone"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "END_NEAR",
+      "title": "Near exit: neck gland map",
+      "prompt": "A gland in the anterior neck produces the major thyroid hormones T3 and T4. Which gland is described?",
+      "response_type": "single_select",
+      "options": [
+        "Anterior pituitary",
+        "Parathyroid gland",
+        "Adrenal cortex",
+        "Thyroid gland"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "END_CHANGED",
+      "title": "Changed exit: neuroendocrine lesion",
+      "prompt": "Axons connecting hypothalamic neurons to the posterior pituitary are severed, while the anterior pituitary remains intact. Release of which hormones is most directly reduced?",
+      "response_type": "single_select",
+      "options": [
+        "TSH and ACTH",
+        "ADH and oxytocin",
+        "Insulin and glucagon",
+        "Cortisol and aldosterone"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "END_REPAIR_NEAR",
+      "title": "Repair: location–product pair",
+      "prompt": "Which location–product pair is correctly matched?",
+      "response_type": "single_select",
+      "options": [
+        "Adrenal medulla — epinephrine",
+        "Anterior pituitary — insulin",
+        "Pancreatic beta cell — cortisol",
+        "Thyroid gland — ACTH"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "END_REENTRY_NEAR",
+      "title": "Fresh re-entry: pancreatic source",
+      "prompt": "After blood glucose rises, a pancreatic islet cell releases a hormone that promotes glucose uptake and storage. Which source–product pair fits?",
+      "response_type": "single_select",
+      "options": [
+        "Alpha cell — glucagon",
+        "Adrenal cortex — insulin",
+        "Beta cell — insulin",
+        "Posterior pituitary — glucagon"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "END_REPAIR_CHANGED",
+      "title": "Repair: synthesis versus release",
+      "prompt": "Which statement correctly resolves the hypothalamus–posterior-pituitary relation?",
+      "response_type": "single_select",
+      "options": [
+        "The posterior pituitary synthesizes hypothalamic releasing hormones",
+        "The hypothalamus releases TSH directly from the thyroid",
+        "The anterior pituitary stores hormones synthesized by the hypothalamus",
+        "The hypothalamus makes ADH and oxytocin for posterior-pituitary release"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "END_REENTRY_CHANGED",
+      "title": "Fresh re-entry: reduced synthesis",
+      "prompt": "The posterior pituitary is structurally intact, but hypothalamic synthesis of oxytocin is strongly inhibited. Which outcome is most likely after existing stores are depleted?",
+      "response_type": "single_select",
+      "options": [
+        "The posterior pituitary begins independent oxytocin synthesis",
+        "Oxytocin release falls after posterior-pituitary stores are depleted",
+        "The anterior pituitary becomes the new source of oxytocin",
+        "The adrenal medulla converts epinephrine into oxytocin"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    }
+  ]
+}
