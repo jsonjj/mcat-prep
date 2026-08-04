@@ -113,6 +113,11 @@ jobs:
       - name: Build web artifacts
         env:
           VITE_AUTHORITY_BASE_URL: ${{ vars.VITE_AUTHORITY_BASE_URL }}
+          # Show the Practice-test dashboard in the deployed SPA (client presentation
+          # flag). The server plan gate stays authoritative via the learner-API
+          # PRACTICE_TEST_ENABLED env (default off), so the strict guided plan never
+          # reserves a practice_test slot whose runner has no deployed backend.
+          VITE_PRACTICE_TEST_ENABLED: 'true'
         run: pnpm run build
 
       # Guardrail: never ship answer keys / rationales / server-only modules to the edge.

@@ -1,10 +1,19 @@
 # Periodic scored Practice TEST — production status & enablement
 
 **Date:** Aug 2, 2026 (reflects code as of current commit)
-**Status:** **GATED OFF in production; fully working in dev.** The scored
-practice-test *runner* is a dev/preview-only surface with no deployed backend, so
-the feature is hidden in prod behind a capability flag rather than shown as a
-permanent empty/"coming soon" state. Dev (`pnpm dev`) is unchanged.
+**Status:** **Client DASHBOARD shown in production; scored RUNNER + server plan
+slot still gated off.** As of Aug 3, 2026 the deployed learner build sets
+`VITE_PRACTICE_TEST_ENABLED=true` (see `.github/workflows/deploy.yml` +
+`tools/aws/src/publish-web.ts`), so the Practice-test dashboard card renders on the
+live Practice page exactly as it does in dev — populated from a real summary once a
+sitting exists, or its honest empty states until then (the deployed API does not
+route `/v1/practice-test/summary`, and the client swallows that `not_found` into
+`null`). What remains OFF in production: the scored-test **runner**
+(`/api/practice-test/*` has no deployed backend) and the **server plan gate** — the
+learner-API Lambda leaves `PRACTICE_TEST_ENABLED` unset (default `false`), so
+`Authority.buildTodaysPath` reserves **no** `practice_test` slot and the strict
+guided plan can never deadlock on a runner that cannot serve. Dev (`pnpm dev`) is
+unchanged.
 
 If this document and the code disagree, the code wins.
 
@@ -23,8 +32,8 @@ deployed learner PWA today:
    → [`server/practice-test-api.ts`](../apps/learner-web/server/practice-test-api.ts)),
    which drives the engine in
    [`server/practice-test-engine.ts`](../apps/learner-web/server/practice-test-engine.ts)
-   + [`server/practice-test-bank.ts`](../apps/learner-web/server/practice-test-bank.ts)
-   over `@mcat/policies` (`assemblePracticeTest` / `scorePracticeTest`).
+   - [`server/practice-test-bank.ts`](../apps/learner-web/server/practice-test-bank.ts)
+     over `@mcat/policies` (`assemblePracticeTest` / `scorePracticeTest`).
 2. **The SUMMARY** — `GET /v1/practice-test/summary`, read by
    `getPracticeTestSummary` in
    [`packages/client-core/src/http.ts`](../packages/client-core/src/http.ts) and

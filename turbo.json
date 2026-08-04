@@ -4,7 +4,14 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", "dist-server/**", "build/**", ".react-router/**"]
+      "outputs": ["dist/**", "dist-server/**", "build/**", ".react-router/**"],
+      "env": [
+        "VITE_AUTHORITY_BASE_URL",
+        "VITE_PRACTICE_TEST_ENABLED",
+        "VITE_DIAGNOSTIC_ENABLED",
+        "VITE_SUPABASE_URL",
+        "VITE_SUPABASE_ANON_KEY"
+      ]
     },
     "typecheck": {
       "dependsOn": ["^build"],

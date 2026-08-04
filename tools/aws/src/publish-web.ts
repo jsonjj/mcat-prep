@@ -403,7 +403,16 @@ export async function publishWeb(options: {
       args: ['--filter', `@mcat/${app}-web`, 'build'],
       cwd: options.repositoryRoot,
       ...(app === 'learner'
-        ? { env: { VITE_AUTHORITY_BASE_URL: authorityBaseUrl(options.authorityBaseUrl) } }
+        ? {
+            env: {
+              VITE_AUTHORITY_BASE_URL: authorityBaseUrl(options.authorityBaseUrl),
+              // Present the Practice-test dashboard in the published SPA. This is the
+              // client presentation flag only; the learner-API plan gate
+              // (PRACTICE_TEST_ENABLED, default off) stays authoritative so no
+              // practice_test slot is scheduled without a deployed runner backend.
+              VITE_PRACTICE_TEST_ENABLED: 'true',
+            },
+          }
         : {}),
     });
   }
