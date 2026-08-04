@@ -3,7 +3,12 @@ name: AWS backend CI
 on:
   pull_request:
   push:
-    branches: [main, 'codex/**']
+    # `main` is intentionally NOT here: the Deploy workflow (deploy.yml) runs this
+    # exact verify on every `main` push via `workflow_call`. Triggering the
+    # standalone run on `main` too put both under the same `aws-backend-<ref>`
+    # concurrency group, so they cancelled each other. PRs and codex/** still run
+    # the standalone gate here.
+    branches: ['codex/**']
   # Exposed as a reusable gate so the automated deploy pipeline
   # (.github/workflows/deploy.yml) runs this exact verify job before any release.
   workflow_call:
