@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Inline, Stack } from '@mcat/ui-web';
-import { useApplyMasterySeed, useDiagnosticNext, useSubmitDiagnosticBlock } from '../app/queries';
+import {
+  useApplyMasterySeed,
+  useBootstrap,
+  useDiagnosticNext,
+  useSubmitDiagnosticBlock,
+} from '../app/queries';
 import {
   loadBlockDrafts,
   saveBlockDrafts,
@@ -25,6 +30,8 @@ const NO_QUESTIONS: DiagnosticItemView[] = [];
 
 export function Diagnostic() {
   const navigate = useNavigate();
+  const bootstrap = useBootstrap();
+  const learnerId = bootstrap.data?.authenticated === true ? bootstrap.data.learnerId : null;
   const next = useDiagnosticNext();
   const submit = useSubmitDiagnosticBlock();
 
@@ -124,7 +131,13 @@ export function Diagnostic() {
   }
 
   if (next.data.done && next.data.result) {
-    return <DiagnosticComplete result={next.data.result} onContinue={() => navigate('/onboarding/plan')} />;
+    return (
+      <DiagnosticComplete
+        result={next.data.result}
+        learnerId={learnerId}
+        onContinue={() => navigate('/onboarding/plan')}
+      />
+    );
   }
 
   if (!question) {
@@ -326,9 +339,11 @@ export function Diagnostic() {
 
 function DiagnosticComplete({
   result,
+  learnerId,
   onContinue,
 }: {
   result: DiagnosticResultView;
+  learnerId: string | null;
   onContinue: () => void;
 }) {
   const headingRef = useRef<HTMLHeadingElement | null>(null);
@@ -365,9 +380,10 @@ function DiagnosticComplete({
 
   useEffect(() => {
     headingRef.current?.focus();
-    // Mark the diagnostic as genuinely completed so Welcome stops re-offering it.
-    markDiagnosticCompleted();
-  }, []);
+    // Mark the diagnostic as genuinely completed (for THIS learner) so Welcome
+    // stops re-offering it to them — while a different account still gets it.
+    markDiagnosticCompleted(learnerId);
+  }, [learnerId]);
 
   // Hand the read to the mastery engine. The completed block is re-served on
   // every refetch, so this is guarded to one attempt per mount; the write itself

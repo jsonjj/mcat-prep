@@ -20,12 +20,15 @@ import { OnboardingSteps } from '../components/OnboardingSteps';
 export function OnboardingStart() {
   const navigate = useNavigate();
   const bootstrap = useBootstrap();
+  const learnerId = bootstrap.data?.authenticated === true ? bootstrap.data.learnerId : null;
   const onboardingComplete =
     (bootstrap.data?.authenticated === true && bootstrap.data.onboardingComplete) ?? false;
   // The diagnostic is only "done" when actually completed — skipping it (which
   // still completes onboarding via plan setup) leaves this false, so we keep
-  // offering the placement each time until the learner finishes it.
-  const diagnosticDone = isDiagnosticCompleted();
+  // offering the placement each time until the learner finishes it. Keyed by
+  // learner id so a fresh account is never told a previous account's placement
+  // counts as theirs (which is what skipped the placement entirely).
+  const diagnosticDone = isDiagnosticCompleted(learnerId);
 
   // Where we land depends on whether a plan exists yet: AppShell bounces back
   // here until onboarding completes, so a first-time learner goes to plan setup
