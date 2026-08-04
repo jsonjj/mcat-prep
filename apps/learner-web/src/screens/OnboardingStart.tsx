@@ -56,7 +56,20 @@ export function OnboardingStart() {
           </ul>
           {diagnosticDone ? (
             <div className="mc-cta-hero">
-              <Button variant="primary" size="lg" fullWidth onClick={() => navigate('/app')}>
+              {/*
+                Onboarding is only complete once a plan is confirmed (bootstrap's
+                `onboardingComplete` = a `today` plan exists and the session is
+                unlocked). A learner who finished the placement but not plan setup
+                must go to plan setup, not `/app` — AppShell bounces `/app` straight
+                back here while onboarding is incomplete, which read as "Continue
+                does nothing". Mirror `onSkip`.
+              */}
+              <Button
+                variant="primary"
+                size="lg"
+                fullWidth
+                onClick={() => navigate(onboardingComplete ? '/app' : '/onboarding/plan')}
+              >
                 Continue
               </Button>
             </div>

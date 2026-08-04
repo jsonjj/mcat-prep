@@ -16,19 +16,12 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="MCAT Mastery" />
     <title>MCAT Mastery</title>
-    <script>
-      // Set theme before first paint to avoid a flash.
-      (function () {
-        try {
-          // Default to the light "Evidence Atlas" look; dark only if explicitly chosen.
-          var t = localStorage.getItem('mc.theme');
-          var d = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
-          document.documentElement.dataset.theme = d ? 'dark' : 'light';
-        } catch (e) {
-          document.documentElement.dataset.theme = 'light';
-        }
-      })();
-    </script>
+    <!--
+      Theme is set before first paint by a same-origin script rather than an inline
+      one, so the strict learner CSP (`script-src 'self'`) does not block it. As a
+      render-blocking <head> script it still runs before paint (no flash).
+    -->
+    <script src="/theme-init.js"></script>
   </head>
   <body>
     <div id="root"></div>
