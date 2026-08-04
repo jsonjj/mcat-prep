@@ -118,6 +118,13 @@ jobs:
           # PRACTICE_TEST_ENABLED env (default off), so the strict guided plan never
           # reserves a practice_test slot whose runner has no deployed backend.
           VITE_PRACTICE_TEST_ENABLED: 'true'
+          # Supabase auth is compiled into the SPA at build time (see
+          # apps/learner-web/src/app/auth-client.ts). Without these, a CI-built
+          # bundle ships with no Supabase config and every sign-in breaks — so they
+          # are REQUIRED build inputs, supplied as repo/environment secrets (never
+          # hardcoded). turbo.json already allowlists both for the build task.
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: pnpm run build
 
       # Guardrail: never ship answer keys / rationales / server-only modules to the edge.
