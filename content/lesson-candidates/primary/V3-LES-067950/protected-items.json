@@ -1,0 +1,1488 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "SYS-ITEM-ENTRY",
+      "learner_prompt_key": "SYS_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "The stated system is the water, while the bottle and room lie outside its boundary and can exchange energy with it.",
+      "post_commitment_feedback": "Use the author-defined boundary: the water is inside, and thermal energy can cross to the bottle and room.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SYS-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Exchange across a boundary does not place the surroundings inside the selected system."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SYS-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SYS-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Energy transfer does not require matter transfer across the chosen boundary."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SYS-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A sealed bottle can still transfer thermal energy through its walls."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SYS-ITEM-GUIDED",
+      "learner_prompt_key": "SYS_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "Thermal equilibrium with the same third system establishes equality of temperature.",
+      "post_commitment_feedback": "A and C share the temperature indicated by B, which is the Zeroth-Law inference.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SYS-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal temperature does not fix amount, composition, or total internal energy."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SYS-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The Zeroth Law relates temperature, not mass."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SYS-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal temperature implies no net heat transfer if they are placed in thermal contact."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SYS-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SYS-ITEM-LIGHT",
+      "learner_prompt_key": "SYS_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Internal energy is a state function, so its change is determined by the endpoints.",
+      "post_commitment_feedback": "Identical endpoints fix the change in internal energy, while heat and work may trade off by path.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SYS-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SYS-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Heat is a path-dependent boundary transfer."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SYS-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Work depends on the process path and pressure–volume history."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SYS-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Piston motion depends on how the process is carried out."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SYS-ITEM-SOLO",
+      "learner_prompt_key": "SYS_SOLO",
+      "correct_option_index": 2,
+      "rationale": "With the same internal-energy change, a difference in heat must be offset by a difference in work.",
+      "post_commitment_feedback": "The endpoints fix the state change, so the path-dependent heat difference requires a work difference.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SYS-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The same endpoints require the same state-function change."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SYS-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The final thermodynamic state, including temperature, is stated to be the same."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SYS-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SYS-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The Zeroth Law does not depend on the selected process path."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SYS-ITEM-NEAR",
+      "learner_prompt_key": "SYS_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Thermal equilibrium is defined by equality of temperature, not equality of extensive properties.",
+      "post_commitment_feedback": "The required common property is temperature; mass-dependent quantities can remain different.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SYS-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A larger block may contain more total internal energy at the same temperature."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SYS-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Heat capacity depends on amount and can differ with mass."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SYS-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SYS-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Different masses imply that particle numbers may differ."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SYS-ITEM-CHANGED",
+      "learner_prompt_key": "SYS_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "The state table fixes the internal-energy change, while the process logs can assign different heat and work values that preserve the same change.",
+      "post_commitment_feedback": "Endpoint data control the state change; differing heat is balanced by differing work along each path.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SYS-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SYS-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Heat can differ by path even with identical final states."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SYS-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Only the state-function change is endpoint-fixed; heat and work may differ."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SYS-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Internal energy is a state function and does not require path history."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SYS-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "SYS_REPAIR_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Endpoint dependence is the defining test for a state function.",
+      "post_commitment_feedback": "Ask whether alternative paths with the same endpoints must give the same change.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SYS-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The measuring instrument does not determine path independence."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SYS-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Energy transfer can occur while both state and path quantities are reported."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SYS-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Process rate does not define whether a quantity is a state function."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SYS-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SYS-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "SYS_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Heat records energy transfer along a route and can differ for identical endpoints.",
+      "post_commitment_feedback": "The route can change heat and work, but it cannot change endpoint state variables.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SYS-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The same final state includes the same temperature."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SYS-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SYS-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The endpoint state fixes the internal-energy change."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SYS-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The final thermodynamic state is stated to be identical."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SYS-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "SYS_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Equality of temperature is transitive through the third system.",
+      "post_commitment_feedback": "Carry only the temperature equality through the chain; do not add extensive-property claims.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SYS-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SYS-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal temperature does not imply equal total internal energy."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SYS-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Temperature equality does not imply mass equality."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SYS-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Heat is path-dependent and is not fixed by equilibrium temperature alone."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SYS-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "SYS_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Both sensors share bath P’s equilibrium temperature, so they share temperature with each other.",
+      "post_commitment_feedback": "The third-system comparison establishes equal temperature and no stronger equality.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SYS-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Different sensors can have different masses and compositions at equal temperature."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SYS-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Heat absorbed depends on each sensor and its path to equilibrium."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SYS-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SYS-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Heat capacity is not fixed by the common equilibrium temperature."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-ENTRY",
+      "learner_prompt_key": "LAW_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "Expansion transfers energy out as work done by the gas, so work done on the gas is negative.",
+      "post_commitment_feedback": "Under the stated work-on-system convention, expansion work carries a negative sign.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Expansion means the system does work on the surroundings, so work on the system is negative."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Expansion against external pressure transfers mechanical energy."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The stated convention and direction are sufficient to assign the sign."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-GUIDED",
+      "learner_prompt_key": "LAW_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "q = +150 J and w = −40 J, so ΔU = +110 J.",
+      "post_commitment_feedback": "Translate the phrases first: heat enters (+150 J), the system does work (w = −40 J), giving +110 J.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This treats work done by the system as positive work on the system."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Heat entering is positive and exceeds the energy leaving as work."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both transfer signs are reversed relative to the stated convention."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-LIGHT",
+      "learner_prompt_key": "LAW_LIGHT",
+      "correct_option_index": 3,
+      "rationale": "The rectangular area is 200 kPa × 1.5 L = 300 kPa·L = 300 J.",
+      "post_commitment_feedback": "PV work magnitude is the area under the path: pressure times the change in volume.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Dividing pressure by volume change does not give PV work."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits the 1.5 L volume change."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies pressure by final volume instead of volume change."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-SOLO",
+      "learner_prompt_key": "LAW_SOLO",
+      "correct_option_index": 1,
+      "rationale": "The magnitude is 150 kPa × 2.0 L = 300 J, positive because compression is work on the gas.",
+      "post_commitment_feedback": "Compression transfers 300 J into the system as work, so w is +300 J.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Compression means the surroundings do positive work on the system."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Work uses the 2.0 L volume change, not the initial volume."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Dividing pressure by volume change does not calculate PV area."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-NEAR",
+      "learner_prompt_key": "LAW_NEAR",
+      "correct_option_index": 2,
+      "rationale": "q = +450 J and w = −180 J, giving ΔU = +270 J.",
+      "post_commitment_feedback": "Incoming heat minus expansion work leaves a 270 J increase in internal energy.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This assigns positive work-on-system to work done by the gas."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The incoming heat exceeds the outgoing work, so the state change is positive."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both the heat and work signs are inconsistent with the description."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-CHANGED",
+      "learner_prompt_key": "LAW_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "The enclosed area is (300 − 100) kPa × (5 − 2) L = 600 J, and clockwise traversal is net work by the gas.",
+      "post_commitment_feedback": "For a cycle, use enclosed area rather than one segment: the rectangle encloses 600 J.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This uses the pressure difference but omits the 3 L width."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This uses the high-pressure expansion area without subtracting compression area."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A nonzero enclosed area represents nonzero cyclic work."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "LAW_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Energy leaving as heat is negative, while compression is positive work done on the system.",
+      "post_commitment_feedback": "Write the convention in words before calculating: heat in positive, work on positive.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both signs are reversed from the stated heat-in/work-on convention."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both processes transfer energy across the boundary."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Expansion is negative work on the system."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "LAW_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "q = −90 J and w = +140 J, so ΔU = +50 J.",
+      "post_commitment_feedback": "The work input exceeds the heat loss by 50 J, increasing internal energy.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This treats both transfers as energy leaving the system."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Heat released is negative, not positive."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Positive work exceeds the heat loss, so the net state change is positive."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "LAW_REPAIR_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Net cyclic work depends on the loop’s enclosed area and orientation.",
+      "post_commitment_feedback": "Measure the enclosed area, then use loop direction to assign work by or on the gas.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A cycle returns to its initial volume, yet can enclose nonzero area."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both pressure difference and volume width determine enclosed area."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reversing traversal reverses the direction of net work."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "LAW_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Counterclockwise traversal represents net work done on the gas, so w is positive.",
+      "post_commitment_feedback": "Reversing the loop reverses the work direction; the magnitude remains the 250 J enclosed area.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Negative work on the system corresponds to a clockwise loop with net work by the gas."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A loop with nonzero enclosed area has nonzero net work."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The given enclosed area already states the work magnitude."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ENT-ITEM-ENTRY",
+      "learner_prompt_key": "ENT_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "Increasing freedom and accessible arrangements usually gives crystal < liquid < gas.",
+      "post_commitment_feedback": "The gas phase generally has the greatest entropy and the ordered crystal the least.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ENT-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the usual increase in accessible arrangements."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ENT-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ENT-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A crystal is generally more ordered than both fluid phases."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ENT-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Phase changes generally alter the number of accessible arrangements."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ENT-ITEM-GUIDED",
+      "learner_prompt_key": "ENT_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "The total is −12 J/K + 20 J/K = +8 J/K.",
+      "post_commitment_feedback": "Preserve both signs: the surroundings increase exceeds the system decrease by 8 J/K.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ENT-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The signed changes should be added, not both treated as negative."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ENT-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The positive surroundings change has the larger magnitude."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ENT-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Adding magnitudes discards the system’s negative sign."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ENT-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ENT-ITEM-LIGHT",
+      "learner_prompt_key": "ENT_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Vaporization moves from liquid to the higher-entropy gas phase.",
+      "post_commitment_feedback": "The system gains accessible arrangements during vaporization, so its entropy increases.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ENT-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ENT-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Gas generally has more accessible arrangements than liquid."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ENT-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A phase change usually changes the system entropy."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ENT-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The relative phase order supplies the expected sign."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ENT-ITEM-SOLO",
+      "learner_prompt_key": "ENT_SOLO",
+      "correct_option_index": 2,
+      "rationale": "The total entropy change is +4 J/K, which supports the stated spontaneous direction.",
+      "post_commitment_feedback": "A negative surroundings term does not block the process when the total remains positive.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ENT-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The Second Law applies to the positive total, not each part separately."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ENT-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equilibrium requires the sum to equal zero."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ENT-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ENT-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The reverse would have a negative total entropy change."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ENT-ITEM-NEAR",
+      "learner_prompt_key": "ENT_NEAR",
+      "correct_option_index": 2,
+      "rationale": "ΔSuniverse = −18 + 27 = +9 J/K, so the stated condensation direction is spontaneous.",
+      "post_commitment_feedback": "The surroundings increase outweighs the system decrease, producing a positive total.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ENT-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The surroundings increase more, making the total positive."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ENT-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Their sum is +9 J/K rather than zero."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ENT-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ENT-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The positive total selects the stated direction under the given conditions."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ENT-ITEM-CHANGED",
+      "learner_prompt_key": "ENT_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "P totals 0, Q totals +5, and R totals −3 J/K; only Q has a positive total.",
+      "post_commitment_feedback": "Add each row before judging: only Q produces ΔSuniverse greater than zero.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ENT-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ENT-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "P has a zero total and represents equilibrium rather than a positive spontaneous direction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ENT-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "R has a negative total of −3 J/K."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ENT-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neither row has a positive total entropy change."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ENT-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "ENT_REPAIR_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Freezing moves from a less ordered liquid to a more ordered crystal.",
+      "post_commitment_feedback": "Use the phase order first: moving toward the crystal lowers system entropy.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ENT-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Melting increases accessible arrangements and system entropy."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ENT-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Vaporization increases system entropy."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ENT-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Sublimation moves to the highest-entropy listed phase."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ENT-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ENT-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "ENT_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Sublimation moves from the lowest-entropy listed phase to the highest.",
+      "post_commitment_feedback": "The system entropy increases when an ordered solid becomes a gas.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ENT-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The gas has more accessible arrangements than the solid."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ENT-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ENT-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The large phase change does not preserve the same system entropy."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ENT-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The system sign follows phase order independently of the surroundings term."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ENT-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "ENT_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "The universe total is the algebraic sum of system and surroundings entropy changes.",
+      "post_commitment_feedback": "Keep both signed columns and add them; do not judge from either column alone.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ENT-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ENT-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The surroundings term retains its measured sign rather than always being subtracted."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ENT-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The Second Law test includes both system and surroundings."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ENT-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Adding magnitudes discards signs and can reverse the judgment."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ENT-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "ENT_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The algebraic total is +14 − 19 = −5 J/K, so the stated direction is not spontaneous.",
+      "post_commitment_feedback": "Even a system entropy increase is insufficient when the surroundings decrease by more.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ENT-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The negative surroundings change is larger, making the total negative."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ENT-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Opposite signs do not imply a zero sum."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ENT-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ENT-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The algebraic signs must be preserved."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "THM-ITEM-ENTRY",
+      "learner_prompt_key": "THM_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "Electromagnetic radiation can transfer energy without a material medium.",
+      "post_commitment_feedback": "Across nearly empty space, radiation—not conduction or convection—carries thermal energy.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "THM-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Conduction requires material contact and cannot bridge nearly empty space."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "THM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "THM-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Convection requires bulk motion of a fluid medium."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "THM-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Expansion is a material response, not a transfer mechanism."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "THM-ITEM-GUIDED",
+      "learner_prompt_key": "THM_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "q = mcΔT = 50 × 4 × 3 = 600 J.",
+      "post_commitment_feedback": "For a single phase, multiply mass, specific heat, and temperature change.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "THM-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits the 3 K temperature change."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "THM-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies mass by temperature change but omits specific heat."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "THM-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies only specific heat and temperature change."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "THM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "THM-ITEM-LIGHT",
+      "learner_prompt_key": "THM_LIGHT",
+      "correct_option_index": 3,
+      "rationale": "With q and m fixed, c is inversely related to the observed temperature change.",
+      "post_commitment_feedback": "The material that warms less for the same energy per mass has the greater specific heat.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "THM-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "For equal q and m, a smaller temperature change requires larger c."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "THM-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Their different temperature changes contradict equal c under the stated controls."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "THM-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The relation q = mcΔT directly links them."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "THM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "THM-ITEM-SOLO",
+      "learner_prompt_key": "THM_SOLO",
+      "correct_option_index": 1,
+      "rationale": "Most materials expand when temperature rises if they are unconstrained and remain in the same phase.",
+      "post_commitment_feedback": "Heating normally increases the rod’s dimensions without changing its mass.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "THM-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Heating does not remove the rod’s dimensions."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "THM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "THM-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Energy transfer does not add matter to the rod."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "THM-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ordinary thermal expansion can occur without a phase change."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "THM-ITEM-NEAR",
+      "learner_prompt_key": "THM_NEAR",
+      "correct_option_index": 2,
+      "rationale": "For the two-part insulated system, qhot + qcold = 0, so the cooler object gains +900 J.",
+      "post_commitment_feedback": "The heat ledger closes with equal magnitude and opposite signs.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "THM-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The cooler object gains energy, so its signed q is positive."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "THM-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The final temperature change requires energy transfer to the cooler object."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "THM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "THM-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Energy conservation requires equal and opposite heat transfers."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "THM-ITEM-CHANGED",
+      "learner_prompt_key": "THM_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Crossing from liquid to gas is vaporization; during ideal conversion, added q = mLv changes phase fraction at constant temperature.",
+      "post_commitment_feedback": "Read the boundary crossing first, then switch from mcΔT to latent-heat accounting during conversion.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "THM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "THM-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The path adds energy and crosses into the gas region."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "THM-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Crossing the labeled liquid–gas boundary changes phase."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "THM-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ideal phase conversion at fixed pressure occurs at the transition temperature."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "THM-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "THM_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Internal heat transfers are equal in magnitude and opposite in sign for the isolated two-part system.",
+      "post_commitment_feedback": "Assign one loss and one gain, then make their signed sum zero.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "THM-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One object loses energy while the other gains it."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "THM-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The ideal isolated model has no net heat transfer across its outer boundary."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "THM-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "THM-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Masses and heat capacities need not be equal for energy conservation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "THM-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "THM_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "qX + qY = 0, so qY = −350 J.",
+      "post_commitment_feedback": "The partner sample loses exactly the energy that X gains in the insulated model.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "THM-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "THM-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both samples cannot gain energy in a closed two-sample heat exchange."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "THM-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Y must supply the energy gained by X."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "THM-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The magnitudes are equal, not doubled."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "THM-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "THM_REPAIR_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "At the melting transition, latent heat changes phase while ideal temperature remains constant.",
+      "post_commitment_feedback": "A plateau can carry substantial energy: use mass times heat of fusion.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "THM-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Temperature remains constant during the ideal melting plateau."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "THM-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Energy changes phase fraction even without a temperature change."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "THM-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "PV work alone does not replace latent-heat accounting."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "THM-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "THM-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "THM_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The directed solid-to-liquid crossing is melting and requires the heat of fusion.",
+      "post_commitment_feedback": "Follow the arrow across the labeled boundary: added latent heat converts solid to liquid.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "THM-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The directed path is from solid to liquid with heat added."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "THM-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "THM-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Convection may transfer energy but does not eliminate latent heat."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "THM-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Crossing into the liquid region changes the stable phase."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1118 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "CNT-ITEM-ENTRY",
+      "learner_prompt_key": "CNT_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "A1v1 = A2v2, so reducing area increases speed.",
+      "post_commitment_feedback": "The same volume per second must cross the narrower section, requiring faster flow.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNT-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A smaller area requires greater speed to keep Av constant."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNT-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNT-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Steady flow continues through the section."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNT-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Continuity directly relates area and average speed."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNT-ITEM-GUIDED",
+      "learner_prompt_key": "CNT_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "A1v1 = A2v2, so v2 = (6/2) × 3 = 9 m/s.",
+      "post_commitment_feedback": "Area falls by a factor of three, so speed rises by a factor of three.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNT-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This changes speed in the same direction as area rather than inversely."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNT-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal speed would reduce the flow rate in the narrower section."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNT-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies by the full initial area instead of the area ratio of three."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNT-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNT-ITEM-LIGHT",
+      "learner_prompt_key": "CNT_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Halving radius quarters area, and constant Av therefore quadruples speed.",
+      "post_commitment_feedback": "Square the radius ratio before applying continuity.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNT-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNT-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Area scales with radius squared, not radius."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNT-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A smaller area requires a larger speed."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNT-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Unchanged speed would reduce Q to one-fourth."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNT-ITEM-SOLO",
+      "learner_prompt_key": "CNT_SOLO",
+      "correct_option_index": 2,
+      "rationale": "Total outflow equals 15 mL/s, so each of five equal branches carries 3 mL/s.",
+      "post_commitment_feedback": "At a junction, branch flow rates sum to the parent flow rate.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNT-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Copying the parent flow into each branch would create five times the incoming flow."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNT-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Dividing by three rather than five does not close the junction ledger."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNT-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNT-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Multiplying by branch count violates conservation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNT-ITEM-NEAR",
+      "learner_prompt_key": "CNT_NEAR",
+      "correct_option_index": 2,
+      "rationale": "AA vA = AB vB and AB = 3AA, so vB = vA/3.",
+      "post_commitment_feedback": "A threefold larger area carries the same flow at one-third the speed.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNT-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Speed varies inversely with area for fixed Q."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNT-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal speed would make Q three times larger at B."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNT-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNT-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The area ratio is already given; it should not be squared again."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNT-ITEM-CHANGED",
+      "learner_prompt_key": "CNT_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Each branch carries 10 mL/s; speed is Q/A, so the half-area branch Y flows twice as fast.",
+      "post_commitment_feedback": "First divide total Q, then use each branch’s own area.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNT-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNT-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "For equal Q, the larger-area branch has the smaller speed."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNT-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal flow rate through unequal areas requires unequal speeds."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNT-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The area ratio is stated directly and should not be squared."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNT-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "CNT_REPAIR_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The geometry must be expressed as area before equating Av across sections.",
+      "post_commitment_feedback": "Use area—not radius—inside the conserved flow product.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNT-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Continuity uses cross-sectional area, which scales with radius squared."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNT-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Pressure equality is not the continuity relation."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNT-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Continuity equates flow rates rather than summing speeds."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNT-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNT-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "CNT_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Tripling diameter multiplies area by nine, so speed becomes one-ninth.",
+      "post_commitment_feedback": "Square the diameter ratio, then invert it for speed.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNT-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Area scales with diameter squared."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNT-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNT-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Larger area lowers speed for fixed Q."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNT-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The direction is reversed."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNT-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "CNT_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "At steady state without leakage, total incoming volume flow equals total outgoing volume flow.",
+      "post_commitment_feedback": "Conserve Q at the junction, then use each branch area to determine speed.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNT-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNT-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal branch flow requires an explicit equal-split condition."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNT-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Using unsigned magnitudes requires inflow equals summed outflow."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNT-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Speeds are not conserved directly across a branch."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNT-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "CNT_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "For equal branch areas, v = Q/A, so doubling Q doubles speed.",
+      "post_commitment_feedback": "The junction closes and the higher-flow branch has twice the speed.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNT-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "With equal area, speed follows flow rate directly."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNT-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal area with unequal Q requires unequal speed."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNT-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNT-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The branch rates sum to the parent rate: 8 + 16 = 24."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BER-ITEM-ENTRY",
+      "learner_prompt_key": "BER_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "With equal height, the increase in ½ρv² is balanced by a decrease in P.",
+      "post_commitment_feedback": "Under the stated ideal conditions, the faster point has lower static pressure.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BER-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The larger kinetic term at B requires a smaller static-pressure term."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BER-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BER-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal pressure would make the Bernoulli sum larger at B."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BER-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal height and an ideal streamline provide the required relation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BER-ITEM-GUIDED",
+      "learner_prompt_key": "BER_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "P2 − P1 = ½ρ(v1² − v2²) = 500(4 − 36) = −16,000 Pa.",
+      "post_commitment_feedback": "Use the difference of squared speeds and preserve the negative sign for the faster point.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BER-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The faster point has lower, not higher, static pressure."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BER-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits the difference between squared speeds."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BER-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The factor of one-half in the kinetic term is missing."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BER-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BER-ITEM-LIGHT",
+      "learner_prompt_key": "BER_LIGHT",
+      "correct_option_index": 3,
+      "rationale": "With equal speed, P1 + ρgh1 = P2 + ρgh2, so pressure falls as height rises.",
+      "post_commitment_feedback": "The higher point uses more of the Bernoulli ledger in gravitational energy density.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BER-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A larger gravitational term requires a smaller pressure term when speed is unchanged."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BER-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The gravitational energy-density term changes with height."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BER-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The pressure change depends on ρgΔh and the starting pressure."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BER-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BER-ITEM-SOLO",
+      "learner_prompt_key": "BER_SOLO",
+      "correct_option_index": 1,
+      "rationale": "The simple Bernoulli equation assumes steady, incompressible, nonviscous flow along a streamline without unmodeled energy input.",
+      "post_commitment_feedback": "Check the idealization before using the pressure–speed–height tradeoff.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BER-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Material viscous dissipation violates the simple conserved ledger."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BER-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BER-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The simple comparison is along the modeled streamline."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BER-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A pump adds energy and requires an additional term."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BER-ITEM-NEAR",
+      "learner_prompt_key": "BER_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Continuity gives higher speed, and Bernoulli converts that into lower static pressure at equal height.",
+      "post_commitment_feedback": "Use the two equations in order: area controls speed, then speed controls the pressure tradeoff.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BER-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The kinetic term rises, so static pressure must fall at equal height."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BER-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An unchanged pressure would violate the Bernoulli balance when speed changes."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BER-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BER-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Tube color is not a term in the energy balance."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BER-ITEM-CHANGED",
+      "learner_prompt_key": "BER_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "At equal pressure, the higher gravitational term at B requires a smaller kinetic term.",
+      "post_commitment_feedback": "With no added energy, gaining height at equal pressure requires losing speed.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BER-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BER-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both a higher gravitational term and higher kinetic term would exceed the ledger at equal pressure."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BER-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal pressure and speed cannot balance the increased height term."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BER-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Height is an explicit term in the energy balance."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BER-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "BER_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The three energy-density terms are static pressure, kinetic, and gravitational.",
+      "post_commitment_feedback": "Write the complete ledger before canceling equal terms.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BER-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The kinetic and gravitational terms have incorrect forms and units."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BER-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Av is volume flow, not the full Bernoulli energy-density ledger."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BER-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BER-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Pressure is not generally equal to the kinetic term."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BER-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "BER_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "At equal height, the decrease in kinetic energy density is balanced by an increase in static pressure.",
+      "post_commitment_feedback": "Slower ideal flow on the same horizontal streamline has higher static pressure.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BER-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BER-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A smaller kinetic term allows a larger pressure term."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BER-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The Bernoulli sum would fall if both height and pressure stayed unchanged."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BER-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Only the pressure difference is determined, not an absolute negative value."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BER-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "BER_REPAIR_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "With equal pressure and no added or lost energy, the higher gravitational term must be balanced by a lower kinetic term.",
+      "post_commitment_feedback": "Keep the full Bernoulli ledger: at equal pressure, a rise in height requires a decrease in speed when no energy is added.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BER-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both terms cannot rise while their sum remains fixed and the pressure term is unchanged."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BER-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The stem explicitly sets the static pressures equal, so pressure cannot supply the increase."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BER-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The gravitational term remains part of Bernoulli's energy balance for moving fluid."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BER-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BER-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "BER_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "At equal pressure with no added energy, the raised section has a larger gravitational term and therefore a smaller kinetic term.",
+      "post_commitment_feedback": "The garden-pipe context changes the surface details, but the same height–speed ledger requires lower speed at the raised section.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BER-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "With total energy fixed, height and kinetic energy trade off rather than rise together."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BER-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BER-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal pressure cancels the pressure terms, but unequal height still requires unequal speed."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BER-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The stated ideal-streamline conditions supply the terms needed for the comparison."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MTR-ITEM-ENTRY",
+      "learner_prompt_key": "MTR_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "The smaller area increases speed, and Bernoulli gives a corresponding static-pressure decrease.",
+      "post_commitment_feedback": "Venturi logic uses continuity first and Bernoulli second.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MTR-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Continuity and Bernoulli both predict the opposite at the throat."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MTR-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MTR-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At equal height, the larger kinetic term requires lower static pressure."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MTR-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The area change requires a speed change for constant Q."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MTR-ITEM-GUIDED",
+      "learner_prompt_key": "MTR_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "v = √(2×1600/800) = √4 = 2 m/s.",
+      "post_commitment_feedback": "Subtract static from stagnation, multiply by two, divide by density, then take the square root.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MTR-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits the factor of two in v = √(2ΔP/ρ)."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MTR-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This fails to take the square root after calculating v² = 4."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MTR-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The pressure and density values do not support this scale."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MTR-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MTR-ITEM-LIGHT",
+      "learner_prompt_key": "MTR_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "At the stagnation point, local speed is zero and the kinetic contribution appears as higher pressure.",
+      "post_commitment_feedback": "A forward-facing opening measures stagnation pressure.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MTR-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MTR-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A Venturi throat remains a moving section rather than a stagnation point."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MTR-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The measured pressure includes conversion of the incoming kinetic term."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MTR-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Stopping the sampled flow raises pressure rather than forcing it to zero."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MTR-ITEM-SOLO",
+      "learner_prompt_key": "MTR_SOLO",
+      "correct_option_index": 2,
+      "rationale": "Since ΔP = ½ρv², doubling ΔP multiplies speed by √2.",
+      "post_commitment_feedback": "Dynamic pressure scales with speed squared.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MTR-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Speed depends on the square root of pressure difference."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MTR-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The larger pressure difference corresponds to larger, not smaller, speed."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MTR-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MTR-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal density with different dynamic pressure implies different speed."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MTR-ITEM-NEAR",
+      "learner_prompt_key": "MTR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The comparison is between two moving sections of different area, which is the Venturi arrangement.",
+      "post_commitment_feedback": "Use Venturi logic when both pressure ports sample flowing sections across a constriction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MTR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neither sampled point is brought to zero speed."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MTR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The key inference uses a constriction-induced speed change."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MTR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MTR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No temperature-driven size change is involved."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MTR-ITEM-CHANGED",
+      "learner_prompt_key": "MTR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "The forward-facing port measures stagnation pressure and the side port static pressure; their difference is dynamic pressure.",
+      "post_commitment_feedback": "This is a pitot pressure pair, so use ΔP = ½ρv².",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MTR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MTR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No separate upstream and throat areas are compared."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MTR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The ports are at the same location and differ by stagnation of the sampled flow."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MTR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Under the ideal pitot model, the difference directly relates to speed."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MTR-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "MTR_REPAIR_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Pitot inference requires a stagnation pressure and a static pressure at the sampled location.",
+      "post_commitment_feedback": "Find the local zero-speed port before using dynamic-pressure logic.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MTR-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That arrangement is Venturi-style."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MTR-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A constriction with two moving sections is Venturi behavior."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MTR-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That is a continuity junction calculation, not a pitot measurement."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MTR-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MTR-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "MTR_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The narrow throat is faster and therefore has lower static pressure at equal height.",
+      "post_commitment_feedback": "The diagram is a Venturi comparison between two flowing sections.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MTR-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The upstream section is slower and therefore has higher static pressure."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MTR-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MTR-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The speed change requires a static-pressure difference under Bernoulli."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MTR-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Side ports in moving sections measure static pressure."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MTR-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "MTR_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Pstag − Pstatic = ½ρv², which rearranges to the square-root expression.",
+      "post_commitment_feedback": "Use the positive stagnation-minus-static difference and divide by density inside the square root.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MTR-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MTR-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The pressure order, density placement, and square root are incorrect."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MTR-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Dynamic pressure is a difference, not a sum, and speed is squared."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MTR-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The pitot relation is not a hydrostatic height equation in this form."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MTR-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "MTR_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "For fixed ΔP, v is proportional to 1/√ρ; four times the density gives half the speed.",
+      "post_commitment_feedback": "Keep density inside the square root when comparing pitot speeds.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MTR-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Greater density requires lower speed for the same dynamic pressure."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MTR-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Speed varies with the inverse square root of density, not inverse density."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MTR-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MTR-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Density is explicit in ΔP = ½ρv²."
+        }
+      ]
+    }
+  ]
+}

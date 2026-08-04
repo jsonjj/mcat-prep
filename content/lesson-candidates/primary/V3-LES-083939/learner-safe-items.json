@@ -1,0 +1,528 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes; an unresolved fresh re-entry returns control without exit credit.",
+  "items": [
+    {
+      "prompt_key": "NRM_ENTRY",
+      "title": "Starting check: norm versus sanction",
+      "prompt": "A club expects members to silence phones during meetings. A member who complies receives public praise. What is the praise?",
+      "response_type": "single_select",
+      "options": [
+        "The norm itself",
+        "A positive informal sanction",
+        "A negative formal sanction",
+        "Anomie"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRM_GUIDED",
+      "title": "Guided practice: routine convention",
+      "prompt": "Guests are expected to stand in an orderly queue. A person who cuts receives annoyed looks but no formal penalty. Which norm category is the closest fit?",
+      "response_type": "single_select",
+      "options": [
+        "Taboo",
+        "More",
+        "Anomie",
+        "Folkway"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRM_LIGHT",
+      "title": "Less help: moral importance",
+      "prompt": "A community treats care for dependent family members as a strong moral obligation and responds to abandonment with severe condemnation. Which category fits best?",
+      "response_type": "single_select",
+      "options": [
+        "More",
+        "Folkway",
+        "Positive sanction",
+        "Anomie"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRM_SOLO",
+      "title": "On your own: intense prohibition",
+      "prompt": "A behavior is treated as profoundly prohibited and evokes near-universal, intense condemnation in the described group. Which norm type is closest?",
+      "response_type": "single_select",
+      "options": [
+        "Folkway",
+        "Positive formal sanction",
+        "Taboo",
+        "Anomie"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRM_NEAR",
+      "title": "Near exit: classify the response",
+      "prompt": "A licensing board suspends a member for violating a written professional rule. How should the suspension be classified?",
+      "response_type": "single_select",
+      "options": [
+        "A positive informal sanction",
+        "The professional norm itself",
+        "A negative formal sanction",
+        "Anomie"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRM_CHANGED",
+      "title": "Changed exit: identify system-level anomie",
+      "prompt": "After rapid institutional change, residents report that old expectations no longer apply, new expectations conflict, and enforcement is unpredictable. Which concept best fits?",
+      "response_type": "single_select",
+      "options": [
+        "Anomie",
+        "One person violating a folkway",
+        "A positive formal sanction",
+        "A strongly enforced taboo"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRM_REPAIR_NEAR",
+      "title": "Repair: expectation before response",
+      "prompt": "Which sequence correctly analyzes a norm-and-sanction vignette?",
+      "response_type": "single_select",
+      "options": [
+        "Name punishment → assume taboo → ignore rule",
+        "Identify one violator → conclude anomie → stop",
+        "Classify reward as norm → omit expectation",
+        "Identify rule → strength → response"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRM_REENTRY_NEAR",
+      "title": "Fresh re-entry: positive formal response",
+      "prompt": "A university awards an official certificate for compliance with a service expectation. What is the certificate?",
+      "response_type": "single_select",
+      "options": [
+        "A negative informal sanction",
+        "A positive formal sanction",
+        "A folkway",
+        "Anomie"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRM_REPAIR_CHANGED",
+      "title": "Repair: anomie evidence",
+      "prompt": "Which observation most directly supports anomie?",
+      "response_type": "single_select",
+      "options": [
+        "Conflicting rules; weak enforcement",
+        "One member receives a mild reminder about etiquette.",
+        "A board applies a written penalty consistently.",
+        "A group strongly condemns a prohibited behavior."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRM_REENTRY_CHANGED",
+      "title": "Fresh re-entry: conflicting expectations",
+      "prompt": "Two institutions governing the same role issue incompatible expectations, and neither can reliably enforce its rules. Which concept applies?",
+      "response_type": "single_select",
+      "options": [
+        "Folkway",
+        "Positive sanction",
+        "Anomie",
+        "Taboo"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DEV_ENTRY",
+      "title": "Starting check: learned definitions",
+      "prompt": "A newcomer learns a prohibited technique and justifications for using it through repeated interaction with close peers. Which theory best fits?",
+      "response_type": "single_select",
+      "options": [
+        "Labeling theory",
+        "Differential association",
+        "Strain theory",
+        "Anomie alone"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DEV_GUIDED",
+      "title": "Guided practice: reaction to a label",
+      "prompt": "After a minor violation, a person is publicly labeled dangerous, excluded from conventional roles, and later joins similarly excluded peers. Which theory centers this pathway?",
+      "response_type": "single_select",
+      "options": [
+        "Differential association only",
+        "Strain theory only",
+        "Folkway theory",
+        "Labeling theory"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DEV_LIGHT",
+      "title": "Less help: goals and means",
+      "prompt": "A culture strongly promotes financial success, but a group has sharply restricted access to approved routes for achieving it. Which theory emphasizes the resulting pressure?",
+      "response_type": "single_select",
+      "options": [
+        "Labeling theory",
+        "Differential association",
+        "Sanction theory",
+        "Strain theory"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DEV_SOLO",
+      "title": "On your own: theory-specific prediction",
+      "prompt": "Which result most directly supports differential association?",
+      "response_type": "single_select",
+      "options": [
+        "Behavior changes only after an official label is applied.",
+        "Change after peer instruction",
+        "Behavior rises where approved means are blocked despite shared goals.",
+        "Behavior is identical regardless of peer contact."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DEV_NEAR",
+      "title": "Near exit: locate the mechanism",
+      "prompt": "A student’s conduct changes after teachers repeatedly apply a deviant label and remove access to ordinary school roles. Which explanation is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Differential association",
+        "Strain theory",
+        "Labeling theory",
+        "Taboo classification"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DEV_CHANGED",
+      "title": "Changed exit: choose discriminating evidence",
+      "prompt": "Which observation best separates differential association from labeling theory?",
+      "response_type": "single_select",
+      "options": [
+        "Peer-taught conduct before any labeling",
+        "A norm exists and some people violate it.",
+        "A violation receives a negative sanction.",
+        "The behavior occurs in a large city."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DEV_REPAIR_NEAR",
+      "title": "Repair: three causal cues",
+      "prompt": "Which cue belongs to strain theory?",
+      "response_type": "single_select",
+      "options": [
+        "Techniques learned from close peers",
+        "Opportunities changed after a public label",
+        "Blocked means despite valued goals",
+        "Mild disapproval of a routine convention"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DEV_REENTRY_NEAR",
+      "title": "Fresh re-entry: blocked route",
+      "prompt": "A group endorses the same educational goal as others but faces systematic barriers to approved paths for reaching it. Which theory predicts pressure for alternative adaptation?",
+      "response_type": "single_select",
+      "options": [
+        "Strain theory",
+        "Labeling theory",
+        "Differential association",
+        "Taboo theory"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DEV_REPAIR_CHANGED",
+      "title": "Repair: make predictions diverge",
+      "prompt": "Which finding most directly favors labeling over strain theory?",
+      "response_type": "single_select",
+      "options": [
+        "Behavior varies with access to approved means before any label.",
+        "Peers teach techniques before institutions react.",
+        "A strong norm receives a strong sanction.",
+        "Roles change after labeling"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "DEV_REENTRY_CHANGED",
+      "title": "Fresh re-entry: compare two pathways",
+      "prompt": "Group A changes behavior after peer instruction; Group B changes only after public classification closes conventional roles. Which pairing fits?",
+      "response_type": "single_select",
+      "options": [
+        "A: labeling; B: strain",
+        "A: differential association; B: labeling",
+        "A: strain; B: differential association",
+        "A: anomie; B: taboo"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "COL_ENTRY",
+      "title": "Starting check: rapid short-lived spread",
+      "prompt": "A style spreads quickly through imitation, peaks, and largely disappears within weeks. No norm violation is stated. Which concept fits best?",
+      "response_type": "single_select",
+      "options": [
+        "Deviance",
+        "Fad",
+        "Anomie",
+        "Riot"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "COL_GUIDED",
+      "title": "Guided practice: norm-relative behavior",
+      "prompt": "A person deliberately violates a clearly stated group norm while acting alone, and no broader group process follows. Which construct is directly established?",
+      "response_type": "single_select",
+      "options": [
+        "Collective behavior",
+        "Fad",
+        "Collective fear response",
+        "Deviance"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "COL_LIGHT",
+      "title": "Less help: socially spreading fear",
+      "prompt": "An unverified odor report moves through a crowd; fear and similar symptoms escalate through observation and rumor despite no detected hazard. Which example is closest?",
+      "response_type": "single_select",
+      "options": [
+        "Collective fear response",
+        "Fad",
+        "Solitary deviance",
+        "Folkway"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "COL_SOLO",
+      "title": "On your own: volatile crowd action",
+      "prompt": "A gathering rapidly shifts into convergent crowd action, property damage, and conflict with authorities. Which collective example is closest?",
+      "response_type": "single_select",
+      "options": [
+        "Fad",
+        "Collective fear response",
+        "Riot",
+        "Socialization"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "COL_NEAR",
+      "title": "Near exit: use both axes",
+      "prompt": "A coordinated protest follows established rules and spreads through peer networks. Which interpretation is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "Deviance only because the event is collective",
+        "Riot because all protests are riots",
+        "Collective behavior; no stated deviance",
+        "Anomie because people act in a group"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "COL_CHANGED",
+      "title": "Changed exit: classify a two-case matrix",
+      "prompt": "Case A is a solitary norm violation. Case B is a rapidly spreading group practice with no stated violation. Which pairing is correct?",
+      "response_type": "single_select",
+      "options": [
+        "A: deviance; B: collective behavior",
+        "A: collective behavior; B: deviance",
+        "A: fad; B: anomie",
+        "A: riot; B: taboo"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "COL_REPAIR_NEAR",
+      "title": "Repair: two-axis question",
+      "prompt": "Which question identifies deviance rather than collective behavior?",
+      "response_type": "single_select",
+      "options": [
+        "How did behavior spread through the group?",
+        "Did imitation accelerate adoption?",
+        "Did uncertainty amplify shared fear?",
+        "What governing norm was violated?"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "COL_REENTRY_NEAR",
+      "title": "Fresh re-entry: solitary violation",
+      "prompt": "One employee knowingly violates a clear workplace norm in private. No imitation or crowd process occurs. Which classification is supported?",
+      "response_type": "single_select",
+      "options": [
+        "Collective behavior without deviance",
+        "Deviance without collective behavior",
+        "Fad",
+        "Riot"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "COL_REPAIR_CHANGED",
+      "title": "Repair: identify the collective process",
+      "prompt": "Which feature most specifically supports a fad?",
+      "response_type": "single_select",
+      "options": [
+        "Rapid, short-lived diffusion",
+        "One person violates a strong norm.",
+        "Rules become conflicting across institutions.",
+        "A formal board imposes a penalty."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "COL_REENTRY_CHANGED",
+      "title": "Fresh re-entry: distinguish group processes",
+      "prompt": "A rumor about contamination spreads through a school, and fear-related complaints cluster despite negative environmental tests. Which collective example fits?",
+      "response_type": "single_select",
+      "options": [
+        "Fad",
+        "Riot",
+        "Collective fear response",
+        "Solitary deviance"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SOC_ENTRY",
+      "title": "Starting check: workplace socialization",
+      "prompt": "A new employee learns an organization’s reporting role through onboarding, shadowing, and supervisor feedback. Which agent is most immediate?",
+      "response_type": "single_select",
+      "options": [
+        "Family",
+        "Workplace",
+        "Mass media",
+        "Peers outside work"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SOC_GUIDED",
+      "title": "Guided practice: family transmission",
+      "prompt": "Caregivers repeatedly model a greeting routine, prompt children to practice it, and praise its use. Which process is shown?",
+      "response_type": "single_select",
+      "options": [
+        "Workplace socialization of an occupational role",
+        "A mass-media fad only",
+        "Anomie",
+        "Family socialization of a norm"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SOC_LIGHT",
+      "title": "Less help: media scripts",
+      "prompt": "Repeated programs portray one occupation using the same role script, and viewers report learning what that occupation is expected to do. Which agent is central?",
+      "response_type": "single_select",
+      "options": [
+        "Family",
+        "Peer group",
+        "Workplace",
+        "Mass media"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SOC_SOLO",
+      "title": "On your own: peer feedback",
+      "prompt": "A student adopts a group-specific speaking style after repeated interaction, imitation, and feedback from friends. Which agent is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Workplace",
+        "Peers",
+        "Mass media",
+        "Family"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SOC_NEAR",
+      "title": "Near exit: identify all three parts",
+      "prompt": "A supervisor demonstrates a safety script, a trainee rehearses it, and correct use becomes part of the trainee’s role identity. Which mapping is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Media → punishment → biological trait",
+        "Family → rumor spread → fad",
+        "Workplace → rehearsal → role identity",
+        "Peers → norm breakdown → anomie"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SOC_CHANGED",
+      "title": "Changed exit: compare conflicting agents",
+      "prompt": "Family messages favor one career role, while peer feedback and media examples favor another. What is the best socialization interpretation?",
+      "response_type": "single_select",
+      "options": [
+        "Agents transmit competing roles",
+        "Only family can socialize identity.",
+        "Exposure guarantees one identical outcome.",
+        "The conflict proves anomie in the whole society."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SOC_REPAIR_NEAR",
+      "title": "Repair: agent–mechanism–outcome",
+      "prompt": "Which mapping is complete?",
+      "response_type": "single_select",
+      "options": [
+        "Family → family → family",
+        "Media → exposure → guaranteed adoption",
+        "Peers → feedback → group behavior",
+        "Workplace → biology → inherited identity"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SOC_REENTRY_NEAR",
+      "title": "Fresh re-entry: media outcome",
+      "prompt": "An online series repeatedly models a new interaction script, and viewers begin using parts of it in conversation. Which mapping fits?",
+      "response_type": "single_select",
+      "options": [
+        "Media → modeling → behavior",
+        "Workplace → onboarding → role",
+        "Family → sanction → taboo",
+        "Peers → normlessness → anomie"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SOC_REPAIR_CHANGED",
+      "title": "Repair: identify direct and reinforcing agents",
+      "prompt": "A child first learns a routine from caregivers and later receives matching peer approval. Which statement is most precise?",
+      "response_type": "single_select",
+      "options": [
+        "Peers introduced the norm before any family contact.",
+        "Media is the only agent because approval is public.",
+        "The routine is inherited rather than socialized.",
+        "Family introduces; peers reinforce"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SOC_REENTRY_CHANGED",
+      "title": "Fresh re-entry: workplace and peers",
+      "prompt": "Formal onboarding teaches a communication rule, while coworkers’ daily feedback shapes how it is enacted. Which interpretation fits?",
+      "response_type": "single_select",
+      "options": [
+        "Mass media alone determines the role.",
+        "Workplace and peers jointly socialize",
+        "Family alone transmits the job rule.",
+        "No socialization occurs because two agents are involved."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    }
+  ]
+}

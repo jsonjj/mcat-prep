@@ -1,0 +1,528 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes; an unresolved fresh re-entry returns control without exit credit.",
+  "items": [
+    {
+      "prompt_key": "SYS_ENTRY",
+      "title": "Starting check: choose the system",
+      "prompt": "A sealed metal bottle of water cools on a bench. The analysis defines the water as the system. Which statement follows from that boundary choice?",
+      "response_type": "single_select",
+      "options": [
+        "The room is part of the system because it exchanges energy.",
+        "Surroundings; heat can cross",
+        "Matter must leave the water whenever heat leaves it.",
+        "The water cannot change temperature because the bottle is sealed."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SYS_GUIDED",
+      "title": "Guided practice: apply the Zeroth Law",
+      "prompt": "Object A is in thermal equilibrium with thermometer B. Object C later reaches thermal equilibrium with B at the same reading. What can be concluded?",
+      "response_type": "single_select",
+      "options": [
+        "A and C contain equal total internal energy.",
+        "A and C must have equal masses.",
+        "Heat must continuously flow from A to C.",
+        "A and C have equal temperatures."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SYS_LIGHT",
+      "title": "Less help: classify the quantity",
+      "prompt": "A gas follows two different processes between identical initial and final states. Which quantity must be identical for both processes?",
+      "response_type": "single_select",
+      "options": [
+        "Change in internal energy",
+        "Heat transferred to the gas",
+        "Work done on the gas",
+        "Distance traveled by a piston"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SYS_SOLO",
+      "title": "On your own: compare paths",
+      "prompt": "Process X and Process Y begin and end at the same thermodynamic states. X transfers more heat into the system than Y. What must differ?",
+      "response_type": "single_select",
+      "options": [
+        "The endpoint internal-energy change differs.",
+        "The final temperature must differ.",
+        "The work transfer differs between X and Y.",
+        "The Zeroth Law becomes invalid for one path."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SYS_NEAR",
+      "title": "Near exit: thermal-equilibrium limit",
+      "prompt": "Two copper blocks are in thermal equilibrium but have different masses. Which property is necessarily equal?",
+      "response_type": "single_select",
+      "options": [
+        "Total internal energy",
+        "Heat capacity",
+        "Temperature",
+        "Number of particles"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SYS_CHANGED",
+      "title": "Changed exit: endpoint versus process data",
+      "prompt": "A state table shows identical initial and final pressure, volume, and temperature for two paths. A process log reports different heat transfers. Which statement is consistent?",
+      "response_type": "single_select",
+      "options": [
+        "Same ΔU; different work",
+        "Different heat proves the final states are different.",
+        "Same endpoints require equal heat and equal work separately.",
+        "Internal energy is undefined unless the path is known."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SYS_REPAIR_NEAR",
+      "title": "Repair: use the endpoint test",
+      "prompt": "Which question best identifies whether a thermodynamic quantity is a state function?",
+      "response_type": "single_select",
+      "options": [
+        "Was the quantity measured with a thermometer?",
+        "Did energy cross the boundary during the process?",
+        "Was the process completed slowly?",
+        "Is the endpoint change path-independent?"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SYS_REENTRY_NEAR",
+      "title": "Fresh re-entry: identify path dependence",
+      "prompt": "A liquid reaches the same final state by direct heating or by compression followed by cooling. Which reported quantity may differ between routes?",
+      "response_type": "single_select",
+      "options": [
+        "Final temperature",
+        "Heat transferred during the route",
+        "Change in internal energy",
+        "Final pressure"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SYS_REPAIR_CHANGED",
+      "title": "Repair: translate equilibrium statements",
+      "prompt": "If TA = TB and TB = TC, what is the valid Zeroth-Law conclusion?",
+      "response_type": "single_select",
+      "options": [
+        "TA = TC",
+        "UA = UC",
+        "mA = mC",
+        "qA = qC for every process"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SYS_REENTRY_CHANGED",
+      "title": "Fresh re-entry: compare two sensors",
+      "prompt": "Sensor X equilibrates with bath P at 310 K. Sensor Y equilibrates with bath P and also reads 310 K. What follows about X and Y after equilibration?",
+      "response_type": "single_select",
+      "options": [
+        "They store the same internal energy.",
+        "They absorbed the same amount of heat.",
+        "They have the same temperature.",
+        "They have identical heat capacities."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_ENTRY",
+      "title": "Starting check: work sign",
+      "prompt": "Using ΔU = q + w with w defined as work done on the system, a gas expands and pushes the surroundings. What is the sign of w?",
+      "response_type": "single_select",
+      "options": [
+        "Positive",
+        "Negative",
+        "Always zero",
+        "Undefined even after the convention is stated"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_GUIDED",
+      "title": "Guided practice: close the ledger",
+      "prompt": "A system absorbs 150 J of heat while doing 40 J of work on the surroundings. Under ΔU = q + w, what is ΔU?",
+      "response_type": "single_select",
+      "options": [
+        "+190 J",
+        "−110 J",
+        "−190 J",
+        "+110 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_LIGHT",
+      "title": "Less help: rectangular PV area",
+      "prompt": "A gas expands at 200 kPa from 1.0 L to 2.5 L. What is the work done by the gas?",
+      "response_type": "single_select",
+      "options": [
+        "80 J",
+        "200 J",
+        "500 J",
+        "300 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_SOLO",
+      "title": "On your own: compression work",
+      "prompt": "A gas is compressed at 150 kPa from 4.0 L to 2.0 L. Under the work-on-system convention, what is w?",
+      "response_type": "single_select",
+      "options": [
+        "−300 J",
+        "+300 J",
+        "+600 J",
+        "−75 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_NEAR",
+      "title": "Near exit: combine heat and PV work",
+      "prompt": "A gas absorbs 450 J while expanding at constant pressure and doing 180 J of work on the surroundings. What is its internal-energy change?",
+      "response_type": "single_select",
+      "options": [
+        "+630 J",
+        "−270 J",
+        "+270 J",
+        "−630 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_CHANGED",
+      "title": "Changed exit: read a rectangular cycle",
+      "prompt": "A gas traces a clockwise rectangle from 2 L to 5 L between pressures of 100 and 300 kPa. What is the net work done by the gas per cycle?",
+      "response_type": "single_select",
+      "options": [
+        "600 J",
+        "200 J",
+        "900 J",
+        "0 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_REPAIR_NEAR",
+      "title": "Repair: translate transfer language",
+      "prompt": "Under ΔU = q + w, which translation is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Heat leaves: q > 0; surroundings compress system: w < 0",
+        "Heat leaves: q = 0; compression: w = 0",
+        "Heat leaves: q < 0; compression: w > 0",
+        "Heat leaves: q < 0; system expands: w > 0"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_REENTRY_NEAR",
+      "title": "Fresh re-entry: new energy ledger",
+      "prompt": "A system releases 90 J of heat while 140 J of work is done on it. What is ΔU under the stated convention?",
+      "response_type": "single_select",
+      "options": [
+        "+50 J",
+        "−230 J",
+        "+230 J",
+        "−50 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_REPAIR_CHANGED",
+      "title": "Repair: cycle area and direction",
+      "prompt": "Which rule correctly interprets a simple closed PV loop?",
+      "response_type": "single_select",
+      "options": [
+        "The final volume alone gives all cyclic work.",
+        "Only the highest pressure determines net work.",
+        "Clockwise and counterclockwise loops have identical work direction.",
+        "Area gives magnitude; direction gives sign."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_REENTRY_CHANGED",
+      "title": "Fresh re-entry: reverse the loop",
+      "prompt": "A counterclockwise rectangular PV cycle encloses 250 J. Under the work-on-system convention, what is net w?",
+      "response_type": "single_select",
+      "options": [
+        "−250 J",
+        "+250 J",
+        "0 J",
+        "+500 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ENT_ENTRY",
+      "title": "Starting check: phase entropy",
+      "prompt": "For the same pure substance under comparable conditions, which ordering generally has increasing entropy?",
+      "response_type": "single_select",
+      "options": [
+        "Gas < liquid < crystal",
+        "Crystal < liquid < gas",
+        "Liquid < gas < crystal",
+        "Crystal = liquid = gas"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ENT_GUIDED",
+      "title": "Guided practice: add both columns",
+      "prompt": "A process has ΔSsystem = −12 J/K and ΔSsurroundings = +20 J/K. What is ΔSuniverse for the stated direction?",
+      "response_type": "single_select",
+      "options": [
+        "−32 J/K",
+        "−8 J/K",
+        "+32 J/K",
+        "+8 J/K"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ENT_LIGHT",
+      "title": "Less help: assign a phase-change sign",
+      "prompt": "A pure liquid vaporizes. What is the expected sign of the system entropy change?",
+      "response_type": "single_select",
+      "options": [
+        "Positive",
+        "Negative",
+        "Exactly zero",
+        "Undefined from the phase direction"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ENT_SOLO",
+      "title": "On your own: apply the Second Law",
+      "prompt": "For a proposed direction, ΔSsystem = +6 J/K and ΔSsurroundings = −2 J/K. Which conclusion follows?",
+      "response_type": "single_select",
+      "options": [
+        "The direction is impossible because surroundings entropy decreases.",
+        "The system is at equilibrium because one term is negative.",
+        "Spontaneous because ΔSuniverse is positive",
+        "The reverse direction is spontaneous under the same conditions."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ENT_NEAR",
+      "title": "Near exit: system decrease",
+      "prompt": "During condensation, the system entropy falls by 18 J/K and the surroundings entropy rises by 27 J/K. What is the correct judgment?",
+      "response_type": "single_select",
+      "options": [
+        "Condensation is forbidden because system entropy decreases.",
+        "The system is at equilibrium because both terms are nonzero.",
+        "Spontaneous in the stated direction",
+        "Vaporization and condensation are equally favored."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ENT_CHANGED",
+      "title": "Changed exit: interpret an entropy table",
+      "prompt": "A table lists three proposed directions: P has ΔSsystem = +5 and ΔSsurroundings = −5; Q has −4 and +9; R has +7 and −10 J/K. Which direction is spontaneous?",
+      "response_type": "single_select",
+      "options": [
+        "Q only",
+        "P only",
+        "R only",
+        "P and R"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ENT_REPAIR_NEAR",
+      "title": "Repair: phase order before direction",
+      "prompt": "Which change normally lowers the system entropy for a pure substance?",
+      "response_type": "single_select",
+      "options": [
+        "Crystal → liquid",
+        "Liquid → gas",
+        "Crystal → gas",
+        "Liquid → crystal"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ENT_REENTRY_NEAR",
+      "title": "Fresh re-entry: sublimation sign",
+      "prompt": "A solid sublimes directly to a gas. What is the expected sign of ΔSsystem?",
+      "response_type": "single_select",
+      "options": [
+        "Negative",
+        "Positive",
+        "Zero",
+        "Positive only if surroundings entropy is zero"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ENT_REPAIR_CHANGED",
+      "title": "Repair: use the total",
+      "prompt": "Which expression is the Second-Law direction test for a process and its surroundings?",
+      "response_type": "single_select",
+      "options": [
+        "ΔSuniverse = ΔSsystem + ΔSsurroundings",
+        "ΔSuniverse = ΔSsystem − |ΔSsurroundings| always",
+        "ΔSuniverse = ΔSsystem only",
+        "ΔSuniverse = |ΔSsystem| + |ΔSsurroundings|"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ENT_REENTRY_CHANGED",
+      "title": "Fresh re-entry: new entropy ledger",
+      "prompt": "A phase change has ΔSsystem = +14 J/K and ΔSsurroundings = −19 J/K. What follows for the stated direction?",
+      "response_type": "single_select",
+      "options": [
+        "It is spontaneous because system entropy rises.",
+        "It is at equilibrium because the signs differ.",
+        "Not spontaneous; ΔSuniverse = −5 J/K",
+        "It is spontaneous because entropy magnitudes must be added."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "THM_ENTRY",
+      "title": "Starting check: transfer mechanism",
+      "prompt": "Energy from the Sun reaches a spacecraft across nearly empty space. Which transfer mechanism carries that energy?",
+      "response_type": "single_select",
+      "options": [
+        "Conduction",
+        "Radiation",
+        "Convection",
+        "Thermal expansion"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "THM_GUIDED",
+      "title": "Guided practice: use specific heat",
+      "prompt": "How much heat is required to warm 50 g of a material with c = 4 J/(g·K) by 3 K, with no phase change?",
+      "response_type": "single_select",
+      "options": [
+        "200 J",
+        "150 J",
+        "12 J",
+        "600 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "THM_LIGHT",
+      "title": "Less help: compare specific heat",
+      "prompt": "Equal masses of materials A and B receive equal heat. A changes temperature less than B. Which conclusion follows?",
+      "response_type": "single_select",
+      "options": [
+        "A has the smaller specific heat.",
+        "Both must have equal specific heat.",
+        "Specific heat cannot affect temperature change.",
+        "A has the greater specific heat."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "THM_SOLO",
+      "title": "On your own: thermal expansion",
+      "prompt": "A uniform metal rod is heated while remaining in one phase and unconstrained. What change is normally expected?",
+      "response_type": "single_select",
+      "options": [
+        "Its length becomes exactly zero.",
+        "Its length increases.",
+        "Its mass increases because heat is matter.",
+        "It must vaporize immediately."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "THM_NEAR",
+      "title": "Near exit: isolated mixing",
+      "prompt": "In an insulated cup, a hot object loses 900 J before both objects reach one final temperature. How much heat does the cooler object gain?",
+      "response_type": "single_select",
+      "options": [
+        "−900 J",
+        "0 J",
+        "+900 J",
+        "+1800 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "THM_CHANGED",
+      "title": "Changed exit: follow a phase-diagram path",
+      "prompt": "A constant-pressure path moves from the liquid region across the liquid–gas boundary into the gas region while energy is added. What occurs at the boundary in the ideal model?",
+      "response_type": "single_select",
+      "options": [
+        "Latent heat drives isothermal vaporization.",
+        "The liquid cools through the boundary with no energy transfer.",
+        "Only thermal expansion occurs and phase remains liquid.",
+        "Temperature rises continuously during the entire phase conversion."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "THM_REPAIR_NEAR",
+      "title": "Repair: signed calorimetry",
+      "prompt": "Which equation correctly represents two objects exchanging heat in an insulated container?",
+      "response_type": "single_select",
+      "options": [
+        "q1 = q2 with both signs positive",
+        "q1 + q2 > 0 always",
+        "q1 + q2 = 0",
+        "m1c1 = m2c2 for every pair"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "THM_REENTRY_NEAR",
+      "title": "Fresh re-entry: new heat balance",
+      "prompt": "In an insulated container, sample X gains 350 J while reaching equilibrium. What is the signed heat change of sample Y?",
+      "response_type": "single_select",
+      "options": [
+        "−350 J",
+        "+350 J",
+        "0 J",
+        "−700 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "THM_REPAIR_CHANGED",
+      "title": "Repair: choose the phase equation",
+      "prompt": "During an ideal heating-curve plateau while melting continues, which equation accounts for added heat?",
+      "response_type": "single_select",
+      "options": [
+        "q = mcΔT with a large ΔT",
+        "q = 0 because temperature is constant",
+        "q = PΔV only for every melting process",
+        "q = mLf"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "THM_REENTRY_CHANGED",
+      "title": "Fresh re-entry: cross a different boundary",
+      "prompt": "At constant pressure, a path moves from the solid region across the solid–liquid boundary while heat is added. Which description is correct at the boundary?",
+      "response_type": "single_select",
+      "options": [
+        "Freezing releases latent heat while the solid fraction grows.",
+        "Latent heat melts at fixed temperature.",
+        "Convection converts the solid with no phase energy.",
+        "The sample remains entirely solid after entering the liquid region."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    }
+  ]
+}
