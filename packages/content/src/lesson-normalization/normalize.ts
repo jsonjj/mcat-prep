@@ -14,6 +14,7 @@ import {
   type NormalizedItem,
   type NormalizedKc,
   type NormalizedLesson,
+  type NormalizedPrerequisiteGate,
   type NormalizedProjection,
   type NormalizedResponseControl,
 } from './types';
@@ -520,6 +521,697 @@ interface BranchMetadata {
   readonly reentryFunctionByItemId: ReadonlyMap<string, BranchExitFunction>;
   readonly repairFunctionByItemId: ReadonlyMap<string, BranchExitFunction>;
   readonly bindingsByKc: ReadonlyMap<string, readonly NormalizedBranchBinding[]>;
+}
+
+type GateOutcome = 'PASS' | 'FAIL';
+
+interface PrerequisiteAssociation {
+  readonly raw: Json;
+  readonly prerequisiteLessonId: string;
+  readonly activityIds: readonly string[];
+  readonly itemIds: readonly string[];
+  readonly failureNodeIds: readonly string[];
+  readonly ctx: string;
+}
+
+function optionalRecordArray(value: unknown, ctx: string, lessonId: string): Json[] {
+  if (value === undefined) return [];
+  return asArray(value, ctx, { lessonId }).map((entry, ordinal) =>
+    asObject(entry, `${ctx}[${ordinal}]`, { lessonId }),
+  );
+}
+
+function optionalStringList(
+  record: Json,
+  pluralKey: string,
+  singularKey: string,
+  ctx: string,
+  lessonId: string,
+): string[] {
+  if (record[pluralKey] !== undefined) {
+    return asStringArray(record[pluralKey], `${ctx}.${pluralKey}`, { lessonId });
+  }
+  if (record[singularKey] !== undefined) {
+    return [asString(record[singularKey], `${ctx}.${singularKey}`, { lessonId })];
+  }
+  return [];
+}
+
+function prerequisiteAssociations(index: ScriptIndex): readonly PrerequisiteAssociation[] {
+  const curriculum =
+    index.payload.curriculum_context === undefined
+      ? {}
+      : asObject(index.payload.curriculum_context, 'payload.curriculum_context', {
+          lessonId: index.lessonId,
+        });
+  const sources = [
+    {
+      values: optionalRecordArray(
+        index.payload.prerequisite_handoffs,
+        'payload.prerequisite_handoffs',
+        index.lessonId,
+      ),
+      ctx: 'payload.prerequisite_handoffs',
+    },
+    {
+      values: optionalRecordArray(
+        curriculum.hard_prerequisites,
+        'payload.curriculum_context.hard_prerequisites',
+        index.lessonId,
+      ),
+      ctx: 'payload.curriculum_context.hard_prerequisites',
+    },
+    {
+      values: optionalRecordArray(
+        curriculum.hard_prerequisite_handoffs,
+        'payload.curriculum_context.hard_prerequisite_handoffs',
+        index.lessonId,
+      ),
+      ctx: 'payload.curriculum_context.hard_prerequisite_handoffs',
+    },
+  ];
+  const associations: PrerequisiteAssociation[] = [];
+  for (const source of sources) {
+    source.values.forEach((raw, ordinal) => {
+      // A frozen prerequisite may remain provenance after an author explicitly
+      // replaces it with target-local scaffolding. That is not an executable
+      // outcome binding and must not be resurrected by normalization.
+      if (
+        raw.operational_dependency === false ||
+        raw.authoring_behavior === 'IN_LESSON_JIT_SCAFFOLD_NO_EXTERNAL_HANDOFF'
+      ) {
+        return;
+      }
+      const ctx = `${source.ctx}[${ordinal}]`;
+      const activityIds = optionalStringList(
+        raw,
+        'checked_at_activity_ids',
+        'checked_at_activity_id',
+        ctx,
+        index.lessonId,
+      );
+      if (activityIds.length === 0) return;
+      associations.push({
+        raw,
+        prerequisiteLessonId: asString(raw.lesson_id, `${ctx}.lesson_id`, {
+          lessonId: index.lessonId,
+        }),
+        activityIds,
+        itemIds: optionalStringList(
+          raw,
+          'checked_item_binding_ids',
+          'checked_item_binding_id',
+          ctx,
+          index.lessonId,
+        ),
+        failureNodeIds: optionalStringList(
+          raw,
+          'failed_check_handoff_node_ids',
+          'failed_check_handoff_node_id',
+          ctx,
+          index.lessonId,
+        ),
+        ctx,
+      });
+    });
+  }
+  return associations;
+}
+
+function classifyGatePredicate(value: unknown): GateOutcome | null {
+  if (typeof value !== 'string' || !value.includes('CHECK')) return null;
+  if (
+    value.includes('NOT_PASSED') ||
+    value.includes('UNSUPPORTED') ||
+    value.includes('UNRESOLVED')
+  ) {
+    return 'FAIL';
+  }
+  if (value.includes('PASSED') || value.includes('SUPPORTED')) return 'PASS';
+  return null;
+}
+
+function oneConsistentGateValue(
+  values: readonly string[],
+  kind: string,
+  lessonId: string,
+  itemId: string,
+): string {
+  if (values.length === 0) {
+    throw new LessonNormalizationError(`prerequisite gate "${itemId}" has no explicit ${kind}`, {
+      lessonId,
+      itemId,
+    });
+  }
+  const unique = [...new Set(values)];
+  if (unique.length !== 1) {
+    throw new LessonNormalizationError(
+      `prerequisite gate "${itemId}" has contradictory ${kind}: ${unique.join(', ')}`,
+      { lessonId, itemId },
+    );
+  }
+  return unique[0] as string;
+}
+
+function associationFailureNode(
+  association: PrerequisiteAssociation,
+  activityId: string,
+  itemId: string,
+  lessonId: string,
+): string {
+  const activityIndex = association.activityIds.indexOf(activityId);
+  if (activityIndex < 0) {
+    throw new LessonNormalizationError(
+      `prerequisite gate "${itemId}" is absent from its prerequisite association`,
+      { lessonId, itemId },
+    );
+  }
+  if (association.itemIds.length > 0) {
+    const expectedItem =
+      association.itemIds.length === 1 && association.activityIds.length === 1
+        ? association.itemIds[0]
+        : association.itemIds.length === association.activityIds.length
+          ? association.itemIds[activityIndex]
+          : undefined;
+    if (expectedItem === undefined || expectedItem !== itemId) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${itemId}" has contradictory item identity in ${association.ctx}`,
+        { lessonId, itemId },
+      );
+    }
+  }
+  const failureNode =
+    association.failureNodeIds.length === 1
+      ? association.failureNodeIds[0]
+      : association.failureNodeIds.length === association.activityIds.length
+        ? association.failureNodeIds[activityIndex]
+        : undefined;
+  if (failureNode === undefined) {
+    throw new LessonNormalizationError(
+      `prerequisite gate "${itemId}" has an ambiguous failure handoff in ${association.ctx}`,
+      { lessonId, itemId },
+    );
+  }
+  if (
+    association.raw.target_exit_credit_granted !== undefined &&
+    association.raw.target_exit_credit_granted !== false
+  ) {
+    throw new LessonNormalizationError(
+      `prerequisite gate "${itemId}" must be instructional noncredit`,
+      { lessonId, itemId },
+    );
+  }
+  return failureNode;
+}
+
+function gateEntryNode(
+  index: ScriptIndex,
+  kcId: string,
+  itemId: string,
+): {
+  readonly nodeId: string;
+  readonly node: Json;
+  readonly kcScript: Json;
+} {
+  const kcScript = index.kcScriptByKc.get(kcId);
+  if (kcScript === undefined) {
+    throw new LessonNormalizationError(`prerequisite gate "${itemId}" has no owning kc_script`, {
+      lessonId: index.lessonId,
+      itemId,
+    });
+  }
+  const nodeId = asString(kcScript.entry_check_boundary_id, `${kcId}.entry_check_boundary_id`, {
+    lessonId: index.lessonId,
+    itemId,
+  });
+  const node = index.nodeById.get(nodeId);
+  if (node === undefined) {
+    throw new LessonNormalizationError(
+      `prerequisite gate "${itemId}" entry node "${nodeId}" does not resolve`,
+      { lessonId: index.lessonId, itemId, ref: nodeId },
+    );
+  }
+  return { nodeId, node, kcScript };
+}
+
+function directGateObject(
+  value: unknown,
+  ctx: string,
+  lessonId: string,
+  itemId: string,
+): Json | null {
+  if (value === undefined) return null;
+  return asObject(value, ctx, { lessonId, itemId });
+}
+
+function compilePrerequisiteGates(index: ScriptIndex): readonly NormalizedPrerequisiteGate[] {
+  const associations = prerequisiteAssociations(index);
+  const transitions = optionalRecordArray(
+    index.payload.transitions,
+    'payload.transitions',
+    index.lessonId,
+  );
+  const gates: NormalizedPrerequisiteGate[] = [];
+
+  for (const item of index.qep) {
+    const itemId = asString(item.item_binding_id, 'item.item_binding_id', {
+      lessonId: index.lessonId,
+    });
+    const primaryKcId = asString(item.primary_kc_id, `${itemId}.primary_kc_id`, {
+      lessonId: index.lessonId,
+      itemId,
+    });
+    const {
+      nodeId: entryNodeId,
+      node: entryNode,
+      kcScript,
+    } = gateEntryNode(index, primaryKcId, itemId);
+    const outgoing = transitions.filter((transition) => transition.from_node_id === entryNodeId);
+    const passTransitions = outgoing.filter(
+      (transition) => classifyGatePredicate(transition.predicate) === 'PASS',
+    );
+    const failTransitions = outgoing.filter(
+      (transition) => classifyGatePredicate(transition.predicate) === 'FAIL',
+    );
+    const qepGate = directGateObject(
+      item.prerequisite_check,
+      `${itemId}.prerequisite_check`,
+      index.lessonId,
+      itemId,
+    );
+    const activityId =
+      typeof item.activity_id === 'string' && item.activity_id.length > 0 ? item.activity_id : null;
+    const activity = activityId === null ? undefined : index.activityById.get(activityId);
+    const matchedAssociations =
+      activityId === null
+        ? []
+        : associations.filter((association) => association.activityIds.includes(activityId));
+    const activityHasDirectIdentity =
+      activity !== undefined &&
+      (activity.prerequisite_lesson_id !== undefined ||
+        activity.success_next_node_id !== undefined ||
+        activity.failure_handoff_node_id !== undefined);
+    const activityAppearsAtEntry =
+      activityId !== null &&
+      Array.isArray(entryNode.activity_ids) &&
+      entryNode.activity_ids.includes(activityId);
+    const hasLegacyGroupedOutcomeMap = activity?.response_option_transition_map !== undefined;
+    const hasNamedPrerequisiteTransition = outgoing.some(
+      (transition) =>
+        (typeof transition.transition_id === 'string' &&
+          transition.transition_id.includes('PREREQUISITE')) ||
+        (typeof transition.predicate === 'string' && transition.predicate.includes('PREREQUISITE')),
+    );
+    const associationHasOutcomeBinding =
+      matchedAssociations.length > 0 &&
+      activityAppearsAtEntry &&
+      !hasLegacyGroupedOutcomeMap &&
+      (activity?.outcome_transition_map !== undefined ||
+        passTransitions.length > 0 ||
+        failTransitions.length > 0 ||
+        hasNamedPrerequisiteTransition);
+    const hasBindingSignal =
+      qepGate !== null || activityHasDirectIdentity || associationHasOutcomeBinding;
+    if (!hasBindingSignal) continue;
+    if (item.activity_role !== 'ENTRY_CHECK') {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${itemId}" requires ENTRY_CHECK activity_role`,
+        { lessonId: index.lessonId, itemId },
+      );
+    }
+
+    if (activityId === null || activity === undefined) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${itemId}" has no exact activity identity`,
+        { lessonId: index.lessonId, itemId },
+      );
+    }
+    if (activity.item_binding_id !== itemId) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${itemId}" has contradictory activity/item identity`,
+        { lessonId: index.lessonId, itemId, ref: activityId },
+      );
+    }
+    if (activity.primary_kc_id !== primaryKcId || entryNode.primary_kc_id !== primaryKcId) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${itemId}" has contradictory owning lesson/KC identity`,
+        { lessonId: index.lessonId, itemId },
+      );
+    }
+    const entryActivityIds = asStringArray(
+      entryNode.activity_ids,
+      `node "${entryNodeId}".activity_ids`,
+      { lessonId: index.lessonId, itemId, ref: entryNodeId },
+    );
+    if (entryActivityIds.length !== 1 || entryActivityIds[0] !== activityId) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${itemId}" entry node has ambiguous activity identity`,
+        { lessonId: index.lessonId, itemId, ref: entryNodeId },
+      );
+    }
+    const malformedOutcomeTransition = outgoing.find(
+      (transition) => classifyGatePredicate(transition.predicate) === null,
+    );
+    if (malformedOutcomeTransition !== undefined) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${itemId}" has a malformed outcome predicate "${String(
+          malformedOutcomeTransition.predicate,
+        )}"`,
+        { lessonId: index.lessonId, itemId },
+      );
+    }
+    if (passTransitions.length > 1) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${itemId}" has a duplicate pass transition`,
+        { lessonId: index.lessonId, itemId },
+      );
+    }
+    if (failTransitions.length > 1) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${itemId}" has a duplicate fail transition`,
+        { lessonId: index.lessonId, itemId },
+      );
+    }
+
+    const prerequisiteLessonCandidates: string[] = matchedAssociations.map(
+      (association) => association.prerequisiteLessonId,
+    );
+    const passCandidates: string[] = [];
+    const failureCandidates: string[] = matchedAssociations.map((association) =>
+      associationFailureNode(association, activityId, itemId, index.lessonId),
+    );
+
+    if (activity.outcome_transition_map !== undefined) {
+      const map = asObject(
+        activity.outcome_transition_map,
+        `activity "${activityId}".outcome_transition_map`,
+        { lessonId: index.lessonId, itemId },
+      );
+      const keys = Object.keys(map).sort();
+      if (
+        keys.length !== 2 ||
+        keys[0] !== 'SUPPORTED_REASONING' ||
+        keys[1] !== 'UNSUPPORTED_OR_OMITTED'
+      ) {
+        throw new LessonNormalizationError(
+          `prerequisite gate "${itemId}" has a malformed outcome_transition_map`,
+          { lessonId: index.lessonId, itemId },
+        );
+      }
+      passCandidates.push(
+        asString(map.SUPPORTED_REASONING, `${activityId}.SUPPORTED_REASONING`, {
+          lessonId: index.lessonId,
+          itemId,
+        }),
+      );
+      failureCandidates.push(
+        asString(map.UNSUPPORTED_OR_OMITTED, `${activityId}.UNSUPPORTED_OR_OMITTED`, {
+          lessonId: index.lessonId,
+          itemId,
+        }),
+      );
+    }
+
+    const hasDirectActivityFields =
+      activity.prerequisite_lesson_id !== undefined ||
+      activity.success_next_node_id !== undefined ||
+      activity.failure_handoff_node_id !== undefined;
+    if (hasDirectActivityFields) {
+      prerequisiteLessonCandidates.push(
+        asString(activity.prerequisite_lesson_id, `${activityId}.prerequisite_lesson_id`, {
+          lessonId: index.lessonId,
+          itemId,
+        }),
+      );
+      passCandidates.push(
+        asString(activity.success_next_node_id, `${activityId}.success_next_node_id`, {
+          lessonId: index.lessonId,
+          itemId,
+        }),
+      );
+      failureCandidates.push(
+        asString(activity.failure_handoff_node_id, `${activityId}.failure_handoff_node_id`, {
+          lessonId: index.lessonId,
+          itemId,
+        }),
+      );
+      for (const field of ['grants_target_exit_credit', 'selects_route', 'moves_mastery']) {
+        if (activity[field] !== false) {
+          throw new LessonNormalizationError(
+            `prerequisite gate "${itemId}" must be instructional noncredit (${field})`,
+            { lessonId: index.lessonId, itemId },
+          );
+        }
+      }
+    }
+
+    if (qepGate !== null) {
+      prerequisiteLessonCandidates.push(
+        asString(
+          qepGate.prerequisite_lesson_id,
+          `${itemId}.prerequisite_check.prerequisite_lesson_id`,
+          { lessonId: index.lessonId, itemId },
+        ),
+      );
+      passCandidates.push(
+        asString(qepGate.pass_next_node_id, `${itemId}.prerequisite_check.pass_next_node_id`, {
+          lessonId: index.lessonId,
+          itemId,
+        }),
+      );
+      failureCandidates.push(
+        asString(
+          qepGate.failed_or_unresolved_handoff_node_id,
+          `${itemId}.prerequisite_check.failed_or_unresolved_handoff_node_id`,
+          { lessonId: index.lessonId, itemId },
+        ),
+      );
+      for (const field of [
+        'grants_target_exit_credit',
+        'selects_route',
+        'moves_mastery',
+      ] as const) {
+        if (qepGate[field] !== false) {
+          throw new LessonNormalizationError(
+            `prerequisite gate "${itemId}" must be instructional noncredit (${field})`,
+            { lessonId: index.lessonId, itemId },
+          );
+        }
+      }
+    }
+
+    if (passTransitions[0] !== undefined) {
+      passCandidates.push(
+        asString(passTransitions[0].to_node_id, `${itemId}.pass_transition.to_node_id`, {
+          lessonId: index.lessonId,
+          itemId,
+        }),
+      );
+    }
+    if (failTransitions[0] !== undefined) {
+      failureCandidates.push(
+        asString(failTransitions[0].to_node_id, `${itemId}.fail_transition.to_node_id`, {
+          lessonId: index.lessonId,
+          itemId,
+        }),
+      );
+    }
+
+    // The frozen canonical grammar names the successful entry continuation as
+    // `orientation_node_id`. Use it only for the legacy explicit-failure form,
+    // where no other pass source exists and the activity's complete allowed set
+    // independently includes it.
+    if (passCandidates.length === 0 && failTransitions.length === 1) {
+      passCandidates.push(
+        asString(kcScript.orientation_node_id, `${primaryKcId}.orientation_node_id`, {
+          lessonId: index.lessonId,
+          itemId,
+        }),
+      );
+    }
+
+    const prerequisiteLessonId = oneConsistentGateValue(
+      prerequisiteLessonCandidates,
+      'prerequisite lesson identity',
+      index.lessonId,
+      itemId,
+    );
+    if (prerequisiteLessonId === index.lessonId) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${itemId}" cannot hand off to its owning lesson`,
+        { lessonId: index.lessonId, itemId },
+      );
+    }
+    const passNodeId = oneConsistentGateValue(
+      passCandidates,
+      'pass destination',
+      index.lessonId,
+      itemId,
+    );
+    const failureHandoffNodeId = oneConsistentGateValue(
+      failureCandidates,
+      'failure handoff',
+      index.lessonId,
+      itemId,
+    );
+    if (passNodeId === failureHandoffNodeId) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${itemId}" has identical pass and fail destinations`,
+        { lessonId: index.lessonId, itemId },
+      );
+    }
+    for (const nodeId of [passNodeId, failureHandoffNodeId]) {
+      if (!index.nodeById.has(nodeId)) {
+        throw new LessonNormalizationError(
+          `prerequisite gate "${itemId}" destination "${nodeId}" does not resolve`,
+          { lessonId: index.lessonId, itemId, ref: nodeId },
+        );
+      }
+    }
+    const allowedDestinationNodeIds = asStringArray(
+      activity.authorized_next_node_ids,
+      `activity "${activityId}".authorized_next_node_ids`,
+      { lessonId: index.lessonId, itemId },
+    );
+    if (
+      allowedDestinationNodeIds.length !== 2 ||
+      new Set(allowedDestinationNodeIds).size !== 2 ||
+      !allowedDestinationNodeIds.includes(passNodeId) ||
+      !allowedDestinationNodeIds.includes(failureHandoffNodeId)
+    ) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${itemId}" authorized destinations must be the exact pass/fail set`,
+        { lessonId: index.lessonId, itemId },
+      );
+    }
+    const evidenceModes = asStringArray(
+      item.candidate_evidence_modes,
+      `${itemId}.candidate_evidence_modes`,
+      { lessonId: index.lessonId, itemId },
+    );
+    if (evidenceModes.length !== 1 || evidenceModes[0] !== 'INSTRUCTIONAL') {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${itemId}" must be instructional noncredit`,
+        { lessonId: index.lessonId, itemId },
+      );
+    }
+    const failureNode = index.nodeById.get(failureHandoffNodeId) as Json;
+    const failureKind = asString(
+      failureNode.node_kind,
+      `node "${failureHandoffNodeId}".node_kind`,
+      { lessonId: index.lessonId, itemId },
+    );
+    const failureActivities = asStringArray(
+      failureNode.activity_ids,
+      `node "${failureHandoffNodeId}".activity_ids`,
+      { lessonId: index.lessonId, itemId },
+    );
+    if (
+      (failureKind !== 'TRANSITION' && failureKind !== 'PREREQUISITE_HANDOFF') ||
+      failureActivities.length !== 0
+    ) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${itemId}" failure handoff must be a terminal transition`,
+        { lessonId: index.lessonId, itemId, ref: failureHandoffNodeId },
+      );
+    }
+    if (transitions.some((transition) => transition.from_node_id === failureHandoffNodeId)) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${itemId}" has a failure cycle or continuation`,
+        { lessonId: index.lessonId, itemId, ref: failureHandoffNodeId },
+      );
+    }
+
+    gates.push({
+      itemId,
+      activityId,
+      primaryKcId,
+      entryNodeId,
+      prerequisiteLessonId,
+      passNodeId,
+      failureHandoffNodeId,
+      allowedDestinationNodeIds,
+    });
+  }
+
+  validatePrerequisitePassGraph(index, gates);
+  return gates;
+}
+
+function validatePrerequisitePassGraph(
+  index: ScriptIndex,
+  gates: readonly NormalizedPrerequisiteGate[],
+): void {
+  const gateByEntryNode = new Map(gates.map((gate) => [gate.entryNodeId, gate]));
+  const incoming = new Map(gates.map((gate) => [gate.entryNodeId, 0]));
+  for (const gate of gates) {
+    if (gateByEntryNode.has(gate.passNodeId)) {
+      incoming.set(gate.passNodeId, (incoming.get(gate.passNodeId) ?? 0) + 1);
+    }
+  }
+  for (const [entryNodeId, count] of incoming) {
+    if (count > 1) {
+      const gate = gateByEntryNode.get(entryNodeId) as NormalizedPrerequisiteGate;
+      throw new LessonNormalizationError(
+        `prerequisite gate "${gate.itemId}" has ambiguous pass-chain predecessors`,
+        { lessonId: index.lessonId, itemId: gate.itemId, ref: entryNodeId },
+      );
+    }
+  }
+
+  const visited = new Set<string>();
+  const starts = gates.filter((gate) => (incoming.get(gate.entryNodeId) ?? 0) === 0);
+  for (const start of starts) {
+    let current = start;
+    let componentSize = 0;
+    const component = new Set<string>();
+    for (;;) {
+      if (component.has(current.entryNodeId)) {
+        throw new LessonNormalizationError(
+          `prerequisite gate "${current.itemId}" has a pass cycle`,
+          { lessonId: index.lessonId, itemId: current.itemId },
+        );
+      }
+      component.add(current.entryNodeId);
+      visited.add(current.entryNodeId);
+      componentSize += 1;
+      const nextGate = gateByEntryNode.get(current.passNodeId);
+      if (nextGate !== undefined) {
+        current = nextGate;
+        continue;
+      }
+      const currentKc = index.kcScriptByKc.get(current.primaryKcId) as Json;
+      const currentOrientation = asString(
+        currentKc.orientation_node_id,
+        `${current.primaryKcId}.orientation_node_id`,
+        { lessonId: index.lessonId, itemId: current.itemId },
+      );
+      const startKc = index.kcScriptByKc.get(start.primaryKcId) as Json;
+      const startOrientation = asString(
+        startKc.orientation_node_id,
+        `${start.primaryKcId}.orientation_node_id`,
+        { lessonId: index.lessonId, itemId: start.itemId },
+      );
+      const validLocal = current.passNodeId === currentOrientation;
+      const validPreflightReturn = componentSize > 1 && current.passNodeId === startOrientation;
+      if (!validLocal && !validPreflightReturn) {
+        throw new LessonNormalizationError(
+          `prerequisite gate "${current.itemId}" has an unsupported cross-KC pass target "${current.passNodeId}"`,
+          { lessonId: index.lessonId, itemId: current.itemId, ref: current.passNodeId },
+        );
+      }
+      break;
+    }
+  }
+  if (visited.size !== gates.length) {
+    const cyclic = gates.find(
+      (gate) => !visited.has(gate.entryNodeId),
+    ) as NormalizedPrerequisiteGate;
+    throw new LessonNormalizationError(`prerequisite gate "${cyclic.itemId}" has a pass cycle`, {
+      lessonId: index.lessonId,
+      itemId: cyclic.itemId,
+    });
+  }
 }
 
 function learnerContentBlocks(node: Json, ctx: string, detail: Detail): string[] {
@@ -1115,11 +1807,122 @@ function itemIdsForNodes(
     .map((item) => item.itemId);
 }
 
+function validatePrerequisitePresentationGrouping(
+  artifacts: RawLessonArtifacts,
+  index: ScriptIndex,
+  items: readonly NormalizedItem[],
+  gates: readonly NormalizedPrerequisiteGate[],
+): void {
+  if (artifacts.presentationPlan === undefined || gates.length === 0) return;
+  const presentationPayload = asObject(
+    asObject(artifacts.presentationPlan, 'lesson-presentation-plan.json', {
+      lessonId: index.lessonId,
+    }).payload,
+    'lesson-presentation-plan.json.payload',
+    { lessonId: index.lessonId },
+  );
+  const screens = asArray(
+    presentationPayload.screens,
+    'lesson-presentation-plan.json.payload.screens',
+    { lessonId: index.lessonId },
+  ).map((screen, ordinal) =>
+    asObject(screen, `presentation.screens[${ordinal}]`, { lessonId: index.lessonId }),
+  );
+  for (const gate of gates) {
+    const matching = screens.filter((screen) =>
+      Array.isArray(screen.script_node_ids)
+        ? screen.script_node_ids.includes(gate.entryNodeId)
+        : false,
+    );
+    if (matching.length !== 1) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${gate.itemId}" entry node must belong to exactly one delivery screen`,
+        { lessonId: index.lessonId, itemId: gate.itemId, ref: gate.entryNodeId },
+      );
+    }
+    const nodeIds = asStringArray(
+      matching[0]?.script_node_ids,
+      `${gate.itemId}.entry_screen.script_node_ids`,
+      { lessonId: index.lessonId, itemId: gate.itemId },
+    );
+    const scored = itemIdsForNodes(index, items, nodeIds)
+      .map((itemId) => items.find((item) => item.itemId === itemId))
+      .filter((item): item is NormalizedItem => item !== undefined && item.scored);
+    if (scored.length !== 1 || scored[0]?.itemId !== gate.itemId) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${gate.itemId}" has a grouped scored entry screen`,
+        { lessonId: index.lessonId, itemId: gate.itemId },
+      );
+    }
+  }
+}
+
+function validateCompiledPrerequisiteSteps(
+  index: ScriptIndex,
+  items: readonly NormalizedItem[],
+  deliveryByKc: ReadonlyMap<string, readonly NormalizedDeliveryStep[]>,
+  gates: readonly NormalizedPrerequisiteGate[],
+): void {
+  const steps = [...deliveryByKc.values()].flat();
+  for (const gate of gates) {
+    const entrySteps = steps.filter(
+      (step) => step.nodeIds.includes(gate.entryNodeId) || step.itemIds.includes(gate.itemId),
+    );
+    if (entrySteps.length !== 1) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${gate.itemId}" entry resolves ${entrySteps.length} delivery steps`,
+        { lessonId: index.lessonId, itemId: gate.itemId },
+      );
+    }
+    const entryScoredItems = (entrySteps[0]?.itemIds ?? [])
+      .map((itemId) => items.find((item) => item.itemId === itemId))
+      .filter((item): item is NormalizedItem => item !== undefined && item.scored);
+    if (entryScoredItems.length !== 1 || entryScoredItems[0]?.itemId !== gate.itemId) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${gate.itemId}" has a grouped scored entry step`,
+        { lessonId: index.lessonId, itemId: gate.itemId },
+      );
+    }
+    const passSteps = steps.filter((step) => step.nodeIds.includes(gate.passNodeId));
+    if (passSteps.length !== 1 || passSteps[0]?.branchOnly === true) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${gate.itemId}" pass destination must resolve one clean step`,
+        { lessonId: index.lessonId, itemId: gate.itemId, ref: gate.passNodeId },
+      );
+    }
+    if (gate.failureHandoffNodeId === null) continue;
+    const failureSteps = steps.filter((step) =>
+      step.nodeIds.includes(gate.failureHandoffNodeId as string),
+    );
+    const failureStep = failureSteps[0];
+    const failureHasScoredItem =
+      failureStep?.itemIds.some(
+        (itemId) => items.find((item) => item.itemId === itemId)?.scored === true,
+      ) ?? false;
+    if (
+      failureSteps.length !== 1 ||
+      failureStep === undefined ||
+      !failureStep.branchOnly ||
+      failureHasScoredItem
+    ) {
+      throw new LessonNormalizationError(
+        `prerequisite gate "${gate.itemId}" failure handoff must resolve one branch-only noncredit step`,
+        {
+          lessonId: index.lessonId,
+          itemId: gate.itemId,
+          ref: gate.failureHandoffNodeId,
+        },
+      );
+    }
+  }
+}
+
 function compileDeliverySteps(
   artifacts: RawLessonArtifacts,
   index: ScriptIndex,
   items: readonly NormalizedItem[],
   branches: BranchMetadata,
+  prerequisiteGates: readonly NormalizedPrerequisiteGate[],
 ): Map<string, readonly NormalizedDeliveryStep[]> {
   const branchNodeIds = new Set<string>();
   for (const bindings of branches.bindingsByKc.values()) {
@@ -1128,6 +1931,9 @@ function compileDeliverySteps(
       branchNodeIds.add(binding.reentryNodeId);
       if (binding.plannerHandoffNodeId !== null) branchNodeIds.add(binding.plannerHandoffNodeId);
     }
+  }
+  for (const gate of prerequisiteGates) {
+    if (gate.failureHandoffNodeId !== null) branchNodeIds.add(gate.failureHandoffNodeId);
   }
 
   type StepSource = {
@@ -1314,6 +2120,7 @@ function assemble(
   const index = createScriptIndex(artifacts.script);
   const { lessonId, orderedKcIds } = index;
   const branches = compileBranchMetadata(index);
+  const prerequisiteGates = compilePrerequisiteGates(index);
   const items = index.qep.map((item) => buildItem(item, lessonId, branches, resolveProjection));
   const kcSet = new Set(index.orderedKcIds);
   for (const it of items) {
@@ -1327,7 +2134,9 @@ function assemble(
       );
     }
   }
-  const deliveryByKc = compileDeliverySteps(artifacts, index, items, branches);
+  validatePrerequisitePresentationGrouping(artifacts, index, items, prerequisiteGates);
+  const deliveryByKc = compileDeliverySteps(artifacts, index, items, branches, prerequisiteGates);
+  validateCompiledPrerequisiteSteps(index, items, deliveryByKc, prerequisiteGates);
   const kcs: NormalizedKc[] = orderedKcIds.map((kcId, ordinal) => {
     const kcItems = items.filter((item) => item.primaryKcId === kcId);
     const deliverySteps = deliveryByKc.get(kcId) ?? [];
@@ -1358,6 +2167,7 @@ function assemble(
     definitionHash,
     kcs,
     items,
+    prerequisiteGates,
   };
 }
 

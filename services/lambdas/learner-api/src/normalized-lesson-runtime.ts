@@ -9,6 +9,7 @@ import {
   type NormalizedItem,
   type NormalizedKc,
   type NormalizedLesson,
+  type NormalizedPrerequisiteGate,
   type NormalizedResponseControl,
 } from '@mcat/content/lesson-normalization';
 import type { AssistanceLevel } from '@mcat/contracts';
@@ -171,6 +172,7 @@ function assertLoadedRevision(revision: LoadedLessonRevision): void {
       lessonId: revision.lessonId,
     });
   }
+  assertPrerequisiteGateGraph(revision.lesson);
 }
 
 function assertRunRevision(run: NormalizedLessonRun, revision: LoadedLessonRevision): void {
@@ -227,6 +229,123 @@ function itemsForStep(
   return step.itemIds.map((itemId) => itemOf(lesson, itemId));
 }
 
+function exactStepForNode(
+  lesson: NormalizedLesson,
+  nodeId: string,
+  itemId: string,
+): NormalizedDeliveryStep {
+  const matches = allSteps(lesson).filter((step) => step.nodeIds.includes(nodeId));
+  if (matches.length !== 1) {
+    fail(
+      'GRAPH_INVALID',
+      `prerequisite gate "${itemId}" node "${nodeId}" resolves ${matches.length} delivery steps`,
+      { lessonId: lesson.lessonId, itemId },
+    );
+  }
+  return matches[0] as NormalizedDeliveryStep;
+}
+
+function prerequisiteGateForItem(
+  lesson: NormalizedLesson,
+  itemId: string,
+): NormalizedPrerequisiteGate | undefined {
+  return lesson.prerequisiteGates.find((gate) => gate.itemId === itemId);
+}
+
+function assertPrerequisiteGateGraph(lesson: NormalizedLesson): void {
+  if (!Array.isArray(lesson.prerequisiteGates)) {
+    fail('GRAPH_INVALID', 'normalized lesson has no prerequisite-gate admission result', {
+      lessonId: lesson.lessonId,
+    });
+  }
+  const itemIds = new Set<string>();
+  const activityIds = new Set<string>();
+  const entryNodeIds = new Set<string>();
+  for (const gate of lesson.prerequisiteGates) {
+    if (
+      itemIds.has(gate.itemId) ||
+      activityIds.has(gate.activityId) ||
+      entryNodeIds.has(gate.entryNodeId)
+    ) {
+      fail('GRAPH_INVALID', `duplicate prerequisite gate identity for "${gate.itemId}"`, {
+        lessonId: lesson.lessonId,
+        itemId: gate.itemId,
+      });
+    }
+    itemIds.add(gate.itemId);
+    activityIds.add(gate.activityId);
+    entryNodeIds.add(gate.entryNodeId);
+    const item = itemOf(lesson, gate.itemId);
+    if (
+      item.activityRole !== 'ENTRY_CHECK' ||
+      !item.scored ||
+      item.exitFunction !== 'NONE' ||
+      item.isReentry ||
+      item.activityId !== gate.activityId ||
+      item.primaryKcId !== gate.primaryKcId ||
+      gate.prerequisiteLessonId.length === 0 ||
+      gate.prerequisiteLessonId === lesson.lessonId
+    ) {
+      fail('GRAPH_INVALID', `prerequisite gate "${gate.itemId}" has invalid item ownership`, {
+        lessonId: lesson.lessonId,
+        itemId: gate.itemId,
+      });
+    }
+    const entryStep = exactStepForNode(lesson, gate.entryNodeId, gate.itemId);
+    if (
+      entryStep.branchOnly ||
+      !entryStep.itemIds.includes(gate.itemId) ||
+      interactiveItem(lesson, entryStep)?.itemId !== gate.itemId
+    ) {
+      fail('GRAPH_INVALID', `prerequisite gate "${gate.itemId}" has an invalid entry step`, {
+        lessonId: lesson.lessonId,
+        itemId: gate.itemId,
+        stepId: entryStep.stepId,
+      });
+    }
+    const passStep = exactStepForNode(lesson, gate.passNodeId, gate.itemId);
+    if (passStep.branchOnly) {
+      fail('GRAPH_INVALID', `prerequisite gate "${gate.itemId}" pass target is branch-only`, {
+        lessonId: lesson.lessonId,
+        itemId: gate.itemId,
+        stepId: passStep.stepId,
+      });
+    }
+    const expectedDestinations =
+      gate.failureHandoffNodeId === null
+        ? [gate.passNodeId]
+        : [gate.passNodeId, gate.failureHandoffNodeId];
+    if (
+      gate.allowedDestinationNodeIds.length !== expectedDestinations.length ||
+      new Set(gate.allowedDestinationNodeIds).size !== gate.allowedDestinationNodeIds.length ||
+      expectedDestinations.some((nodeId) => !gate.allowedDestinationNodeIds.includes(nodeId))
+    ) {
+      fail(
+        'GRAPH_INVALID',
+        `prerequisite gate "${gate.itemId}" has an invalid allowed-destination set`,
+        { lessonId: lesson.lessonId, itemId: gate.itemId },
+      );
+    }
+    if (gate.failureHandoffNodeId !== null) {
+      const failureStep = exactStepForNode(lesson, gate.failureHandoffNodeId, gate.itemId);
+      if (
+        !failureStep.branchOnly ||
+        failureStep.itemIds.some((failureItemId) => itemOf(lesson, failureItemId).scored)
+      ) {
+        fail(
+          'GRAPH_INVALID',
+          `prerequisite gate "${gate.itemId}" failure target is not branch-only noncredit`,
+          {
+            lessonId: lesson.lessonId,
+            itemId: gate.itemId,
+            stepId: failureStep.stepId,
+          },
+        );
+      }
+    }
+  }
+}
+
 function interactiveItem(
   lesson: NormalizedLesson,
   step: NormalizedDeliveryStep,
@@ -268,6 +387,7 @@ function firstBaselineStep(lesson: NormalizedLesson): NormalizedDeliveryStep | n
 function nextBaselineStep(
   lesson: NormalizedLesson,
   currentStepId: string,
+  responses: NormalizedLessonRun['responses'],
 ): NormalizedDeliveryStep | null {
   const step = stepOf(lesson, currentStepId);
   const kcIndex = lesson.kcs.findIndex((kc) => kc.kcId === step.primaryKcId);
@@ -287,13 +407,19 @@ function nextBaselineStep(
       stepId: currentStepId,
     });
   }
-  const next = kc.cleanBaselineSteps[stepIndex + 1];
-  if (next !== undefined) return next;
+  const candidates: NormalizedDeliveryStep[] = [...kc.cleanBaselineSteps.slice(stepIndex + 1)];
   for (let index = kcIndex + 1; index < lesson.kcs.length; index += 1) {
-    const first = lesson.kcs[index]?.cleanBaselineSteps[0];
-    if (first !== undefined) return first;
+    candidates.push(...(lesson.kcs[index]?.cleanBaselineSteps ?? []));
   }
-  return null;
+  return (
+    candidates.find((candidate) => {
+      const committedGate = lesson.prerequisiteGates.find(
+        (gate) =>
+          candidate.nodeIds.includes(gate.entryNodeId) || candidate.itemIds.includes(gate.itemId),
+      );
+      return committedGate === undefined || responses[committedGate.itemId] === undefined;
+    }) ?? null
+  );
 }
 
 const normalizeText = (value: string): string => value.trim().replace(/\s+/g, ' ');
@@ -563,6 +689,24 @@ function handoffOrBlock(lesson: NormalizedLesson, run: NormalizedLessonRun): Nor
   };
 }
 
+function advancePrerequisiteOutcome(
+  lesson: NormalizedLesson,
+  run: NormalizedLessonRun,
+  gate: NormalizedPrerequisiteGate,
+  outcome: NormalizedFeedbackOutcome,
+): NormalizedLessonRun {
+  if (outcome === 'CORRECT') {
+    return enterStep(run, exactStepForNode(lesson, gate.passNodeId, gate.itemId));
+  }
+  if (gate.failureHandoffNodeId === null) return terminal(run, 'BLOCKED');
+  const handoff = exactStepForNode(lesson, gate.failureHandoffNodeId, gate.itemId);
+  return {
+    ...enterStep(run, handoff),
+    branch: null,
+    blockAfterCurrentStep: true,
+  };
+}
+
 function resumeAfterReentry(
   lesson: NormalizedLesson,
   run: NormalizedLessonRun,
@@ -598,7 +742,7 @@ function resumeAfterReentry(
       );
     }
   } else {
-    next = nextBaselineStep(lesson, branch.failedStepId);
+    next = nextBaselineStep(lesson, branch.failedStepId, run.responses);
   }
   const resumed: NormalizedLessonRun = {
     ...run,
@@ -646,7 +790,7 @@ function advanceAfterContent(
   if (run.blockAfterCurrentStep) return terminal(run, 'BLOCKED');
   if (run.currentStepId === null) return terminal(run, 'DELIVERY_COMPLETE');
   if (run.branch !== null) return advanceBranch(lesson, run);
-  const next = nextBaselineStep(lesson, run.currentStepId);
+  const next = nextBaselineStep(lesson, run.currentStepId, run.responses);
   return next === null ? terminal(run, 'DELIVERY_COMPLETE') : enterStep(run, next);
 }
 
@@ -667,10 +811,14 @@ function advanceAfterFeedback(
   }
 
   if (run.branch === null) {
+    const prerequisiteGate = prerequisiteGateForItem(lesson, item.itemId);
+    if (prerequisiteGate !== undefined) {
+      return advancePrerequisiteOutcome(lesson, run, prerequisiteGate, record.outcome);
+    }
     if (item.exitFunction !== 'NONE' && record.outcome !== 'CORRECT') {
       return enterBranch(lesson, run, step, item);
     }
-    const next = nextBaselineStep(lesson, step.stepId);
+    const next = nextBaselineStep(lesson, step.stepId, run.responses);
     return next === null ? terminal(run, 'DELIVERY_COMPLETE') : enterStep(run, next);
   }
 
@@ -1275,6 +1423,209 @@ function parseBranch(value: unknown, lessonId: string): NormalizedRunBranch | nu
   };
 }
 
+function assertRestoredResponseBindings(
+  run: NormalizedLessonRun,
+  revision: LoadedLessonRevision,
+): void {
+  for (const record of Object.values(run.responses)) {
+    const item = itemOf(revision.lesson, record.itemId);
+    const step = stepOf(revision.lesson, record.stepId);
+    const expectedExitFunction = item.repairsFunction ?? item.exitFunction;
+    if (
+      !step.itemIds.includes(item.itemId) ||
+      step.primaryKcId !== item.primaryKcId ||
+      record.primaryKcId !== item.primaryKcId ||
+      record.activityRole !== item.activityRole ||
+      record.exitFunction !== expectedExitFunction ||
+      record.isReentry !== item.isReentry
+    ) {
+      fail(
+        'STATE_MALFORMED',
+        `response record "${record.itemId}" contradicts its exact lesson revision`,
+        {
+          lessonId: run.lessonId,
+          runId: run.runId,
+          stepId: record.stepId,
+          itemId: record.itemId,
+        },
+      );
+    }
+    const answer = revision.protectedAuthority.answerKey.byItemId[item.itemId];
+    if (answer === undefined) {
+      fail('STATE_MALFORMED', `response record "${record.itemId}" has no exact answer authority`, {
+        lessonId: run.lessonId,
+        runId: run.runId,
+        stepId: record.stepId,
+        itemId: record.itemId,
+      });
+    }
+    const expectedOutcome = outcomeFor(answer, record.response);
+    if (record.outcome !== expectedOutcome || record.correct !== (expectedOutcome === 'CORRECT')) {
+      fail(
+        'STATE_MALFORMED',
+        `response outcome for "${record.itemId}" contradicts the exact answer authority`,
+        {
+          lessonId: run.lessonId,
+          runId: run.runId,
+          stepId: record.stepId,
+          itemId: record.itemId,
+        },
+      );
+    }
+  }
+}
+
+function assertRestoredPrerequisiteCursor(
+  run: NormalizedLessonRun,
+  revision: LoadedLessonRevision,
+): void {
+  const failedGates = revision.lesson.prerequisiteGates
+    .map((gate) => ({ gate, record: run.responses[gate.itemId] }))
+    .filter(
+      (
+        candidate,
+      ): candidate is {
+        readonly gate: NormalizedPrerequisiteGate;
+        readonly record: NormalizedResponseRecord;
+      } => candidate.record !== undefined && candidate.record.outcome !== 'CORRECT',
+    );
+  if (failedGates.length === 0) return;
+  if (failedGates.length > 1) {
+    fail('STATE_MALFORMED', 'run contains more than one failed prerequisite gate', {
+      lessonId: run.lessonId,
+      runId: run.runId,
+    });
+  }
+  const { gate, record } = failedGates[0]!;
+  const entryStep = exactStepForNode(revision.lesson, gate.entryNodeId, gate.itemId);
+  const validFeedback =
+    run.status === 'IN_PROGRESS' &&
+    run.display === 'FEEDBACK' &&
+    run.currentStepId === entryStep.stepId &&
+    run.branch === null &&
+    !run.blockAfterCurrentStep;
+  const validHandoff =
+    gate.failureHandoffNodeId !== null &&
+    run.status === 'IN_PROGRESS' &&
+    run.display === 'CONTENT' &&
+    run.currentStepId ===
+      exactStepForNode(revision.lesson, gate.failureHandoffNodeId, gate.itemId).stepId &&
+    run.branch === null &&
+    run.blockAfterCurrentStep;
+  const validTerminal =
+    run.status === 'BLOCKED' &&
+    run.currentStepId === null &&
+    run.display === 'CONTENT' &&
+    run.branch === null &&
+    !run.blockAfterCurrentStep;
+  if (!validFeedback && !validHandoff && !validTerminal) {
+    fail(
+      'STATE_MALFORMED',
+      `failed prerequisite gate "${gate.itemId}" contradicts the restored graph cursor`,
+      {
+        lessonId: run.lessonId,
+        runId: run.runId,
+        stepId: record.stepId,
+        itemId: gate.itemId,
+      },
+    );
+  }
+}
+
+function sameStringSet(left: readonly string[], right: readonly string[]): boolean {
+  return (
+    left.length === right.length &&
+    [...left].sort().every((value, index) => value === [...right].sort()[index])
+  );
+}
+
+function samePassedExits(
+  left: NormalizedLessonRun['passedExits'],
+  right: NormalizedLessonRun['passedExits'],
+): boolean {
+  const leftKeys = Object.keys(left);
+  const rightKeys = Object.keys(right);
+  return (
+    sameStringSet(leftKeys, rightKeys) &&
+    leftKeys.every((kcId) => sameStringSet(left[kcId] ?? [], right[kcId] ?? []))
+  );
+}
+
+function sameBranch(
+  left: NormalizedLessonRun['branch'],
+  right: NormalizedLessonRun['branch'],
+): boolean {
+  if (left === null || right === null) return left === right;
+  return (
+    left.kcId === right.kcId &&
+    left.failedStepId === right.failedStepId &&
+    left.failedFunction === right.failedFunction
+  );
+}
+
+function sameRestoredGraphAuthority(
+  replayed: NormalizedLessonRun,
+  restored: NormalizedLessonRun,
+): boolean {
+  return (
+    replayed.status === restored.status &&
+    replayed.currentStepId === restored.currentStepId &&
+    replayed.display === restored.display &&
+    sameBranch(replayed.branch, restored.branch) &&
+    replayed.blockAfterCurrentStep === restored.blockAfterCurrentStep &&
+    sameStringSet(Object.keys(replayed.responses), Object.keys(restored.responses)) &&
+    samePassedExits(replayed.passedExits, restored.passedExits)
+  );
+}
+
+function assertRestoredGraphReachable(
+  restored: NormalizedLessonRun,
+  revision: LoadedLessonRevision,
+): void {
+  let replayed = createNormalizedLessonRun({
+    revision,
+    now: restored.startedAt,
+    runId: restored.runId,
+  });
+  for (let guard = 0; guard < 10_000; guard += 1) {
+    if (sameRestoredGraphAuthority(replayed, restored)) return;
+    if (replayed.status !== 'IN_PROGRESS' || replayed.currentStepId === null) break;
+    const step = stepOf(revision.lesson, replayed.currentStepId);
+    const item = interactiveItem(revision.lesson, step);
+    if (replayed.display === 'FEEDBACK') {
+      replayed = applyNormalizedLessonAction(
+        replayed,
+        { type: 'CONTINUE' },
+        restored.updatedAt,
+        revision,
+      );
+      continue;
+    }
+    if (item !== null) {
+      const committed = restored.responses[item.itemId];
+      if (committed === undefined) break;
+      replayed = applyNormalizedLessonAction(
+        replayed,
+        { type: 'SUBMIT_RESPONSE', response: committed.response },
+        committed.committedAt,
+        revision,
+      );
+      continue;
+    }
+    replayed = applyNormalizedLessonAction(
+      replayed,
+      { type: 'CONTINUE' },
+      restored.updatedAt,
+      revision,
+    );
+  }
+  fail('STATE_MALFORMED', 'restored graph cursor has no exact committed response path', {
+    lessonId: restored.lessonId,
+    runId: restored.runId,
+    ...(restored.currentStepId === null ? {} : { stepId: restored.currentStepId }),
+  });
+}
+
 export function restoreNormalizedLessonRun(
   value: unknown,
   revision: LoadedLessonRevision,
@@ -1311,6 +1662,9 @@ export function restoreNormalizedLessonRun(
     updatedAt: requiredString(raw, 'updatedAt', address.lessonId),
   };
   assertRunRevision(run, revision);
+  assertRestoredResponseBindings(run, revision);
+  assertRestoredPrerequisiteCursor(run, revision);
+  assertRestoredGraphReachable(run, revision);
   if (run.status === 'IN_PROGRESS') {
     if (run.currentStepId === null) {
       fail('STATE_MALFORMED', 'in-progress run has no currentStepId', {

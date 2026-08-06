@@ -160,6 +160,29 @@ export interface NormalizedBranchBinding {
   readonly plannerHandoffNodeId: string | null;
 }
 
+/**
+ * A compiler-admitted prerequisite outcome gate.
+ *
+ * This is deliberately narrower than ENTRY_CHECK: ordinary/legacy entry checks
+ * remain baseline questions. A gate exists only when the authored activity,
+ * item, entry node, prerequisite lesson, outcome destinations, and complete
+ * allowed-destination set resolve without inference or contradiction.
+ */
+export interface NormalizedPrerequisiteGate {
+  readonly itemId: string;
+  readonly activityId: string;
+  readonly primaryKcId: string;
+  readonly entryNodeId: string;
+  readonly prerequisiteLessonId: string;
+  readonly passNodeId: string;
+  /**
+   * `null` is reserved for an already-admitted direct-block graph. Current raw
+   * grammar adapters require an exact authored handoff node.
+   */
+  readonly failureHandoffNodeId: string | null;
+  readonly allowedDestinationNodeIds: readonly string[];
+}
+
 export interface NormalizedKc {
   readonly kcId: string;
   /** 1-based position within `orderedKcIds`. */
@@ -183,6 +206,8 @@ export interface NormalizedLesson {
   readonly kcs: readonly NormalizedKc[];
   /** All items flattened, in source (`question_evidence_plan`) order. */
   readonly items: readonly NormalizedItem[];
+  /** Explicitly authored, compile-admitted prerequisite outcome gates only. */
+  readonly prerequisiteGates: readonly NormalizedPrerequisiteGate[];
 }
 
 /** SERVER-ONLY answer authority. Never place this object in a learner DTO. */
