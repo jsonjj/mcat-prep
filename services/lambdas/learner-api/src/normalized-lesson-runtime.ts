@@ -422,6 +422,37 @@ function nextBaselineStep(
   );
 }
 
+function exactForwardBaselineStepForNode(
+  lesson: NormalizedLesson,
+  currentStepId: string,
+  nodeId: string,
+): NormalizedDeliveryStep {
+  const baseline = lesson.kcs.flatMap((kc) => kc.cleanBaselineSteps);
+  const currentIndex = baseline.findIndex((step) => step.stepId === currentStepId);
+  if (currentIndex < 0) {
+    fail('GRAPH_INVALID', `step "${currentStepId}" is not on the clean baseline`, {
+      lessonId: lesson.lessonId,
+      stepId: currentStepId,
+    });
+  }
+  const matches = baseline.filter((step) => step.nodeIds.includes(nodeId));
+  if (matches.length !== 1) {
+    fail(
+      'GRAPH_INVALID',
+      `success continuation "${nodeId}" resolves ${matches.length} clean baseline steps`,
+      { lessonId: lesson.lessonId, stepId: currentStepId },
+    );
+  }
+  const next = matches[0] as NormalizedDeliveryStep;
+  if (baseline.indexOf(next) <= currentIndex) {
+    fail('GRAPH_INVALID', `success continuation "${nodeId}" is not forward on the clean baseline`, {
+      lessonId: lesson.lessonId,
+      stepId: currentStepId,
+    });
+  }
+  return next;
+}
+
 const normalizeText = (value: string): string => value.trim().replace(/\s+/g, ' ');
 const blank = (value: string | null): boolean => value === null || value.trim() === '';
 
@@ -730,17 +761,7 @@ function resumeAfterReentry(
   }
   let next: NormalizedDeliveryStep | null = null;
   if (binding.successNextNodeId !== null) {
-    next =
-      kc.cleanBaselineSteps.find((step) =>
-        step.nodeIds.includes(binding.successNextNodeId as string),
-      ) ?? null;
-    if (next === null) {
-      fail(
-        'GRAPH_INVALID',
-        `success continuation "${binding.successNextNodeId}" is not on the clean baseline`,
-        { lessonId: run.lessonId, runId: run.runId },
-      );
-    }
+    next = exactForwardBaselineStepForNode(lesson, branch.failedStepId, binding.successNextNodeId);
   } else {
     next = nextBaselineStep(lesson, branch.failedStepId, run.responses);
   }

@@ -494,6 +494,159 @@ describe('canonical repair, exact re-entry, and bounded handoff', () => {
     expect(driveToEnd(run, revision).status).toBe('DELIVERY_COMPLETE');
   });
 
+  it('follows an explicit forward cross-KC success continuation after fresh re-entry', async () => {
+    const base = await provider.loadActiveRevision({ lessonId: L2 });
+    const sourceKc = base.lesson.kcs[0];
+    const targetStep = base.lesson.kcs[1]?.cleanBaselineSteps[0];
+    const sourceBinding = sourceKc?.branchBindings.find(
+      (candidate) => candidate.failedFunction === 'CHANGED_TASK',
+    );
+    const targetNodeId = targetStep?.nodeIds[0];
+    if (
+      sourceKc === undefined ||
+      sourceBinding === undefined ||
+      targetStep === undefined ||
+      targetNodeId === undefined
+    ) {
+      throw new Error('cross-KC branch fixture is incomplete');
+    }
+    const revision: LoadedLessonRevision = {
+      ...base,
+      lesson: {
+        ...base.lesson,
+        kcs: base.lesson.kcs.map((kc) =>
+          kc.kcId === sourceKc.kcId
+            ? {
+                ...kc,
+                branchBindings: kc.branchBindings.map((binding) =>
+                  binding.failedFunction === sourceBinding.failedFunction
+                    ? { ...binding, successNextNodeId: targetNodeId }
+                    : binding,
+                ),
+              }
+            : kc,
+        ),
+      },
+    };
+    const binding = revision.lesson.kcs[0]?.branchBindings.find(
+      (candidate) => candidate.failedFunction === sourceBinding.failedFunction,
+    );
+    const failedStep = revision.lesson.kcs[0]?.cleanBaselineSteps.find((step) =>
+      step.itemIds.some(
+        (itemId) =>
+          revision.lesson.items.find((item) => item.itemId === itemId)?.exitFunction ===
+          binding?.failedFunction,
+      ),
+    );
+    const repair = binding === undefined ? undefined : branchStep(revision, binding, 'repair');
+    const reentry = binding === undefined ? undefined : branchStep(revision, binding, 'reentry');
+    if (
+      binding === undefined ||
+      failedStep === undefined ||
+      repair === undefined ||
+      reentry === undefined
+    ) {
+      throw new Error('cross-KC branch steps are incomplete');
+    }
+
+    let run = advanceToStep(createRun(revision), failedStep.stepId, revision);
+    run = submit(
+      run,
+      wrongResponseFor(revision, itemForStep(revision, failedStep.stepId).itemId),
+      revision,
+    );
+    run = continueRun(run, revision);
+    expect(run.currentStepId).toBe(repair.stepId);
+    run = submit(
+      run,
+      correctResponseFor(revision, itemForStep(revision, repair.stepId).itemId),
+      revision,
+    );
+    run = continueRun(run, revision);
+    expect(run.currentStepId).toBe(reentry.stepId);
+    run = submit(
+      run,
+      correctResponseFor(revision, itemForStep(revision, reentry.stepId).itemId),
+      revision,
+    );
+    run = continueRun(run, revision);
+
+    expect(run.currentStepId).toBe(targetStep.stepId);
+    expect(run.passedExits[sourceKc.kcId]).toContain(binding.failedFunction);
+    expect(driveToEnd(run, revision).status).toBe('DELIVERY_COMPLETE');
+  });
+
+  it('fails closed when an explicit success continuation points backward', async () => {
+    const base = await provider.loadActiveRevision({ lessonId: L2 });
+    const sourceKc = base.lesson.kcs[0];
+    const sourceBinding = sourceKc?.branchBindings.find(
+      (candidate) => candidate.failedFunction === 'CHANGED_TASK',
+    );
+    const backwardNodeId = sourceKc?.cleanBaselineSteps[0]?.nodeIds[0];
+    if (sourceKc === undefined || sourceBinding === undefined || backwardNodeId === undefined) {
+      throw new Error('backward branch fixture is incomplete');
+    }
+    const revision: LoadedLessonRevision = {
+      ...base,
+      lesson: {
+        ...base.lesson,
+        kcs: base.lesson.kcs.map((kc) =>
+          kc.kcId === sourceKc.kcId
+            ? {
+                ...kc,
+                branchBindings: kc.branchBindings.map((binding) =>
+                  binding.failedFunction === sourceBinding.failedFunction
+                    ? { ...binding, successNextNodeId: backwardNodeId }
+                    : binding,
+                ),
+              }
+            : kc,
+        ),
+      },
+    };
+    const binding = revision.lesson.kcs[0]?.branchBindings.find(
+      (candidate) => candidate.failedFunction === sourceBinding.failedFunction,
+    );
+    const failedStep = revision.lesson.kcs[0]?.cleanBaselineSteps.find((step) =>
+      step.itemIds.some(
+        (itemId) =>
+          revision.lesson.items.find((item) => item.itemId === itemId)?.exitFunction ===
+          binding?.failedFunction,
+      ),
+    );
+    const repair = binding === undefined ? undefined : branchStep(revision, binding, 'repair');
+    const reentry = binding === undefined ? undefined : branchStep(revision, binding, 'reentry');
+    if (
+      binding === undefined ||
+      failedStep === undefined ||
+      repair === undefined ||
+      reentry === undefined
+    ) {
+      throw new Error('backward branch steps are incomplete');
+    }
+
+    let run = advanceToStep(createRun(revision), failedStep.stepId, revision);
+    run = submit(
+      run,
+      wrongResponseFor(revision, itemForStep(revision, failedStep.stepId).itemId),
+      revision,
+    );
+    run = continueRun(run, revision);
+    run = submit(
+      run,
+      correctResponseFor(revision, itemForStep(revision, repair.stepId).itemId),
+      revision,
+    );
+    run = continueRun(run, revision);
+    run = submit(
+      run,
+      correctResponseFor(revision, itemForStep(revision, reentry.stepId).itemId),
+      revision,
+    );
+
+    expect(() => continueRun(run, revision)).toThrow(/not forward on the clean baseline/);
+  });
+
   it('uses the function-specific L3 repair and sends a failed confirmation to the authored handoff without exit credit', async () => {
     const revision = await provider.loadActiveRevision({ lessonId: L3 });
     const kc = revision.lesson.kcs[0];
