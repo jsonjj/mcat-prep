@@ -1,34 +1,75 @@
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 import { createHash, createHmac, generateKeyPairSync, sign as signBytes } from 'node:crypto';
+import { once } from 'node:events';
 import {
   chmodSync,
+  cpSync,
   existsSync,
   lstatSync,
   mkdirSync,
   readFileSync,
+  readlinkSync,
   readdirSync,
   renameSync,
   rmSync,
   symlinkSync,
   truncateSync,
+  unlinkSync,
   writeFileSync,
 } from 'node:fs';
 import { copyFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import { dirname, join, relative, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
-import { afterAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, describe, expect, it } from 'vitest';
 
 import {
   TEAM_RETURN_STAGING_RELATIVE_ROOT,
   intakeTeamReturn,
+  loadTeamReturnAcceptanceArtifact,
   validateTeamReturnCandidateMechanically,
   type CentralMechanicalValidation,
   type TeamReturnCheckoutEvidence,
   type TeamReturnIntakeDependencies,
   type TeamReturnIntakeRequest,
 } from './team-return-intake';
+import {
+  MAX_ACCEPTANCE_AGGREGATE_BYTES,
+  MAX_ACCEPTANCE_ARCHIVE_BYTES,
+  MAX_ACCEPTANCE_MARKERS,
+} from './team-return-acceptance-artifact';
+import { planLessonRehash } from '../lesson-validator/rehash';
 
 const REPOSITORY_ROOT = resolve(import.meta.dirname, '..', '..', '..', '..');
+let approvedCandidateTemplate: string | null = null;
+
+function approvedCandidateTemplateRoot(): string {
+  if (approvedCandidateTemplate !== null) return approvedCandidateTemplate;
+  const checkout = join(FIXTURE_ROOT, 'approved-team-b-template');
+  execFileSync(
+    '/usr/bin/git',
+    [
+      'clone',
+      join(
+        REPOSITORY_ROOT,
+        '.tmp/scratch/lesson-factory-2026-08-03T1727-0500/wp-08/team-B-wave-02-package/team-B-wave-02.bundle',
+      ),
+      checkout,
+    ],
+    { stdio: 'ignore' },
+  );
+  execFileSync(
+    '/usr/bin/git',
+    ['-C', checkout, 'checkout', '60f6e45f564c3c5ab100f896f2bf11bca83e8a98'],
+    {
+      stdio: 'ignore',
+    },
+  );
+  approvedCandidateTemplate = join(checkout, 'content/lesson-candidates/team-B/V3-LES-619870');
+  return approvedCandidateTemplate;
+}
+const requireFromTest = createRequire(import.meta.url);
 const LIVE_AUTHORITY_ROOT = resolve(
   REPOSITORY_ROOT,
   '..',
@@ -116,6 +157,7 @@ interface FixtureOptions {
   readonly lessonCount?: number;
   readonly finalTeam?: boolean;
   readonly statuses?: readonly LessonStatus[];
+  readonly contentVariant?: string;
   readonly protectedLeak?: boolean;
   readonly identityCollision?: boolean;
   readonly realGit?: boolean;
@@ -148,6 +190,7 @@ interface Fixture {
 }
 
 let fixtureOrdinal = 0;
+const fixtureRoots = new Set<string>();
 
 function canonical(value: unknown): string {
   if (
@@ -178,12 +221,29 @@ function writeJson(path: string, value: unknown): void {
 function makeWritable(path: string): void {
   if (!existsSync(path)) return;
   const info = lstatSync(path);
+  if (info.isSymbolicLink()) return;
   if (!info.isDirectory()) {
     chmodSync(path, 0o600);
     return;
   }
   chmodSync(path, 0o700);
   for (const name of readdirSync(path)) makeWritable(join(path, name));
+}
+
+function makeImmutable(path: string): void {
+  if (!existsSync(path)) return;
+  const info = lstatSync(path);
+  if (info.isDirectory()) {
+    for (const name of readdirSync(path)) makeImmutable(join(path, name));
+    chmodSync(path, 0o500);
+  } else {
+    chmodSync(path, 0o400);
+  }
+}
+
+function removeFixtureRoot(root: string): void {
+  makeWritable(root);
+  rmSync(root, { force: true, recursive: true });
 }
 
 function readJson(path: string): Record<string, unknown> {
@@ -195,6 +255,15 @@ function git(root: string, args: readonly string[]): string {
     encoding: 'utf8',
     shell: false,
     stdio: ['ignore', 'pipe', 'pipe'],
+  }).trim();
+}
+
+function gitWithInput(root: string, args: readonly string[], input: string): string {
+  return execFileSync('/usr/bin/git', ['-C', root, ...args], {
+    encoding: 'utf8',
+    input,
+    shell: false,
+    stdio: ['pipe', 'pipe', 'pipe'],
   }).trim();
 }
 
@@ -649,7 +718,10 @@ function makeCandidate(
   assignment: Record<string, unknown>,
   lessonId: string,
   status: LessonStatus,
-  options: Pick<FixtureOptions, 'identityCollision' | 'mechanicalFailures' | 'protectedLeak'>,
+  options: Pick<
+    FixtureOptions,
+    'contentVariant' | 'identityCollision' | 'mechanicalFailures' | 'protectedLeak'
+  >,
   pinnedCommit = PINNED_COMMIT,
 ): {
   readonly lessonHandoffSha256: string;
@@ -668,7 +740,10 @@ function makeCandidate(
 
   writeJson(join(root, 'lesson-script.json'), {
     lesson_id: lessonId,
-    payload: { ordered_kc_ids: [`V3-KC-${lessonId.slice(-6)}`] },
+    payload: {
+      ordered_kc_ids: [`V3-KC-${lessonId.slice(-6)}`],
+      ...(options.contentVariant === undefined ? {} : { fixture_variant: options.contentVariant }),
+    },
   });
   writeJson(join(root, 'kc-coverage-matrix.json'), { lesson_id: lessonId });
   writeJson(join(root, 'lesson-presentation-plan.json'), { lesson_id: lessonId });
@@ -691,6 +766,51 @@ function makeCandidate(
       evaluation_available: false,
     },
   });
+  let productionManifestTemplate: Record<string, unknown> | null = null;
+  if (options.contentVariant === 'production-mechanical') {
+    const approvedTeamRoot = dirname(approvedCandidateTemplateRoot());
+    const productionRoot = join(approvedTeamRoot, lessonId);
+    const templateLessonId = lstatSync(productionRoot).isDirectory() ? lessonId : 'V3-LES-619870';
+    const selectedProductionRoot =
+      templateLessonId === lessonId ? productionRoot : approvedCandidateTemplateRoot();
+    const replaceLessonId = (value: unknown): unknown => {
+      if (typeof value === 'string') {
+        return value
+          .replaceAll(templateLessonId, lessonId)
+          .replaceAll(templateLessonId.slice(-6), lessonId.slice(-6));
+      }
+      if (Array.isArray(value)) return value.map(replaceLessonId);
+      if (value !== null && typeof value === 'object') {
+        return Object.fromEntries(
+          Object.entries(value as Record<string, unknown>).map(([key, nested]) => [
+            key,
+            replaceLessonId(nested),
+          ]),
+        );
+      }
+      return value;
+    };
+    for (const path of [...PRIMARY_FILES, 'learner-safe-items.json', 'protected-items.json']) {
+      writeJson(
+        join(root, path),
+        replaceLessonId(JSON.parse(readFileSync(join(selectedProductionRoot, path), 'utf8'))),
+      );
+    }
+    productionManifestTemplate = replaceLessonId(
+      JSON.parse(readFileSync(join(selectedProductionRoot, 'artifact-manifest.json'), 'utf8')),
+    ) as Record<string, unknown>;
+    const initialPlan = planLessonRehash(
+      readdirSync(root)
+        .filter((path) => path.endsWith('.json'))
+        .map((relPath) => ({ rawText: readFileSync(join(root, relPath), 'utf8'), relPath })),
+      `${JSON.stringify(productionManifestTemplate, null, 2)}\n`,
+    );
+    for (const write of initialPlan.writes) {
+      if (write.relPath !== 'artifact-manifest.json') {
+        writeFileSync(join(root, write.relPath), write.newText);
+      }
+    }
+  }
 
   const primary = PRIMARY_FILES.map((path) => fileIdentity(join(root, path), path));
   const normalizationInputs = {
@@ -811,7 +931,7 @@ function makeCandidate(
     artifact_type: path.toUpperCase().replaceAll(/[^A-Z0-9]+/g, '_'),
     ...fileIdentity(join(root, path), path),
   }));
-  writeJson(join(root, 'artifact-manifest.json'), {
+  const generatedManifest = {
     artifact_type: 'LESSON_ARTIFACT_MANIFEST',
     companion_artifacts: [
       'learner-safe-items.json',
@@ -836,7 +956,60 @@ function makeCandidate(
       path: file.path,
     })),
     publication_status: 'INTERNAL_DRAFT_ONLY',
-  });
+  };
+  if (productionManifestTemplate === null) {
+    writeJson(join(root, 'artifact-manifest.json'), generatedManifest);
+  } else {
+    const refreshRecords = (value: unknown): unknown =>
+      Array.isArray(value)
+        ? value.map((raw) => {
+            const record = raw as Record<string, unknown>;
+            const path =
+              typeof record.path === 'string'
+                ? record.path
+                : typeof record.file === 'string'
+                  ? record.file
+                  : null;
+            if (path === null || !existsSync(join(root, path))) return record;
+            const bytes = readFileSync(join(root, path));
+            return {
+              ...record,
+              ...('file_sha256' in record ? { file_sha256: sha256(bytes) } : {}),
+              ...('sha256' in record ? { sha256: sha256(bytes) } : {}),
+              ...('size' in record ? { size: bytes.byteLength } : {}),
+            };
+          })
+        : value;
+    const manifest = {
+      ...productionManifestTemplate,
+      companion_artifacts: refreshRecords(productionManifestTemplate.companion_artifacts),
+      evidence_artifacts: refreshRecords(productionManifestTemplate.evidence_artifacts),
+      kit_validation_artifacts: refreshRecords(productionManifestTemplate.kit_validation_artifacts),
+      lesson_binding: {
+        ...(productionManifestTemplate.lesson_binding as Record<string, unknown>),
+        lesson_id: lessonId,
+      },
+      primary_artifacts: (
+        productionManifestTemplate.primary_artifacts as Array<Record<string, unknown>>
+      ).map((record) => {
+        const path = String(record.path);
+        return { ...record, file_sha256: sha256(readFileSync(join(root, path))) };
+      }),
+      publication_status: 'INTERNAL_DRAFT_ONLY',
+    };
+    const plan = planLessonRehash(
+      readdirSync(root)
+        .filter((path) => path.endsWith('.json'))
+        .map((relPath) => ({ rawText: readFileSync(join(root, relPath), 'utf8'), relPath })),
+      `${JSON.stringify(manifest, null, 2)}\n`,
+    );
+    for (const write of plan.writes) {
+      writeFileSync(join(root, write.relPath), write.newText);
+    }
+    if (!existsSync(join(root, 'artifact-manifest.json'))) {
+      writeFileSync(join(root, 'artifact-manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
+    }
+  }
 
   const artifactHashes = Object.fromEntries(
     [
@@ -908,6 +1081,7 @@ const mechanicalPass: CentralMechanicalValidation = {
 function makeFixture(options: FixtureOptions = {}): Fixture {
   fixtureOrdinal += 1;
   const root = join(FIXTURE_ROOT, `case-${String(fixtureOrdinal).padStart(3, '0')}`);
+  fixtureRoots.add(root);
   makeWritable(root);
   rmSync(root, { force: true, recursive: true });
   const team = options.team ?? 'team-A';
@@ -1056,11 +1230,953 @@ function rewriteLessonHandoff(
   commitFixtureMutation(fixture, 'rewrite lesson handoff fixture');
 }
 
+function rewriteFinalTeamLessons(
+  fixture: Fixture,
+  replacements: readonly {
+    readonly index: number;
+    readonly status: LessonStatus;
+    readonly contentVariant?: string;
+  }[],
+): void {
+  const assignment = readJson(
+    join(fixture.centralRoot, `content/lesson-factory/assignments/${fixture.team}-30.json`),
+  );
+  const wave = readJson(fixture.wavePath);
+  const team = readJson(fixture.teamPath);
+  const waveRows = wave.rows as Array<Record<string, unknown>>;
+  const teamRows = team.rows as Array<Record<string, unknown>>;
+  if (replacements.some((replacement) => replacement.contentVariant === 'production-mechanical')) {
+    const destination = join(
+      fixture.centralRoot,
+      'curriculum/v3/v3-lesson-authoring-manifest.json',
+    );
+    mkdirSync(dirname(destination), { recursive: true });
+    cpSync(join(REPOSITORY_ROOT, 'curriculum/v3/v3-lesson-authoring-manifest.json'), destination);
+  }
+  for (const replacement of replacements) {
+    const lessonId = fixture.lessonIds[replacement.index];
+    if (lessonId === undefined) throw new Error('fixture replacement lesson missing');
+    const row = makeCandidate(
+      join(fixture.candidateRoot, lessonId),
+      fixture.team,
+      assignment,
+      lessonId,
+      replacement.status,
+      {
+        ...(replacement.contentVariant === undefined
+          ? {}
+          : { contentVariant: replacement.contentVariant }),
+        identityCollision: false,
+        mechanicalFailures: [],
+        protectedLeak: false,
+      },
+      fixture.pinnedCommit,
+    );
+    waveRows[replacement.index] = row;
+    teamRows[replacement.index] = row;
+  }
+  writeJson(fixture.wavePath, wave);
+  writeJson(fixture.teamPath, team);
+  commitFixtureMutation(fixture, 'rewrite final team lesson outcomes');
+}
+
+function stagedRoot(fixture: Fixture): string {
+  return join(
+    fixture.centralRoot,
+    TEAM_RETURN_STAGING_RELATIVE_ROOT,
+    fixture.team,
+    fixture.request.source.kind === 'CHECKOUT' && existsSync(fixture.teamPath) ? 'TEAM' : 'WAVE-01',
+  );
+}
+
+function filesystemIdentity(root: string): string {
+  const entries: Array<Record<string, unknown>> = [];
+  const walk = (path: string): void => {
+    const info = lstatSync(path);
+    const relativePath = relative(root, path).split('/').join('/');
+    entries.push({
+      kind: info.isDirectory() ? 'DIRECTORY' : 'FILE',
+      mode: info.mode & 0o777,
+      path: relativePath === '' ? '.' : relativePath,
+      ...(info.isFile()
+        ? {
+            sha256: sha256(readFileSync(path)),
+            size: info.size,
+          }
+        : {}),
+    });
+    if (info.isDirectory()) {
+      for (const name of readdirSync(path).sort()) walk(join(path, name));
+    }
+  };
+  walk(root);
+  return sha256(canonical(entries));
+}
+
+function supersessionAuthority(prior: Awaited<ReturnType<typeof intakeTeamReturn>>) {
+  return {
+    action: 'SUPERSEDE_FINAL_TEAM' as const,
+    expectedPriorSourceBatchSha256: prior.aggregates.sourceBatchSha256,
+    expectedPriorStagingIdentitySha256: prior.copy.stagingIdentitySha256,
+  };
+}
+
+type ForgeryKind =
+  | 'ALTERNATE_PRIOR_RANGE'
+  | 'EXTRA_SCHEMA'
+  | 'EXTRA_ARCHIVE_FILE'
+  | 'AUTHORITY_NESTED_EXTRA'
+  | 'FORGED_MECHANICAL_PASS'
+  | 'HANDOFF_NONCLAIM'
+  | 'MALFORMED_MANIFEST'
+  | 'OMIT_CONTROL_HANDOFFS'
+  | 'PRIOR_RECEIPT_MISMATCH'
+  | 'PROMOTED_CHECKER'
+  | 'PROVENANCE'
+  | 'ROW_ORDER'
+  | 'SETS'
+  | 'SOURCE_BLOB_IDENTITY'
+  | 'SOURCE_EXTRA'
+  | 'SOURCE_PATH_TRAVERSAL'
+  | 'SOURCE_SHORTENED'
+  | 'WAVE_BLOB'
+  | 'WAVE_EXTRA'
+  | 'WAVE_MODE'
+  | 'WAVE_NONREGULAR_CLAIM'
+  | 'WAVE_OMITTED'
+  | 'WRONG_ASSIGNMENT_AUTHORITY'
+  | 'WRONG_KIT_AUTHORITY'
+  | 'WRONG_TOOL_AUTHORITY';
+
+function acceptanceObjectPath(
+  finalRoot: string,
+  kind: 'archive' | 'manifest' | 'receipt',
+  expectedSha256: string,
+): string {
+  const root = join(dirname(finalRoot), 'TEAM.acceptance-v1', 'objects', kind);
+  const path = readdirSync(root)
+    .map((name) => join(root, name))
+    .find((candidate) => sha256(readFileSync(candidate)) === expectedSha256);
+  if (path === undefined) throw new Error(`${kind} object missing`);
+  return path;
+}
+
+function archiveTreeSha256(
+  inventoryEntries: readonly {
+    readonly path: string;
+    readonly sha256: string;
+    readonly size: number;
+  }[],
+): string {
+  const directories = new Set<string>();
+  for (const entry of inventoryEntries) {
+    let parent = dirname(entry.path).split('/').join('/');
+    while (parent !== '.' && parent !== '') {
+      directories.add(parent);
+      parent = dirname(parent).split('/').join('/');
+    }
+  }
+  return sha256(
+    canonical([
+      ...[...directories].sort().map((path) => ({ kind: 'DIRECTORY', mode: 0o500, path })),
+      ...inventoryEntries.map((entry) => ({ ...entry, kind: 'FILE', mode: 0o400 })),
+    ]),
+  );
+}
+
+function writeForgedObject(
+  finalRoot: string,
+  kind: 'archive' | 'manifest' | 'receipt',
+  bytes: Buffer,
+): string {
+  const objectSha256 = sha256(bytes);
+  const root = join(dirname(finalRoot), 'TEAM.acceptance-v1', 'objects', kind);
+  const path = join(root, `${objectSha256}.object`);
+  const indexPath = join(root, `${objectSha256}.index`);
+  if (existsSync(indexPath)) return objectSha256;
+  if (!existsSync(path)) writeFileSync(path, bytes, { flag: 'wx', mode: 0o400 });
+  writeFileSync(indexPath, `${objectSha256}.object\n`, { flag: 'wx', mode: 0o400 });
+  return objectSha256;
+}
+
+function forgedObjectIdentity(
+  finalRoot: string,
+  kind: 'archive' | 'manifest' | 'receipt',
+  objectSha256: string,
+) {
+  const root = join(dirname(finalRoot), 'TEAM.acceptance-v1', 'objects', kind);
+  const name = readFileSync(join(root, `${objectSha256}.index`), 'utf8').trim();
+  const relativePath = `TEAM.acceptance-v1/objects/${kind}/${name}`;
+  const info = lstatSync(join(dirname(finalRoot), relativePath));
+  return {
+    device: info.dev,
+    inode: info.ino,
+    mode: 0o400 as const,
+    nlink: 1 as const,
+    relativePath,
+    size: info.size,
+  };
+}
+
+function forgeAcceptanceHandle(
+  finalRoot: string,
+  accepted: Awaited<ReturnType<typeof intakeTeamReturn>>,
+  kind: ForgeryKind,
+  options: {
+    readonly alternatePriorCommit?: string;
+  } = {},
+): NonNullable<(typeof accepted)['copy']['acceptance']> {
+  const original = accepted.copy.acceptance;
+  if (original === undefined) throw new Error('acceptance handle missing');
+  const manifest = JSON.parse(
+    readFileSync(acceptanceObjectPath(finalRoot, 'manifest', original.manifestSha256), 'utf8'),
+  ) as Record<string, unknown>;
+  const archive = JSON.parse(
+    readFileSync(acceptanceObjectPath(finalRoot, 'archive', original.archiveSha256), 'utf8'),
+  ) as {
+    entries: Array<Record<string, unknown>>;
+    format: string;
+  };
+  const intake = structuredClone(manifest.intake) as Record<string, unknown>;
+  const supersession = structuredClone(manifest.supersession) as Record<string, unknown>;
+
+  if (kind === 'ALTERNATE_PRIOR_RANGE') {
+    if (options.alternatePriorCommit === undefined) throw new Error('alternate prior missing');
+    const sourceProof = manifest.sourceProof as Record<string, unknown>;
+    sourceProof.priorCommit = options.alternatePriorCommit;
+  }
+  if (kind === 'PRIOR_RECEIPT_MISMATCH') {
+    const sourceProof = manifest.sourceProof as Record<string, unknown>;
+    sourceProof.priorCommit = sourceProof.headCommit;
+  }
+  if (kind === 'EXTRA_SCHEMA') intake.unreviewedModule = { accepted: true };
+  if (kind === 'PROVENANCE') {
+    const source = intake.source as Record<string, unknown>;
+    source.sourceSha256 = 'f'.repeat(64);
+  }
+  if (kind === 'SOURCE_PATH_TRAVERSAL') {
+    const sourceProof = manifest.sourceProof as Record<string, unknown>;
+    const changedPaths = [...(sourceProof.changedPaths as string[])];
+    changedPaths[0] = '../attacker-alias';
+    sourceProof.changedPaths = changedPaths.sort();
+    const source = intake.source as Record<string, unknown>;
+    source.sourceSha256 = sha256(
+      canonical({
+        branch: sourceProof.branch,
+        changedPaths: sourceProof.changedPaths,
+        headCommit: sourceProof.headCommit,
+      }),
+    );
+  }
+  if (kind === 'SOURCE_BLOB_IDENTITY') {
+    const sourceProof = manifest.sourceProof as Record<string, unknown>;
+    const identities = sourceProof.changedPathIdentities as Array<Record<string, unknown>>;
+    const identity = identities.find((candidate) => String(candidate.path).includes('/V3-LES-'));
+    if (identity === undefined) throw new Error('lesson source identity missing');
+    identity.gitBlobSha1 = 'f'.repeat(40);
+    identity.sha256 = 'f'.repeat(64);
+    sourceProof.changedPathAggregateSha256 = sha256(canonical(identities));
+  }
+  if (kind === 'SOURCE_SHORTENED' || kind === 'SOURCE_EXTRA') {
+    const sourceProof = manifest.sourceProof as Record<string, unknown>;
+    const identities = structuredClone(sourceProof.changedPathIdentities) as Array<
+      Record<string, unknown>
+    >;
+    if (kind === 'SOURCE_SHORTENED') {
+      const index = identities.findIndex((identity) =>
+        String(identity.path).endsWith('/TEAM-HANDOFF.json'),
+      );
+      identities.splice(index >= 0 ? index : identities.length - 1, 1);
+    } else {
+      identities.push({
+        gitBlobSha1: 'f'.repeat(40),
+        gitMode: '100644',
+        path: 'content/lesson-candidates/team-B/waves/UNREVIEWED.json',
+        sha256: 'f'.repeat(64),
+        size: 1,
+      });
+    }
+    identities.sort((left, right) => String(left.path).localeCompare(String(right.path)));
+    sourceProof.changedPathIdentities = identities;
+    sourceProof.changedPaths = identities.map((identity) => identity.path);
+    sourceProof.changedPathAggregateSha256 = sha256(canonical(identities));
+    const source = intake.source as Record<string, unknown>;
+    source.sourceSha256 = sha256(
+      canonical({
+        branch: sourceProof.branch,
+        changedPaths: sourceProof.changedPaths,
+        headCommit: sourceProof.headCommit,
+      }),
+    );
+  }
+  if (kind === 'AUTHORITY_NESTED_EXTRA') {
+    const admissionAuthority = manifest.admissionAuthority as Record<string, unknown>;
+    const kit = admissionAuthority.kit as Record<string, unknown>;
+    kit.unreviewedAuthority = true;
+  }
+  if (kind === 'FORGED_MECHANICAL_PASS') {
+    const promotedAdmissions = manifest.promotedAdmissions as Array<Record<string, unknown>>;
+    const mechanical = promotedAdmissions[0]?.mechanical as Record<string, unknown>;
+    mechanical.validatorEvidenceSha256 = 'f'.repeat(64);
+  }
+  if (
+    kind === 'WRONG_ASSIGNMENT_AUTHORITY' ||
+    kind === 'WRONG_KIT_AUTHORITY' ||
+    kind === 'WRONG_TOOL_AUTHORITY'
+  ) {
+    const admissionAuthority = manifest.admissionAuthority as Record<string, unknown>;
+    if (kind === 'WRONG_ASSIGNMENT_AUTHORITY') {
+      admissionAuthority.assignmentId = 'forged-reviewed-assignment';
+    } else if (kind === 'WRONG_KIT_AUTHORITY') {
+      admissionAuthority.kitSha256 = 'f'.repeat(64);
+    } else {
+      admissionAuthority.toolSha256 = 'f'.repeat(64);
+    }
+  }
+  if (kind === 'ROW_ORDER') {
+    (intake.rows as unknown[]).reverse();
+  }
+  if (kind === 'SETS') {
+    const unchanged = supersession.unchangedCompleteLessonIds as string[];
+    supersession.unchangedCompleteLessonIds = unchanged.slice(1);
+    supersession.newlyCompleteLessonIds = [
+      ...(supersession.newlyCompleteLessonIds as string[]),
+      unchanged[0],
+    ];
+  }
+  if (kind === 'HANDOFF_NONCLAIM') {
+    const entry = archive.entries.find((candidate) =>
+      String(candidate.path).endsWith('/LESSON-HANDOFF.json'),
+    );
+    if (entry === undefined) throw new Error('handoff archive entry missing');
+    const handoff = JSON.parse(
+      Buffer.from(String(entry.bytesBase64), 'base64').toString('utf8'),
+    ) as Record<string, unknown>;
+    handoff.nonclaims = {
+      humanApproved: true,
+      officialRubricPass: false,
+      publicationApproved: false,
+    };
+    const bytes = Buffer.from(`${canonical(handoff)}\n`);
+    entry.bytesBase64 = bytes.toString('base64');
+    entry.sha256 = sha256(bytes);
+    entry.size = bytes.byteLength;
+  }
+  if (kind === 'MALFORMED_MANIFEST' || kind === 'PROMOTED_CHECKER') {
+    const promotedId = (supersession.newlyCompleteLessonIds as string[])[0] as string;
+    const rows = intake.rows as Array<Record<string, unknown>>;
+    const row = rows.find((candidate) => candidate.lessonId === promotedId);
+    const handoffEntry = archive.entries.find(
+      (candidate) => candidate.path === `lessons/${promotedId}/LESSON-HANDOFF.json`,
+    );
+    const manifestEntry = archive.entries.find(
+      (candidate) => candidate.path === `lessons/${promotedId}/artifact-manifest.json`,
+    );
+    if (row === undefined || handoffEntry === undefined || manifestEntry === undefined) {
+      throw new Error('promoted lesson archive closure missing');
+    }
+    const handoff = JSON.parse(
+      Buffer.from(String(handoffEntry.bytesBase64), 'base64').toString('utf8'),
+    ) as Record<string, unknown>;
+    if (kind === 'MALFORMED_MANIFEST') {
+      const bytes = Buffer.from('{}\n');
+      manifestEntry.bytesBase64 = bytes.toString('base64');
+      manifestEntry.sha256 = sha256(bytes);
+      manifestEntry.size = bytes.byteLength;
+    } else {
+      const checkerPath = `lessons/${promotedId}/validation/lesson-validate.json`;
+      const checkerEntry = archive.entries.find((candidate) => candidate.path === checkerPath);
+      if (checkerEntry === undefined) throw new Error('promoted checker missing');
+      const checkerBytes = Buffer.from('{}\n');
+      checkerEntry.bytesBase64 = checkerBytes.toString('base64');
+      checkerEntry.sha256 = sha256(checkerBytes);
+      checkerEntry.size = checkerBytes.byteLength;
+      const artifactManifest = JSON.parse(
+        Buffer.from(String(manifestEntry.bytesBase64), 'base64').toString('utf8'),
+      ) as Record<string, unknown>;
+      for (const key of ['kit_validation_artifacts', 'evidence_artifacts']) {
+        const identities = artifactManifest[key];
+        if (!Array.isArray(identities)) continue;
+        for (const identity of identities as Array<Record<string, unknown>>) {
+          if (identity.path !== 'validation/lesson-validate.json') continue;
+          if ('sha256' in identity) identity.sha256 = checkerEntry.sha256;
+          if ('file_sha256' in identity) identity.file_sha256 = checkerEntry.sha256;
+          if ('size' in identity) identity.size = checkerEntry.size;
+        }
+      }
+      const manifestBytes = Buffer.from(`${canonical(artifactManifest)}\n`);
+      manifestEntry.bytesBase64 = manifestBytes.toString('base64');
+      manifestEntry.sha256 = sha256(manifestBytes);
+      manifestEntry.size = manifestBytes.byteLength;
+      const artifactHashes = handoff.artifactHashes as Record<string, unknown>;
+      artifactHashes['validation/lesson-validate.json'] = checkerEntry.sha256;
+    }
+    handoff.artifactManifestSha256 = manifestEntry.sha256;
+    const handoffBytes = Buffer.from(`${canonical(handoff)}\n`);
+    handoffEntry.bytesBase64 = handoffBytes.toString('base64');
+    handoffEntry.sha256 = sha256(handoffBytes);
+    handoffEntry.size = handoffBytes.byteLength;
+    row.lessonHandoffSha256 = handoffEntry.sha256;
+    row.rootSha256 = manifestEntry.sha256;
+  }
+  if (kind === 'EXTRA_ARCHIVE_FILE') {
+    const bytes = Buffer.from('{}\n');
+    archive.entries.push({
+      bytesBase64: bytes.toString('base64'),
+      mode: 0o400,
+      path: 'waves/UNREVIEWED-HANDOFF.json',
+      sha256: sha256(bytes),
+      size: bytes.byteLength,
+    });
+    archive.entries.sort((left, right) => String(left.path).localeCompare(String(right.path)));
+  }
+  if (kind === 'WAVE_EXTRA') {
+    const bytes = Buffer.from('{"unreviewed":true}\n');
+    archive.entries.push({
+      bytesBase64: bytes.toString('base64'),
+      mode: 0o400,
+      path: 'waves/EXTRA-HANDOFF.json',
+      sha256: sha256(bytes),
+      size: bytes.byteLength,
+    });
+    archive.entries.sort((left, right) => String(left.path).localeCompare(String(right.path)));
+  }
+  if (kind === 'WAVE_OMITTED') {
+    const index = archive.entries.findIndex((entry) => String(entry.path).startsWith('waves/'));
+    if (index < 0) throw new Error('trusted wave missing');
+    archive.entries.splice(index, 1);
+  }
+  if (kind === 'WAVE_MODE' || kind === 'WAVE_BLOB' || kind === 'WAVE_NONREGULAR_CLAIM') {
+    const sourceProof = manifest.sourceProof as Record<string, unknown>;
+    const waves = sourceProof.waveTreeIdentities as Array<Record<string, unknown>>;
+    const wave = waves[0];
+    if (wave === undefined) throw new Error('wave tree proof missing');
+    if (kind === 'WAVE_MODE') wave.gitMode = wave.gitMode === '100644' ? '100755' : '100644';
+    if (kind === 'WAVE_BLOB') {
+      wave.gitBlobSha1 = 'f'.repeat(40);
+      wave.sha256 = 'f'.repeat(64);
+    }
+    if (kind === 'WAVE_NONREGULAR_CLAIM') {
+      wave.gitMode = '120000';
+      wave.gitType = 'blob';
+    }
+    sourceProof.waveTreeAggregateSha256 = sha256(canonical(waves));
+  }
+  if (kind === 'OMIT_CONTROL_HANDOFFS') {
+    archive.entries = archive.entries.filter(
+      (entry) => entry.path !== 'TEAM-HANDOFF.json' && !String(entry.path).startsWith('waves/'),
+    );
+  }
+  const candidateInventory = archive.entries.map((entry) => ({
+    kind: 'FILE',
+    mode: 0o400,
+    path: entry.path,
+    sha256: entry.sha256,
+    size: entry.size,
+  }));
+  manifest.candidateRootClosure = {
+    entryCount: candidateInventory.length,
+    inventorySha256: sha256(canonical(candidateInventory)),
+    pathSha256: sha256(canonical(candidateInventory.map((entry) => entry.path))),
+  };
+
+  const archiveBytes = Buffer.from(`${canonical(archive)}\n`);
+  const archiveSha256 = writeForgedObject(finalRoot, 'archive', archiveBytes);
+  const archiveDescriptor = {
+    format: 'lesson-generation-team-acceptance-archive/1',
+    mode: 0o400,
+    relativePath: `TEAM.acceptance-v1/objects/archive/${archiveSha256}.index`,
+    sha256: archiveSha256,
+    size: archiveBytes.byteLength,
+  };
+  const inventoryEntries = archive.entries
+    .filter((entry) => String(entry.path).startsWith('lessons/'))
+    .map((entry) => ({
+      path: String(entry.path).slice('lessons/'.length),
+      sha256: String(entry.sha256),
+      size: Number(entry.size),
+    }));
+  const aggregates = intake.aggregates as Record<string, unknown>;
+  const rows = intake.rows as Array<Record<string, unknown>>;
+  for (const row of rows) {
+    const { code: _code, rowSha256: _rowSha256, ...core } = row;
+    row.rowSha256 = sha256(canonical(core));
+  }
+  aggregates.sourceBatchSha256 = sha256(canonical(inventoryEntries));
+  aggregates.rowSha256 = sha256(
+    canonical(rows.map(({ code: _code, rowSha256: _rowSha256, ...row }) => row)),
+  );
+  aggregates.rootSha256 = sha256(
+    canonical(rows.map((row) => ({ lessonId: row.lessonId, rootSha256: row.rootSha256 }))),
+  );
+  const copy = intake.copy as Record<string, unknown>;
+  copy.stagingIdentitySha256 = sha256(
+    canonical({
+      scopeId: (intake.scope as Record<string, unknown>).id,
+      sourceBatchSha256: aggregates.sourceBatchSha256,
+      teamId: intake.teamId,
+    }),
+  );
+  const replacement = supersession.replacement as Record<string, unknown>;
+  replacement.copyIdentitySha256 = sha256(canonical(copy));
+  replacement.rootSha256 = aggregates.rootSha256;
+  replacement.rowSha256 = aggregates.rowSha256;
+  replacement.sourceBatchSha256 = aggregates.sourceBatchSha256;
+  replacement.sourceIdentitySha256 = sha256(canonical(intake.source));
+  replacement.stagingIdentitySha256 = copy.stagingIdentitySha256;
+  replacement.treeSha256 = archiveTreeSha256(inventoryEntries);
+  const generationCore = {
+    acceptanceMarkerRelativePath: supersession.acceptanceMarkerRelativePath,
+    action: supersession.action,
+    newlyCompleteLessonIds: supersession.newlyCompleteLessonIds,
+    prior: supersession.prior,
+    replacement,
+    supersessionId: supersession.supersessionId,
+    teamId: intake.teamId,
+    unchangedCompleteLessonIds: supersession.unchangedCompleteLessonIds,
+  };
+  supersession.generationId = sha256(canonical(generationCore));
+  intake.supersession = supersession;
+  const { receiptSha256: _receiptSha256, ...unsignedIntake } = intake;
+  intake.receiptSha256 = sha256(canonical(unsignedIntake));
+
+  const receipt = {
+    action: supersession.action,
+    archive: archiveDescriptor,
+    format: 'lesson-generation-team-acceptance-receipt/1',
+    generationId: supersession.generationId,
+    intakeReceiptSha256: intake.receiptSha256,
+    predecessorReceiptSha256: (supersession.prior as Record<string, unknown>).receiptSha256,
+    supersession,
+  };
+  const receiptBytes = Buffer.from(`${canonical(receipt)}\n`);
+  const receiptSha256 = writeForgedObject(finalRoot, 'receipt', receiptBytes);
+  const receiptDescriptor = {
+    mode: 0o400,
+    relativePath: `TEAM.acceptance-v1/objects/receipt/${receiptSha256}.index`,
+    sha256: receiptSha256,
+    size: receiptBytes.byteLength,
+  };
+  const { receiptSha256: _dryReceipt, ...dryBase } = intake;
+  const dryUnsigned = {
+    ...dryBase,
+    copy: {
+      disposition: 'SUPERSESSION_READY',
+      stagedCompleteCount: 0,
+      stagingIdentitySha256: copy.stagingIdentitySha256,
+    },
+    mode: 'DRY_RUN',
+  };
+  const forgedManifest = {
+    ...manifest,
+    acceptanceReceipt: receiptDescriptor,
+    archive: archiveDescriptor,
+    generationId: supersession.generationId,
+    intake,
+    package: {
+      assignmentIdSha256: intake.assignmentIdSha256,
+      authority: intake.authority,
+      source: intake.source,
+      sourceBatchSha256: aggregates.sourceBatchSha256,
+      stagingIdentitySha256: copy.stagingIdentitySha256,
+    },
+    predecessor: supersession.prior,
+    supersession,
+    validation: {
+      acceptedIntakeReceiptSha256: intake.receiptSha256,
+      dryRunIntakeReceiptSha256: sha256(canonical(dryUnsigned)),
+    },
+  };
+  const manifestBytes = Buffer.from(`${canonical(forgedManifest)}\n`);
+  const manifestSha256 = writeForgedObject(finalRoot, 'manifest', manifestBytes);
+  const markerPath = join(dirname(finalRoot), original.markerRelativePath);
+  unlinkSync(markerPath);
+  symlinkSync(manifestSha256, markerPath);
+  const markerInfo = lstatSync(markerPath);
+  return {
+    archiveSha256,
+    generationId: String(supersession.generationId),
+    manifestSha256,
+    marker: {
+      device: markerInfo.dev,
+      inode: markerInfo.ino,
+      mode: markerInfo.mode & 0o777,
+      target: manifestSha256,
+    },
+    markerRelativePath: original.markerRelativePath,
+    objects: {
+      archive: forgedObjectIdentity(finalRoot, 'archive', archiveSha256),
+      manifest: forgedObjectIdentity(finalRoot, 'manifest', manifestSha256),
+      receipt: forgedObjectIdentity(finalRoot, 'receipt', receiptSha256),
+    },
+    receiptSha256,
+    sourceCommit: String((intake.source as Record<string, unknown>).headCommit),
+    sourceTreeSha256: String(replacement.treeSha256),
+  };
+}
+
+async function prepareFinalTeamSupersession(
+  options: {
+    readonly changePriorComplete?: boolean;
+    readonly downgradePriorComplete?: boolean;
+    readonly team?: Team;
+  } = {},
+) {
+  if ((options.team ?? 'team-B') !== 'team-B') {
+    const fixture = makeFixture({
+      finalTeam: true,
+      statuses: Array.from({ length: 30 }, (_, index) =>
+        index < 23 ? ('COMPLETE' as const) : ('BLOCKED' as const),
+      ),
+      ...(options.team === undefined ? {} : { team: options.team }),
+    });
+    const prior = await intakeTeamReturn(
+      { ...fixture.request, mode: 'ACCEPT' },
+      fixture.dependencies,
+    );
+    rewriteFinalTeamLessons(
+      fixture,
+      Array.from({ length: 7 }, (_, offset) => ({
+        index: 23 + offset,
+        status: 'COMPLETE' as const,
+      })),
+    );
+    return {
+      authority: supersessionAuthority(prior),
+      finalRoot: stagedRoot(fixture),
+      fixture,
+      prior,
+    };
+  }
+  fixtureOrdinal += 1;
+  const root = join(
+    FIXTURE_ROOT,
+    `production-${process.pid}-${String(fixtureOrdinal).padStart(3, '0')}`,
+  );
+  fixtureRoots.add(root);
+  rmSync(root, { force: true, recursive: true });
+  mkdirSync(root, { recursive: true });
+  const checkoutRoot = join(root, 'checkout');
+  execFileSync(
+    '/usr/bin/git',
+    [
+      'clone',
+      join(
+        REPOSITORY_ROOT,
+        '.tmp/scratch/lesson-factory-2026-08-03T1727-0500/wp-08/team-B-wave-02-package/team-B-wave-02.bundle',
+      ),
+      checkoutRoot,
+    ],
+    { stdio: 'ignore' },
+  );
+  git(checkoutRoot, [
+    'checkout',
+    '-B',
+    'lesson-factory/team-B/wave-01',
+    '60f6e45f564c3c5ab100f896f2bf11bca83e8a98',
+  ]);
+  const centralRoot = join(root, 'central');
+  cpSync(checkoutRoot, centralRoot, { recursive: true });
+  cpSync(
+    join(REPOSITORY_ROOT, 'content/lesson-factory/assignments/team-B-30.json'),
+    join(centralRoot, 'content/lesson-factory/assignments/team-B-30.json'),
+  );
+  cpSync(
+    join(REPOSITORY_ROOT, 'content/lesson-factory/packets'),
+    join(centralRoot, 'content/lesson-factory/packets'),
+    { recursive: true },
+  );
+  const finalRoot = join(centralRoot, TEAM_RETURN_STAGING_RELATIVE_ROOT, 'team-B', 'TEAM');
+  mkdirSync(dirname(finalRoot), { recursive: true });
+  cpSync(join(REPOSITORY_ROOT, TEAM_RETURN_STAGING_RELATIVE_ROOT, 'team-B', 'TEAM'), finalRoot, {
+    recursive: true,
+  });
+  makeImmutable(finalRoot);
+  const prior = JSON.parse(readFileSync(join(finalRoot, 'INTAKE-RECEIPT.json'), 'utf8')) as Awaited<
+    ReturnType<typeof intakeTeamReturn>
+  >;
+  const pinnedCommit = '5fd019fa9fb16bb4ab29885f50a12934483180e3';
+  const headCommit = git(checkoutRoot, ['rev-parse', 'HEAD']);
+  const evidence: TeamReturnCheckoutEvidence = {
+    branch: git(checkoutRoot, ['symbolic-ref', '--short', 'HEAD']),
+    changedPaths: git(checkoutRoot, ['diff', '--name-only', `${pinnedCommit}..${headCommit}`])
+      .split('\n')
+      .filter(Boolean)
+      .sort(),
+    clean: true,
+    headCommit,
+    pinnedAncestor: true,
+  };
+  const candidateRoot = join(checkoutRoot, 'content/lesson-candidates/team-B');
+  const fixture: Fixture = {
+    authorityRoot: LIVE_AUTHORITY_ROOT,
+    candidateRoot,
+    centralRoot,
+    checkoutRoot,
+    dependencies: {},
+    evidence,
+    kitManifestPath: '',
+    lessonIds: prior.rows.map((row) => row.lessonId),
+    pinnedCommit,
+    request: {
+      authorityRoot: LIVE_AUTHORITY_ROOT,
+      centralRepositoryRoot: centralRoot,
+      mode: 'DRY_RUN',
+      source: { kind: 'CHECKOUT', root: checkoutRoot },
+    },
+    root,
+    team: 'team-B',
+    teamPath: join(candidateRoot, 'TEAM-HANDOFF.json'),
+    wavePath: join(candidateRoot, 'waves/WAVE-01-HANDOFF.json'),
+  };
+  if (options.changePriorComplete === true) {
+    const path = join(candidateRoot, prior.rows[0]?.lessonId ?? '', 'lesson-script.json');
+    const value = readJson(path);
+    value.reviewForgery = true;
+    writeJson(path, value);
+    commitFixtureMutation(fixture, 'change prior accepted lesson');
+  }
+  if (options.downgradePriorComplete === true) {
+    rewriteFinalTeamLessons(fixture, [{ index: 0, status: 'BLOCKED' }]);
+  }
+  return {
+    authority: supersessionAuthority(prior),
+    finalRoot: stagedRoot(fixture),
+    fixture,
+    prior,
+  };
+}
+
+function installEquivalentAlternatePrior(fixture: Fixture, actualPriorCommit: string): string {
+  const priorTree = git(fixture.checkoutRoot, ['rev-parse', `${actualPriorCommit}^{tree}`]);
+  const alternatePrior = git(fixture.checkoutRoot, [
+    '-c',
+    'user.name=WP08 Test',
+    '-c',
+    'user.email=wp08-test@example.invalid',
+    'commit-tree',
+    priorTree,
+    '-p',
+    actualPriorCommit,
+    '-m',
+    'equivalent alternate predecessor',
+  ]);
+  const approvedHead = git(fixture.checkoutRoot, ['rev-parse', 'HEAD']);
+  const approvedTree = git(fixture.checkoutRoot, ['rev-parse', `${approvedHead}^{tree}`]);
+  const mergeHead = git(fixture.checkoutRoot, [
+    '-c',
+    'user.name=WP08 Test',
+    '-c',
+    'user.email=wp08-test@example.invalid',
+    'commit-tree',
+    approvedTree,
+    '-p',
+    approvedHead,
+    '-p',
+    alternatePrior,
+    '-m',
+    'approved package with alternate ancestor',
+  ]);
+  git(fixture.checkoutRoot, ['reset', '--hard', mergeHead]);
+  return alternatePrior;
+}
+
+function installEquivalentReplacementHead(fixture: Fixture): string {
+  const approvedHead = git(fixture.checkoutRoot, ['rev-parse', 'HEAD']);
+  const approvedTree = git(fixture.checkoutRoot, ['rev-parse', `${approvedHead}^{tree}`]);
+  const replacementHead = git(fixture.checkoutRoot, [
+    '-c',
+    'user.name=WP08 Test',
+    '-c',
+    'user.email=wp08-test@example.invalid',
+    'commit-tree',
+    approvedTree,
+    '-p',
+    approvedHead,
+    '-m',
+    'unapproved equivalent replacement head',
+  ]);
+  git(fixture.checkoutRoot, ['reset', '--hard', replacementHead]);
+  return replacementHead;
+}
+
+function replaceTreeChild(
+  root: string,
+  treeish: string,
+  childName: string,
+  replacementTreeSha1: string,
+): string {
+  const entries = git(root, ['ls-tree', treeish]).split('\n').filter(Boolean);
+  const index = entries.findIndex((entry) => entry.endsWith(`\t${childName}`));
+  if (index < 0) throw new Error(`tree child missing: ${childName}`);
+  entries[index] = `040000 tree ${replacementTreeSha1}\t${childName}`;
+  return gitWithInput(root, ['mktree'], `${entries.join('\n')}\n`);
+}
+
+function installNonregularWaveTreeHead(
+  fixture: Fixture,
+  variant: 'EMPTY_TREE' | 'NESTED_TREE' | 'SUBMODULE',
+): { readonly marker: string; readonly replacementCommit: string } {
+  const root = fixture.checkoutRoot;
+  const approvedHead = git(root, ['rev-parse', 'HEAD']);
+  const wavesTree = git(root, [
+    'rev-parse',
+    `${approvedHead}:content/lesson-candidates/team-B/waves`,
+  ]);
+  const waveEntries = git(root, ['ls-tree', wavesTree]).split('\n').filter(Boolean);
+  let marker: string;
+  if (variant === 'SUBMODULE') {
+    marker = 'SUBMODULE-REVIEWED';
+    waveEntries.push(`160000 commit ${approvedHead}\t${marker}`);
+  } else {
+    marker = variant === 'EMPTY_TREE' ? 'EMPTY-REVIEWED' : 'NESTED-REVIEWED';
+    const insertedTree =
+      variant === 'EMPTY_TREE'
+        ? gitWithInput(root, ['mktree'], '')
+        : gitWithInput(
+            root,
+            ['mktree'],
+            `100644 blob ${git(root, [
+              'rev-parse',
+              `${approvedHead}:content/lesson-candidates/team-B/waves/WAVE-01-HANDOFF.json`,
+            ])}\tNESTED.json\n`,
+          );
+    waveEntries.push(`040000 tree ${insertedTree}\t${marker}`);
+  }
+  waveEntries.sort((left, right) =>
+    left.slice(left.indexOf('\t') + 1).localeCompare(right.slice(right.indexOf('\t') + 1)),
+  );
+  const replacementWaves = gitWithInput(root, ['mktree'], `${waveEntries.join('\n')}\n`);
+  const teamTree = replaceTreeChild(
+    root,
+    `${approvedHead}:content/lesson-candidates/team-B`,
+    'waves',
+    replacementWaves,
+  );
+  const candidatesTree = replaceTreeChild(
+    root,
+    `${approvedHead}:content/lesson-candidates`,
+    'team-B',
+    teamTree,
+  );
+  const contentTree = replaceTreeChild(
+    root,
+    `${approvedHead}:content`,
+    'lesson-candidates',
+    candidatesTree,
+  );
+  const rootTree = replaceTreeChild(root, `${approvedHead}^{tree}`, 'content', contentTree);
+  const replacementHead = git(root, [
+    '-c',
+    'user.name=WP08 Test',
+    '-c',
+    'user.email=wp08-test@example.invalid',
+    'commit-tree',
+    rootTree,
+    '-p',
+    approvedHead,
+    '-m',
+    `add ${variant.toLowerCase()} reviewed wave entry`,
+  ]);
+  git(root, ['reset', '--hard', replacementHead]);
+  return { marker, replacementCommit: replacementHead };
+}
+
+async function spawnPausedAcceptancePublication(
+  prepared: Awaited<ReturnType<typeof prepareFinalTeamSupersession>>,
+  boundary: string,
+): Promise<ChildProcessWithoutNullStreams> {
+  const moduleUrl = pathToFileURL(join(import.meta.dirname, 'team-return-intake.ts')).href;
+  const script = `
+    import { writeFileSync } from 'node:fs';
+    import { intakeTeamReturn } from ${JSON.stringify(moduleUrl)};
+    const request = JSON.parse(process.env.WP08_REQUEST);
+    const evidence = JSON.parse(process.env.WP08_EVIDENCE);
+    const boundary = process.env.WP08_BOUNDARY;
+    const result = await intakeTeamReturn(request, {
+      inspectCheckout: async () => evidence,
+      onSupersessionBoundary: (value) => {
+        if (value !== boundary) return;
+        writeFileSync(1, \`WP08_BOUNDARY:\${value}\\n\`);
+        Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0);
+      },
+    });
+    writeFileSync(1, \`WP08_RESULT:\${JSON.stringify(result)}\\n\`);
+  `;
+  const child = spawn(
+    process.execPath,
+    ['--import', requireFromTest.resolve('tsx'), '--input-type=module', '--eval', script],
+    {
+      cwd: REPOSITORY_ROOT,
+      env: {
+        ...process.env,
+        WP08_BOUNDARY: boundary,
+        WP08_EVIDENCE: JSON.stringify(prepared.fixture.evidence),
+        WP08_MECHANICAL: JSON.stringify(mechanicalPass),
+        WP08_REQUEST: JSON.stringify({
+          ...prepared.fixture.request,
+          mode: 'ACCEPT',
+          supersession: prepared.authority,
+        }),
+      },
+      stdio: ['pipe', 'pipe', 'pipe'],
+    },
+  );
+  await new Promise<void>((resolveReady, rejectReady) => {
+    let output = '';
+    let errorOutput = '';
+    let settled = false;
+    child.stdout.on('data', (chunk: Buffer) => {
+      output += chunk.toString('utf8');
+      if (!settled && output.includes(`WP08_BOUNDARY:${boundary}\n`)) {
+        settled = true;
+        resolveReady();
+      }
+    });
+    child.stderr.on('data', (chunk: Buffer) => {
+      errorOutput += chunk.toString('utf8');
+    });
+    child.once('exit', (code, signal) => {
+      if (settled) return;
+      settled = true;
+      rejectReady(
+        new Error(
+          `acceptance child exited before ${boundary}: ${String(code)}/${String(signal)} ${errorOutput} ${output}`,
+        ),
+      );
+    });
+  });
+  return child;
+}
+
+async function killPausedAcceptanceChild(child: ChildProcessWithoutNullStreams): Promise<void> {
+  child.kill('SIGKILL');
+  await once(child, 'exit');
+}
+
+function expectImmutableTreeModes(root: string): void {
+  const visit = (path: string): void => {
+    const info = lstatSync(path);
+    expect(info.mode & 0o777, path).toBe(info.isDirectory() ? 0o500 : 0o400);
+    if (info.isDirectory()) {
+      for (const name of readdirSync(path)) visit(join(path, name));
+    }
+  };
+  visit(root);
+}
+
 describe('deterministic Team A/B return intake', () => {
+  afterEach(() => {
+    for (const root of fixtureRoots) {
+      removeFixtureRoot(root);
+      fixtureRoots.delete(root);
+    }
+  }, 120_000);
+
   afterAll(() => {
     makeWritable(FIXTURE_ROOT);
     rmSync(FIXTURE_ROOT, { force: true, recursive: true });
-  });
+  }, 120_000);
 
   it('admits the live generation-3 lockfile tool pin without KIT_AUTHORITY_INVALID', async () => {
     const checkoutRoot = join(FIXTURE_ROOT, 'live-authority-probe');
@@ -1996,4 +3112,1048 @@ describe('deterministic Team A/B return intake', () => {
     expect(result.aggregates.rootSha256).toMatch(SHA);
     expect(result.exceptions).toEqual([]);
   }, 30_000);
+
+  it('commits a content-addressed Team B acceptance marker without changing TEAM', async () => {
+    const { authority, finalRoot, fixture, prior } = await prepareFinalTeamSupersession();
+    const oldIdentity = filesystemIdentity(finalRoot);
+    for (const lessonId of [
+      'V3-LES-619870',
+      'V3-LES-631070',
+      'V3-LES-710436',
+      'V3-LES-726940',
+      'V3-LES-765609',
+      'V3-LES-773665',
+      'V3-LES-865559',
+    ]) {
+      expect(
+        validateTeamReturnCandidateMechanically(
+          join(fixture.candidateRoot, lessonId),
+          lessonId,
+          fixture.centralRoot,
+        ),
+      ).toMatchObject({
+        computedQuality: 'PASS',
+        normalization: 'PASS',
+        protectedBoundary: 'PASS',
+        structural: 'PASS',
+        validatorEvidenceSha256: expect.stringMatching(SHA),
+      });
+    }
+    const beforeProjection = filesystemIdentity(dirname(finalRoot));
+    const projected = await intakeTeamReturn(
+      { ...fixture.request, supersession: authority },
+      fixture.dependencies,
+    );
+
+    expect(projected.decision, JSON.stringify(projected.exceptions)).toBe('ACCEPTED');
+    expect(projected.copy.disposition).toBe('SUPERSESSION_READY');
+    expect(projected.copy.acceptance).toMatchObject({
+      archiveSha256: expect.stringMatching(SHA),
+      generationId: expect.stringMatching(SHA),
+      manifestSha256: expect.stringMatching(SHA),
+      markerRelativePath: expect.stringMatching(/^TEAM\.acceptance-v1\/commits\/[0-9a-f]{64}$/),
+      receiptSha256: expect.stringMatching(SHA),
+      sourceCommit: fixture.evidence.headCommit,
+      sourceTreeSha256: expect.stringMatching(SHA),
+    });
+    expect(projected.copy.acceptance?.marker).toBeUndefined();
+    expect(filesystemIdentity(dirname(finalRoot))).toBe(beforeProjection);
+
+    const accepted = await intakeTeamReturn(
+      { ...fixture.request, mode: 'ACCEPT', supersession: authority },
+      fixture.dependencies,
+    );
+    expect(accepted.decision, JSON.stringify(accepted.exceptions)).toBe('ACCEPTED');
+    expect(accepted.copy.disposition).toBe('SUPERSESSION_COMMITTED');
+    expect(accepted.copy.acceptance).toMatchObject({
+      archiveSha256: projected.copy.acceptance?.archiveSha256,
+      generationId: projected.copy.acceptance?.generationId,
+      manifestSha256: projected.copy.acceptance?.manifestSha256,
+      markerRelativePath: projected.copy.acceptance?.markerRelativePath,
+      receiptSha256: projected.copy.acceptance?.receiptSha256,
+      marker: {
+        device: expect.any(Number),
+        inode: expect.any(Number),
+        mode: expect.any(Number),
+        target: projected.copy.acceptance?.manifestSha256,
+      },
+      objects: {
+        archive: {
+          mode: 0o400,
+          nlink: 1,
+          relativePath: expect.stringMatching(
+            /^TEAM\.acceptance-v1\/objects\/archive\/[0-9a-f]{64}\.object$/,
+          ),
+        },
+        manifest: {
+          mode: 0o400,
+          nlink: 1,
+          relativePath: expect.stringMatching(
+            /^TEAM\.acceptance-v1\/objects\/manifest\/[0-9a-f]{64}\.object$/,
+          ),
+        },
+        receipt: {
+          mode: 0o400,
+          nlink: 1,
+          relativePath: expect.stringMatching(
+            /^TEAM\.acceptance-v1\/objects\/receipt\/[0-9a-f]{64}\.object$/,
+          ),
+        },
+      },
+    });
+    expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
+    expectImmutableTreeModes(finalRoot);
+    expect(recursiveFiles(join(finalRoot, 'lessons'))).toHaveLength(23 * LESSON_FILES.length);
+    expect(existsSync(join(dirname(finalRoot), 'TEAM.supersessions'))).toBe(false);
+
+    const acceptance = accepted.copy.acceptance;
+    if (acceptance === undefined) throw new Error('acceptance handle missing');
+    const markerPath = join(dirname(finalRoot), acceptance.markerRelativePath);
+    expect(lstatSync(markerPath).isSymbolicLink()).toBe(true);
+    expect(readlinkSync(markerPath)).toBe(acceptance.manifestSha256);
+    for (const [kind, objectSha256] of [
+      ['archive', acceptance.archiveSha256],
+      ['manifest', acceptance.manifestSha256],
+      ['receipt', acceptance.receiptSha256],
+    ] as const) {
+      const indexPath = join(
+        dirname(finalRoot),
+        'TEAM.acceptance-v1',
+        'objects',
+        kind,
+        `${objectSha256}.index`,
+      );
+      const indexInfo = lstatSync(indexPath);
+      expect(indexInfo.isFile()).toBe(true);
+      expect(indexInfo.mode & 0o777).toBe(0o400);
+      expect(readFileSync(indexPath, 'utf8')).toMatch(/^[0-9a-f]{64}\.object\n$/);
+    }
+    const manifestRoot = join(dirname(finalRoot), 'TEAM.acceptance-v1', 'objects', 'manifest');
+    const manifestPath = readdirSync(manifestRoot)
+      .map((name) => join(manifestRoot, name))
+      .find((path) => sha256(readFileSync(path)) === acceptance.manifestSha256);
+    if (manifestPath === undefined) throw new Error('manifest object missing');
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as Record<string, unknown>;
+    expect(Object.keys(manifest).sort()).toEqual([
+      'acceptanceReceipt',
+      'action',
+      'admissionAuthority',
+      'archive',
+      'candidateRootClosure',
+      'format',
+      'generationId',
+      'intake',
+      'nonclaims',
+      'package',
+      'predecessor',
+      'promotedAdmissions',
+      'sourceProof',
+      'statusCounts',
+      'supersession',
+      'validation',
+    ]);
+    expect(manifest.nonclaims).toEqual({
+      humanApproved: false,
+      officialRubricPass: false,
+      publicationApproved: false,
+    });
+    expect(manifest.statusCounts).toEqual({ BLOCKED: 0, COMPLETE: 30, FAILED: 0 });
+    expect(manifest.promotedAdmissions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          lessonId: expect.stringMatching(/^V3-LES-[0-9]{6}$/),
+          mechanical: {
+            computedQuality: 'PASS',
+            normalization: 'PASS',
+            protectedBoundary: 'PASS',
+            structural: 'PASS',
+            validatorEvidenceSha256: expect.stringMatching(SHA),
+          },
+          rowSha256: expect.stringMatching(SHA),
+        }),
+      ]),
+    );
+    expect(manifest.promotedAdmissions).toHaveLength(7);
+    const sourceProof = manifest.sourceProof as {
+      changedPathIdentities: Array<{ path: string }>;
+      changedPaths: string[];
+      priorCommit: string;
+      waveTreeAggregateSha256: string;
+      waveTreeIdentities: Array<{
+        gitBlobSha1: string;
+        gitMode: string;
+        gitType: string;
+        path: string;
+        sha256: string;
+        size: number;
+      }>;
+    };
+    const reviewedChangedPaths = git(fixture.checkoutRoot, [
+      'diff',
+      '--name-only',
+      String(prior.source.headCommit),
+      String(accepted.source.headCommit),
+      '--',
+    ])
+      .split('\n')
+      .filter(Boolean)
+      .sort();
+    expect(sourceProof.changedPaths).toEqual(reviewedChangedPaths);
+    expect(sourceProof.changedPathIdentities.map((identity) => identity.path)).toEqual(
+      reviewedChangedPaths,
+    );
+    expect(sourceProof.priorCommit).toBe(prior.source.headCommit);
+    const reviewedWavePaths = git(fixture.checkoutRoot, [
+      'ls-tree',
+      '-r',
+      '--name-only',
+      String(accepted.source.headCommit),
+      '--',
+      'content/lesson-candidates/team-B/waves/',
+    ])
+      .split('\n')
+      .filter(Boolean)
+      .sort();
+    expect(sourceProof.waveTreeIdentities.map((identity) => identity.path)).toEqual(
+      reviewedWavePaths,
+    );
+    expect(sourceProof.waveTreeIdentities).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          gitBlobSha1: expect.stringMatching(/^[0-9a-f]{40}$/),
+          gitMode: expect.stringMatching(/^100(644|755)$/),
+          gitType: 'blob',
+          path: expect.stringMatching(/^content\/lesson-candidates\/team-B\/waves\/[^/]+\.json$/),
+          sha256: expect.stringMatching(SHA),
+        }),
+      ]),
+    );
+    expect(sourceProof.waveTreeAggregateSha256).toMatch(SHA);
+    expect(reviewedChangedPaths).toContain('content/lesson-candidates/team-B/TEAM-HANDOFF.json');
+    expect(reviewedChangedPaths.some((path) => path.includes('/team-B/waves/'))).toBe(true);
+    expect(
+      new Set(
+        reviewedChangedPaths
+          .map((path) => /^content\/lesson-candidates\/team-B\/(V3-LES-[0-9]{6})\//.exec(path)?.[1])
+          .filter(Boolean),
+      ).size,
+    ).toBe(7);
+    const archive = JSON.parse(
+      readFileSync(acceptanceObjectPath(finalRoot, 'archive', acceptance.archiveSha256), 'utf8'),
+    ) as { entries: Array<{ path: string }> };
+    const archivePaths = archive.entries.map((entry) => entry.path);
+    expect(archivePaths).toContain('TEAM-HANDOFF.json');
+    expect(archivePaths.some((path) => path.startsWith('waves/'))).toBe(true);
+    expect(archivePaths.filter((path) => path.startsWith('lessons/'))).toHaveLength(
+      30 * LESSON_FILES.length,
+    );
+    expect(manifest.candidateRootClosure).toEqual({
+      entryCount: archivePaths.length,
+      inventorySha256: expect.stringMatching(SHA),
+      pathSha256: expect.stringMatching(SHA),
+    });
+    expect(manifest.sourceProof).toMatchObject({
+      changedPathAggregateSha256: expect.stringMatching(SHA),
+      changedPathIdentities: expect.arrayContaining([
+        expect.objectContaining({
+          gitBlobSha1: expect.stringMatching(/^[0-9a-f]{40}$/),
+          gitMode: expect.stringMatching(/^100(644|755)$/),
+          path: expect.stringMatching(/^content\/lesson-candidates\/team-B\//),
+          sha256: expect.stringMatching(SHA),
+        }),
+      ]),
+    });
+    expect(canonical(manifest)).not.toContain('publicationRuntime');
+    expect(canonical(manifest)).not.toContain('/usr/bin/python3');
+    expect(manifest).toMatchObject({
+      generationId: acceptance.generationId,
+      package: {
+        assignmentIdSha256: accepted.assignmentIdSha256,
+        source: accepted.source,
+        sourceBatchSha256: accepted.aggregates.sourceBatchSha256,
+        stagingIdentitySha256: accepted.copy.stagingIdentitySha256,
+      },
+      validation: {
+        acceptedIntakeReceiptSha256: accepted.receiptSha256,
+        dryRunIntakeReceiptSha256: expect.stringMatching(SHA),
+      },
+    });
+
+    const replay = await intakeTeamReturn(
+      { ...fixture.request, mode: 'ACCEPT', supersession: authority },
+      fixture.dependencies,
+    );
+    expect(replay.decision, JSON.stringify(replay.exceptions)).toBe('ACCEPTED');
+    expect(replay.copy.disposition).toBe('PRESENT_IDENTICAL');
+    expect(replay.copy.acceptance?.manifestSha256).toBe(acceptance.manifestSha256);
+    expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
+  }, 240_000);
+
+  it('rejects a self-consistent alternate ancestor instead of the staged predecessor commit', async () => {
+    const { authority, finalRoot, fixture, prior } = await prepareFinalTeamSupersession();
+    const oldIdentity = filesystemIdentity(finalRoot);
+    const alternatePrior = installEquivalentAlternatePrior(
+      fixture,
+      String(prior.source.headCommit),
+    );
+    const replacementHead = git(fixture.checkoutRoot, ['rev-parse', 'HEAD']);
+    expect(alternatePrior).not.toBe(prior.source.headCommit);
+    expect(
+      git(fixture.checkoutRoot, [
+        'diff',
+        '--name-only',
+        String(prior.source.headCommit),
+        replacementHead,
+        '--',
+      ]),
+    ).toBe(
+      git(fixture.checkoutRoot, ['diff', '--name-only', alternatePrior, replacementHead, '--']),
+    );
+    const accepted = await intakeTeamReturn(
+      { ...fixture.request, mode: 'ACCEPT', supersession: authority },
+      fixture.dependencies,
+    );
+    expect(accepted.decision, JSON.stringify(accepted.exceptions)).toBe('ACCEPTED');
+    const forgedHandle = forgeAcceptanceHandle(finalRoot, accepted, 'ALTERNATE_PRIOR_RANGE', {
+      alternatePriorCommit: alternatePrior,
+    });
+
+    expect(() =>
+      loadTeamReturnAcceptanceArtifact({
+        authorityRoot: fixture.request.authorityRoot,
+        centralRepositoryRoot: fixture.request.centralRepositoryRoot,
+        reviewedCheckoutRoot: fixture.checkoutRoot,
+        handle: forgedHandle,
+        scopeId: 'TEAM',
+        teamId: 'team-B',
+      }),
+    ).toThrow();
+    expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
+  }, 240_000);
+
+  it('rejects an artifact whose replacement commit is not the reviewed package HEAD', async () => {
+    const { authority, finalRoot, fixture } = await prepareFinalTeamSupersession();
+    const oldIdentity = filesystemIdentity(finalRoot);
+    const accepted = await intakeTeamReturn(
+      { ...fixture.request, mode: 'ACCEPT', supersession: authority },
+      fixture.dependencies,
+    );
+    expect(accepted.decision, JSON.stringify(accepted.exceptions)).toBe('ACCEPTED');
+    const replacementHead = installEquivalentReplacementHead(fixture);
+    expect(replacementHead).not.toBe(accepted.source.headCommit);
+    const handle = accepted.copy.acceptance;
+    if (handle === undefined) throw new Error('acceptance handle missing');
+
+    expect(() =>
+      loadTeamReturnAcceptanceArtifact({
+        authorityRoot: fixture.request.authorityRoot,
+        centralRepositoryRoot: fixture.request.centralRepositoryRoot,
+        reviewedCheckoutRoot: fixture.checkoutRoot,
+        handle,
+        scopeId: 'TEAM',
+        teamId: 'team-B',
+      }),
+    ).toThrow();
+    expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
+  }, 240_000);
+
+  it.each([
+    { label: 'an empty tree', variant: 'EMPTY_TREE' },
+    { label: 'a nested nonempty tree', variant: 'NESTED_TREE' },
+    { label: 'a submodule', variant: 'SUBMODULE' },
+  ] as const)(
+    'rejects $label entry below the trusted WAVE prefix',
+    async ({ variant }) => {
+      const { authority, finalRoot, fixture, prior } = await prepareFinalTeamSupersession();
+      const oldIdentity = filesystemIdentity(finalRoot);
+      const originalReplacementCommit = git(fixture.checkoutRoot, ['rev-parse', 'HEAD']);
+      const { marker, replacementCommit } = installNonregularWaveTreeHead(fixture, variant);
+      if (variant === 'EMPTY_TREE') {
+        expect(
+          git(fixture.checkoutRoot, [
+            'diff',
+            '--name-only',
+            String(prior.source.headCommit),
+            replacementCommit,
+            '--',
+          ]),
+        ).toBe(
+          git(fixture.checkoutRoot, [
+            'diff',
+            '--name-only',
+            String(prior.source.headCommit),
+            originalReplacementCommit,
+            '--',
+          ]),
+        );
+      }
+      expect(
+        git(fixture.checkoutRoot, [
+          'ls-tree',
+          '-r',
+          '-t',
+          replacementCommit,
+          '--',
+          'content/lesson-candidates/team-B/waves/',
+        ]),
+      ).toContain(`waves/${marker}`);
+      if (variant === 'EMPTY_TREE') {
+        expect(
+          git(fixture.checkoutRoot, [
+            'ls-tree',
+            '-r',
+            replacementCommit,
+            '--',
+            'content/lesson-candidates/team-B/waves/',
+          ]),
+        ).not.toContain(`waves/${marker}`);
+      }
+      const result = await intakeTeamReturn(
+        { ...fixture.request, mode: 'ACCEPT', supersession: authority },
+        fixture.dependencies,
+      );
+
+      expect(result.decision).toBe('REJECTED');
+      expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
+    },
+    240_000,
+  );
+
+  it('rejects a nonregular WAVE entry in the trusted replacement Git tree', async () => {
+    const { authority, finalRoot, fixture } = await prepareFinalTeamSupersession();
+    const oldIdentity = filesystemIdentity(finalRoot);
+    unlinkSync(fixture.wavePath);
+    symlinkSync('../TEAM-HANDOFF.json', fixture.wavePath);
+    commitFixtureMutation(fixture, 'replace trusted wave with symlink');
+
+    const result = await intakeTeamReturn(
+      { ...fixture.request, mode: 'ACCEPT', supersession: authority },
+      fixture.dependencies,
+    );
+
+    expect(result.decision).toBe('REJECTED');
+    expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
+  }, 240_000);
+
+  it.each([
+    'EXTRA_SCHEMA',
+    'EXTRA_ARCHIVE_FILE',
+    'AUTHORITY_NESTED_EXTRA',
+    'FORGED_MECHANICAL_PASS',
+    'HANDOFF_NONCLAIM',
+    'MALFORMED_MANIFEST',
+    'OMIT_CONTROL_HANDOFFS',
+    'PRIOR_RECEIPT_MISMATCH',
+    'PROMOTED_CHECKER',
+    'PROVENANCE',
+    'ROW_ORDER',
+    'SETS',
+    'SOURCE_BLOB_IDENTITY',
+    'SOURCE_EXTRA',
+    'SOURCE_PATH_TRAVERSAL',
+    'SOURCE_SHORTENED',
+    'WAVE_BLOB',
+    'WAVE_EXTRA',
+    'WAVE_MODE',
+    'WAVE_NONREGULAR_CLAIM',
+    'WAVE_OMITTED',
+    'WRONG_ASSIGNMENT_AUTHORITY',
+    'WRONG_KIT_AUTHORITY',
+    'WRONG_TOOL_AUTHORITY',
+  ] as const)(
+    'rejects a fully rehashed acceptance artifact with forged %s semantics',
+    async (forgeryKind) => {
+      const { authority, finalRoot, fixture } = await prepareFinalTeamSupersession();
+      const oldIdentity = filesystemIdentity(finalRoot);
+      const accepted = await intakeTeamReturn(
+        { ...fixture.request, mode: 'ACCEPT', supersession: authority },
+        fixture.dependencies,
+      );
+      const forgedHandle = forgeAcceptanceHandle(finalRoot, accepted, forgeryKind);
+
+      expect(() =>
+        loadTeamReturnAcceptanceArtifact({
+          authorityRoot: fixture.request.authorityRoot,
+          centralRepositoryRoot: fixture.request.centralRepositoryRoot,
+          reviewedCheckoutRoot: fixture.checkoutRoot,
+          handle: forgedHandle,
+          scopeId: 'TEAM',
+          teamId: 'team-B',
+        }),
+      ).toThrow();
+      expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
+    },
+    240_000,
+  );
+
+  it('rejects pathname substitution while validating a newly written object handle', async () => {
+    const { authority, finalRoot, fixture } = await prepareFinalTeamSupersession();
+    const oldIdentity = filesystemIdentity(finalRoot);
+    let substituted = false;
+    const result = await intakeTeamReturn(
+      { ...fixture.request, mode: 'ACCEPT', supersession: authority },
+      {
+        ...fixture.dependencies,
+        onBeforeAcceptanceObjectValidation: (kind: string, path: string) => {
+          if (substituted || kind !== 'archive') return;
+          substituted = true;
+          renameSync(path, `${path}.moved`);
+          writeFileSync(path, 'attacker replacement\n', { mode: 0o400 });
+        },
+      } as TeamReturnIntakeDependencies & {
+        onBeforeAcceptanceObjectValidation: (kind: string, path: string) => void;
+      },
+    );
+
+    expect(substituted).toBe(true);
+    expect(result.decision).toBe('REJECTED');
+    expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
+  }, 240_000);
+
+  it.each(['FILE', 'DIRECTORY', 'SYMLINK'] as const)(
+    'preserves and refuses an occupied acceptance marker %s',
+    async (kind) => {
+      const { authority, finalRoot, fixture } = await prepareFinalTeamSupersession();
+      const oldIdentity = filesystemIdentity(finalRoot);
+      const projected = await intakeTeamReturn(
+        { ...fixture.request, supersession: authority },
+        fixture.dependencies,
+      );
+      const markerRelativePath = projected.copy.acceptance?.markerRelativePath;
+      if (markerRelativePath === undefined) throw new Error('projected marker missing');
+      const markerPath = join(dirname(finalRoot), markerRelativePath);
+      mkdirSync(dirname(markerPath), { recursive: true, mode: 0o700 });
+      if (kind === 'FILE') writeFileSync(markerPath, 'occupied\n');
+      else if (kind === 'DIRECTORY') mkdirSync(markerPath);
+      else symlinkSync('0'.repeat(64), markerPath);
+      const before = lstatSync(markerPath);
+
+      const result = await intakeTeamReturn(
+        { ...fixture.request, mode: 'ACCEPT', supersession: authority },
+        fixture.dependencies,
+      );
+
+      expect(result.decision).toBe('REJECTED');
+      expect(lstatSync(markerPath).ino).toBe(before.ino);
+      expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
+    },
+    180_000,
+  );
+
+  it('allows one identical concurrent marker winner and rejects a conflicting fork', async () => {
+    const prepared = await prepareFinalTeamSupersession();
+    const oldIdentity = filesystemIdentity(prepared.finalRoot);
+    const [first, second] = await Promise.all([
+      intakeTeamReturn(
+        {
+          ...prepared.fixture.request,
+          mode: 'ACCEPT',
+          supersession: prepared.authority,
+        },
+        prepared.fixture.dependencies,
+      ),
+      intakeTeamReturn(
+        {
+          ...prepared.fixture.request,
+          mode: 'ACCEPT',
+          supersession: prepared.authority,
+        },
+        prepared.fixture.dependencies,
+      ),
+    ]);
+    expect(first.decision).toBe('ACCEPTED');
+    expect(second.decision).toBe('ACCEPTED');
+    expect(first.copy.acceptance?.manifestSha256).toBe(second.copy.acceptance?.manifestSha256);
+    expect(filesystemIdentity(prepared.finalRoot)).toBe(oldIdentity);
+
+    const conflictRoot = join(prepared.fixture.root, 'checkout-conflict');
+    cpSync(prepared.fixture.checkoutRoot, conflictRoot, { recursive: true });
+    const conflicting: Fixture = {
+      ...prepared.fixture,
+      candidateRoot: join(
+        conflictRoot,
+        relative(prepared.fixture.checkoutRoot, prepared.fixture.candidateRoot),
+      ),
+      checkoutRoot: conflictRoot,
+      request: {
+        ...prepared.fixture.request,
+        source: { kind: 'CHECKOUT', root: conflictRoot },
+      },
+    };
+    rewriteFinalTeamLessons(conflicting, [
+      { contentVariant: 'conflicting-promoted-content', index: 29, status: 'COMPLETE' },
+    ]);
+    const conflict = await intakeTeamReturn(
+      { ...conflicting.request, mode: 'ACCEPT', supersession: prepared.authority },
+      conflicting.dependencies,
+    );
+    expect(conflict.decision).toBe('REJECTED');
+    expect(filesystemIdentity(prepared.finalRoot)).toBe(oldIdentity);
+    expect(
+      readdirSync(join(dirname(prepared.finalRoot), 'TEAM.acceptance-v1', 'commits')),
+    ).toHaveLength(1);
+  }, 300_000);
+
+  it.each(['archive', 'manifest', 'receipt'] as const)(
+    'rejects replay when a content-addressed %s object drifts',
+    async (kind) => {
+      const { authority, finalRoot, fixture } = await prepareFinalTeamSupersession();
+      const oldIdentity = filesystemIdentity(finalRoot);
+      const accepted = await intakeTeamReturn(
+        { ...fixture.request, mode: 'ACCEPT', supersession: authority },
+        fixture.dependencies,
+      );
+      const expectedSha256 =
+        kind === 'archive'
+          ? accepted.copy.acceptance?.archiveSha256
+          : kind === 'manifest'
+            ? accepted.copy.acceptance?.manifestSha256
+            : accepted.copy.acceptance?.receiptSha256;
+      if (expectedSha256 === undefined) throw new Error(`${kind} hash missing`);
+      const objectRoot = join(dirname(finalRoot), 'TEAM.acceptance-v1', 'objects', kind);
+      const objectPath = readdirSync(objectRoot)
+        .map((name) => join(objectRoot, name))
+        .find((path) => sha256(readFileSync(path)) === expectedSha256);
+      if (objectPath === undefined) throw new Error(`${kind} object missing`);
+      chmodSync(objectPath, 0o600);
+      writeFileSync(objectPath, 'tampered\n');
+      chmodSync(objectPath, 0o400);
+
+      const replay = await intakeTeamReturn(
+        { ...fixture.request, mode: 'ACCEPT', supersession: authority },
+        fixture.dependencies,
+      );
+      expect(replay.decision).toBe('REJECTED');
+      expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
+    },
+    240_000,
+  );
+
+  it.each(['OVERSIZED', 'SPARSE'] as const)(
+    'rejects a referenced %s archive before allocating its declared bytes',
+    async (variant) => {
+      const { authority, finalRoot, fixture } = await prepareFinalTeamSupersession();
+      const oldIdentity = filesystemIdentity(finalRoot);
+      const accepted = await intakeTeamReturn(
+        { ...fixture.request, mode: 'ACCEPT', supersession: authority },
+        fixture.dependencies,
+      );
+      const acceptance = accepted.copy.acceptance;
+      if (acceptance?.objects === undefined) throw new Error('acceptance objects missing');
+      const archivePath = join(dirname(finalRoot), acceptance.objects.archive.relativePath);
+      chmodSync(archivePath, 0o600);
+      truncateSync(
+        archivePath,
+        variant === 'OVERSIZED'
+          ? MAX_ACCEPTANCE_ARCHIVE_BYTES + 1
+          : MAX_ACCEPTANCE_ARCHIVE_BYTES - 1,
+      );
+      chmodSync(archivePath, 0o400);
+
+      expect(() =>
+        loadTeamReturnAcceptanceArtifact({
+          authorityRoot: fixture.request.authorityRoot,
+          centralRepositoryRoot: fixture.request.centralRepositoryRoot,
+          reviewedCheckoutRoot: fixture.checkoutRoot,
+          handle: acceptance,
+          scopeId: 'TEAM',
+          teamId: 'team-B',
+        }),
+      ).toThrow();
+      expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
+    },
+    240_000,
+  );
+
+  it('ignores unreferenced crash objects without scanning their bytes', async () => {
+    const { authority, finalRoot, fixture } = await prepareFinalTeamSupersession();
+    const oldIdentity = filesystemIdentity(finalRoot);
+    const accepted = await intakeTeamReturn(
+      { ...fixture.request, mode: 'ACCEPT', supersession: authority },
+      fixture.dependencies,
+    );
+    const acceptance = accepted.copy.acceptance;
+    if (acceptance === undefined) throw new Error('acceptance handle missing');
+    const archiveRoot = join(dirname(finalRoot), 'TEAM.acceptance-v1', 'objects', 'archive');
+    for (let index = 0; index < 64; index += 1) {
+      const path = join(archiveRoot, `${String(index).padStart(64, '0')}.object`);
+      writeFileSync(path, 'orphan\n', { mode: 0o400 });
+    }
+
+    const loaded = loadTeamReturnAcceptanceArtifact({
+      authorityRoot: fixture.request.authorityRoot,
+      centralRepositoryRoot: fixture.request.centralRepositoryRoot,
+      reviewedCheckoutRoot: fixture.checkoutRoot,
+      handle: acceptance,
+      scopeId: 'TEAM',
+      teamId: 'team-B',
+    });
+    expect(loaded.intakeReceipt.receiptSha256).toBe(accepted.receiptSha256);
+    expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
+    removeFixtureRoot(loaded.extractedRoot);
+  }, 240_000);
+
+  it('rejects manifest-declared object sizes above the aggregate byte bound', async () => {
+    const { authority, finalRoot, fixture } = await prepareFinalTeamSupersession();
+    const oldIdentity = filesystemIdentity(finalRoot);
+    const accepted = await intakeTeamReturn(
+      { ...fixture.request, mode: 'ACCEPT', supersession: authority },
+      fixture.dependencies,
+    );
+    const acceptance = accepted.copy.acceptance;
+    if (acceptance?.objects === undefined) throw new Error('acceptance objects missing');
+    const manifest = JSON.parse(
+      readFileSync(join(dirname(finalRoot), acceptance.objects.manifest.relativePath), 'utf8'),
+    ) as Record<string, unknown>;
+    const archive = manifest.archive as Record<string, unknown>;
+    archive.size = MAX_ACCEPTANCE_AGGREGATE_BYTES;
+    const bytes = Buffer.from(`${canonical(manifest)}\n`);
+    const manifestSha256 = writeForgedObject(finalRoot, 'manifest', bytes);
+    const markerPath = join(dirname(finalRoot), acceptance.markerRelativePath);
+    unlinkSync(markerPath);
+    symlinkSync(manifestSha256, markerPath);
+    const markerInfo = lstatSync(markerPath);
+    const forgedHandle = {
+      ...acceptance,
+      manifestSha256,
+      marker: {
+        device: markerInfo.dev,
+        inode: markerInfo.ino,
+        mode: markerInfo.mode & 0o777,
+        target: manifestSha256,
+      },
+      objects: {
+        ...acceptance.objects,
+        manifest: forgedObjectIdentity(finalRoot, 'manifest', manifestSha256),
+      },
+    };
+
+    expect(() =>
+      loadTeamReturnAcceptanceArtifact({
+        authorityRoot: fixture.request.authorityRoot,
+        centralRepositoryRoot: fixture.request.centralRepositoryRoot,
+        reviewedCheckoutRoot: fixture.checkoutRoot,
+        handle: forgedHandle,
+        scopeId: 'TEAM',
+        teamId: 'team-B',
+      }),
+    ).toThrow();
+    expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
+  }, 240_000);
+
+  it('rejects an acceptance store above the closed marker bound', async () => {
+    const { authority, finalRoot, fixture } = await prepareFinalTeamSupersession();
+    const oldIdentity = filesystemIdentity(finalRoot);
+    const accepted = await intakeTeamReturn(
+      { ...fixture.request, mode: 'ACCEPT', supersession: authority },
+      fixture.dependencies,
+    );
+    const acceptance = accepted.copy.acceptance;
+    if (acceptance === undefined) throw new Error('acceptance handle missing');
+    const commitsRoot = join(dirname(finalRoot), 'TEAM.acceptance-v1', 'commits');
+    for (let index = 0; index < MAX_ACCEPTANCE_MARKERS; index += 1) {
+      const name = sha256(`bounded-marker-${index}`);
+      symlinkSync(acceptance.manifestSha256, join(commitsRoot, name));
+    }
+
+    expect(() =>
+      loadTeamReturnAcceptanceArtifact({
+        authorityRoot: fixture.request.authorityRoot,
+        centralRepositoryRoot: fixture.request.centralRepositoryRoot,
+        reviewedCheckoutRoot: fixture.checkoutRoot,
+        handle: acceptance,
+        scopeId: 'TEAM',
+        teamId: 'team-B',
+      }),
+    ).toThrow();
+    expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
+  }, 240_000);
+
+  it('streams marker enumeration and stops after MAX plus one entries', async () => {
+    const root = join(FIXTURE_ROOT, 'bounded-marker-stream');
+    rmSync(root, { force: true, recursive: true });
+    mkdirSync(root, { recursive: true, mode: 0o700 });
+    try {
+      for (let index = 0; index < 4096; index += 1) {
+        symlinkSync('0'.repeat(64), join(root, sha256(`stream-marker-${index}`)));
+      }
+      const module = (await import('./team-return-intake')) as unknown as {
+        readBoundedAcceptanceMarkerNames?: (
+          root: string,
+          onEntry?: (name: string) => void,
+        ) => readonly string[] | null;
+      };
+      expect(module.readBoundedAcceptanceMarkerNames).toBeTypeOf('function');
+      let visited = 0;
+      const names = module.readBoundedAcceptanceMarkerNames?.(root, () => {
+        visited += 1;
+      });
+      expect(names).toBeNull();
+      expect(visited).toBe(MAX_ACCEPTANCE_MARKERS + 1);
+    } finally {
+      rmSync(root, { force: true, recursive: true });
+    }
+  });
+
+  it('treats a parent-alias marker as non-authoritative and leaves TEAM untouched', async () => {
+    const { authority, finalRoot, fixture } = await prepareFinalTeamSupersession();
+    const oldIdentity = filesystemIdentity(finalRoot);
+    let replaced = false;
+    const result = await intakeTeamReturn(
+      { ...fixture.request, mode: 'ACCEPT', supersession: authority },
+      {
+        ...fixture.dependencies,
+        onBeforeSupersessionPublish: (markerPath) => {
+          if (replaced) return;
+          replaced = true;
+          const storeRoot = join(dirname(finalRoot), 'TEAM.acceptance-v1');
+          renameSync(storeRoot, `${storeRoot}.trusted-orphan`);
+          mkdirSync(dirname(markerPath), { recursive: true, mode: 0o700 });
+        },
+      },
+    );
+
+    expect(replaced).toBe(true);
+    expect(result.decision).toBe('REJECTED');
+    expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
+    expectImmutableTreeModes(finalRoot);
+  }, 240_000);
+
+  it.each([
+    'ARCHIVE_OBJECT_WRITE',
+    'ARCHIVE_OBJECT_FSYNC',
+    'ARCHIVE_OBJECT_INDEX_CREATE',
+    'ARCHIVE_OBJECT_INDEX_FSYNC',
+    'RECEIPT_OBJECT_WRITE',
+    'RECEIPT_OBJECT_FSYNC',
+    'RECEIPT_OBJECT_INDEX_CREATE',
+    'RECEIPT_OBJECT_INDEX_FSYNC',
+    'MANIFEST_OBJECT_WRITE',
+    'MANIFEST_OBJECT_FSYNC',
+    'MANIFEST_OBJECT_INDEX_CREATE',
+    'MANIFEST_OBJECT_INDEX_FSYNC',
+    'PRE_MARKER_CREATE',
+    'POST_MARKER_CREATE',
+    'MARKER_PARENT_FSYNC',
+  ] as const)(
+    'recovers after SIGKILL at acceptance boundary %s without changing TEAM',
+    async (boundary) => {
+      const prepared = await prepareFinalTeamSupersession();
+      const oldIdentity = filesystemIdentity(prepared.finalRoot);
+      const child = await spawnPausedAcceptancePublication(prepared, boundary);
+      await killPausedAcceptanceChild(child);
+
+      expect(filesystemIdentity(prepared.finalRoot)).toBe(oldIdentity);
+      const recovered = await intakeTeamReturn(
+        {
+          ...prepared.fixture.request,
+          mode: 'ACCEPT',
+          supersession: prepared.authority,
+        },
+        prepared.fixture.dependencies,
+      );
+      expect(recovered.decision, JSON.stringify(recovered.exceptions)).toBe('ACCEPTED');
+      expect(['SUPERSESSION_COMMITTED', 'PRESENT_IDENTICAL']).toContain(recovered.copy.disposition);
+      const acceptance = recovered.copy.acceptance;
+      if (acceptance === undefined) throw new Error('recovered acceptance missing');
+      const markerPath = join(dirname(prepared.finalRoot), acceptance.markerRelativePath);
+      expect(lstatSync(markerPath).isSymbolicLink()).toBe(true);
+      expect(readlinkSync(markerPath)).toBe(acceptance.manifestSha256);
+      expect(filesystemIdentity(prepared.finalRoot)).toBe(oldIdentity);
+      expectImmutableTreeModes(prepared.finalRoot);
+    },
+    300_000,
+  );
+
+  it('requires the fixed marker handle and safely extracts all 30 accepted lessons', async () => {
+    const { authority, finalRoot, fixture } = await prepareFinalTeamSupersession();
+    const oldIdentity = filesystemIdentity(finalRoot);
+    const accepted = await intakeTeamReturn(
+      { ...fixture.request, mode: 'ACCEPT', supersession: authority },
+      fixture.dependencies,
+    );
+    if (accepted.copy.acceptance === undefined) throw new Error('acceptance handle missing');
+    const loaded = loadTeamReturnAcceptanceArtifact({
+      authorityRoot: fixture.request.authorityRoot,
+      centralRepositoryRoot: fixture.request.centralRepositoryRoot,
+      reviewedCheckoutRoot: fixture.checkoutRoot,
+      handle: accepted.copy.acceptance,
+      scopeId: 'TEAM',
+      teamId: 'team-B',
+    });
+    fixtureRoots.add(loaded.extractedRoot);
+    expect(recursiveFiles(join(loaded.extractedRoot, 'lessons'))).toHaveLength(
+      30 * LESSON_FILES.length,
+    );
+    expectImmutableTreeModes(loaded.extractedRoot);
+    expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
+
+    const aliasedHandle = {
+      ...accepted.copy.acceptance,
+      markerRelativePath: `TEAM.acceptance-v1/aliases/${accepted.copy.acceptance?.generationId}`,
+    };
+    expect(() =>
+      loadTeamReturnAcceptanceArtifact({
+        authorityRoot: fixture.request.authorityRoot,
+        centralRepositoryRoot: fixture.request.centralRepositoryRoot,
+        reviewedCheckoutRoot: fixture.checkoutRoot,
+        handle: aliasedHandle as NonNullable<typeof accepted.copy.acceptance>,
+        scopeId: 'TEAM',
+        teamId: 'team-B',
+      }),
+    ).toThrow();
+  }, 240_000);
+
+  it('rejects FINAL_TEAM supersession for wrong prior identities and same-batch abuse', async () => {
+    const sameBatch = makeFixture({
+      finalTeam: true,
+      statuses: Array.from({ length: 30 }, (_, index) =>
+        index < 23 ? ('COMPLETE' as const) : ('BLOCKED' as const),
+      ),
+      team: 'team-B',
+    });
+    const prior = await intakeTeamReturn(
+      { ...sameBatch.request, mode: 'ACCEPT' },
+      sameBatch.dependencies,
+    );
+    const sameBatchResult = await intakeTeamReturn(
+      {
+        ...sameBatch.request,
+        mode: 'ACCEPT',
+        supersession: supersessionAuthority(prior),
+      },
+      sameBatch.dependencies,
+    );
+    expect(sameBatchResult.decision).toBe('REJECTED');
+    expect(codes(sameBatchResult)).toContain('SUPERSESSION_AUTHORITY_INVALID');
+
+    rewriteFinalTeamLessons(
+      sameBatch,
+      Array.from({ length: 7 }, (_, offset) => ({
+        index: 23 + offset,
+        status: 'COMPLETE' as const,
+      })),
+    );
+    for (const supersession of [
+      {
+        ...supersessionAuthority(prior),
+        expectedPriorSourceBatchSha256: '0'.repeat(64),
+      },
+      {
+        ...supersessionAuthority(prior),
+        expectedPriorStagingIdentitySha256: '0'.repeat(64),
+      },
+    ]) {
+      const result = await intakeTeamReturn(
+        { ...sameBatch.request, supersession },
+        sameBatch.dependencies,
+      );
+      expect(result.decision).toBe('REJECTED');
+      expect(codes(result)).toContain('SUPERSESSION_AUTHORITY_INVALID');
+    }
+  }, 120_000);
+
+  it('rejects supersession authority for WAVE scope even when its digests are well formed', async () => {
+    const fixture = makeFixture({ lessonCount: 2, team: 'team-B' });
+    const result = await intakeTeamReturn(
+      {
+        ...fixture.request,
+        supersession: {
+          action: 'SUPERSEDE_FINAL_TEAM',
+          expectedPriorSourceBatchSha256: '1'.repeat(64),
+          expectedPriorStagingIdentitySha256: '2'.repeat(64),
+        },
+      },
+      fixture.dependencies,
+    );
+
+    expect(result.decision).toBe('REJECTED');
+    expect(codes(result)).toContain('SUPERSESSION_AUTHORITY_INVALID');
+    expect(result.copy.disposition).not.toBe('SUPERSESSION_READY');
+  });
+
+  it('recomputes the prior receipt, full tree, and modes before projecting supersession', async () => {
+    const { authority, finalRoot, fixture } = await prepareFinalTeamSupersession();
+    const receiptPath = join(finalRoot, 'INTAKE-RECEIPT.json');
+    const receiptBytes = readFileSync(receiptPath);
+    chmodSync(receiptPath, 0o600);
+    writeFileSync(receiptPath, '{}\n');
+    chmodSync(receiptPath, 0o400);
+
+    const forgedReceipt = await intakeTeamReturn(
+      { ...fixture.request, supersession: authority },
+      fixture.dependencies,
+    );
+    expect(forgedReceipt.decision).toBe('REJECTED');
+    expect(codes(forgedReceipt)).toContain('SUPERSESSION_PRIOR_INVALID');
+
+    chmodSync(receiptPath, 0o600);
+    writeFileSync(receiptPath, receiptBytes);
+    chmodSync(receiptPath, 0o400);
+    const stagedScript = join(
+      finalRoot,
+      'lessons',
+      fixture.lessonIds[0] as string,
+      'lesson-script.json',
+    );
+    const scriptBytes = readFileSync(stagedScript);
+    chmodSync(stagedScript, 0o600);
+    writeFileSync(stagedScript, '{"tampered":true}\n');
+    chmodSync(stagedScript, 0o400);
+
+    const tamperedTree = await intakeTeamReturn(
+      { ...fixture.request, supersession: authority },
+      fixture.dependencies,
+    );
+    expect(tamperedTree.decision).toBe('REJECTED');
+    expect(codes(tamperedTree)).toContain('SUPERSESSION_PRIOR_INVALID');
+
+    chmodSync(stagedScript, 0o600);
+    writeFileSync(stagedScript, scriptBytes);
+    chmodSync(stagedScript, 0o400);
+    chmodSync(join(finalRoot, 'lessons', fixture.lessonIds[0] as string), 0o700);
+    const driftedMode = await intakeTeamReturn(
+      { ...fixture.request, supersession: authority },
+      fixture.dependencies,
+    );
+    expect(driftedMode.decision).toBe('REJECTED');
+    expect(codes(driftedMode)).toContain('SUPERSESSION_PRIOR_INVALID');
+  }, 120_000);
+
+  it('rejects a changed previously COMPLETE lesson even when the replacement validates', async () => {
+    const { authority, finalRoot, fixture, prior } = await prepareFinalTeamSupersession({
+      changePriorComplete: true,
+    });
+    const priorIdentity = filesystemIdentity(finalRoot);
+
+    const result = await intakeTeamReturn(
+      { ...fixture.request, supersession: authority },
+      fixture.dependencies,
+    );
+
+    expect(result.decision).toBe('REJECTED');
+    expect(codes(result)).toContain('SUPERSESSION_NON_MONOTONIC');
+    expect(filesystemIdentity(finalRoot)).toBe(priorIdentity);
+    expect(readJson(join(finalRoot, 'INTAKE-RECEIPT.json')).receiptSha256).toBe(
+      prior.receiptSha256,
+    );
+  }, 120_000);
+
+  it('rejects removal or downgrade of a previously COMPLETE row', async () => {
+    const { authority, finalRoot, fixture, prior } = await prepareFinalTeamSupersession({
+      downgradePriorComplete: true,
+    });
+
+    const result = await intakeTeamReturn(
+      { ...fixture.request, supersession: authority },
+      fixture.dependencies,
+    );
+
+    expect(result.decision).toBe('REJECTED');
+    expect(codes(result)).toContain('SUPERSESSION_NON_MONOTONIC');
+    expect(recursiveFiles(join(finalRoot, 'lessons'))).toHaveLength(23 * LESSON_FILES.length);
+    expect(readJson(join(finalRoot, 'INTAKE-RECEIPT.json')).receiptSha256).toBe(
+      prior.receiptSha256,
+    );
+  }, 120_000);
 });

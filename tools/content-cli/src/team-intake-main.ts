@@ -5,6 +5,7 @@ import {
   intakeTeamReturn,
   type TeamReturnIntakeRequest,
   type TeamReturnSource,
+  type TeamReturnSupersessionRequest,
 } from '../../../packages/content/src/lesson-factory/team-return-intake';
 
 const RUN_ID = '2026-08-03T1727-0500';
@@ -15,6 +16,7 @@ export interface ParsedTeamIntakeCliArguments {
   readonly help: boolean;
   readonly mode: 'DRY_RUN' | 'ACCEPT';
   readonly source?: TeamReturnSource;
+  readonly supersession?: TeamReturnSupersessionRequest;
 }
 
 function argumentValue(args: readonly string[], flag: string): string | undefined {
@@ -36,8 +38,14 @@ export function parseTeamIntakeCliArguments(
   if (args.length === 1 && (args[0] === '--help' || args[0] === '-h')) {
     return { help: true, mode: 'DRY_RUN' };
   }
-  const valueFlags = new Set(['--checkout-root', '--archive', '--attestation']);
-  const switchFlags = new Set(['--accept']);
+  const valueFlags = new Set([
+    '--checkout-root',
+    '--archive',
+    '--attestation',
+    '--expected-prior-source-batch',
+    '--expected-prior-staging-identity',
+  ]);
+  const switchFlags = new Set(['--accept', '--supersede-final-team']);
   for (let index = 0; index < args.length; index += 1) {
     const argument = args[index] as string;
     if (valueFlags.has(argument)) {
@@ -52,6 +60,9 @@ export function parseTeamIntakeCliArguments(
   if (args.filter((argument) => argument === '--accept').length > 1) {
     throw new Error('DUPLICATE_ARGUMENT:--accept');
   }
+  if (args.filter((argument) => argument === '--supersede-final-team').length > 1) {
+    throw new Error('DUPLICATE_ARGUMENT:--supersede-final-team');
+  }
   const checkoutRoot = argumentValue(args, '--checkout-root');
   const archivePath = argumentValue(args, '--archive');
   const attestationPath = argumentValue(args, '--attestation');
@@ -61,6 +72,31 @@ export function parseTeamIntakeCliArguments(
   }
   if (hasArchiveArgument && (archivePath === undefined || attestationPath === undefined)) {
     throw new Error('SIGNED_ARCHIVE_ARGUMENTS_INCOMPLETE');
+  }
+  const supersedeFinalTeam = args.includes('--supersede-final-team');
+  const expectedPriorSourceBatchSha256 = argumentValue(args, '--expected-prior-source-batch');
+  const expectedPriorStagingIdentitySha256 = argumentValue(
+    args,
+    '--expected-prior-staging-identity',
+  );
+  const hasSupersessionArgument =
+    supersedeFinalTeam ||
+    expectedPriorSourceBatchSha256 !== undefined ||
+    expectedPriorStagingIdentitySha256 !== undefined;
+  if (
+    hasSupersessionArgument &&
+    (!supersedeFinalTeam ||
+      expectedPriorSourceBatchSha256 === undefined ||
+      expectedPriorStagingIdentitySha256 === undefined)
+  ) {
+    throw new Error('SUPERSESSION_ARGUMENTS_INCOMPLETE');
+  }
+  if (
+    hasSupersessionArgument &&
+    (!/^[0-9a-f]{64}$/.test(expectedPriorSourceBatchSha256 as string) ||
+      !/^[0-9a-f]{64}$/.test(expectedPriorStagingIdentitySha256 as string))
+  ) {
+    throw new Error('SUPERSESSION_IDENTITY_INVALID');
   }
   const source: TeamReturnSource =
     checkoutRoot !== undefined
@@ -74,6 +110,15 @@ export function parseTeamIntakeCliArguments(
     help: false,
     mode: args.includes('--accept') ? 'ACCEPT' : 'DRY_RUN',
     source,
+    ...(hasSupersessionArgument
+      ? {
+          supersession: {
+            action: 'SUPERSEDE_FINAL_TEAM' as const,
+            expectedPriorSourceBatchSha256: expectedPriorSourceBatchSha256 as string,
+            expectedPriorStagingIdentitySha256: expectedPriorStagingIdentitySha256 as string,
+          },
+        }
+      : {}),
   };
 }
 
@@ -81,7 +126,7 @@ function absoluteInput(path: string): string {
   return isAbsolute(path) ? path : resolve(process.cwd(), path);
 }
 
-function usage(): string {
+export function teamIntakeUsage(): string {
   return [
     'Team return intake (dry-run by default)',
     '',
@@ -91,7 +136,11 @@ function usage(): string {
     'Signed fallback archive:',
     '  pnpm --filter @mcat/content-cli exec tsx src/team-intake-main.ts --archive <zip> --attestation <json> [--accept]',
     '',
+    'Explicit FINAL_TEAM supersession to a content-addressed acceptance artifact (dry-run projection unless --accept is also present):',
+    '  --supersede-final-team --expected-prior-source-batch <sha256> --expected-prior-staging-identity <sha256>',
+    '',
     'Team, assignment, lesson IDs, generation authority, and staging destination are derived and cannot be overridden.',
+    'The predecessor receipt, object hashes, and atomic immutable symlink marker are derived and cannot be overridden.',
   ].join('\n');
 }
 
@@ -109,7 +158,7 @@ export async function runTeamIntakeCli(rawArguments = process.argv.slice(2)): Pr
     return 1;
   }
   if (parsed.help) {
-    process.stdout.write(`${usage()}\n`);
+    process.stdout.write(`${teamIntakeUsage()}\n`);
     return 0;
   }
   const source = parsed.source as TeamReturnSource;
@@ -126,6 +175,7 @@ export async function runTeamIntakeCli(rawArguments = process.argv.slice(2)): Pr
     centralRepositoryRoot: REPOSITORY_ROOT,
     mode: parsed.mode,
     source: normalizedSource,
+    ...(parsed.supersession === undefined ? {} : { supersession: parsed.supersession }),
   };
   const result = await intakeTeamReturn(request);
   process.stdout.write(`${JSON.stringify(result)}\n`);

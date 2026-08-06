@@ -4,21 +4,27 @@ import {
   chmodSync,
   closeSync,
   constants as fsConstants,
+  fchmodSync,
   existsSync,
   fstatSync,
+  fsyncSync,
   lstatSync,
   mkdirSync,
   mkdtempSync,
   openSync,
+  opendirSync,
   readFileSync,
+  readlinkSync,
   readSync,
   readdirSync,
   realpathSync,
   renameSync,
   rmSync,
+  writeSync,
   writeFileSync,
 } from 'node:fs';
 import { copyFile as nodeCopyFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { inflateRawSync } from 'node:zlib';
 
@@ -31,6 +37,21 @@ import {
   type LessonValidationInput,
   type RehashFile,
 } from '../lesson-validator';
+import {
+  ACCEPTANCE_RELATIVE_ROOT,
+  MAX_ACCEPTANCE_AGGREGATE_BYTES,
+  MAX_ACCEPTANCE_CHAIN_DEPTH,
+  MAX_ACCEPTANCE_MARKERS,
+  acceptanceObjectRelativePath,
+  createAcceptanceMarker,
+  inspectAcceptanceMarker,
+  openAcceptanceStore,
+  readImmutableObject,
+  writeImmutableObject,
+  type AcceptanceMarkerIdentity,
+  type AcceptanceObjectIdentity,
+  type AcceptancePublicationBoundary,
+} from './team-return-acceptance-artifact';
 import { deriveKitIdentityAggregate } from './kit-identity-aggregate';
 
 export const TEAM_RETURN_STAGING_RELATIVE_ROOT =
@@ -165,6 +186,10 @@ export type TeamReturnIntakeCode =
   | 'SOURCE_REPOSITORY_DRIFT'
   | 'SOURCE_RESOURCE_LIMIT_EXCEEDED'
   | 'STAGING_MISMATCH'
+  | 'SUPERSESSION_AUTHORITY_INVALID'
+  | 'SUPERSESSION_NON_MONOTONIC'
+  | 'SUPERSESSION_PRIOR_INVALID'
+  | 'SUPERSESSION_TRANSACTION_FAILED'
   | 'TEAM_HANDOFF_INVALID'
   | 'TRUSTED_SIGNER_INVALID'
   | 'TRUSTED_SIGNER_MISSING'
@@ -200,6 +225,12 @@ export interface TeamReturnIntakeDependencies {
   ) => Promise<CentralMechanicalValidation> | CentralMechanicalValidation;
   readonly copyFile?: (source: string, destination: string) => Promise<void>;
   readonly chmodPath?: (path: string, mode: number) => void;
+  readonly onBeforeSupersessionPublish?: (destination: string) => void;
+  readonly onBeforeAcceptanceObjectValidation?: (
+    kind: 'archive' | 'manifest' | 'receipt',
+    path: string,
+  ) => void;
+  readonly onSupersessionBoundary?: (boundary: TeamReturnSupersessionBoundary) => void;
 }
 
 export type TeamReturnSource =
@@ -210,11 +241,20 @@ export type TeamReturnSource =
       readonly attestationPath: string;
     };
 
+export type TeamReturnSupersessionBoundary = AcceptancePublicationBoundary;
+
+export interface TeamReturnSupersessionRequest {
+  readonly action: 'SUPERSEDE_FINAL_TEAM';
+  readonly expectedPriorSourceBatchSha256: string;
+  readonly expectedPriorStagingIdentitySha256: string;
+}
+
 export interface TeamReturnIntakeRequest {
   readonly authorityRoot: string;
   readonly centralRepositoryRoot: string;
   readonly mode?: 'DRY_RUN' | 'ACCEPT';
   readonly source: TeamReturnSource;
+  readonly supersession?: TeamReturnSupersessionRequest;
 }
 
 export interface TeamReturnException {
@@ -230,6 +270,44 @@ export interface TeamReturnIntakeRow {
   readonly rootSha256: string;
   readonly rowSha256: string;
   readonly status: LessonStatus;
+}
+
+interface TeamReturnSupersessionSide {
+  readonly copyIdentitySha256: string;
+  readonly receiptSha256?: string;
+  readonly rootSha256: string;
+  readonly rowSha256: string;
+  readonly sourceIdentitySha256: string;
+  readonly sourceBatchSha256: string;
+  readonly stagingIdentitySha256: string;
+  readonly treeSha256: string;
+}
+
+export interface TeamReturnSupersessionBinding {
+  readonly action: 'SUPERSEDE_FINAL_TEAM';
+  readonly acceptanceMarkerRelativePath: string;
+  readonly generationId: string;
+  readonly newlyCompleteLessonIds: readonly string[];
+  readonly prior: TeamReturnSupersessionSide & { readonly receiptSha256: string };
+  readonly replacement: TeamReturnSupersessionSide;
+  readonly supersessionId: string;
+  readonly unchangedCompleteLessonIds: readonly string[];
+}
+
+export interface TeamReturnAcceptanceHandle {
+  readonly archiveSha256: string;
+  readonly generationId: string;
+  readonly manifestSha256: string;
+  readonly marker?: AcceptanceMarkerIdentity;
+  readonly markerRelativePath: string;
+  readonly objects?: {
+    readonly archive: AcceptanceObjectIdentity;
+    readonly manifest: AcceptanceObjectIdentity;
+    readonly receipt: AcceptanceObjectIdentity;
+  };
+  readonly receiptSha256: string;
+  readonly sourceCommit: string;
+  readonly sourceTreeSha256: string;
 }
 
 export interface TeamReturnIntakeResult {
@@ -269,12 +347,16 @@ export interface TeamReturnIntakeResult {
       | 'NOT_REQUESTED'
       | 'STAGED_NEW'
       | 'PRESENT_IDENTICAL'
+      | 'SUPERSESSION_READY'
+      | 'SUPERSESSION_COMMITTED'
       | 'REFUSED_MISMATCH'
       | 'FAILED'
       | 'VALIDATION_REJECTED';
     readonly stagedCompleteCount: number;
+    readonly acceptance?: TeamReturnAcceptanceHandle;
     readonly stagingIdentitySha256: string;
   };
+  readonly supersession?: TeamReturnSupersessionBinding;
   readonly receiptSha256: string;
 }
 
@@ -315,6 +397,7 @@ interface MaterializedSource {
   readonly cleanup?: () => void;
   readonly kind: TeamReturnSource['kind'];
   readonly ledger: readonly SourceIdentity[];
+  readonly changedPathIdentities: readonly ChangedPathIdentity[];
   readonly teamHint?: TeamId;
 }
 
@@ -322,6 +405,15 @@ interface SourceIdentity {
   readonly path: string;
   readonly sha256: string;
   readonly size: number;
+}
+
+interface ChangedPathIdentity extends SourceIdentity {
+  readonly gitBlobSha1: string;
+  readonly gitMode: '100644' | '100755';
+}
+
+interface GitTreeFileIdentity extends ChangedPathIdentity {
+  readonly gitType: 'blob';
 }
 
 interface OfferedRow {
@@ -435,6 +527,16 @@ function directory(path: string): boolean {
     return info.isDirectory() && !info.isSymbolicLink();
   } catch {
     return false;
+  }
+}
+
+function lstatExists(path: string): boolean {
+  try {
+    lstatSync(path);
+    return true;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return false;
+    throw error;
   }
 }
 
@@ -589,7 +691,14 @@ function addException(
 function constantResult(
   partial: Omit<TeamReturnIntakeResult, 'receiptSha256'>,
 ): TeamReturnIntakeResult {
-  return { ...partial, receiptSha256: digest(canonical(partial)) };
+  return { ...partial, receiptSha256: intakeReceiptIdentity(partial) };
+}
+
+function intakeReceiptIdentity(value: JsonRecord): string {
+  const copy = record(value.copy);
+  if (copy === null || copy.acceptance === undefined) return digest(canonical(value));
+  const { acceptance: _acceptance, ...logicalCopy } = copy;
+  return digest(canonical({ ...value, copy: logicalCopy }));
 }
 
 function gitOutput(root: string, args: readonly string[]): string {
@@ -621,6 +730,7 @@ function snapshotHeadCheckout(
   const identity = { device: workInfo.dev, inode: workInfo.ino };
   try {
     const ledger: SourceIdentity[] = [];
+    const changedPathIdentities: ChangedPathIdentity[] = [];
     let totalBytes = 0;
     for (const path of [...evidence.changedPaths].sort()) {
       if (!safeRelative(path)) throw new Error('CHECKOUT_SNAPSHOT_PATH_INVALID');
@@ -649,6 +759,13 @@ function snapshotHeadCheckout(
       mkdirSync(dirname(target), { recursive: true, mode: 0o700 });
       writeFileSync(target, bytes, { flag: 'wx', mode: 0o600 });
       ledger.push({ path, sha256: digest(bytes), size: bytes.length });
+      changedPathIdentities.push({
+        gitBlobSha1: match[2] as string,
+        gitMode: match[1] as '100644' | '100755',
+        path,
+        sha256: digest(bytes),
+        size: bytes.length,
+      });
     }
     hardenIncomingTree(work, chmodSync);
     return {
@@ -658,11 +775,196 @@ function snapshotHeadCheckout(
       cleanup: () => cleanupOwnedIncoming(work, identity),
       kind: 'CHECKOUT',
       ledger,
+      changedPathIdentities,
     };
   } catch (error) {
     cleanupOwnedIncoming(work, identity);
     throw error;
   }
+}
+
+function reviewedWaveTreeIdentities(
+  gitRoot: string,
+  candidateRoot: string | undefined,
+  commit: string,
+  teamId: TeamId,
+): readonly GitTreeFileIdentity[] {
+  const prefix = `content/lesson-candidates/${teamId}/waves/`;
+  const records = gitBytes(
+    gitRoot,
+    ['ls-tree', '-r', '-t', '-z', commit, '--', prefix],
+    MAX_CHECKOUT_SNAPSHOT_PATH_BYTES + MAX_CHECKOUT_SNAPSHOT_ENTRIES * 96,
+  )
+    .toString('utf8')
+    .split('\0')
+    .filter(Boolean);
+  if (records.length === 0 || records.length > MAX_CHECKOUT_SNAPSHOT_ENTRIES) {
+    throw new Error('SUPERSESSION_WAVE_TREE_CLOSURE_INVALID');
+  }
+  const trustedContainerTrees = new Set<string>();
+  let container = '';
+  for (const component of prefix.slice(0, -1).split('/')) {
+    container = container === '' ? component : `${container}/${component}`;
+    trustedContainerTrees.add(container);
+  }
+  const leafRecords = records.filter((treeRecord) => {
+    const match = /^([0-9]{6}) ([a-z]+) ([0-9a-f]{40})\t(.+)$/.exec(treeRecord);
+    return !(
+      match !== null &&
+      match[1] === '040000' &&
+      match[2] === 'tree' &&
+      trustedContainerTrees.has(match[4] as string)
+    );
+  });
+  if (leafRecords.length === 0) throw new Error('SUPERSESSION_WAVE_TREE_CLOSURE_INVALID');
+  const identities = leafRecords.map((treeRecord): GitTreeFileIdentity => {
+    const match = /^([0-9]{6}) ([a-z]+) ([0-9a-f]{40})\t(.+)$/.exec(treeRecord);
+    if (
+      match === null ||
+      !['100644', '100755'].includes(match[1] as string) ||
+      match[2] !== 'blob' ||
+      !safeRelative(match[4] as string) ||
+      !(match[4] as string).startsWith(prefix) ||
+      !/^content\/lesson-candidates\/team-[AB]\/waves\/[^/]+\.json$/.test(match[4] as string)
+    ) {
+      throw new Error('SUPERSESSION_WAVE_TREE_ENTRY_INVALID');
+    }
+    const path = match[4] as string;
+    const bytes = gitBytes(
+      gitRoot,
+      ['cat-file', 'blob', match[3] as string],
+      MAX_ARCHIVE_ENTRY_EXPANDED_BYTES,
+    );
+    if (candidateRoot !== undefined) {
+      const snapshotBytes = readFileSync(confined(candidateRoot, path));
+      if (!bytes.equals(snapshotBytes)) {
+        throw new Error('SUPERSESSION_WAVE_TREE_SNAPSHOT_MISMATCH');
+      }
+    }
+    return {
+      gitBlobSha1: match[3] as string,
+      gitMode: match[1] as '100644' | '100755',
+      gitType: 'blob',
+      path,
+      sha256: digest(bytes),
+      size: bytes.byteLength,
+    };
+  });
+  if (
+    new Set(identities.map((identity) => identity.path)).size !== identities.length ||
+    canonical(identities.map((identity) => identity.path)) !==
+      canonical(identities.map((identity) => identity.path).sort())
+  ) {
+    throw new Error('SUPERSESSION_WAVE_TREE_ORDER_INVALID');
+  }
+  return identities;
+}
+
+function reviewedSupersessionSource(
+  materialized: MaterializedSource,
+  priorCommit: string,
+  teamId: TeamId,
+  promotedLessonIds: readonly string[],
+): {
+  readonly evidence: TeamReturnCheckoutEvidence;
+  readonly identities: readonly ChangedPathIdentity[];
+  readonly waveTreeIdentities: readonly GitTreeFileIdentity[];
+} {
+  if (materialized.checkoutRoot === undefined || !COMMIT.test(priorCommit)) {
+    throw new Error('SUPERSESSION_SOURCE_PROOF_UNAVAILABLE');
+  }
+  const headCommit = materialized.checkoutEvidence.headCommit;
+  const waveTreeIdentities = reviewedWaveTreeIdentities(
+    materialized.checkoutRoot,
+    materialized.candidateRoot,
+    headCommit,
+    teamId,
+  );
+  if (
+    gitOutput(materialized.checkoutRoot, [
+      'merge-base',
+      '--is-ancestor',
+      priorCommit,
+      headCommit,
+    ]) !== ''
+  ) {
+    throw new Error('SUPERSESSION_SOURCE_ANCESTRY_INVALID');
+  }
+  const changedPaths = gitBytes(
+    materialized.checkoutRoot,
+    ['diff', '--name-only', '-z', priorCommit, headCommit, '--'],
+    MAX_CHECKOUT_SNAPSHOT_PATH_BYTES,
+  )
+    .toString('utf8')
+    .split('\0')
+    .filter(Boolean);
+  if (
+    changedPaths.length === 0 ||
+    changedPaths.length > MAX_CHECKOUT_SNAPSHOT_ENTRIES ||
+    new Set(changedPaths).size !== changedPaths.length ||
+    canonical(changedPaths) !== canonical([...changedPaths].sort())
+  ) {
+    throw new Error('SUPERSESSION_SOURCE_CLOSURE_INVALID');
+  }
+  const prefix = `content/lesson-candidates/${teamId}/`;
+  const promoted = new Set(promotedLessonIds);
+  const observedPromoted = new Set<string>();
+  let hasTeamHandoff = false;
+  let hasWaveHandoff = false;
+  const identities = changedPaths.map((path): ChangedPathIdentity => {
+    if (!safeRelative(path) || !path.startsWith(prefix)) {
+      throw new Error('SUPERSESSION_SOURCE_PATH_INVALID');
+    }
+    const relativePath = path.slice(prefix.length);
+    const lessonMatch = /^(V3-LES-[0-9]{6})\//.exec(relativePath);
+    if (lessonMatch !== null) {
+      const lessonId = lessonMatch[1] as string;
+      if (!promoted.has(lessonId)) throw new Error('SUPERSESSION_SOURCE_LESSON_INVALID');
+      observedPromoted.add(lessonId);
+    } else if (relativePath === 'TEAM-HANDOFF.json') {
+      hasTeamHandoff = true;
+    } else if (/^waves\/[^/]+\.json$/.test(relativePath)) {
+      hasWaveHandoff = true;
+    } else {
+      throw new Error('SUPERSESSION_SOURCE_CONTRACT_PATH_INVALID');
+    }
+    const treeRecord = gitBytes(
+      materialized.checkoutRoot as string,
+      ['ls-tree', '-z', headCommit, '--', path],
+      16 * 1024,
+    ).toString('utf8');
+    const records = treeRecord.split('\0').filter(Boolean);
+    const match = /^(100644|100755) blob ([0-9a-f]{40})\t(.+)$/.exec(records[0] ?? '');
+    if (records.length !== 1 || match === null || match[3] !== path) {
+      throw new Error('SUPERSESSION_SOURCE_BLOB_INVALID');
+    }
+    const bytes = gitBytes(
+      materialized.checkoutRoot as string,
+      ['cat-file', 'blob', match[2] as string],
+      MAX_ARCHIVE_ENTRY_EXPANDED_BYTES,
+    );
+    const snapshotBytes = readFileSync(confined(materialized.candidateRoot, path));
+    if (!bytes.equals(snapshotBytes)) throw new Error('SUPERSESSION_SOURCE_SNAPSHOT_MISMATCH');
+    return {
+      gitBlobSha1: match[2] as string,
+      gitMode: match[1] as '100644' | '100755',
+      path,
+      sha256: digest(bytes),
+      size: bytes.byteLength,
+    };
+  });
+  if (
+    !hasTeamHandoff ||
+    !hasWaveHandoff ||
+    canonical([...observedPromoted].sort()) !== canonical([...promoted].sort())
+  ) {
+    throw new Error('SUPERSESSION_SOURCE_REQUIRED_CLOSURE_MISSING');
+  }
+  return {
+    evidence: { ...materialized.checkoutEvidence, changedPaths },
+    identities,
+    waveTreeIdentities,
+  };
 }
 
 function inspectCheckout(checkoutRoot: string, pinnedCommit: string): TeamReturnCheckoutEvidence {
@@ -1330,6 +1632,7 @@ async function materializeArchive(
       cleanup: () => cleanupOwnedIncoming(work, ownedWork?.identity ?? null),
       kind: 'SIGNED_ARCHIVE',
       ledger,
+      changedPathIdentities: [],
       teamHint: teamId,
     };
   } catch (error) {
@@ -2318,13 +2621,2054 @@ function compareStaged(
       if (info.isSymbolicLink()) return false;
       if (info.isDirectory()) {
         if (!modesValid(path)) return false;
-      } else if (!info.isFile() || (info.mode & 0o777) !== 0o400) {
+      } else if (!info.isFile() || info.nlink !== 1 || (info.mode & 0o777) !== 0o400) {
         return false;
       }
     }
     return true;
   };
   return modesValid(finalRoot);
+}
+
+interface VerifiedStagedState {
+  readonly completeLessonIds: readonly string[];
+  readonly inventory: readonly {
+    readonly path: string;
+    readonly sha256: string;
+    readonly size: number;
+  }[];
+  readonly receipt: TeamReturnIntakeResult;
+  readonly treeSha256: string;
+}
+
+function lessonTreeIdentity(
+  files: readonly { readonly path: string; readonly sha256: string; readonly size: number }[],
+): string {
+  const directories = new Set<string>(['.']);
+  for (const file of files) {
+    let parent = dirname(file.path).split(sep).join('/');
+    while (parent !== '.' && parent !== '') {
+      directories.add(parent);
+      parent = dirname(parent).split(sep).join('/');
+    }
+  }
+  return digest(
+    canonical([
+      ...[...directories].sort().map((path) => ({ kind: 'DIRECTORY', mode: 0o500, path })),
+      ...files.map((file) => ({ ...file, kind: 'FILE', mode: 0o400 })),
+    ]),
+  );
+}
+
+function readOnlyModesValid(root: string): boolean {
+  const info = lstatSync(root);
+  if (info.isSymbolicLink() || !info.isDirectory() || (info.mode & 0o777) !== 0o500) {
+    return false;
+  }
+  for (const entry of readdirSync(root, { withFileTypes: true })) {
+    const path = join(root, entry.name);
+    const child = lstatSync(path);
+    if (child.isSymbolicLink()) return false;
+    if (child.isDirectory()) {
+      if (!readOnlyModesValid(path)) return false;
+    } else if (!child.isFile() || child.nlink !== 1 || (child.mode & 0o777) !== 0o400) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function validReceiptSelfIdentity(receipt: JsonRecord): boolean {
+  if (typeof receipt.receiptSha256 !== 'string' || !DIGEST.test(receipt.receiptSha256)) {
+    return false;
+  }
+  const { receiptSha256: _receiptSha256, ...unsigned } = receipt;
+  return intakeReceiptIdentity(unsigned) === receipt.receiptSha256;
+}
+
+function verifyStagedState(finalRoot: string): VerifiedStagedState | null {
+  try {
+    if (!directory(finalRoot) || !readOnlyModesValid(finalRoot)) return null;
+    const rootEntries = readdirSync(finalRoot).sort();
+    const expectedRootEntries = ['INTAKE-RECEIPT.json', 'lessons'].sort();
+    if (canonical(rootEntries) !== canonical(expectedRootEntries)) return null;
+    const receiptRecord = readJson(join(finalRoot, 'INTAKE-RECEIPT.json'));
+    if (
+      receiptRecord === null ||
+      !validReceiptSelfIdentity(receiptRecord) ||
+      !hasExactKeys(receiptRecord, [
+        'aggregates',
+        'assignmentIdSha256',
+        'authority',
+        'copy',
+        'decision',
+        'exceptions',
+        'format',
+        'mode',
+        'receiptSha256',
+        'rows',
+        'scope',
+        'source',
+        ...(receiptRecord.supersession === undefined ? [] : ['supersession']),
+        'teamId',
+      ]) ||
+      receiptRecord.format !== 'lesson-generation-team-return-intake/1' ||
+      receiptRecord.mode !== 'ACCEPT' ||
+      receiptRecord.decision !== 'ACCEPTED' ||
+      !TEAM_IDS.includes(receiptRecord.teamId as TeamId) ||
+      typeof receiptRecord.assignmentIdSha256 !== 'string' ||
+      !DIGEST.test(receiptRecord.assignmentIdSha256) ||
+      !Array.isArray(receiptRecord.exceptions) ||
+      receiptRecord.exceptions.length !== 0
+    ) {
+      return null;
+    }
+    const scope = record(receiptRecord.scope);
+    const aggregates = record(receiptRecord.aggregates);
+    const copy = record(receiptRecord.copy);
+    const authority = record(receiptRecord.authority);
+    const source = record(receiptRecord.source);
+    if (
+      scope === null ||
+      !hasExactKeys(scope, ['id', 'kind', 'rowCount']) ||
+      typeof scope.id !== 'string' ||
+      !['WAVE', 'FINAL_TEAM'].includes(String(scope.kind)) ||
+      !Number.isInteger(scope.rowCount) ||
+      aggregates === null ||
+      !hasExactKeys(aggregates, ['rootSha256', 'rowSha256', 'sourceBatchSha256']) ||
+      !DIGEST.test(String(aggregates.rootSha256)) ||
+      !DIGEST.test(String(aggregates.rowSha256)) ||
+      !DIGEST.test(String(aggregates.sourceBatchSha256)) ||
+      copy === null ||
+      !hasExactKeys(copy, ['disposition', 'stagedCompleteCount', 'stagingIdentitySha256']) ||
+      copy.disposition !== 'STAGED_NEW' ||
+      !Number.isInteger(copy.stagedCompleteCount) ||
+      !DIGEST.test(String(copy.stagingIdentitySha256)) ||
+      authority === null ||
+      !hasExactKeys(authority, [
+        'finalizationReceiptSha256',
+        'generation',
+        'kitManifestSha256',
+        'pinnedCommit',
+        'readySha256',
+        'sendMeSha256',
+      ]) ||
+      !DIGEST.test(String(authority.finalizationReceiptSha256)) ||
+      !Number.isInteger(authority.generation) ||
+      !DIGEST.test(String(authority.kitManifestSha256)) ||
+      !COMMIT.test(String(authority.pinnedCommit)) ||
+      !DIGEST.test(String(authority.readySha256)) ||
+      !DIGEST.test(String(authority.sendMeSha256)) ||
+      source === null ||
+      !hasExactKeys(source, ['branch', 'headCommit', 'kind', 'sourceSha256']) ||
+      typeof source.branch !== 'string' ||
+      source.branch.length === 0 ||
+      !COMMIT.test(String(source.headCommit)) ||
+      !['CHECKOUT', 'SIGNED_ARCHIVE'].includes(String(source.kind)) ||
+      !DIGEST.test(String(source.sourceSha256)) ||
+      !Array.isArray(receiptRecord.rows)
+    ) {
+      return null;
+    }
+    const rows: TeamReturnIntakeRow[] = [];
+    for (const rawRow of receiptRecord.rows) {
+      const row = record(rawRow);
+      if (
+        row === null ||
+        !hasExactKeys(row, [
+          'code',
+          'lessonHandoffSha256',
+          'lessonId',
+          'rootSha256',
+          'rowSha256',
+          'status',
+        ]) ||
+        typeof row.lessonId !== 'string' ||
+        !LESSON_ID.test(row.lessonId) ||
+        !['COMPLETE', 'BLOCKED', 'FAILED'].includes(String(row.status)) ||
+        !DIGEST.test(String(row.lessonHandoffSha256)) ||
+        !DIGEST.test(String(row.rootSha256)) ||
+        !DIGEST.test(String(row.rowSha256))
+      ) {
+        return null;
+      }
+      const rowCore = {
+        lessonHandoffSha256: row.lessonHandoffSha256,
+        lessonId: row.lessonId,
+        rootSha256: row.rootSha256,
+        status: row.status,
+      };
+      const expectedCode =
+        row.status === 'COMPLETE'
+          ? 'ACCEPTED_COMPLETE'
+          : row.status === 'BLOCKED'
+            ? 'RECORDED_BLOCKED'
+            : 'RECORDED_FAILED';
+      if (row.code !== expectedCode || row.rowSha256 !== digest(canonical(rowCore))) return null;
+      rows.push(row as unknown as TeamReturnIntakeRow);
+    }
+    if (
+      rows.length !== scope.rowCount ||
+      copy.stagedCompleteCount !== rows.filter((row) => row.status === 'COMPLETE').length ||
+      new Set(rows.map((row) => row.lessonId)).size !== rows.length
+    ) {
+      return null;
+    }
+    const rowCores = rows.map(({ code: _code, rowSha256: _rowSha256, ...row }) => row);
+    const rootCores = rows.map((row) => ({
+      lessonId: row.lessonId,
+      rootSha256: row.rootSha256,
+    }));
+    if (
+      aggregates.rowSha256 !== digest(canonical(rowCores)) ||
+      aggregates.rootSha256 !== digest(canonical(rootCores))
+    ) {
+      return null;
+    }
+    const completeLessonIds = rows
+      .filter((row) => row.status === 'COMPLETE')
+      .map((row) => row.lessonId);
+    const lessonsRoot = join(finalRoot, 'lessons');
+    if (!directory(lessonsRoot)) return null;
+    const expectedFiles = completeLessonIds
+      .flatMap((lessonId) => LESSON_FILES.map((path) => `${lessonId}/${path}`))
+      .sort();
+    if (canonical(listFiles(lessonsRoot)) !== canonical(expectedFiles)) return null;
+    const stagedInventory = inventory(lessonsRoot, expectedFiles);
+    if (aggregates.sourceBatchSha256 !== digest(canonical(stagedInventory))) return null;
+    const expectedStagingIdentity = digest(
+      canonical({
+        scopeId: scope.id,
+        sourceBatchSha256: aggregates.sourceBatchSha256,
+        teamId: receiptRecord.teamId,
+      }),
+    );
+    if (copy.stagingIdentitySha256 !== expectedStagingIdentity) return null;
+    if (receiptRecord.supersession !== undefined) return null;
+    return {
+      completeLessonIds,
+      inventory: stagedInventory,
+      receipt: receiptRecord as unknown as TeamReturnIntakeResult,
+      treeSha256: lessonTreeIdentity(stagedInventory),
+    };
+  } catch {
+    return null;
+  }
+}
+
+function stagedStateMatchesReplacement(
+  staged: VerifiedStagedState,
+  result: TeamReturnIntakeResult,
+  expected: readonly { readonly path: string; readonly sha256: string; readonly size: number }[],
+): boolean {
+  return (
+    canonical(staged.inventory) === canonical(expected) &&
+    staged.receipt.receiptSha256 === result.receiptSha256 &&
+    canonical(staged.receipt) === canonical(result)
+  );
+}
+
+function supersessionPriorSide(state: VerifiedStagedState): TeamReturnSupersessionBinding['prior'] {
+  return {
+    copyIdentitySha256: digest(canonical(state.receipt.copy)),
+    receiptSha256: state.receipt.receiptSha256,
+    rootSha256: state.receipt.aggregates.rootSha256,
+    rowSha256: state.receipt.aggregates.rowSha256,
+    sourceIdentitySha256: digest(canonical(state.receipt.source)),
+    sourceBatchSha256: state.receipt.aggregates.sourceBatchSha256,
+    stagingIdentitySha256: state.receipt.copy.stagingIdentitySha256,
+    treeSha256: state.treeSha256,
+  };
+}
+
+function supersessionReplacementSide(
+  state: VerifiedStagedState,
+): TeamReturnSupersessionBinding['replacement'] {
+  const { acceptance: _acceptance, ...logicalCopy } = state.receipt.copy;
+  return {
+    copyIdentitySha256: digest(canonical(logicalCopy)),
+    rootSha256: state.receipt.aggregates.rootSha256,
+    rowSha256: state.receipt.aggregates.rowSha256,
+    sourceIdentitySha256: digest(canonical(state.receipt.source)),
+    sourceBatchSha256: state.receipt.aggregates.sourceBatchSha256,
+    stagingIdentitySha256: state.receipt.copy.stagingIdentitySha256,
+    treeSha256: state.treeSha256,
+  };
+}
+
+interface AcceptanceArchiveEntry {
+  readonly bytesBase64: string;
+  readonly mode: 256;
+  readonly path: string;
+  readonly sha256: string;
+  readonly size: number;
+}
+
+interface AcceptanceArtifacts {
+  readonly archiveBytes: Buffer;
+  readonly handle: Omit<TeamReturnAcceptanceHandle, 'marker'>;
+  readonly manifestBytes: Buffer;
+  readonly receiptBytes: Buffer;
+}
+
+interface AcceptanceObjectDescriptor {
+  readonly mode: 256;
+  readonly relativePath: string;
+  readonly sha256: string;
+  readonly size: number;
+}
+
+interface AcceptanceArchiveDescriptor extends AcceptanceObjectDescriptor {
+  readonly format: 'lesson-generation-team-acceptance-archive/1';
+}
+
+interface AcceptanceSourceProof extends TeamReturnCheckoutEvidence {
+  readonly changedPathAggregateSha256: string;
+  readonly changedPathIdentities: readonly ChangedPathIdentity[];
+  readonly priorCommit: string;
+  readonly waveTreeAggregateSha256: string;
+  readonly waveTreeIdentities: readonly GitTreeFileIdentity[];
+}
+
+interface AcceptanceCandidateRootClosure {
+  readonly entryCount: number;
+  readonly inventorySha256: string;
+  readonly pathSha256: string;
+}
+
+interface PromotedAdmission {
+  readonly lessonId: string;
+  readonly mechanical: CentralMechanicalValidation;
+  readonly rowSha256: string;
+}
+
+function makePromotedAdmissions(
+  result: TeamReturnIntakeResult,
+  binding: TeamReturnSupersessionBinding,
+  candidateRoot: string,
+  teamAuthority: TeamAuthority,
+  mechanicalAdmissions: ReadonlyMap<string, CentralMechanicalValidation>,
+  centralRoot: string,
+): readonly PromotedAdmission[] {
+  return binding.newlyCompleteLessonIds.map((lessonId) => {
+    const row = result.rows.find((candidate) => candidate.lessonId === lessonId);
+    if (row === undefined) throw new Error('PROMOTED_ADMISSION_ROW_MISSING');
+    const exceptions: TeamReturnException[] = [];
+    const validated = validateLessonEvidence(
+      join(candidateRoot, lessonId),
+      row,
+      teamAuthority,
+      result.teamId as TeamId,
+      exceptions,
+    );
+    const mechanical = mechanicalAdmissions.get(lessonId);
+    const freshMechanical = validateTeamReturnCandidateMechanically(
+      join(candidateRoot, lessonId),
+      lessonId,
+      centralRoot,
+    );
+    if (
+      mechanical === undefined ||
+      canonical(mechanical) !== canonical(freshMechanical) ||
+      exceptions.length !== 0 ||
+      canonical(validated.row) !== canonical(row) ||
+      mechanical.structural !== 'PASS' ||
+      mechanical.computedQuality !== 'PASS' ||
+      mechanical.normalization !== 'PASS' ||
+      mechanical.protectedBoundary !== 'PASS' ||
+      !DIGEST.test(mechanical.validatorEvidenceSha256)
+    ) {
+      throw new Error('PROMOTED_ADMISSION_INVALID');
+    }
+    return { lessonId, mechanical, rowSha256: row.rowSha256 };
+  });
+}
+
+function acceptanceArchive(
+  candidateRoot: string,
+  expected: readonly { readonly path: string; readonly sha256: string; readonly size: number }[],
+): { readonly bytes: Buffer; readonly closure: AcceptanceCandidateRootClosure } {
+  const lessonEntries: AcceptanceArchiveEntry[] = [...expected].map((file) => {
+    const bytes = readFileSync(join(candidateRoot, file.path));
+    if (bytes.byteLength !== file.size || digest(bytes) !== file.sha256) {
+      throw new Error('SOURCE_BYTES_CHANGED');
+    }
+    return {
+      bytesBase64: bytes.toString('base64'),
+      mode: 0o400,
+      path: `lessons/${file.path}`,
+      sha256: file.sha256,
+      size: file.size,
+    };
+  });
+  const expectedLessonPaths = new Set(expected.map((file) => file.path));
+  const candidatePaths = listFiles(candidateRoot);
+  const controlPaths = candidatePaths.filter((path) => !expectedLessonPaths.has(path));
+  if (
+    canonical(candidatePaths.filter((path) => expectedLessonPaths.has(path))) !==
+      canonical([...expectedLessonPaths].sort()) ||
+    !controlPaths.includes('TEAM-HANDOFF.json') ||
+    controlPaths.filter((path) => /^waves\/[^/]+\.json$/.test(path)).length === 0 ||
+    controlPaths.some((path) => path !== 'TEAM-HANDOFF.json' && !/^waves\/[^/]+\.json$/.test(path))
+  ) {
+    throw new Error('CANDIDATE_ROOT_CLOSURE_INVALID');
+  }
+  const controlEntries: AcceptanceArchiveEntry[] = controlPaths.map((path) => {
+    const bytes = readFileSync(join(candidateRoot, path));
+    return {
+      bytesBase64: bytes.toString('base64'),
+      mode: 0o400,
+      path,
+      sha256: digest(bytes),
+      size: bytes.byteLength,
+    };
+  });
+  const entries = [...lessonEntries, ...controlEntries].sort((left, right) =>
+    left.path < right.path ? -1 : left.path > right.path ? 1 : 0,
+  );
+  const closureInventory = entries.map(({ bytesBase64: _bytesBase64, ...entry }) => ({
+    ...entry,
+    kind: 'FILE' as const,
+  }));
+  return {
+    bytes: Buffer.from(
+      `${canonical({ entries, format: 'lesson-generation-team-acceptance-archive/1' })}\n`,
+    ),
+    closure: {
+      entryCount: entries.length,
+      inventorySha256: digest(canonical(closureInventory)),
+      pathSha256: digest(canonical(entries.map((entry) => entry.path))),
+    },
+  };
+}
+
+function acceptanceReceiptRecord(
+  result: TeamReturnIntakeResult,
+  binding: TeamReturnSupersessionBinding,
+  archive: AcceptanceArchiveDescriptor,
+): JsonRecord {
+  return {
+    action: binding.action,
+    archive,
+    format: 'lesson-generation-team-acceptance-receipt/1',
+    generationId: binding.generationId,
+    intakeReceiptSha256: result.receiptSha256,
+    predecessorReceiptSha256: binding.prior.receiptSha256,
+    supersession: binding,
+  };
+}
+
+function acceptanceManifestRecord(
+  result: TeamReturnIntakeResult,
+  binding: TeamReturnSupersessionBinding,
+  archive: AcceptanceArchiveDescriptor,
+  acceptanceReceipt: AcceptanceObjectDescriptor,
+  sourceProof: AcceptanceSourceProof,
+  candidateRootClosure: AcceptanceCandidateRootClosure,
+  admissionAuthority: TeamAuthority,
+  promotedAdmissions: readonly PromotedAdmission[],
+): JsonRecord {
+  const { receiptSha256: _receiptSha256, ...base } = result;
+  const dryRunProjection = constantResult({
+    ...base,
+    copy: {
+      disposition: 'SUPERSESSION_READY',
+      stagedCompleteCount: 0,
+      stagingIdentitySha256: result.copy.stagingIdentitySha256,
+    },
+    mode: 'DRY_RUN',
+  });
+  return {
+    action: binding.action,
+    admissionAuthority,
+    acceptanceReceipt,
+    archive,
+    candidateRootClosure,
+    format: 'lesson-generation-team-acceptance-manifest/1',
+    generationId: binding.generationId,
+    intake: result,
+    nonclaims: {
+      humanApproved: false,
+      officialRubricPass: false,
+      publicationApproved: false,
+    },
+    package: {
+      assignmentIdSha256: result.assignmentIdSha256,
+      authority: result.authority,
+      source: result.source,
+      sourceBatchSha256: result.aggregates.sourceBatchSha256,
+      stagingIdentitySha256: result.copy.stagingIdentitySha256,
+    },
+    predecessor: binding.prior,
+    promotedAdmissions,
+    sourceProof,
+    statusCounts: {
+      BLOCKED: result.rows.filter((row) => row.status === 'BLOCKED').length,
+      COMPLETE: result.rows.filter((row) => row.status === 'COMPLETE').length,
+      FAILED: result.rows.filter((row) => row.status === 'FAILED').length,
+    },
+    supersession: binding,
+    validation: {
+      acceptedIntakeReceiptSha256: result.receiptSha256,
+      dryRunIntakeReceiptSha256: dryRunProjection.receiptSha256,
+    },
+  };
+}
+
+function makeAcceptanceArtifacts(
+  result: TeamReturnIntakeResult,
+  binding: TeamReturnSupersessionBinding,
+  candidateRoot: string,
+  expected: readonly { readonly path: string; readonly sha256: string; readonly size: number }[],
+  sourceProof: TeamReturnCheckoutEvidence,
+  changedPathIdentities: readonly ChangedPathIdentity[],
+  waveTreeIdentities: readonly GitTreeFileIdentity[],
+  priorCommit: string,
+  centralRoot: string,
+  teamAuthority: TeamAuthority,
+  mechanicalAdmissions: ReadonlyMap<string, CentralMechanicalValidation>,
+): AcceptanceArtifacts {
+  const closedSourceProof: AcceptanceSourceProof = {
+    ...sourceProof,
+    changedPathAggregateSha256: digest(canonical(changedPathIdentities)),
+    changedPathIdentities,
+    priorCommit,
+    waveTreeAggregateSha256: digest(canonical(waveTreeIdentities)),
+    waveTreeIdentities,
+  };
+  const promotedAdmissions = makePromotedAdmissions(
+    result,
+    binding,
+    candidateRoot,
+    teamAuthority,
+    mechanicalAdmissions,
+    centralRoot,
+  );
+  const acceptanceArchiveResult = acceptanceArchive(candidateRoot, expected);
+  const archiveBytes = acceptanceArchiveResult.bytes;
+  const archiveSha256 = digest(archiveBytes);
+  const archive = {
+    format: 'lesson-generation-team-acceptance-archive/1' as const,
+    mode: 0o400 as const,
+    relativePath: acceptanceObjectRelativePath('archive', archiveSha256),
+    sha256: archiveSha256,
+    size: archiveBytes.byteLength,
+  };
+  const receiptBytes = Buffer.from(
+    `${canonical(acceptanceReceiptRecord(result, binding, archive))}\n`,
+  );
+  const receiptSha256 = digest(receiptBytes);
+  const acceptanceReceipt = {
+    mode: 0o400 as const,
+    relativePath: acceptanceObjectRelativePath('receipt', receiptSha256),
+    sha256: receiptSha256,
+    size: receiptBytes.byteLength,
+  };
+  const manifestBytes = Buffer.from(
+    `${canonical(
+      acceptanceManifestRecord(
+        result,
+        binding,
+        archive,
+        acceptanceReceipt,
+        closedSourceProof,
+        acceptanceArchiveResult.closure,
+        teamAuthority,
+        promotedAdmissions,
+      ),
+    )}\n`,
+  );
+  const manifestSha256 = digest(manifestBytes);
+  return {
+    archiveBytes,
+    handle: {
+      archiveSha256,
+      generationId: binding.generationId,
+      manifestSha256,
+      markerRelativePath: binding.acceptanceMarkerRelativePath,
+      receiptSha256,
+      sourceCommit: result.source.headCommit,
+      sourceTreeSha256: binding.replacement.treeSha256,
+    },
+    manifestBytes,
+    receiptBytes,
+  };
+}
+
+interface ParsedAcceptanceArchive {
+  readonly candidateInventory: readonly {
+    readonly kind: 'FILE';
+    readonly mode: 256;
+    readonly path: string;
+    readonly sha256: string;
+    readonly size: number;
+  }[];
+  readonly files: ReadonlyMap<string, Buffer>;
+  readonly inventory: readonly {
+    readonly path: string;
+    readonly sha256: string;
+    readonly size: number;
+  }[];
+  readonly treeSha256: string;
+}
+
+function parseAcceptanceArchive(bytes: Buffer): ParsedAcceptanceArchive | null {
+  if (bytes.byteLength > MAX_ARCHIVE_TOTAL_EXPANDED_BYTES) return null;
+  let parsed: JsonRecord | null;
+  try {
+    parsed = record(JSON.parse(bytes.toString('utf8')));
+  } catch {
+    return null;
+  }
+  if (
+    parsed === null ||
+    !hasExactKeys(parsed, ['entries', 'format']) ||
+    parsed.format !== 'lesson-generation-team-acceptance-archive/1' ||
+    !Array.isArray(parsed.entries) ||
+    parsed.entries.length < 30 * LESSON_FILES.length + 2
+  ) {
+    return null;
+  }
+  const inventory: { path: string; sha256: string; size: number }[] = [];
+  const files = new Map<string, Buffer>();
+  const candidateInventory: Array<{
+    kind: 'FILE';
+    mode: 256;
+    path: string;
+    sha256: string;
+    size: number;
+  }> = [];
+  let expandedBytes = 0;
+  for (const raw of parsed.entries) {
+    const entry = record(raw);
+    const entryPath = String(entry?.path);
+    if (
+      entry === null ||
+      !hasExactKeys(entry, ['bytesBase64', 'mode', 'path', 'sha256', 'size']) ||
+      entry.mode !== 0o400 ||
+      typeof entry?.path !== 'string' ||
+      !(
+        /^lessons\/V3-LES-[0-9]{6}\/.+/.test(entryPath) ||
+        entryPath === 'TEAM-HANDOFF.json' ||
+        /^waves\/[^/]+\.json$/.test(entryPath)
+      ) ||
+      entryPath.includes('..') ||
+      entryPath.includes('\\') ||
+      (/^lessons\//.test(entryPath) &&
+        !LESSON_FILES.some((path) => entryPath.endsWith(`/${path}`))) ||
+      typeof entry.bytesBase64 !== 'string' ||
+      !DIGEST.test(String(entry.sha256)) ||
+      !Number.isSafeInteger(entry.size) ||
+      Number(entry.size) < 0
+    ) {
+      return null;
+    }
+    const data = Buffer.from(entry.bytesBase64, 'base64');
+    expandedBytes += data.byteLength;
+    if (
+      expandedBytes > MAX_ARCHIVE_TOTAL_EXPANDED_BYTES ||
+      data.byteLength > MAX_ARCHIVE_ENTRY_EXPANDED_BYTES ||
+      data.toString('base64') !== entry.bytesBase64 ||
+      data.byteLength !== entry.size ||
+      digest(data) !== entry.sha256
+    ) {
+      return null;
+    }
+    candidateInventory.push({
+      kind: 'FILE',
+      mode: 0o400,
+      path: entryPath,
+      sha256: String(entry.sha256),
+      size: Number(entry.size),
+    });
+    if (entryPath.startsWith('lessons/')) {
+      inventory.push({
+        path: entryPath.slice('lessons/'.length),
+        sha256: String(entry.sha256),
+        size: Number(entry.size),
+      });
+      files.set(entryPath.slice('lessons/'.length), data);
+    } else {
+      files.set(entryPath, data);
+    }
+  }
+  if (
+    canonical(inventory.map((entry) => entry.path)) !==
+      canonical([...inventory.map((entry) => entry.path)].sort()) ||
+    new Set(inventory.map((entry) => entry.path)).size !== inventory.length ||
+    canonical(candidateInventory.map((entry) => entry.path)) !==
+      canonical([...candidateInventory.map((entry) => entry.path)].sort()) ||
+    new Set(candidateInventory.map((entry) => entry.path)).size !== candidateInventory.length
+  ) {
+    return null;
+  }
+  return { candidateInventory, files, inventory, treeSha256: lessonTreeIdentity(inventory) };
+}
+
+function parseAcceptanceObjectDescriptor(
+  value: unknown,
+  kind: 'archive' | 'receipt',
+): (AcceptanceObjectDescriptor & { readonly format?: string }) | null {
+  const descriptor = record(value);
+  const keys =
+    kind === 'archive'
+      ? ['format', 'mode', 'relativePath', 'sha256', 'size']
+      : ['mode', 'relativePath', 'sha256', 'size'];
+  if (
+    descriptor === null ||
+    !hasExactKeys(descriptor, keys) ||
+    (kind === 'archive' && descriptor.format !== 'lesson-generation-team-acceptance-archive/1') ||
+    descriptor.mode !== 0o400 ||
+    !DIGEST.test(String(descriptor.sha256)) ||
+    descriptor.relativePath !== acceptanceObjectRelativePath(kind, String(descriptor.sha256)) ||
+    !Number.isSafeInteger(descriptor.size) ||
+    Number(descriptor.size) < 0
+  ) {
+    return null;
+  }
+  return descriptor as unknown as AcceptanceObjectDescriptor & { readonly format?: string };
+}
+
+function acceptanceIntakeSchemaValid(
+  receipt: TeamReturnIntakeResult,
+  binding: TeamReturnSupersessionBinding,
+  archive: ParsedAcceptanceArchive,
+): boolean {
+  const value = receipt as unknown as JsonRecord;
+  if (
+    !hasExactKeys(value, [
+      'aggregates',
+      'assignmentIdSha256',
+      'authority',
+      'copy',
+      'decision',
+      'exceptions',
+      'format',
+      'mode',
+      'receiptSha256',
+      'rows',
+      'scope',
+      'source',
+      'supersession',
+      'teamId',
+    ]) ||
+    receipt.format !== 'lesson-generation-team-return-intake/1' ||
+    receipt.mode !== 'ACCEPT' ||
+    receipt.decision !== 'ACCEPTED' ||
+    receipt.teamId === null ||
+    !TEAM_IDS.includes(receipt.teamId) ||
+    !DIGEST.test(receipt.assignmentIdSha256) ||
+    receipt.exceptions.length !== 0 ||
+    !hasExactKeys(receipt.authority as unknown as JsonRecord, [
+      'finalizationReceiptSha256',
+      'generation',
+      'kitManifestSha256',
+      'pinnedCommit',
+      'readySha256',
+      'sendMeSha256',
+    ]) ||
+    !Number.isInteger(receipt.authority.generation) ||
+    !DIGEST.test(receipt.authority.finalizationReceiptSha256) ||
+    !DIGEST.test(receipt.authority.kitManifestSha256) ||
+    !COMMIT.test(receipt.authority.pinnedCommit) ||
+    !DIGEST.test(receipt.authority.readySha256) ||
+    !DIGEST.test(receipt.authority.sendMeSha256) ||
+    !hasExactKeys(receipt.source as unknown as JsonRecord, [
+      'branch',
+      'headCommit',
+      'kind',
+      'sourceSha256',
+    ]) ||
+    !new RegExp(`^lesson-factory/${receipt.teamId}/wave-[0-9]{2}$`).test(receipt.source.branch) ||
+    !COMMIT.test(receipt.source.headCommit) ||
+    !['CHECKOUT', 'SIGNED_ARCHIVE'].includes(receipt.source.kind) ||
+    !DIGEST.test(receipt.source.sourceSha256) ||
+    !hasExactKeys(receipt.scope as unknown as JsonRecord, ['id', 'kind', 'rowCount']) ||
+    receipt.scope.id !== 'TEAM' ||
+    receipt.scope.kind !== 'FINAL_TEAM' ||
+    receipt.scope.rowCount !== 30 ||
+    !hasExactKeys(receipt.aggregates as unknown as JsonRecord, [
+      'rootSha256',
+      'rowSha256',
+      'sourceBatchSha256',
+    ]) ||
+    !DIGEST.test(receipt.aggregates.rootSha256) ||
+    !DIGEST.test(receipt.aggregates.rowSha256) ||
+    !DIGEST.test(receipt.aggregates.sourceBatchSha256) ||
+    !hasExactKeys(receipt.copy as unknown as JsonRecord, [
+      'disposition',
+      'stagedCompleteCount',
+      'stagingIdentitySha256',
+    ]) ||
+    receipt.copy.disposition !== 'SUPERSESSION_COMMITTED' ||
+    receipt.copy.stagedCompleteCount !== 30 ||
+    !DIGEST.test(receipt.copy.stagingIdentitySha256) ||
+    canonical(receipt.supersession) !== canonical(binding) ||
+    receipt.rows.length !== 30
+  ) {
+    return false;
+  }
+  const lessonIds = new Set<string>();
+  for (const row of receipt.rows) {
+    if (
+      !hasExactKeys(row as unknown as JsonRecord, [
+        'code',
+        'lessonHandoffSha256',
+        'lessonId',
+        'rootSha256',
+        'rowSha256',
+        'status',
+      ]) ||
+      row.code !== 'ACCEPTED_COMPLETE' ||
+      row.status !== 'COMPLETE' ||
+      !LESSON_ID.test(row.lessonId) ||
+      lessonIds.has(row.lessonId) ||
+      !DIGEST.test(row.lessonHandoffSha256) ||
+      !DIGEST.test(row.rootSha256) ||
+      !DIGEST.test(row.rowSha256)
+    ) {
+      return false;
+    }
+    lessonIds.add(row.lessonId);
+    const rowCore = {
+      lessonHandoffSha256: row.lessonHandoffSha256,
+      lessonId: row.lessonId,
+      rootSha256: row.rootSha256,
+      status: row.status,
+    };
+    const handoffBytes = archive.files.get(`${row.lessonId}/LESSON-HANDOFF.json`);
+    const manifestBytes = archive.files.get(`${row.lessonId}/artifact-manifest.json`);
+    if (
+      handoffBytes === undefined ||
+      manifestBytes === undefined ||
+      digest(handoffBytes) !== row.lessonHandoffSha256 ||
+      digest(manifestBytes) !== row.rootSha256 ||
+      digest(canonical(rowCore)) !== row.rowSha256
+    ) {
+      return false;
+    }
+    let handoff: JsonRecord | null;
+    let artifactManifest: JsonRecord | null;
+    try {
+      handoff = record(JSON.parse(handoffBytes.toString('utf8')));
+      artifactManifest = record(JSON.parse(manifestBytes.toString('utf8')));
+    } catch {
+      return false;
+    }
+    if (
+      handoff === null ||
+      artifactManifest === null ||
+      !hasExactKeys(handoff, [
+        'artifactHashes',
+        'artifactManifestSha256',
+        'assignmentId',
+        'authorSelfAuditRef',
+        'computedQualityRef',
+        'format',
+        'judgePreScreenRef',
+        'lessonId',
+        'lifecycle',
+        'nonclaims',
+        'packetSha256',
+        'repositoryCommit',
+        'requestedStatus',
+        'status',
+        'toolAndSchemaVersions',
+        'unresolvedBlockerCodes',
+        'validationRefs',
+      ]) ||
+      handoff.format !== 'lesson-generation-lesson-handoff/2' ||
+      handoff.lessonId !== row.lessonId ||
+      handoff.repositoryCommit !== receipt.authority.pinnedCommit ||
+      handoff.artifactManifestSha256 !== row.rootSha256 ||
+      handoff.status !== 'COMPLETE' ||
+      handoff.requestedStatus !== 'COMPLETE' ||
+      handoff.lifecycle !== 'CANDIDATE_RUBRIC_SCREENED' ||
+      canonical(handoff.unresolvedBlockerCodes) !== canonical([]) ||
+      !validNonclaims(handoff.nonclaims)
+    ) {
+      return false;
+    }
+    for (const path of LESSON_FILES.filter((path) => path !== 'protected-items.json')) {
+      const bytes = archive.files.get(`${row.lessonId}/${path}`);
+      if (bytes === undefined) return false;
+      try {
+        const parsed = JSON.parse(bytes.toString('utf8')) as unknown;
+        if (officialClaimFound(parsed)) return false;
+      } catch {
+        return false;
+      }
+    }
+  }
+  const rowCores = receipt.rows.map(({ code: _code, rowSha256: _rowSha256, ...row }) => row);
+  const rootCores = receipt.rows.map((row) => ({
+    lessonId: row.lessonId,
+    rootSha256: row.rootSha256,
+  }));
+  return (
+    digest(canonical(rowCores)) === receipt.aggregates.rowSha256 &&
+    digest(canonical(rootCores)) === receipt.aggregates.rootSha256 &&
+    digest(canonical(archive.inventory)) === receipt.aggregates.sourceBatchSha256 &&
+    receipt.copy.stagingIdentitySha256 ===
+      digest(
+        canonical({
+          scopeId: receipt.scope.id,
+          sourceBatchSha256: receipt.aggregates.sourceBatchSha256,
+          teamId: receipt.teamId,
+        }),
+      )
+  );
+}
+
+function promotedAdmissionsValid(
+  receipt: TeamReturnIntakeResult,
+  binding: TeamReturnSupersessionBinding,
+  archive: ParsedAcceptanceArchive,
+  authority: TeamAuthority,
+  value: unknown,
+  centralRoot: string,
+): boolean {
+  if (!Array.isArray(value) || value.length !== binding.newlyCompleteLessonIds.length) return false;
+  const admissions = new Map<string, PromotedAdmission>();
+  for (const raw of value) {
+    const admission = record(raw);
+    const mechanical = record(admission?.mechanical);
+    if (
+      admission === null ||
+      mechanical === null ||
+      !hasExactKeys(admission, ['lessonId', 'mechanical', 'rowSha256']) ||
+      !hasExactKeys(mechanical, [
+        'computedQuality',
+        'normalization',
+        'protectedBoundary',
+        'structural',
+        'validatorEvidenceSha256',
+      ]) ||
+      typeof admission.lessonId !== 'string' ||
+      admissions.has(admission.lessonId) ||
+      !DIGEST.test(String(admission.rowSha256)) ||
+      mechanical.structural !== 'PASS' ||
+      mechanical.computedQuality !== 'PASS' ||
+      mechanical.normalization !== 'PASS' ||
+      mechanical.protectedBoundary !== 'PASS' ||
+      !DIGEST.test(String(mechanical.validatorEvidenceSha256))
+    ) {
+      return false;
+    }
+    admissions.set(admission.lessonId, admission as unknown as PromotedAdmission);
+  }
+  const work = mkdtempSync(join(tmpdir(), 'mcat-promoted-admission-'));
+  try {
+    for (const entry of archive.candidateInventory) {
+      const sourceKey = entry.path.startsWith('lessons/')
+        ? entry.path.slice('lessons/'.length)
+        : entry.path;
+      const bytes = archive.files.get(sourceKey);
+      if (bytes === undefined) return false;
+      const destination = confined(
+        work,
+        entry.path.startsWith('lessons/') ? entry.path.slice('lessons/'.length) : entry.path,
+      );
+      mkdirSync(dirname(destination), { recursive: true, mode: 0o700 });
+      writeFileSync(destination, bytes, { flag: 'wx', mode: 0o600 });
+    }
+    const waveFiles = archive.candidateInventory
+      .map((entry) => entry.path)
+      .filter((path) => /^waves\/[^/]+-HANDOFF\.json$/.test(path));
+    if (waveFiles.length !== 1) return false;
+    const handoffExceptions: TeamReturnException[] = [];
+    const offered = resolveOfferedRows(
+      work,
+      basename(waveFiles[0] as string, '-HANDOFF.json'),
+      authority,
+      receipt.teamId as TeamId,
+      handoffExceptions,
+    );
+    const receiptRows = receipt.rows.map(({ code: _code, rowSha256: _rowSha256, ...row }) => row);
+    if (
+      offered === null ||
+      offered.kind !== 'FINAL_TEAM' ||
+      offered.id !== 'TEAM' ||
+      handoffExceptions.length !== 0 ||
+      canonical(offered.rows) !== canonical(receiptRows)
+    ) {
+      return false;
+    }
+    for (const lessonId of binding.newlyCompleteLessonIds) {
+      const admission = admissions.get(lessonId);
+      const row = receipt.rows.find((candidate) => candidate.lessonId === lessonId);
+      if (admission === undefined || row === undefined || admission.rowSha256 !== row.rowSha256) {
+        return false;
+      }
+      const lessonRoot = join(work, lessonId);
+      const exceptions: TeamReturnException[] = [];
+      const validated = validateLessonEvidence(
+        lessonRoot,
+        row,
+        authority,
+        receipt.teamId as TeamId,
+        exceptions,
+      );
+      const freshMechanical = validateTeamReturnCandidateMechanically(
+        lessonRoot,
+        lessonId,
+        centralRoot,
+      );
+      if (
+        exceptions.length !== 0 ||
+        canonical(validated.row) !== canonical(row) ||
+        canonical(freshMechanical) !== canonical(admission.mechanical) ||
+        freshMechanical.structural !== 'PASS' ||
+        freshMechanical.computedQuality !== 'PASS' ||
+        freshMechanical.normalization !== 'PASS' ||
+        freshMechanical.protectedBoundary !== 'PASS'
+      ) {
+        return false;
+      }
+    }
+    return admissions.size === binding.newlyCompleteLessonIds.length;
+  } finally {
+    rmSync(work, { force: true, recursive: true });
+  }
+}
+
+function sourceProofArchiveIdentityValid(
+  value: JsonRecord,
+  archive: ParsedAcceptanceArchive,
+  teamId: string,
+): boolean {
+  if (!Array.isArray(value.changedPathIdentities)) return false;
+  const prefix = `content/lesson-candidates/${teamId}/`;
+  const archived = new Set<string>();
+  for (const raw of value.changedPathIdentities) {
+    const identity = record(raw);
+    if (
+      identity === null ||
+      typeof identity.path !== 'string' ||
+      !identity.path.startsWith(prefix)
+    ) {
+      return false;
+    }
+    const relativePath = identity.path.slice(prefix.length);
+    const bytes = archive.files.get(relativePath);
+    if (
+      bytes === undefined ||
+      identity.sha256 !== digest(bytes) ||
+      identity.size !== bytes.byteLength ||
+      identity.gitMode !== '100644' ||
+      identity.gitBlobSha1 !==
+        createHash('sha1').update(`blob ${bytes.byteLength}\0`).update(bytes).digest('hex')
+    ) {
+      return false;
+    }
+    archived.add(relativePath);
+  }
+  return archived.size === value.changedPathIdentities.length;
+}
+
+function sourceProofGitClosureValid(
+  sourceProof: JsonRecord,
+  centralRoot: string,
+  teamId: TeamId,
+  promotedLessonIds: readonly string[],
+): boolean {
+  try {
+    const priorCommit = String(sourceProof.priorCommit);
+    const headCommit = String(sourceProof.headCommit);
+    if (!COMMIT.test(priorCommit) || !COMMIT.test(headCommit)) return false;
+    const ancestry = spawnSync(
+      GIT_EXECUTABLE,
+      ['-C', centralRoot, 'merge-base', '--is-ancestor', priorCommit, headCommit],
+      { shell: false, stdio: 'ignore' },
+    );
+    if (ancestry.status !== 0) return false;
+    const paths = gitOutput(centralRoot, ['diff', '--name-only', priorCommit, headCommit, '--'])
+      .split('\n')
+      .filter(Boolean)
+      .sort();
+    if (canonical(paths) !== canonical(sourceProof.changedPaths)) return false;
+    const trustedWaveTree = reviewedWaveTreeIdentities(centralRoot, undefined, headCommit, teamId);
+    if (
+      canonical(trustedWaveTree) !== canonical(sourceProof.waveTreeIdentities) ||
+      digest(canonical(trustedWaveTree)) !== sourceProof.waveTreeAggregateSha256
+    ) {
+      return false;
+    }
+    const identities = sourceProof.changedPathIdentities as unknown[];
+    if (!Array.isArray(identities) || identities.length !== paths.length) return false;
+    const prefix = `content/lesson-candidates/${teamId}/`;
+    const promoted = new Set(promotedLessonIds);
+    const observed = new Set<string>();
+    let teamHandoff = false;
+    let waveHandoff = false;
+    for (const [index, path] of paths.entries()) {
+      const relativePath = path.startsWith(prefix) ? path.slice(prefix.length) : '';
+      const lesson = /^(V3-LES-[0-9]{6})\//.exec(relativePath)?.[1];
+      if (lesson !== undefined) {
+        if (!promoted.has(lesson)) return false;
+        observed.add(lesson);
+      } else if (relativePath === 'TEAM-HANDOFF.json') {
+        teamHandoff = true;
+      } else if (/^waves\/[^/]+\.json$/.test(relativePath)) {
+        waveHandoff = true;
+      } else {
+        return false;
+      }
+      const tree = gitOutput(centralRoot, ['ls-tree', headCommit, '--', path]);
+      const match = /^(100644|100755) blob ([0-9a-f]{40})\t(.+)$/.exec(tree);
+      const identity = record(identities[index]);
+      if (match === null || match[3] !== path || identity === null) return false;
+      const bytes = gitBytes(
+        centralRoot,
+        ['cat-file', 'blob', match[2] as string],
+        MAX_ARCHIVE_ENTRY_EXPANDED_BYTES,
+      );
+      if (
+        canonical(identity) !==
+        canonical({
+          gitBlobSha1: match[2],
+          gitMode: match[1],
+          path,
+          sha256: digest(bytes),
+          size: bytes.byteLength,
+        })
+      ) {
+        return false;
+      }
+    }
+    return (
+      teamHandoff &&
+      waveHandoff &&
+      canonical([...observed].sort()) === canonical([...promoted].sort())
+    );
+  } catch {
+    return false;
+  }
+}
+
+function sourceProofWaveArchiveValid(
+  sourceProof: JsonRecord,
+  archive: ParsedAcceptanceArchive,
+  teamId: TeamId,
+): boolean {
+  if (!Array.isArray(sourceProof.waveTreeIdentities)) return false;
+  const prefix = `content/lesson-candidates/${teamId}/`;
+  const expected = (sourceProof.waveTreeIdentities as unknown[]).map((raw) => {
+    const identity = record(raw);
+    if (
+      identity === null ||
+      typeof identity.path !== 'string' ||
+      !identity.path.startsWith(`${prefix}waves/`)
+    ) {
+      return null;
+    }
+    return {
+      kind: 'FILE',
+      mode: 0o400,
+      path: identity.path.slice(prefix.length),
+      sha256: identity.sha256,
+      size: identity.size,
+    };
+  });
+  if (expected.some((identity) => identity === null)) return false;
+  const archivedWaves = archive.candidateInventory.filter((identity) =>
+    identity.path.startsWith('waves/'),
+  );
+  return canonical(expected) === canonical(archivedWaves);
+}
+
+interface LoadedAcceptanceState {
+  readonly archive: ParsedAcceptanceArchive;
+  readonly binding: TeamReturnSupersessionBinding;
+  readonly objects: {
+    readonly archive: AcceptanceObjectIdentity;
+    readonly manifest: AcceptanceObjectIdentity;
+    readonly receipt: AcceptanceObjectIdentity;
+  };
+  readonly state: VerifiedStagedState;
+  readonly sourceProof: AcceptanceSourceProof;
+}
+
+function centralRootFromTeamRoot(teamRoot: string): string {
+  let root = teamRoot;
+  for (let index = 0; index < TEAM_RETURN_STAGING_RELATIVE_ROOT.split('/').length + 1; index += 1) {
+    root = dirname(root);
+  }
+  return root;
+}
+
+function loadAcceptanceState(
+  teamRoot: string,
+  manifestSha256: string,
+  expectedObjects?: TeamReturnAcceptanceHandle['objects'],
+  trustedAuthority?: {
+    readonly centralRoot: string;
+    readonly gitRoot?: string;
+    readonly teamAuthority: TeamAuthority;
+  },
+): LoadedAcceptanceState | null {
+  try {
+    const manifestObject = readImmutableObject(
+      teamRoot,
+      'manifest',
+      manifestSha256,
+      digest,
+      expectedObjects?.manifest,
+    );
+    const manifestBytes = manifestObject.bytes;
+    let manifest: JsonRecord | null;
+    try {
+      manifest = record(JSON.parse(manifestBytes.toString('utf8')));
+    } catch {
+      return null;
+    }
+    if (
+      manifest === null ||
+      !hasExactKeys(manifest, [
+        'acceptanceReceipt',
+        'admissionAuthority',
+        'action',
+        'archive',
+        'candidateRootClosure',
+        'format',
+        'generationId',
+        'intake',
+        'nonclaims',
+        'package',
+        'predecessor',
+        'promotedAdmissions',
+        'sourceProof',
+        'statusCounts',
+        'supersession',
+        'validation',
+      ]) ||
+      manifest.format !== 'lesson-generation-team-acceptance-manifest/1'
+    ) {
+      return null;
+    }
+    const intake = record(manifest.intake);
+    const archive = record(manifest.archive);
+    const candidateRootClosure = record(manifest.candidateRootClosure);
+    const sourceProof = record(manifest.sourceProof);
+    const intakeSource = record(intake?.source);
+    const admissionAuthority = record(manifest.admissionAuthority);
+    const archiveDescriptor = parseAcceptanceObjectDescriptor(archive, 'archive');
+    const receiptDescriptor = parseAcceptanceObjectDescriptor(
+      manifest.acceptanceReceipt,
+      'receipt',
+    );
+    if (
+      intake === null ||
+      intakeSource === null ||
+      admissionAuthority === null ||
+      candidateRootClosure === null ||
+      !hasExactKeys(candidateRootClosure, ['entryCount', 'inventorySha256', 'pathSha256']) ||
+      !Number.isSafeInteger(candidateRootClosure.entryCount) ||
+      Number(candidateRootClosure.entryCount) < 30 * LESSON_FILES.length + 2 ||
+      !DIGEST.test(String(candidateRootClosure.inventorySha256)) ||
+      !DIGEST.test(String(candidateRootClosure.pathSha256)) ||
+      !hasExactKeys(admissionAuthority, [
+        'assignment',
+        'assignmentId',
+        'assignmentRows',
+        'kit',
+        'kitSha256',
+        'readySha256',
+        'sendMeSha256',
+        'team',
+        'toolSha256',
+      ]) ||
+      typeof admissionAuthority.assignmentId !== 'string' ||
+      digest(admissionAuthority.assignmentId) !== intake.assignmentIdSha256 ||
+      !Array.isArray(admissionAuthority.assignmentRows) ||
+      record(admissionAuthority.assignment) === null ||
+      record(admissionAuthority.kit) === null ||
+      record(admissionAuthority.team) === null ||
+      admissionAuthority.kitSha256 !== record(intake.authority)?.kitManifestSha256 ||
+      admissionAuthority.readySha256 !== record(intake.authority)?.readySha256 ||
+      admissionAuthority.sendMeSha256 !== record(intake.authority)?.sendMeSha256 ||
+      !DIGEST.test(String(admissionAuthority.toolSha256)) ||
+      !validReceiptSelfIdentity(intake) ||
+      sourceProof === null ||
+      !hasExactKeys(sourceProof, [
+        'branch',
+        'changedPathAggregateSha256',
+        'changedPathIdentities',
+        'changedPaths',
+        'clean',
+        'headCommit',
+        'pinnedAncestor',
+        'priorCommit',
+        'waveTreeAggregateSha256',
+        'waveTreeIdentities',
+      ]) ||
+      typeof sourceProof.branch !== 'string' ||
+      sourceProof.branch !== intakeSource.branch ||
+      !Array.isArray(sourceProof.changedPaths) ||
+      !Array.isArray(sourceProof.changedPathIdentities) ||
+      sourceProof.changedPaths.length > MAX_CHECKOUT_SNAPSHOT_ENTRIES ||
+      sourceProof.changedPaths.some((path) => typeof path !== 'string') ||
+      sourceProof.changedPaths.some(
+        (path) =>
+          typeof path !== 'string' ||
+          !safeRelative(path) ||
+          path.normalize('NFC') !== path ||
+          !/^[A-Za-z0-9._/-]+$/.test(path) ||
+          Buffer.byteLength(path, 'utf8') > MAX_CHECKOUT_SNAPSHOT_SINGLE_PATH_BYTES,
+      ) ||
+      new Set(sourceProof.changedPaths as string[]).size !== sourceProof.changedPaths.length ||
+      (sourceProof.changedPaths as string[]).reduce(
+        (total, path) => total + Buffer.byteLength(path, 'utf8'),
+        0,
+      ) > MAX_CHECKOUT_SNAPSHOT_PATH_BYTES ||
+      canonical(sourceProof.changedPaths) !==
+        canonical([...(sourceProof.changedPaths as string[])].sort()) ||
+      sourceProof.changedPathIdentities.length !== sourceProof.changedPaths.length ||
+      (sourceProof.changedPathIdentities as unknown[]).some((raw, index) => {
+        const identity = record(raw);
+        return (
+          identity === null ||
+          !hasExactKeys(identity, ['gitBlobSha1', 'gitMode', 'path', 'sha256', 'size']) ||
+          identity.path !== (sourceProof.changedPaths as string[])[index] ||
+          !/^[0-9a-f]{40}$/.test(String(identity.gitBlobSha1)) ||
+          !['100644', '100755'].includes(String(identity.gitMode)) ||
+          !DIGEST.test(String(identity.sha256)) ||
+          !Number.isSafeInteger(identity.size) ||
+          Number(identity.size) < 0
+        );
+      }) ||
+      sourceProof.changedPathAggregateSha256 !==
+        digest(canonical(sourceProof.changedPathIdentities)) ||
+      !Array.isArray(sourceProof.waveTreeIdentities) ||
+      sourceProof.waveTreeIdentities.length === 0 ||
+      sourceProof.waveTreeIdentities.length > MAX_CHECKOUT_SNAPSHOT_ENTRIES ||
+      (sourceProof.waveTreeIdentities as unknown[]).some((raw) => {
+        const identity = record(raw);
+        return (
+          identity === null ||
+          !hasExactKeys(identity, [
+            'gitBlobSha1',
+            'gitMode',
+            'gitType',
+            'path',
+            'sha256',
+            'size',
+          ]) ||
+          !/^[0-9a-f]{40}$/.test(String(identity.gitBlobSha1)) ||
+          !['100644', '100755'].includes(String(identity.gitMode)) ||
+          identity.gitType !== 'blob' ||
+          typeof identity.path !== 'string' ||
+          !/^content\/lesson-candidates\/team-[AB]\/waves\/[^/]+\.json$/.test(identity.path) ||
+          !DIGEST.test(String(identity.sha256)) ||
+          !Number.isSafeInteger(identity.size) ||
+          Number(identity.size) < 0
+        );
+      }) ||
+      new Set(
+        (sourceProof.waveTreeIdentities as Array<{ readonly path: string }>).map(
+          (identity) => identity.path,
+        ),
+      ).size !== sourceProof.waveTreeIdentities.length ||
+      canonical(
+        (sourceProof.waveTreeIdentities as Array<{ readonly path: string }>).map(
+          (identity) => identity.path,
+        ),
+      ) !==
+        canonical(
+          (sourceProof.waveTreeIdentities as Array<{ readonly path: string }>)
+            .map((identity) => identity.path)
+            .sort(),
+        ) ||
+      sourceProof.waveTreeAggregateSha256 !== digest(canonical(sourceProof.waveTreeIdentities)) ||
+      sourceProof.clean !== true ||
+      sourceProof.headCommit !== intakeSource.headCommit ||
+      sourceProof.pinnedAncestor !== true ||
+      !COMMIT.test(String(sourceProof.priorCommit)) ||
+      !validNonclaims(manifest.nonclaims) ||
+      canonical(manifest.statusCounts) !== canonical({ BLOCKED: 0, COMPLETE: 30, FAILED: 0 }) ||
+      archiveDescriptor === null ||
+      receiptDescriptor === null ||
+      archiveDescriptor.size + receiptDescriptor.size + manifestBytes.byteLength >
+        MAX_ACCEPTANCE_AGGREGATE_BYTES
+    ) {
+      return null;
+    }
+    const receipt = intake as unknown as TeamReturnIntakeResult;
+    const binding = parseAcceptanceSupersessionBinding(
+      manifest.supersession,
+      receipt.teamId as TeamId,
+    );
+    const archiveObject = readImmutableObject(
+      teamRoot,
+      'archive',
+      archiveDescriptor.sha256,
+      digest,
+      expectedObjects?.archive,
+    );
+    const receiptObject = readImmutableObject(
+      teamRoot,
+      'receipt',
+      receiptDescriptor.sha256,
+      digest,
+      expectedObjects?.receipt,
+    );
+    if (
+      binding === null ||
+      archiveObject.identity.size !== archiveDescriptor.size ||
+      receiptObject.identity.size !== receiptDescriptor.size
+    ) {
+      return null;
+    }
+    const archiveBytes = archiveObject.bytes;
+    const receiptBytes = receiptObject.bytes;
+    const parsedArchive = parseAcceptanceArchive(archiveBytes);
+    if (parsedArchive === null) {
+      return null;
+    }
+    const expectedPaths = receipt.rows
+      .filter((row) => row.status === 'COMPLETE')
+      .flatMap((row) => LESSON_FILES.map((path) => `${row.lessonId}/${path}`))
+      .sort();
+    const rowCores = receipt.rows.map(({ code: _code, rowSha256: _rowSha256, ...row }) => row);
+    const rootCores = receipt.rows.map((row) => ({
+      lessonId: row.lessonId,
+      rootSha256: row.rootSha256,
+    }));
+    const expectedReceipt = Buffer.from(
+      `${canonical(
+        acceptanceReceiptRecord(receipt, binding, archiveDescriptor as AcceptanceArchiveDescriptor),
+      )}\n`,
+    );
+    const expectedManifest = Buffer.from(
+      `${canonical(
+        acceptanceManifestRecord(
+          receipt,
+          binding,
+          archiveDescriptor as AcceptanceArchiveDescriptor,
+          receiptDescriptor,
+          sourceProof as unknown as AcceptanceSourceProof,
+          candidateRootClosure as unknown as AcceptanceCandidateRootClosure,
+          admissionAuthority as unknown as TeamAuthority,
+          manifest.promotedAdmissions as readonly PromotedAdmission[],
+        ),
+      )}\n`,
+    );
+    const intakeSchemaValid = acceptanceIntakeSchemaValid(receipt, binding, parsedArchive);
+    const admissionsValid = promotedAdmissionsValid(
+      receipt,
+      binding,
+      parsedArchive,
+      admissionAuthority as unknown as TeamAuthority,
+      manifest.promotedAdmissions,
+      trustedAuthority?.centralRoot ?? centralRootFromTeamRoot(teamRoot),
+    );
+    if (
+      canonical(receiptBytes) !== canonical(expectedReceipt) ||
+      digest(expectedReceipt) !== receiptDescriptor.sha256 ||
+      canonical(manifestBytes) !== canonical(expectedManifest) ||
+      receipt.mode !== 'ACCEPT' ||
+      receipt.decision !== 'ACCEPTED' ||
+      receipt.copy.disposition !== 'SUPERSESSION_COMMITTED' ||
+      receipt.scope.kind !== 'FINAL_TEAM' ||
+      receipt.scope.id !== 'TEAM' ||
+      receipt.scope.rowCount !== 30 ||
+      receipt.rows.length !== 30 ||
+      receipt.rows.some((row) => row.status !== 'COMPLETE') ||
+      !intakeSchemaValid ||
+      !admissionsValid ||
+      (trustedAuthority !== undefined &&
+        canonical(admissionAuthority) !== canonical(trustedAuthority.teamAuthority)) ||
+      receipt.teamId === null ||
+      !sourceProofArchiveIdentityValid(sourceProof, parsedArchive, receipt.teamId) ||
+      !sourceProofWaveArchiveValid(sourceProof, parsedArchive, receipt.teamId) ||
+      !sourceProofGitClosureValid(
+        sourceProof,
+        trustedAuthority?.gitRoot ??
+          trustedAuthority?.centralRoot ??
+          centralRootFromTeamRoot(teamRoot),
+        receipt.teamId,
+        binding.newlyCompleteLessonIds,
+      ) ||
+      candidateRootClosure.entryCount !== parsedArchive.candidateInventory.length ||
+      candidateRootClosure.inventorySha256 !==
+        digest(canonical(parsedArchive.candidateInventory)) ||
+      candidateRootClosure.pathSha256 !==
+        digest(canonical(parsedArchive.candidateInventory.map((entry) => entry.path))) ||
+      canonical(parsedArchive.inventory.map((entry) => entry.path)) !== canonical(expectedPaths) ||
+      digest(canonical(parsedArchive.inventory)) !== receipt.aggregates.sourceBatchSha256 ||
+      digest(canonical(rowCores)) !== receipt.aggregates.rowSha256 ||
+      digest(canonical(rootCores)) !== receipt.aggregates.rootSha256 ||
+      parsedArchive.treeSha256 !== binding.replacement.treeSha256 ||
+      receipt.aggregates.rootSha256 !== binding.replacement.rootSha256 ||
+      receipt.aggregates.rowSha256 !== binding.replacement.rowSha256 ||
+      receipt.aggregates.sourceBatchSha256 !== binding.replacement.sourceBatchSha256 ||
+      receipt.copy.stagingIdentitySha256 !== binding.replacement.stagingIdentitySha256 ||
+      digest(canonical(receipt.source)) !== binding.replacement.sourceIdentitySha256 ||
+      digest(canonical(receipt.copy)) !== binding.replacement.copyIdentitySha256
+    ) {
+      return null;
+    }
+    return {
+      archive: parsedArchive,
+      binding,
+      objects: {
+        archive: archiveObject.identity,
+        manifest: manifestObject.identity,
+        receipt: receiptObject.identity,
+      },
+      state: {
+        completeLessonIds: receipt.rows
+          .filter((row) => row.status === 'COMPLETE')
+          .map((row) => row.lessonId),
+        inventory: parsedArchive.inventory,
+        receipt,
+        treeSha256: parsedArchive.treeSha256,
+      },
+      sourceProof: sourceProof as unknown as AcceptanceSourceProof,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function acceptanceTransitionValid(
+  predecessor: VerifiedStagedState,
+  successor: LoadedAcceptanceState,
+): boolean {
+  const priorRows = new Map(predecessor.receipt.rows.map((row) => [row.lessonId, row]));
+  const replacementRows = new Map(successor.state.receipt.rows.map((row) => [row.lessonId, row]));
+  if (
+    predecessor.receipt.teamId !== successor.state.receipt.teamId ||
+    predecessor.receipt.assignmentIdSha256 !== successor.state.receipt.assignmentIdSha256 ||
+    canonical(predecessor.receipt.authority) !== canonical(successor.state.receipt.authority) ||
+    predecessor.receipt.source.kind !== successor.state.receipt.source.kind ||
+    canonical(predecessor.receipt.rows.map((row) => row.lessonId)) !==
+      canonical(successor.state.receipt.rows.map((row) => row.lessonId)) ||
+    canonical(successor.binding.prior) !== canonical(supersessionPriorSide(predecessor)) ||
+    canonical(successor.binding.replacement) !==
+      canonical(supersessionReplacementSide(successor.state))
+  ) {
+    return false;
+  }
+  const unchanged: string[] = [];
+  const promoted: string[] = [];
+  const predecessorInventory = new Map(predecessor.inventory.map((entry) => [entry.path, entry]));
+  const replacementInventory = new Map(
+    successor.state.inventory.map((entry) => [entry.path, entry]),
+  );
+  for (const priorRow of predecessor.receipt.rows) {
+    const replacement = replacementRows.get(priorRow.lessonId);
+    if (replacement === undefined || priorRows.get(priorRow.lessonId) !== priorRow) return false;
+    if (priorRow.status === 'COMPLETE') {
+      if (canonical(priorRow) !== canonical(replacement)) return false;
+      for (const path of LESSON_FILES) {
+        const key = `${priorRow.lessonId}/${path}`;
+        if (
+          canonical(predecessorInventory.get(key) ?? null) !==
+          canonical(replacementInventory.get(key) ?? null)
+        ) {
+          return false;
+        }
+      }
+      unchanged.push(priorRow.lessonId);
+    } else {
+      if (!['BLOCKED', 'FAILED'].includes(priorRow.status) || replacement.status !== 'COMPLETE') {
+        return false;
+      }
+      promoted.push(priorRow.lessonId);
+    }
+  }
+  return (
+    canonical(unchanged) === canonical(successor.binding.unchangedCompleteLessonIds) &&
+    canonical(promoted) === canonical(successor.binding.newlyCompleteLessonIds) &&
+    unchanged.length + promoted.length === 30
+  );
+}
+
+export function readBoundedAcceptanceMarkerNames(
+  commitsRoot: string,
+  onEntry?: (name: string) => void,
+): readonly string[] | null {
+  const directory = opendirSync(commitsRoot);
+  const names: string[] = [];
+  try {
+    while (true) {
+      const entry = directory.readSync();
+      if (entry === null) break;
+      onEntry?.(entry.name);
+      if (names.length >= MAX_ACCEPTANCE_MARKERS) return null;
+      if (!DIGEST.test(entry.name) || !entry.isSymbolicLink()) return null;
+      names.push(entry.name);
+    }
+  } finally {
+    directory.closeSync();
+  }
+  return names.sort();
+}
+
+function validatedSupersessionChain(
+  finalRoot: string,
+  trustedAuthority?: {
+    readonly centralRoot: string;
+    readonly gitRoot?: string;
+    readonly teamAuthority: TeamAuthority;
+  },
+): readonly VerifiedStagedState[] | null {
+  const acceptedRoot = verifyStagedState(finalRoot);
+  if (acceptedRoot === null) return null;
+  const teamRoot = dirname(finalRoot);
+  const commitsRoot = join(teamRoot, ACCEPTANCE_RELATIVE_ROOT, 'commits');
+  if (!existsSync(commitsRoot)) return [acceptedRoot];
+  const commitsInfo = lstatSync(commitsRoot);
+  if (
+    commitsInfo.isSymbolicLink() ||
+    !commitsInfo.isDirectory() ||
+    (commitsInfo.mode & 0o777) !== 0o700
+  ) {
+    return null;
+  }
+  const markerNames = readBoundedAcceptanceMarkerNames(commitsRoot);
+  if (markerNames === null) return null;
+  const publications: Array<
+    LoadedAcceptanceState & {
+      markerName: string;
+    }
+  > = [];
+  for (const markerName of markerNames) {
+    if (!DIGEST.test(markerName)) return null;
+    const markerPath = join(commitsRoot, markerName);
+    const markerInfo = lstatSync(markerPath);
+    if (!markerInfo.isSymbolicLink()) return null;
+    const target = readlinkSync(markerPath);
+    if (!DIGEST.test(target)) return null;
+    const loaded = loadAcceptanceState(teamRoot, target, undefined, trustedAuthority);
+    if (
+      loaded === null ||
+      markerName !== loaded.binding.supersessionId ||
+      loaded.binding.acceptanceMarkerRelativePath !==
+        `${ACCEPTANCE_RELATIVE_ROOT}/commits/${markerName}`
+    ) {
+      return null;
+    }
+    publications.push({ ...loaded, markerName });
+  }
+  const states: VerifiedStagedState[] = [acceptedRoot];
+  const consumed = new Set<string>();
+  let predecessor = acceptedRoot;
+  while (true) {
+    const successors = publications.filter(
+      (candidate) =>
+        canonical(candidate.binding.prior) === canonical(supersessionPriorSide(predecessor)),
+    );
+    if (successors.length === 0) break;
+    if (successors.length !== 1) return null;
+    const successor = successors[0] as (typeof publications)[number];
+    if (
+      consumed.has(successor.markerName) ||
+      states.length >= MAX_ACCEPTANCE_CHAIN_DEPTH ||
+      successor.sourceProof.priorCommit !== predecessor.receipt.source.headCommit ||
+      !acceptanceTransitionValid(predecessor, successor) ||
+      canonical(successor.binding.replacement) !==
+        canonical(supersessionReplacementSide(successor.state))
+    ) {
+      return null;
+    }
+    consumed.add(successor.markerName);
+    states.push(successor.state);
+    predecessor = successor.state;
+  }
+  return consumed.size === publications.length ? states : null;
+}
+
+export interface TeamReturnAcceptanceLoadResult {
+  readonly extractedRoot: string;
+  readonly handle: TeamReturnAcceptanceHandle & {
+    readonly marker: AcceptanceMarkerIdentity;
+    readonly objects: NonNullable<TeamReturnAcceptanceHandle['objects']>;
+  };
+  readonly intakeReceipt: TeamReturnIntakeResult;
+}
+
+export function loadTeamReturnAcceptanceArtifact(input: {
+  readonly authorityRoot: string;
+  readonly centralRepositoryRoot: string;
+  readonly reviewedCheckoutRoot: string;
+  readonly handle: TeamReturnAcceptanceHandle;
+  readonly scopeId: 'TEAM';
+  readonly teamId: TeamId;
+}): TeamReturnAcceptanceLoadResult {
+  if (
+    input.scopeId !== 'TEAM' ||
+    !TEAM_IDS.includes(input.teamId) ||
+    input.handle.marker === undefined ||
+    input.handle.objects === undefined
+  ) {
+    throw new Error('ACCEPTANCE_HANDLE_INVALID');
+  }
+  const centralRoot = realpathSync(input.centralRepositoryRoot);
+  const authorityExceptions: TeamReturnException[] = [];
+  const finalization = verifyAuthorityRoot(realpathSync(input.authorityRoot), authorityExceptions);
+  const teamAuthority =
+    finalization === null
+      ? null
+      : verifyTeamAuthority(
+          realpathSync(input.authorityRoot),
+          centralRoot,
+          finalization,
+          input.teamId,
+          authorityExceptions,
+        );
+  if (teamAuthority === null || authorityExceptions.length !== 0) {
+    throw new Error('ACCEPTANCE_AUTHORITY_INVALID');
+  }
+  const trustedAuthority = {
+    centralRoot,
+    gitRoot: realpathSync(input.reviewedCheckoutRoot),
+    teamAuthority,
+  };
+  const finalRoot = join(
+    centralRoot,
+    TEAM_RETURN_STAGING_RELATIVE_ROOT,
+    input.teamId,
+    input.scopeId,
+  );
+  const teamRoot = dirname(finalRoot);
+  const marker = inspectAcceptanceMarker(
+    teamRoot,
+    input.handle.markerRelativePath,
+    input.handle.manifestSha256,
+  );
+  if (
+    marker === null ||
+    canonical(marker) !== canonical(input.handle.marker) ||
+    input.handle.markerRelativePath !==
+      `${ACCEPTANCE_RELATIVE_ROOT}/commits/${input.handle.markerRelativePath.split('/').at(-1)}`
+  ) {
+    throw new Error('ACCEPTANCE_MARKER_INVALID');
+  }
+  const loaded = loadAcceptanceState(
+    teamRoot,
+    input.handle.manifestSha256,
+    input.handle.objects,
+    trustedAuthority,
+  );
+  const chain = validatedSupersessionChain(finalRoot, trustedAuthority);
+  if (
+    loaded === null ||
+    chain === null ||
+    chain.at(-1)?.receipt.receiptSha256 !== loaded.state.receipt.receiptSha256 ||
+    loaded.binding.acceptanceMarkerRelativePath !== input.handle.markerRelativePath ||
+    loaded.binding.generationId !== input.handle.generationId ||
+    loaded.binding.replacement.treeSha256 !== input.handle.sourceTreeSha256 ||
+    loaded.state.receipt.source.headCommit !== input.handle.sourceCommit ||
+    loaded.state.receipt.source.headCommit !==
+      gitOutput(trustedAuthority.gitRoot, ['rev-parse', 'HEAD'])
+  ) {
+    throw new Error('ACCEPTANCE_CHAIN_INVALID');
+  }
+  const extractedRoot = mkdtempSync(join(tmpdir(), 'mcat-team-acceptance-'));
+  const extractedInfo = lstatSync(extractedRoot);
+  const extractedIdentity = { device: extractedInfo.dev, inode: extractedInfo.ino };
+  try {
+    mkdirSync(join(extractedRoot, 'lessons'), { mode: 0o700 });
+    for (const [relativePath, bytes] of [...loaded.archive.files.entries()].sort(
+      ([left], [right]) => left.localeCompare(right),
+    )) {
+      const destination = confined(
+        extractedRoot,
+        relativePath === 'TEAM-HANDOFF.json' || /^waves\/[^/]+\.json$/.test(relativePath)
+          ? relativePath
+          : `lessons/${relativePath}`,
+      );
+      mkdirSync(dirname(destination), { recursive: true, mode: 0o700 });
+      const descriptor = openSync(
+        destination,
+        fsConstants.O_WRONLY | fsConstants.O_CREAT | fsConstants.O_EXCL | fsConstants.O_NOFOLLOW,
+        0o600,
+      );
+      try {
+        let offset = 0;
+        while (offset < bytes.byteLength) {
+          offset += writeSync(descriptor, bytes, offset, bytes.byteLength - offset);
+        }
+        fchmodSync(descriptor, 0o400);
+        fsyncSync(descriptor);
+      } finally {
+        closeSync(descriptor);
+      }
+    }
+    const directories = collectDirectories(extractedRoot).sort(
+      (left, right) => right.length - left.length,
+    );
+    for (const path of directories) {
+      chmodSync(path, 0o500);
+      const descriptor = openSync(
+        path,
+        fsConstants.O_RDONLY | fsConstants.O_DIRECTORY | fsConstants.O_NOFOLLOW,
+      );
+      try {
+        fsyncSync(descriptor);
+      } finally {
+        closeSync(descriptor);
+      }
+    }
+    const extractedInventory = inventory(
+      join(extractedRoot, 'lessons'),
+      listFiles(join(extractedRoot, 'lessons')),
+    );
+    const extractedCandidateInventory = inventory(extractedRoot, listFiles(extractedRoot)).map(
+      (entry) => ({
+        ...entry,
+        kind: 'FILE',
+        mode: lstatSync(confined(extractedRoot, entry.path)).mode & 0o777,
+      }),
+    );
+    if (
+      canonical(extractedInventory) !== canonical(loaded.archive.inventory) ||
+      canonical(extractedCandidateInventory) !== canonical(loaded.archive.candidateInventory) ||
+      !readOnlyModesValid(extractedRoot)
+    ) {
+      throw new Error('ACCEPTANCE_EXTRACTION_INVALID');
+    }
+    return {
+      extractedRoot,
+      handle: input.handle as TeamReturnAcceptanceLoadResult['handle'],
+      intakeReceipt: loaded.state.receipt,
+    };
+  } catch (error) {
+    cleanupOwnedIncoming(extractedRoot, extractedIdentity);
+    throw error;
+  }
+}
+
+function findSupersessionPredecessor(
+  finalRoot: string,
+  request: TeamReturnSupersessionRequest,
+  trustedAuthority?: {
+    readonly centralRoot: string;
+    readonly gitRoot?: string;
+    readonly teamAuthority: TeamAuthority;
+  },
+): VerifiedStagedState | null {
+  const chain = validatedSupersessionChain(finalRoot, trustedAuthority);
+  if (chain === null) return null;
+  const matching = chain.filter(
+    (candidate) =>
+      candidate.receipt.aggregates.sourceBatchSha256 === request.expectedPriorSourceBatchSha256 &&
+      candidate.receipt.copy.stagingIdentitySha256 === request.expectedPriorStagingIdentitySha256,
+  );
+  if (matching.length !== 1) return null;
+  const candidate = matching[0] as VerifiedStagedState;
+  return chain.indexOf(candidate) >= chain.length - 2 ? candidate : null;
+}
+
+function makeSupersessionBinding(input: {
+  readonly finalRoot: string;
+  readonly request: TeamReturnSupersessionRequest;
+  readonly result: TeamReturnIntakeResult;
+  readonly expected: readonly {
+    readonly path: string;
+    readonly sha256: string;
+    readonly size: number;
+  }[];
+  readonly exceptions: TeamReturnException[];
+  readonly centralRoot: string;
+  readonly gitRoot: string;
+  readonly teamAuthority: TeamAuthority;
+}): TeamReturnSupersessionBinding | null {
+  if (
+    input.request.action !== 'SUPERSEDE_FINAL_TEAM' ||
+    !DIGEST.test(input.request.expectedPriorSourceBatchSha256) ||
+    !DIGEST.test(input.request.expectedPriorStagingIdentitySha256) ||
+    input.result.scope.kind !== 'FINAL_TEAM' ||
+    input.result.scope.id !== 'TEAM' ||
+    input.result.scope.rowCount !== 30 ||
+    input.result.teamId === null
+  ) {
+    addException(input.exceptions, 'SUPERSESSION_AUTHORITY_INVALID', 'COPY', {
+      reason: 'REQUEST_OR_SCOPE_INVALID',
+    });
+    return null;
+  }
+  const trustedAuthority = {
+    centralRoot: input.centralRoot,
+    gitRoot: input.gitRoot,
+    teamAuthority: input.teamAuthority,
+  };
+  const prior = findSupersessionPredecessor(input.finalRoot, input.request, trustedAuthority);
+  if (prior === null) {
+    const acceptedRoot = verifyStagedState(input.finalRoot);
+    const chain =
+      acceptedRoot === null ? null : validatedSupersessionChain(input.finalRoot, trustedAuthority);
+    const expectedMatchesAcceptedRoot =
+      acceptedRoot !== null &&
+      acceptedRoot.receipt.aggregates.sourceBatchSha256 ===
+        input.request.expectedPriorSourceBatchSha256 &&
+      acceptedRoot.receipt.copy.stagingIdentitySha256 ===
+        input.request.expectedPriorStagingIdentitySha256;
+    addException(
+      input.exceptions,
+      chain === null || expectedMatchesAcceptedRoot
+        ? 'SUPERSESSION_PRIOR_INVALID'
+        : 'SUPERSESSION_AUTHORITY_INVALID',
+      'COPY',
+      {
+        scopeId: input.result.scope.id,
+        teamId: input.result.teamId,
+      },
+    );
+    return null;
+  }
+  if (
+    prior.receipt.teamId !== input.result.teamId ||
+    prior.receipt.scope.kind !== 'FINAL_TEAM' ||
+    prior.receipt.scope.id !== 'TEAM' ||
+    prior.receipt.scope.rowCount !== 30 ||
+    prior.receipt.aggregates.sourceBatchSha256 !== input.request.expectedPriorSourceBatchSha256 ||
+    prior.receipt.copy.stagingIdentitySha256 !== input.request.expectedPriorStagingIdentitySha256 ||
+    prior.receipt.assignmentIdSha256 !== input.result.assignmentIdSha256 ||
+    canonical(prior.receipt.authority) !== canonical(input.result.authority)
+  ) {
+    addException(input.exceptions, 'SUPERSESSION_AUTHORITY_INVALID', 'COPY', {
+      expectedPriorSourceBatchSha256: input.request.expectedPriorSourceBatchSha256,
+      expectedPriorStagingIdentitySha256: input.request.expectedPriorStagingIdentitySha256,
+    });
+    return null;
+  }
+  if (
+    prior.receipt.aggregates.sourceBatchSha256 === input.result.aggregates.sourceBatchSha256 ||
+    prior.receipt.copy.stagingIdentitySha256 === input.result.copy.stagingIdentitySha256
+  ) {
+    addException(input.exceptions, 'SUPERSESSION_AUTHORITY_INVALID', 'COPY', {
+      reason: 'SAME_BATCH',
+    });
+    return null;
+  }
+  const priorRows = new Map(prior.receipt.rows.map((row) => [row.lessonId, row]));
+  const replacementRows = new Map(input.result.rows.map((row) => [row.lessonId, row]));
+  if (
+    canonical(prior.receipt.rows.map((row) => row.lessonId)) !==
+    canonical(input.result.rows.map((row) => row.lessonId))
+  ) {
+    addException(input.exceptions, 'SUPERSESSION_NON_MONOTONIC', 'COPY', {
+      reason: 'ROW_CLOSURE_CHANGED',
+    });
+    return null;
+  }
+  const replacementInventory = new Map(input.expected.map((file) => [file.path, file]));
+  const priorInventory = new Map(prior.inventory.map((file) => [file.path, file]));
+  const unchangedCompleteLessonIds: string[] = [];
+  const newlyCompleteLessonIds: string[] = [];
+  for (const priorRow of prior.receipt.rows) {
+    const replacementRow = replacementRows.get(priorRow.lessonId);
+    if (replacementRow === undefined) {
+      addException(input.exceptions, 'SUPERSESSION_NON_MONOTONIC', 'COPY', {
+        lessonId: priorRow.lessonId,
+        reason: 'ROW_REMOVED',
+      });
+      return null;
+    }
+    if (priorRow.status === 'COMPLETE') {
+      if (replacementRow.status !== 'COMPLETE') {
+        addException(input.exceptions, 'SUPERSESSION_NON_MONOTONIC', 'COPY', {
+          lessonId: priorRow.lessonId,
+          reason: 'COMPLETE_DOWNGRADED',
+        });
+        return null;
+      }
+      for (const path of LESSON_FILES) {
+        const key = `${priorRow.lessonId}/${path}`;
+        if (
+          canonical(priorInventory.get(key) ?? null) !==
+          canonical(replacementInventory.get(key) ?? null)
+        ) {
+          addException(input.exceptions, 'SUPERSESSION_NON_MONOTONIC', 'COPY', {
+            lessonId: priorRow.lessonId,
+            reason: 'COMPLETE_TREE_CHANGED',
+          });
+          return null;
+        }
+      }
+      unchangedCompleteLessonIds.push(priorRow.lessonId);
+      continue;
+    }
+    if (replacementRow.status !== priorRow.status && replacementRow.status !== 'COMPLETE') {
+      addException(input.exceptions, 'SUPERSESSION_NON_MONOTONIC', 'COPY', {
+        lessonId: priorRow.lessonId,
+        reason: 'NONCOMPLETE_STATUS_CHANGED',
+      });
+      return null;
+    }
+    if (replacementRow.status === 'COMPLETE') {
+      newlyCompleteLessonIds.push(priorRow.lessonId);
+    } else if (canonical(replacementRow) !== canonical(priorRow)) {
+      addException(input.exceptions, 'SUPERSESSION_NON_MONOTONIC', 'COPY', {
+        lessonId: priorRow.lessonId,
+        reason: 'NONCOMPLETE_IDENTITY_CHANGED',
+      });
+      return null;
+    }
+  }
+  if (priorRows.size !== replacementRows.size) {
+    addException(input.exceptions, 'SUPERSESSION_NON_MONOTONIC', 'COPY', {
+      reason: 'NO_MONOTONIC_ADDITION',
+    });
+    return null;
+  }
+  const priorSide = {
+    copyIdentitySha256: digest(canonical(prior.receipt.copy)),
+    receiptSha256: prior.receipt.receiptSha256,
+    rootSha256: prior.receipt.aggregates.rootSha256,
+    rowSha256: prior.receipt.aggregates.rowSha256,
+    sourceIdentitySha256: digest(canonical(prior.receipt.source)),
+    sourceBatchSha256: prior.receipt.aggregates.sourceBatchSha256,
+    stagingIdentitySha256: prior.receipt.copy.stagingIdentitySha256,
+    treeSha256: prior.treeSha256,
+  };
+  const replacementCopy = {
+    disposition: 'SUPERSESSION_COMMITTED' as const,
+    stagedCompleteCount: input.result.rows.filter((row) => row.status === 'COMPLETE').length,
+    stagingIdentitySha256: input.result.copy.stagingIdentitySha256,
+  };
+  const replacementSide = {
+    copyIdentitySha256: digest(canonical(replacementCopy)),
+    rootSha256: input.result.aggregates.rootSha256,
+    rowSha256: input.result.aggregates.rowSha256,
+    sourceIdentitySha256: digest(canonical(input.result.source)),
+    sourceBatchSha256: input.result.aggregates.sourceBatchSha256,
+    stagingIdentitySha256: input.result.copy.stagingIdentitySha256,
+    treeSha256: lessonTreeIdentity(input.expected),
+  };
+  const supersessionId = digest(
+    canonical({
+      action: input.request.action,
+      prior: priorSide,
+      scope: 'FINAL_TEAM',
+      teamId: input.result.teamId,
+    }),
+  );
+  const acceptanceMarkerRelativePath = `${ACCEPTANCE_RELATIVE_ROOT}/commits/${supersessionId}`;
+  const generationCore = {
+    action: input.request.action,
+    acceptanceMarkerRelativePath,
+    newlyCompleteLessonIds,
+    prior: priorSide,
+    replacement: replacementSide,
+    supersessionId,
+    teamId: input.result.teamId,
+    unchangedCompleteLessonIds,
+  };
+  const generationId = digest(canonical(generationCore));
+  return {
+    acceptanceMarkerRelativePath,
+    action: 'SUPERSEDE_FINAL_TEAM',
+    generationId,
+    newlyCompleteLessonIds,
+    prior: priorSide,
+    replacement: replacementSide,
+    supersessionId,
+    unchangedCompleteLessonIds,
+  };
 }
 
 interface OwnedIncomingIdentity {
@@ -2454,9 +4798,367 @@ function reviseResult(
   });
 }
 
+function bindSupersessionResult(
+  result: TeamReturnIntakeResult,
+  supersession: TeamReturnSupersessionBinding,
+  candidateRoot: string,
+  expected: readonly { readonly path: string; readonly sha256: string; readonly size: number }[],
+  sourceProof: TeamReturnCheckoutEvidence,
+  changedPathIdentities: readonly ChangedPathIdentity[],
+  waveTreeIdentities: readonly GitTreeFileIdentity[],
+  priorCommit: string,
+  centralRoot: string,
+  teamAuthority: TeamAuthority,
+  mechanicalAdmissions: ReadonlyMap<string, CentralMechanicalValidation>,
+): TeamReturnIntakeResult {
+  const { receiptSha256: _receiptSha256, ...base } = result;
+  const publication = constantResult({
+    ...base,
+    mode: 'ACCEPT',
+    copy: {
+      ...base.copy,
+      disposition: 'SUPERSESSION_COMMITTED',
+      stagedCompleteCount: result.rows.filter((row) => row.status === 'COMPLETE').length,
+    },
+    supersession,
+  });
+  const artifacts = makeAcceptanceArtifacts(
+    publication,
+    supersession,
+    candidateRoot,
+    expected,
+    sourceProof,
+    changedPathIdentities,
+    waveTreeIdentities,
+    priorCommit,
+    centralRoot,
+    teamAuthority,
+    mechanicalAdmissions,
+  );
+  const selected =
+    result.mode === 'ACCEPT'
+      ? publication
+      : constantResult({
+          ...base,
+          copy: {
+            ...base.copy,
+            disposition: 'SUPERSESSION_READY',
+            stagedCompleteCount: 0,
+          },
+          supersession,
+        });
+  const { receiptSha256: _selectedReceiptSha256, ...selectedBase } = selected;
+  return constantResult({
+    ...selectedBase,
+    copy: {
+      ...selected.copy,
+      acceptance: artifacts.handle,
+    },
+  });
+}
+
 function makeEmptyAggregates(): TeamReturnIntakeResult['aggregates'] {
   const empty = digest(canonical([]));
   return { rootSha256: empty, rowSha256: empty, sourceBatchSha256: empty };
+}
+
+function parseAcceptanceSupersessionBinding(
+  value: unknown,
+  teamId: TeamId,
+): TeamReturnSupersessionBinding | null {
+  const binding = record(value);
+  if (
+    binding === null ||
+    !hasExactKeys(binding, [
+      'acceptanceMarkerRelativePath',
+      'action',
+      'generationId',
+      'newlyCompleteLessonIds',
+      'prior',
+      'replacement',
+      'supersessionId',
+      'unchangedCompleteLessonIds',
+    ]) ||
+    binding.action !== 'SUPERSEDE_FINAL_TEAM' ||
+    !Array.isArray(binding.newlyCompleteLessonIds) ||
+    !Array.isArray(binding.unchangedCompleteLessonIds) ||
+    !DIGEST.test(String(binding.generationId)) ||
+    !DIGEST.test(String(binding.supersessionId))
+  ) {
+    return null;
+  }
+  const prior = record(binding.prior);
+  const replacement = record(binding.replacement);
+  const sideKeys = [
+    'copyIdentitySha256',
+    'rootSha256',
+    'rowSha256',
+    'sourceBatchSha256',
+    'sourceIdentitySha256',
+    'stagingIdentitySha256',
+    'treeSha256',
+  ];
+  if (
+    prior === null ||
+    replacement === null ||
+    !hasExactKeys(prior, [...sideKeys, 'receiptSha256']) ||
+    !hasExactKeys(replacement, sideKeys) ||
+    [...sideKeys, 'receiptSha256'].some((key) => !DIGEST.test(String(prior[key]))) ||
+    sideKeys.some((key) => !DIGEST.test(String(replacement[key]))) ||
+    binding.acceptanceMarkerRelativePath !==
+      `${ACCEPTANCE_RELATIVE_ROOT}/commits/${String(binding.supersessionId)}` ||
+    [...binding.newlyCompleteLessonIds, ...binding.unchangedCompleteLessonIds].some(
+      (lessonId) => typeof lessonId !== 'string' || !LESSON_ID.test(lessonId),
+    )
+  ) {
+    return null;
+  }
+  const expectedSupersessionId = digest(
+    canonical({
+      action: binding.action,
+      prior,
+      scope: 'FINAL_TEAM',
+      teamId,
+    }),
+  );
+  const generationCore = {
+    action: binding.action,
+    acceptanceMarkerRelativePath: binding.acceptanceMarkerRelativePath,
+    newlyCompleteLessonIds: binding.newlyCompleteLessonIds,
+    prior,
+    replacement,
+    supersessionId: binding.supersessionId,
+    teamId,
+    unchangedCompleteLessonIds: binding.unchangedCompleteLessonIds,
+  };
+  return expectedSupersessionId === binding.supersessionId &&
+    digest(canonical(generationCore)) === binding.generationId
+    ? (binding as unknown as TeamReturnSupersessionBinding)
+    : null;
+}
+
+async function commitAcceptanceArtifact(input: {
+  readonly candidateRoot: string;
+  readonly exceptions: TeamReturnException[];
+  readonly expected: readonly {
+    readonly path: string;
+    readonly sha256: string;
+    readonly size: number;
+  }[];
+  readonly finalRoot: string;
+  readonly onBeforeAcceptanceObjectValidation?: TeamReturnIntakeDependencies['onBeforeAcceptanceObjectValidation'];
+  readonly onBeforeSupersessionPublish?: (destination: string) => void;
+  readonly onSupersessionBoundary?: (boundary: TeamReturnSupersessionBoundary) => void;
+  readonly reinspectCheckout?: () => Promise<TeamReturnCheckoutEvidence>;
+  readonly result: TeamReturnIntakeResult;
+  readonly scopeId: string;
+  readonly stagingIdentitySha256: string;
+  readonly supersession: TeamReturnSupersessionBinding;
+  readonly teamId: TeamId;
+  readonly validatedCheckoutEvidence: TeamReturnCheckoutEvidence;
+  readonly acceptanceSourceProof: TeamReturnCheckoutEvidence;
+  readonly acceptanceChangedPathIdentities: readonly ChangedPathIdentity[];
+  readonly acceptanceWaveTreeIdentities: readonly GitTreeFileIdentity[];
+  readonly acceptancePriorCommit: string;
+  readonly centralRoot: string;
+  readonly reviewedGitRoot: string;
+  readonly teamAuthority: TeamAuthority;
+  readonly mechanicalAdmissions: ReadonlyMap<string, CentralMechanicalValidation>;
+}): Promise<TeamReturnIntakeResult> {
+  const teamRoot = dirname(input.finalRoot);
+  const handle = input.result.copy.acceptance;
+  if (handle === undefined) throw new Error('ACCEPTANCE_HANDLE_MISSING');
+  const trustedAuthority = {
+    centralRoot: input.centralRoot,
+    gitRoot: input.reviewedGitRoot,
+    teamAuthority: input.teamAuthority,
+  };
+  const replay = (): TeamReturnIntakeResult | null => {
+    const marker = inspectAcceptanceMarker(
+      teamRoot,
+      handle.markerRelativePath,
+      handle.manifestSha256,
+    );
+    if (marker === null) return null;
+    const loaded = loadAcceptanceState(
+      teamRoot,
+      handle.manifestSha256,
+      undefined,
+      trustedAuthority,
+    );
+    const chain = validatedSupersessionChain(input.finalRoot, trustedAuthority);
+    const terminal = chain?.at(-1);
+    if (
+      loaded === null ||
+      terminal === undefined ||
+      terminal.receipt.receiptSha256 !== loaded.state.receipt.receiptSha256 ||
+      canonical(loaded.binding) !== canonical(input.supersession) ||
+      canonical(loaded.state.inventory) !== canonical(input.expected) ||
+      loaded.state.receipt.receiptSha256 !== input.result.receiptSha256
+    ) {
+      addException(input.exceptions, 'STAGING_MISMATCH', 'COPY', {
+        markerRelativePath: handle.markerRelativePath,
+        reason: 'ACCEPTANCE_MARKER_CONFLICT',
+      });
+      return reviseResult(
+        input.result,
+        'REJECTED',
+        {
+          disposition: 'REFUSED_MISMATCH',
+          stagedCompleteCount: 0,
+          acceptance: handle,
+          stagingIdentitySha256: input.stagingIdentitySha256,
+        },
+        input.exceptions,
+      );
+    }
+    return reviseResult(
+      input.result,
+      'ACCEPTED',
+      {
+        acceptance: { ...handle, marker, objects: loaded.objects },
+        disposition: 'PRESENT_IDENTICAL',
+        stagedCompleteCount: input.result.rows.filter((row) => row.status === 'COMPLETE').length,
+        stagingIdentitySha256: input.stagingIdentitySha256,
+      },
+      input.exceptions,
+    );
+  };
+  const existing = replay();
+  if (existing !== null) return existing;
+  try {
+    const artifacts = makeAcceptanceArtifacts(
+      reviseResult(
+        input.result,
+        'ACCEPTED',
+        {
+          disposition: 'SUPERSESSION_COMMITTED',
+          stagedCompleteCount: input.result.rows.filter((row) => row.status === 'COMPLETE').length,
+          stagingIdentitySha256: input.stagingIdentitySha256,
+        },
+        [],
+      ),
+      input.supersession,
+      input.candidateRoot,
+      input.expected,
+      input.acceptanceSourceProof,
+      input.acceptanceChangedPathIdentities,
+      input.acceptanceWaveTreeIdentities,
+      input.acceptancePriorCommit,
+      input.centralRoot,
+      input.teamAuthority,
+      input.mechanicalAdmissions,
+    );
+    if (
+      artifacts.handle.archiveSha256 !== handle.archiveSha256 ||
+      artifacts.handle.manifestSha256 !== handle.manifestSha256 ||
+      artifacts.handle.receiptSha256 !== handle.receiptSha256
+    ) {
+      throw new Error('ACCEPTANCE_PROJECTION_CHANGED');
+    }
+    if (input.reinspectCheckout !== undefined) {
+      const currentEvidence = await input.reinspectCheckout();
+      if (canonical(currentEvidence) !== canonical(input.validatedCheckoutEvidence)) {
+        throw new Error('SOURCE_REPOSITORY_DRIFT');
+      }
+    }
+    const store = openAcceptanceStore(teamRoot);
+    const archiveIdentity = writeImmutableObject(
+      store,
+      teamRoot,
+      'archive',
+      artifacts.archiveBytes,
+      handle.archiveSha256,
+      digest,
+      input.onSupersessionBoundary,
+      input.onBeforeAcceptanceObjectValidation,
+    );
+    const receiptIdentity = writeImmutableObject(
+      store,
+      teamRoot,
+      'receipt',
+      artifacts.receiptBytes,
+      handle.receiptSha256,
+      digest,
+      input.onSupersessionBoundary,
+      input.onBeforeAcceptanceObjectValidation,
+    );
+    const manifestIdentity = writeImmutableObject(
+      store,
+      teamRoot,
+      'manifest',
+      artifacts.manifestBytes,
+      handle.manifestSha256,
+      digest,
+      input.onSupersessionBoundary,
+      input.onBeforeAcceptanceObjectValidation,
+    );
+    const objects = {
+      archive: archiveIdentity,
+      manifest: manifestIdentity,
+      receipt: receiptIdentity,
+    };
+    if (loadAcceptanceState(teamRoot, handle.manifestSha256, objects, trustedAuthority) === null) {
+      throw new Error('ACCEPTANCE_OBJECT_SET_INVALID');
+    }
+    let marker: AcceptanceMarkerIdentity;
+    try {
+      const markerPath = join(teamRoot, handle.markerRelativePath);
+      input.onBeforeSupersessionPublish?.(markerPath);
+      marker = createAcceptanceMarker(
+        store,
+        teamRoot,
+        handle.markerRelativePath,
+        handle.manifestSha256,
+        input.onSupersessionBoundary,
+      );
+    } catch (error) {
+      const raced = replay();
+      if (raced !== null) return raced;
+      throw error;
+    }
+    const publishedChain = validatedSupersessionChain(input.finalRoot, trustedAuthority);
+    if (
+      publishedChain === null ||
+      publishedChain.at(-1)?.receipt.receiptSha256 !== input.result.receiptSha256
+    ) {
+      throw new Error('ACCEPTANCE_PUBLICATION_INVALID');
+    }
+    return reviseResult(
+      input.result,
+      'ACCEPTED',
+      {
+        acceptance: { ...handle, marker, objects },
+        disposition: 'SUPERSESSION_COMMITTED',
+        stagedCompleteCount: input.result.rows.filter((row) => row.status === 'COMPLETE').length,
+        stagingIdentitySha256: input.stagingIdentitySha256,
+      },
+      input.exceptions,
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (message === 'SOURCE_REPOSITORY_DRIFT') {
+      addException(input.exceptions, 'SOURCE_REPOSITORY_DRIFT', 'COPY', {
+        scopeId: input.scopeId,
+        teamId: input.teamId,
+      });
+    }
+    addException(input.exceptions, 'SUPERSESSION_TRANSACTION_FAILED', 'COPY', {
+      error: message,
+      markerRelativePath: handle.markerRelativePath,
+    });
+    return reviseResult(
+      input.result,
+      'REJECTED',
+      {
+        acceptance: handle,
+        disposition: 'FAILED',
+        stagedCompleteCount: 0,
+        stagingIdentitySha256: input.stagingIdentitySha256,
+      },
+      input.exceptions,
+    );
+  }
 }
 
 async function stageAcceptedBatch(input: {
@@ -2472,10 +5174,22 @@ async function stageAcceptedBatch(input: {
   readonly rows: readonly TeamReturnIntakeRow[];
   readonly result: TeamReturnIntakeResult;
   readonly copyFile: (source: string, destination: string) => Promise<void>;
-  readonly chmodPath: (path: string, mode: number) => void;
+  readonly chmodPath?: (path: string, mode: number) => void;
   readonly exceptions: TeamReturnException[];
   readonly reinspectCheckout?: () => Promise<TeamReturnCheckoutEvidence>;
   readonly validatedCheckoutEvidence: TeamReturnCheckoutEvidence;
+  readonly supersession?: TeamReturnSupersessionBinding;
+  readonly supersessionRequest?: TeamReturnSupersessionRequest;
+  readonly acceptanceSourceProof: TeamReturnCheckoutEvidence;
+  readonly acceptanceChangedPathIdentities: readonly ChangedPathIdentity[];
+  readonly acceptanceWaveTreeIdentities: readonly GitTreeFileIdentity[];
+  readonly acceptancePriorCommit: string;
+  readonly reviewedGitRoot: string;
+  readonly teamAuthority: TeamAuthority;
+  readonly mechanicalAdmissions: ReadonlyMap<string, CentralMechanicalValidation>;
+  readonly onBeforeAcceptanceObjectValidation?: TeamReturnIntakeDependencies['onBeforeAcceptanceObjectValidation'];
+  readonly onBeforeSupersessionPublish?: (destination: string) => void;
+  readonly onSupersessionBoundary?: (boundary: TeamReturnSupersessionBoundary) => void;
 }): Promise<TeamReturnIntakeResult> {
   const expected = input.expected;
   const stagingRoot = join(input.centralRoot, TEAM_RETURN_STAGING_RELATIVE_ROOT);
@@ -2488,7 +5202,48 @@ async function stageAcceptedBatch(input: {
     }),
   );
   if (existsSync(finalRoot)) {
-    if (!compareStaged(finalRoot, expected, input.result, true)) {
+    const staged = verifyStagedState(finalRoot);
+    const exactCompletedReplay = false;
+    if (
+      staged !== null &&
+      (stagedStateMatchesReplacement(staged, input.result, expected) || exactCompletedReplay) &&
+      (!existsSync(join(dirname(finalRoot), ACCEPTANCE_RELATIVE_ROOT, 'commits')) ||
+        input.supersessionRequest !== undefined)
+    ) {
+      if (
+        !exactCompletedReplay &&
+        input.supersessionRequest !== undefined &&
+        input.supersessionRequest.expectedPriorSourceBatchSha256 ===
+          staged.receipt.aggregates.sourceBatchSha256 &&
+        input.supersessionRequest.expectedPriorStagingIdentitySha256 ===
+          staged.receipt.copy.stagingIdentitySha256
+      ) {
+        addException(input.exceptions, 'SUPERSESSION_AUTHORITY_INVALID', 'COPY', {
+          reason: 'SAME_BATCH',
+        });
+        return reviseResult(
+          input.result,
+          'REJECTED',
+          {
+            disposition: 'REFUSED_MISMATCH',
+            stagedCompleteCount: 0,
+            stagingIdentitySha256,
+          },
+          input.exceptions,
+        );
+      }
+      return reviseResult(
+        input.result,
+        'ACCEPTED',
+        {
+          disposition: 'PRESENT_IDENTICAL',
+          stagedCompleteCount: input.rows.filter((row) => row.status === 'COMPLETE').length,
+          stagingIdentitySha256,
+        },
+        input.exceptions,
+      );
+    }
+    if (input.supersession === undefined) {
       addException(input.exceptions, 'STAGING_MISMATCH', 'COPY', {
         scopeId: input.scopeId,
         teamId: input.teamId,
@@ -2504,16 +5259,12 @@ async function stageAcceptedBatch(input: {
         input.exceptions,
       );
     }
-    return reviseResult(
-      input.result,
-      'ACCEPTED',
-      {
-        disposition: 'PRESENT_IDENTICAL',
-        stagedCompleteCount: input.rows.filter((row) => row.status === 'COMPLETE').length,
-        stagingIdentitySha256,
-      },
-      input.exceptions,
-    );
+    return await commitAcceptanceArtifact({
+      ...input,
+      finalRoot,
+      stagingIdentitySha256,
+      supersession: input.supersession,
+    });
   }
   mkdirSync(dirname(finalRoot), { recursive: true, mode: 0o700 });
   const temporary = join(
@@ -2548,7 +5299,7 @@ async function stageAcceptedBatch(input: {
       mode: 0o400,
       flag: 'wx',
     });
-    hardenIncomingTree(temporary, input.chmodPath);
+    hardenIncomingTree(temporary, input.chmodPath ?? chmodSync);
     if (!compareStaged(temporary, expected, input.result, true)) {
       throw new Error('HARDENING_VERIFICATION_FAILED');
     }
@@ -2599,6 +5350,7 @@ export async function intakeTeamReturn(
   let derived: { readonly candidateRoot: string; readonly teamId: TeamId } | null = null;
   let scope: TeamReturnIntakeResult['scope'] = { id: 'UNKNOWN', kind: 'UNKNOWN', rowCount: 0 };
   const rows: TeamReturnIntakeRow[] = [];
+  const mechanicalAdmissions = new Map<string, CentralMechanicalValidation>();
   let assignmentId = '';
   let aggregates = makeEmptyAggregates();
   try {
@@ -2785,6 +5537,7 @@ export async function intakeTeamReturn(
         const mechanical = await (
           dependencies.mechanicalValidate ?? validateTeamReturnCandidateMechanically
         )(lessonRoot, offeredRow.lessonId, centralRoot);
+        mechanicalAdmissions.set(offeredRow.lessonId, mechanical);
         if (
           mechanical.structural !== 'PASS' ||
           mechanical.computedQuality !== 'PASS' ||
@@ -2822,6 +5575,37 @@ export async function intakeTeamReturn(
       sourceBatchSha256: digest(canonical(sourceInventory)),
     };
     if (exceptions.length > 0) {
+      if (request.supersession !== undefined) {
+        const provisional = makePartialResult({
+          aggregates,
+          assignmentId,
+          copy: {
+            disposition: 'VALIDATION_REJECTED',
+            stagedCompleteCount: 0,
+            stagingIdentitySha256: digest(canonical({ scopeId: scope.id, teamId: derived.teamId })),
+          },
+          decision: 'REJECTED',
+          exceptions,
+          finalization,
+          materialized,
+          mode,
+          rows,
+          scope,
+          sourceKind: request.source.kind,
+          teamAuthority,
+          teamId: derived.teamId,
+        });
+        makeSupersessionBinding({
+          centralRoot,
+          exceptions,
+          expected: sourceInventory,
+          finalRoot: join(centralRoot, TEAM_RETURN_STAGING_RELATIVE_ROOT, derived.teamId, scope.id),
+          request: request.supersession,
+          result: provisional,
+          gitRoot: materialized.checkoutRoot as string,
+          teamAuthority,
+        });
+      }
       return makePartialResult({
         aggregates,
         assignmentId,
@@ -2842,7 +5626,7 @@ export async function intakeTeamReturn(
         teamId: derived.teamId,
       });
     }
-    const accepted = makePartialResult({
+    let accepted = makePartialResult({
       aggregates,
       assignmentId,
       copy: {
@@ -2868,6 +5652,139 @@ export async function intakeTeamReturn(
       teamAuthority,
       teamId: derived.teamId,
     });
+    let supersession: TeamReturnSupersessionBinding | undefined;
+    let acceptanceSourceProof = materialized.checkoutEvidence;
+    let acceptanceChangedPathIdentities = materialized.changedPathIdentities;
+    let acceptanceWaveTreeIdentities: readonly GitTreeFileIdentity[] = [];
+    let acceptancePriorCommit = materialized.checkoutEvidence.headCommit;
+    if (request.supersession !== undefined) {
+      const finalRoot = join(
+        centralRoot,
+        TEAM_RETURN_STAGING_RELATIVE_ROOT,
+        derived.teamId,
+        scope.id,
+      );
+      supersession =
+        makeSupersessionBinding({
+          centralRoot,
+          exceptions,
+          expected: sourceInventory,
+          finalRoot,
+          request: request.supersession,
+          result: accepted,
+          gitRoot: materialized.checkoutRoot as string,
+          teamAuthority,
+        }) ?? undefined;
+      if (supersession === undefined) {
+        return reviseResult(
+          accepted,
+          'REJECTED',
+          {
+            disposition: 'REFUSED_MISMATCH',
+            stagedCompleteCount: 0,
+            stagingIdentitySha256: accepted.copy.stagingIdentitySha256,
+          },
+          exceptions,
+        );
+      }
+      if (supersession !== undefined) {
+        const predecessor = findSupersessionPredecessor(finalRoot, request.supersession, {
+          centralRoot,
+          gitRoot: materialized.checkoutRoot as string,
+          teamAuthority,
+        });
+        if (predecessor === null) throw new Error('SUPERSESSION_PREDECESSOR_UNAVAILABLE');
+        const reviewedSource = reviewedSupersessionSource(
+          materialized,
+          predecessor.receipt.source.headCommit,
+          derived.teamId,
+          supersession.newlyCompleteLessonIds,
+        );
+        acceptanceSourceProof = reviewedSource.evidence;
+        acceptanceChangedPathIdentities = [...reviewedSource.identities];
+        acceptanceWaveTreeIdentities = reviewedSource.waveTreeIdentities;
+        acceptancePriorCommit = predecessor.receipt.source.headCommit;
+        accepted = bindSupersessionResult(
+          accepted,
+          supersession,
+          derived.candidateRoot,
+          sourceInventory,
+          reviewedSource.evidence,
+          reviewedSource.identities,
+          reviewedSource.waveTreeIdentities,
+          predecessor.receipt.source.headCommit,
+          centralRoot,
+          teamAuthority,
+          mechanicalAdmissions,
+        );
+        if (mode === 'DRY_RUN') {
+          const teamRoot = dirname(finalRoot);
+          const handle = accepted.copy.acceptance;
+          if (handle === undefined) throw new Error('ACCEPTANCE_HANDLE_MISSING');
+          const markerPath = join(teamRoot, handle.markerRelativePath);
+          if (existsSync(markerPath) || lstatExists(markerPath)) {
+            const marker = inspectAcceptanceMarker(
+              teamRoot,
+              handle.markerRelativePath,
+              handle.manifestSha256,
+            );
+            const stagedGeneration =
+              marker === null
+                ? null
+                : loadAcceptanceState(teamRoot, handle.manifestSha256, undefined, {
+                    centralRoot,
+                    gitRoot: materialized.checkoutRoot as string,
+                    teamAuthority,
+                  });
+            const chain = validatedSupersessionChain(finalRoot, {
+              centralRoot,
+              gitRoot: materialized.checkoutRoot as string,
+              teamAuthority,
+            });
+            if (
+              stagedGeneration === null ||
+              chain === null ||
+              chain.at(-1)?.receipt.receiptSha256 !==
+                stagedGeneration.state.receipt.receiptSha256 ||
+              stagedGeneration.state.receipt.receiptSha256 !== accepted.receiptSha256 ||
+              canonical(stagedGeneration.state.inventory) !== canonical(sourceInventory)
+            ) {
+              addException(exceptions, 'STAGING_MISMATCH', 'COPY', {
+                markerRelativePath: handle.markerRelativePath,
+                reason: 'ACCEPTANCE_MARKER_CONFLICT',
+              });
+              return reviseResult(
+                accepted,
+                'REJECTED',
+                {
+                  acceptance: handle,
+                  disposition: 'REFUSED_MISMATCH',
+                  stagedCompleteCount: 0,
+                  stagingIdentitySha256: accepted.copy.stagingIdentitySha256,
+                },
+                exceptions,
+              );
+            }
+            accepted = reviseResult(
+              accepted,
+              'ACCEPTED',
+              {
+                acceptance: {
+                  ...handle,
+                  ...(marker === null || stagedGeneration === null
+                    ? {}
+                    : { marker, objects: stagedGeneration.objects }),
+                },
+                disposition: 'PRESENT_IDENTICAL',
+                stagedCompleteCount: rows.filter((row) => row.status === 'COMPLETE').length,
+                stagingIdentitySha256: accepted.copy.stagingIdentitySha256,
+              },
+              exceptions,
+            );
+          }
+        }
+      }
+    }
     if (mode === 'DRY_RUN') return accepted;
     const validatedMaterialized = materialized;
     const validatedFinalization = finalization;
@@ -2875,7 +5792,7 @@ export async function intakeTeamReturn(
       candidateRoot: derived.candidateRoot,
       centralRoot,
       copyFile: dependencies.copyFile ?? nodeCopyFile,
-      chmodPath: dependencies.chmodPath ?? chmodSync,
+      ...(dependencies.chmodPath === undefined ? {} : { chmodPath: dependencies.chmodPath }),
       expected: sourceInventory,
       exceptions,
       ...(validatedMaterialized.kind === 'CHECKOUT' &&
@@ -2891,8 +5808,28 @@ export async function intakeTeamReturn(
       result: accepted,
       rows,
       scopeId: scope.id,
+      ...(supersession === undefined ? {} : { supersession }),
+      ...(request.supersession === undefined ? {} : { supersessionRequest: request.supersession }),
+      ...(dependencies.onSupersessionBoundary === undefined
+        ? {}
+        : { onSupersessionBoundary: dependencies.onSupersessionBoundary }),
+      ...(dependencies.onBeforeSupersessionPublish === undefined
+        ? {}
+        : { onBeforeSupersessionPublish: dependencies.onBeforeSupersessionPublish }),
+      ...(dependencies.onBeforeAcceptanceObjectValidation === undefined
+        ? {}
+        : {
+            onBeforeAcceptanceObjectValidation: dependencies.onBeforeAcceptanceObjectValidation,
+          }),
       teamId: derived.teamId,
       validatedCheckoutEvidence: validatedMaterialized.checkoutEvidence,
+      acceptanceSourceProof,
+      acceptanceChangedPathIdentities,
+      acceptanceWaveTreeIdentities,
+      acceptancePriorCommit,
+      reviewedGitRoot: validatedMaterialized.checkoutRoot as string,
+      teamAuthority,
+      mechanicalAdmissions,
     });
   } catch (error) {
     if (
