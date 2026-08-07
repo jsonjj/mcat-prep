@@ -23,6 +23,16 @@ describe('team intake CLI arguments', () => {
     expect(() =>
       parseTeamIntakeCliArguments(['--checkout-root', '/fixed/team-wave', '--team', 'team-A']),
     ).toThrow(/UNSUPPORTED_ARGUMENT/);
+    for (const [flag, value] of [
+      ['--validator-root', '/caller/validator'],
+      ['--validator-bundle', '/caller/repository.bundle'],
+      ['--repository-url', 'https://attacker.invalid/repository.git'],
+      ['--repository-commit', '0'.repeat(40)],
+    ] as const) {
+      expect(() =>
+        parseTeamIntakeCliArguments(['--checkout-root', '/fixed/team-wave', flag, value]),
+      ).toThrow(/UNSUPPORTED_ARGUMENT/);
+    }
   });
 
   it('accepts only archive and attestation paths and rejects caller-selected signer keys', () => {

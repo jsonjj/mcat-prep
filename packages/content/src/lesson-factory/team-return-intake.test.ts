@@ -19,6 +19,7 @@ import {
 } from 'node:fs';
 import { copyFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
+import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -80,6 +81,29 @@ const FIXTURE_ROOT = join(
   REPOSITORY_ROOT,
   '.tmp/scratch/lesson-factory-2026-08-03T1727-0500/wp-08/tests',
 );
+const CURRENT_INTAKE_AUTHORITY_PATHS = [
+  'packages/content/package.json',
+  'packages/content/src/lesson-factory/kit-identity-aggregate.ts',
+  'packages/content/src/lesson-factory/team-return-acceptance-artifact.ts',
+  'packages/content/src/lesson-factory/team-return-intake.ts',
+  'packages/content/src/lesson-factory/team-return-runtime-authorization.json',
+  'packages/content/src/lesson-factory/team-return-runtime-child-bootstrap.mjs',
+  'packages/content/src/lesson-factory/team-return-runtime-supervisor.mjs',
+  'packages/content/src/lesson-normalization/index.ts',
+  'packages/content/src/lesson-normalization/normalize.ts',
+  'packages/content/src/lesson-normalization/types.ts',
+  'packages/content/src/lesson-validator/canonical.ts',
+  'packages/content/src/lesson-validator/computed-quality.ts',
+  'packages/content/src/lesson-validator/index.ts',
+  'packages/content/src/lesson-validator/proposed-kcs.ts',
+  'packages/content/src/lesson-validator/rehash.ts',
+  'packages/content/src/lesson-validator/resolvable.ts',
+  'packages/content/src/lesson-validator/rules.ts',
+  'packages/content/src/lesson-validator/types.ts',
+  'packages/content/src/lesson-validator/validate.ts',
+  'tools/content-cli/package.json',
+  'tools/content-cli/src/team-intake-main.ts',
+] as const;
 const PINNED_COMMIT = '1'.repeat(40);
 const HEAD_COMMIT = '2'.repeat(40);
 const SHA = /^[0-9a-f]{64}$/;
@@ -267,9 +291,11 @@ function gitWithInput(root: string, args: readonly string[], input: string): str
   }).trim();
 }
 
-function commitAll(root: string, message: string): string {
+function commitAll(root: string, message: string, deterministic = false): string {
   git(root, ['add', '--all']);
-  git(root, [
+  const args = [
+    '-C',
+    root,
     '-c',
     'user.name=WP08 Test',
     '-c',
@@ -277,7 +303,25 @@ function commitAll(root: string, message: string): string {
     'commit',
     '-m',
     message,
-  ]);
+  ];
+  if (deterministic) {
+    execFileSync('/usr/bin/git', args, {
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        GIT_AUTHOR_DATE: '2026-08-05T20:00:00-05:00',
+        GIT_COMMITTER_DATE: '2026-08-05T20:00:00-05:00',
+      },
+      shell: false,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+  } else {
+    execFileSync('/usr/bin/git', args, {
+      encoding: 'utf8',
+      shell: false,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+  }
   return git(root, ['rev-parse', 'HEAD']);
 }
 
@@ -1876,7 +1920,20 @@ async function prepareFinalTeamSupersession(
     '60f6e45f564c3c5ab100f896f2bf11bca83e8a98',
   ]);
   const centralRoot = join(root, 'central');
-  cpSync(checkoutRoot, centralRoot, { recursive: true });
+  execFileSync(
+    '/usr/bin/git',
+    ['clone', '--local', '--no-hardlinks', REPOSITORY_ROOT, centralRoot],
+    {
+      stdio: 'ignore',
+    },
+  );
+  git(centralRoot, ['remote', 'set-url', 'origin', 'https://github.com/jsonjj/mcat-prep.git']);
+  for (const path of CURRENT_INTAKE_AUTHORITY_PATHS) {
+    const destination = join(centralRoot, path);
+    mkdirSync(dirname(destination), { recursive: true });
+    cpSync(join(REPOSITORY_ROOT, path), destination);
+  }
+  commitAll(centralRoot, 'install current intake authority', true);
   cpSync(
     join(REPOSITORY_ROOT, 'content/lesson-factory/assignments/team-B-30.json'),
     join(centralRoot, 'content/lesson-factory/assignments/team-B-30.json'),
@@ -1945,6 +2002,119 @@ async function prepareFinalTeamSupersession(
     fixture,
     prior,
   };
+}
+
+function makeCurrentHeadTeamBFixture(options: { readonly copyAuthority?: boolean } = {}): Fixture {
+  fixtureOrdinal += 1;
+  const root = join(
+    FIXTURE_ROOT,
+    `current-head-team-b-${process.pid}-${String(fixtureOrdinal).padStart(3, '0')}`,
+  );
+  fixtureRoots.add(root);
+  rmSync(root, { force: true, recursive: true });
+  mkdirSync(root, { recursive: true });
+  const checkoutRoot = join(root, 'checkout');
+  execFileSync(
+    '/usr/bin/git',
+    [
+      'clone',
+      join(
+        REPOSITORY_ROOT,
+        '.tmp/scratch/lesson-factory-2026-08-03T1727-0500/wp-08/team-B-wave-02-package/team-B-wave-02.bundle',
+      ),
+      checkoutRoot,
+    ],
+    { stdio: 'ignore' },
+  );
+  git(checkoutRoot, [
+    'checkout',
+    '-B',
+    'lesson-factory/team-B/wave-01',
+    '60f6e45f564c3c5ab100f896f2bf11bca83e8a98',
+  ]);
+  const centralRoot = join(root, 'central');
+  execFileSync(
+    '/usr/bin/git',
+    ['clone', '--local', '--no-hardlinks', REPOSITORY_ROOT, centralRoot],
+    {
+      stdio: 'ignore',
+    },
+  );
+  git(centralRoot, ['remote', 'set-url', 'origin', 'https://github.com/jsonjj/mcat-prep.git']);
+  for (const path of CURRENT_INTAKE_AUTHORITY_PATHS) {
+    const destination = join(centralRoot, path);
+    mkdirSync(dirname(destination), { recursive: true });
+    cpSync(join(REPOSITORY_ROOT, path), destination);
+  }
+  commitAll(centralRoot, 'install current intake authority', true);
+  cpSync(
+    join(REPOSITORY_ROOT, 'content/lesson-factory/assignments/team-B-30.json'),
+    join(centralRoot, 'content/lesson-factory/assignments/team-B-30.json'),
+  );
+  cpSync(
+    join(REPOSITORY_ROOT, 'content/lesson-factory/packets'),
+    join(centralRoot, 'content/lesson-factory/packets'),
+    { recursive: true },
+  );
+  const authorityRoot =
+    options.copyAuthority === true ? join(root, 'authority') : LIVE_AUTHORITY_ROOT;
+  if (options.copyAuthority === true) {
+    cpSync(LIVE_AUTHORITY_ROOT, authorityRoot, { recursive: true });
+    makeWritable(authorityRoot);
+  }
+  const pinnedCommit = '5fd019fa9fb16bb4ab29885f50a12934483180e3';
+  const headCommit = git(checkoutRoot, ['rev-parse', 'HEAD']);
+  const evidence: TeamReturnCheckoutEvidence = {
+    branch: git(checkoutRoot, ['symbolic-ref', '--short', 'HEAD']),
+    changedPaths: git(checkoutRoot, ['diff', '--name-only', `${pinnedCommit}..${headCommit}`])
+      .split('\n')
+      .filter(Boolean)
+      .sort(),
+    clean: true,
+    headCommit,
+    pinnedAncestor: true,
+  };
+  const candidateRoot = join(checkoutRoot, 'content/lesson-candidates/team-B');
+  return {
+    authorityRoot,
+    candidateRoot,
+    centralRoot,
+    checkoutRoot,
+    dependencies: {},
+    evidence,
+    kitManifestPath: join(
+      authorityRoot,
+      'versions/1bd989d033d31b01a2b02c452450b72086d6497372d0d5c189ff5ea50c475bf2/team-B/KIT-MANIFEST.json',
+    ),
+    lessonIds: (
+      readJson(join(candidateRoot, 'TEAM-HANDOFF.json')).rows as Array<Record<string, unknown>>
+    ).map((row) => String(row.lessonId)),
+    pinnedCommit,
+    request: {
+      authorityRoot,
+      centralRepositoryRoot: centralRoot,
+      mode: 'DRY_RUN',
+      source: { kind: 'CHECKOUT', root: checkoutRoot },
+    },
+    root,
+    team: 'team-B',
+    teamPath: join(candidateRoot, 'TEAM-HANDOFF.json'),
+    wavePath: join(candidateRoot, 'waves/WAVE-01-HANDOFF.json'),
+  };
+}
+
+function makeCurrentHeadTeamBAuthorityProbe(
+  options: { readonly copyAuthority?: boolean } = {},
+): Fixture {
+  const fixture = makeCurrentHeadTeamBFixture(options);
+  rmSync(fixture.candidateRoot, { force: true, recursive: true });
+  mkdirSync(fixture.candidateRoot, { recursive: true });
+  writeJson(join(fixture.candidateRoot, 'authority-probe.json'), {
+    format: 'team-return-authority-probe/1',
+    teamId: 'team-B',
+  });
+  commitFixtureMutation(fixture, 'create lightweight authority probe');
+  return { ...fixture, lessonIds: [] };
 }
 
 function installEquivalentAlternatePrior(fixture: Fixture, actualPriorCommit: string): string {
@@ -2165,6 +2335,188 @@ function expectImmutableTreeModes(root: string): void {
   visit(root);
 }
 
+async function runSupervisorReplacementProbe(replacement: 'EXACT_COPY' | 'CHANGED_BYTES') {
+  const root = join(
+    FIXTURE_ROOT,
+    `supervisor-replacement-${replacement.toLowerCase()}-${Date.now()}-${Math.random()}`,
+  );
+  fixtureRoots.add(root);
+  mkdirSync(root, { recursive: true, mode: 0o700 });
+  const dependencyPath = join(root, 'dependency.mjs');
+  const entryPath = join(root, 'entry.mjs');
+  const configurationPath = join(root, 'configuration.json');
+  const dependencyBytes = Buffer.from(`export const value = 'AUTHORIZED';\n`);
+  writeFileSync(dependencyPath, dependencyBytes, { mode: 0o400 });
+  writeFileSync(
+    entryPath,
+    `import { value } from './dependency.mjs';\nprocess.stdout.write(\`\${value}\\n\`);\n`,
+    { mode: 0o400 },
+  );
+  const files = [dependencyPath, entryPath].map((path) => {
+    const info = lstatSync(path);
+    const bytes = readFileSync(path);
+    return {
+      device: info.dev,
+      inode: info.ino,
+      path,
+      sha256: sha256(bytes),
+      size: info.size,
+    };
+  });
+  const nonce = 'a'.repeat(64);
+  writeFileSync(
+    configurationPath,
+    `${canonical({
+      arguments: [],
+      files,
+      node: process.execPath,
+      nonce,
+      sealedRoots: [root],
+      tsxCli: entryPath,
+    })}\n`,
+    { mode: 0o400 },
+  );
+  const supervisorPath = join(
+    REPOSITORY_ROOT,
+    'packages/content/src/lesson-factory/team-return-runtime-supervisor.mjs',
+  );
+  const child = spawn(process.execPath, [supervisorPath, configurationPath], {
+    cwd: root,
+    stdio: ['pipe', 'pipe', 'pipe', 'pipe'],
+  });
+  let stderr = '';
+  child.stderr?.on('data', (chunk: Buffer) => {
+    stderr += chunk.toString('utf8');
+  });
+  const observation = child.stdio[3];
+  if (observation === null || typeof observation === 'undefined' || !('on' in observation)) {
+    throw new Error('supervisor observation unavailable');
+  }
+  await new Promise<void>((resolveReady, rejectReady) => {
+    let output = '';
+    observation.on('data', (chunk: Buffer) => {
+      output += chunk.toString('utf8');
+      if (output.endsWith('\n')) resolveReady();
+    });
+    child.once('exit', (code, signal) => {
+      rejectReady(new Error(`supervisor exited before replacement: ${code}/${signal}`));
+    });
+  });
+  const replacementPath = join(root, 'dependency-replacement.mjs');
+  writeFileSync(
+    replacementPath,
+    replacement === 'EXACT_COPY' ? dependencyBytes : `export const value = 'TAMPERED';\n`,
+    { mode: 0o400 },
+  );
+  renameSync(replacementPath, dependencyPath);
+  child.stdin?.end(`GO ${nonce}\n`);
+  const exit = (await once(child, 'exit')) as [number | null, NodeJS.Signals | null];
+  return {
+    signal: exit[1],
+    status: exit[0],
+    stderr,
+  };
+}
+
+async function crashValidatorLeaseBoundary(
+  request: TeamReturnIntakeRequest,
+  boundary: 'BEFORE_MKDIR' | 'AFTER_MKDIR_BEFORE_INODE_UPDATE' | 'AFTER_INODE_UPDATE',
+): Promise<{ readonly leasePath: string; readonly root: string }> {
+  const preload = `
+    import fs from 'node:fs';
+    import { syncBuiltinESMExports } from 'node:module';
+    const boundary = process.env.WP08_VALIDATOR_LEASE_BOUNDARY;
+    const originalMkdirSync = fs.mkdirSync;
+    const originalRenameSync = fs.renameSync;
+    const pause = (leasePath, root) => {
+      fs.writeFileSync(1, \`WP08_VALIDATOR_LEASE:\${JSON.stringify({ leasePath, root })}\\n\`);
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0);
+    };
+    fs.mkdirSync = function(path, options) {
+      const value = String(path);
+      const match = /mcat-team-validator-recovery-v1\\/snapshot-([0-9a-f]{64})$/.exec(value);
+      if (match !== null && boundary === 'BEFORE_MKDIR') {
+        pause(value.replace(/snapshot-([0-9a-f]{64})$/, 'lease-$1.json'), value);
+      }
+      const result = originalMkdirSync.apply(this, arguments);
+      if (match !== null && boundary === 'AFTER_MKDIR_BEFORE_INODE_UPDATE') {
+        pause(value.replace(/snapshot-([0-9a-f]{64})$/, 'lease-$1.json'), value);
+      }
+      return result;
+    };
+    fs.renameSync = function(source, destination) {
+      const result = originalRenameSync.apply(this, arguments);
+      const value = String(destination);
+      if (
+        boundary === 'AFTER_INODE_UPDATE' &&
+        /mcat-team-validator-recovery-v1\\/lease-[0-9a-f]{64}\\.json$/.test(value)
+      ) {
+        const lease = JSON.parse(fs.readFileSync(value, 'utf8'));
+        if (lease.sequence === 1 && Number.isSafeInteger(lease.snapshot?.device)) {
+          pause(value, lease.root);
+        }
+      }
+      return result;
+    };
+    syncBuiltinESMExports();
+  `;
+  const script = `
+    const { intakeTeamReturn } = await import(${JSON.stringify(
+      pathToFileURL(
+        join(REPOSITORY_ROOT, 'packages/content/src/lesson-factory/team-return-intake.ts'),
+      ).href,
+    )});
+    await intakeTeamReturn(JSON.parse(process.env.WP08_VALIDATOR_LEASE_REQUEST));
+  `;
+  const child = spawn(
+    process.execPath,
+    [
+      '--import',
+      `data:text/javascript,${encodeURIComponent(preload)}`,
+      '--import',
+      requireFromTest.resolve('tsx'),
+      '--input-type=module',
+      '--eval',
+      script,
+    ],
+    {
+      cwd: REPOSITORY_ROOT,
+      env: {
+        ...process.env,
+        WP08_VALIDATOR_LEASE_BOUNDARY: boundary,
+        WP08_VALIDATOR_LEASE_REQUEST: JSON.stringify(request),
+      },
+      stdio: ['ignore', 'pipe', 'pipe'],
+    },
+  );
+  const artifact = await new Promise<{ readonly leasePath: string; readonly root: string }>(
+    (resolveReady, rejectReady) => {
+      let output = '';
+      let errors = '';
+      child.stdout.on('data', (chunk: Buffer) => {
+        output += chunk.toString('utf8');
+        const line = output
+          .split('\n')
+          .find((candidate) => candidate.startsWith('WP08_VALIDATOR_LEASE:'));
+        if (line !== undefined) {
+          resolveReady(JSON.parse(line.slice('WP08_VALIDATOR_LEASE:'.length)));
+        }
+      });
+      child.stderr.on('data', (chunk: Buffer) => {
+        errors += chunk.toString('utf8');
+      });
+      child.once('exit', (code, signal) => {
+        rejectReady(
+          new Error(`validator lease child exited before ${boundary}: ${code}/${signal} ${errors}`),
+        );
+      });
+    },
+  );
+  child.kill('SIGKILL');
+  await once(child, 'exit');
+  return artifact;
+}
+
 describe('deterministic Team A/B return intake', () => {
   afterEach(() => {
     for (const root of fixtureRoots) {
@@ -2208,6 +2560,691 @@ describe('deterministic Team A/B return intake', () => {
     expect(codes(result)).not.toContain('KIT_AUTHORITY_INVALID');
     expect(codes(result)).toContain('SOURCE_AMBIGUOUS');
   });
+
+  it('uses one pinned generation-3 validator snapshot for all 30 Team B rows', async () => {
+    const fixture = makeCurrentHeadTeamBFixture();
+    const normalizePath = join(
+      fixture.centralRoot,
+      'packages/content/src/lesson-normalization/normalize.ts',
+    );
+    const typesPath = join(
+      fixture.centralRoot,
+      'packages/content/src/lesson-normalization/types.ts',
+    );
+    const before = {
+      normalize: sha256(readFileSync(normalizePath)),
+      types: sha256(readFileSync(typesPath)),
+    };
+
+    const result = await intakeTeamReturn(fixture.request);
+    const validator = (result.authority as unknown as Record<string, unknown>).validator as
+      | Record<string, unknown>
+      | undefined;
+
+    expect(before).toEqual({
+      normalize: 'b514e83dfba0cd743a1327a60b15fd1fcb218942a83fc27abb13154159d577f4',
+      types: '61471b510a851d28ba89c1d2e061c46ef83e9c55a2f972c1bc4f37e975c4db41',
+    });
+    expect(
+      result.decision,
+      JSON.stringify({
+        exceptions: result.exceptions,
+        firstValidatorResult: (validator?.results as unknown[] | undefined)?.[0],
+        mismatches: (
+          (validator?.results as Array<Record<string, unknown>> | undefined) ?? []
+        ).filter((item) => item.receiptMatch !== true),
+      }),
+    ).toBe('ACCEPTED');
+    expect(result.exceptions).toEqual([]);
+    expect(validator).toMatchObject({
+      format: 'lesson-generation-pinned-validator-authority/1',
+      repositoryCommit: '5fd019fa9fb16bb4ab29885f50a12934483180e3',
+      repositoryUrl: 'https://github.com/jsonjj/mcat-prep.git',
+      snapshotCount: 1,
+      validatorAggregateSha256: 'ce30f30bb8873b03673f2d7795e37ad53f4b21485f34de3088c68c60c203af84',
+    });
+    expect((validator?.files as unknown[] | undefined) ?? []).toHaveLength(15);
+    expect((validator?.commandFiles as unknown[] | undefined)?.length ?? 0).toBeGreaterThan(15);
+    expect(validator?.commandFiles).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          path: 'tools/content-cli/src/entry.ts',
+          sha256: expect.stringMatching(SHA),
+        }),
+        expect.objectContaining({
+          path: 'tools/content-cli/src/main.ts',
+          sha256: expect.stringMatching(SHA),
+        }),
+      ]),
+    );
+    expect(validator?.files).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          gitBlobSha1: expect.stringMatching(/^[0-9a-f]{40}$/),
+          gitMode: '100644',
+          path: 'packages/content/src/lesson-normalization/normalize.ts',
+          sha256: 'fd6feb2da8ea4099999dcae03cba95d908c5e9612fbc2c3e4cea58b38da7ff1f',
+          size: expect.any(Number),
+        }),
+        expect.objectContaining({
+          gitBlobSha1: expect.stringMatching(/^[0-9a-f]{40}$/),
+          gitMode: '100644',
+          path: 'packages/content/src/lesson-normalization/types.ts',
+          sha256: 'c1f09aa627f1d5bd897d0c1fe7857f9f7f60a50cc724faf50bceeca0ee215a76',
+          size: expect.any(Number),
+        }),
+      ]),
+    );
+    expect((validator?.centralFiles as unknown[] | undefined) ?? []).toHaveLength(
+      CURRENT_INTAKE_AUTHORITY_PATHS.length,
+    );
+    expect(validator).toMatchObject({
+      bundleMode: 0o644,
+      bundleSha256: expect.stringMatching(SHA),
+      centralCommit: expect.stringMatching(/^[0-9a-f]{40}$/),
+      centralFilesAggregateSha256: expect.stringMatching(SHA),
+      curriculum: {
+        gitBlobSha1: expect.stringMatching(/^[0-9a-f]{40}$/),
+        gitMode: '100644',
+        path: 'curriculum/v3/v3-lesson-authoring-manifest.json',
+        sha256: '3bbe04ae878fe3936b65bb941ce658f2e48fb104670d7b3c3ad1d243cb99eac9',
+        size: expect.any(Number),
+      },
+      nodeExecutableSha256: expect.stringMatching(SHA),
+      nodeVersion: 'v24.17.0',
+      repositoryClean: true,
+      repositoryTreeSha1: expect.stringMatching(/^[0-9a-f]{40}$/),
+      commandFilesAggregateSha256: expect.stringMatching(SHA),
+      runtimeCopyFilesAggregateSha256: expect.stringMatching(SHA),
+      runtimeExecutionBinding: 'SUPERVISED_KERNEL_BOUND',
+      runtimeFilesAggregateSha256: expect.stringMatching(SHA),
+      runtimePrivate: true,
+      runtimeAuthorization: {
+        format: 'team-validator-runtime-authorization/1',
+        lockfileSha256: 'c86aadae5734de469361d77ee99e7b6ab9630e6d9e319f721132e63248dfa8af',
+        node: {
+          cdHash: expect.stringMatching(/^[0-9a-f]{40}$/),
+          executableSha256: expect.stringMatching(SHA),
+          machOUuid: expect.stringMatching(
+            /^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/,
+          ),
+        },
+        packagesAggregateSha256: expect.stringMatching(SHA),
+      },
+      runtimeSourceFilesAggregateSha256: expect.stringMatching(SHA),
+      snapshotSha256: expect.stringMatching(SHA),
+      toolSha256: 'c86aadae5734de469361d77ee99e7b6ab9630e6d9e319f721132e63248dfa8af',
+      tsxCliSha256: '56b9b4f04e479fc14cdf74295ea4bd57d73be94d74350a36013741ed651a011d',
+      tsxConfigSha256: expect.stringMatching(SHA),
+      tsxVersion: '4.23.1',
+    });
+    expect((validator?.results as unknown[] | undefined) ?? []).toHaveLength(30);
+    const runtimeSourceFiles = validator?.runtimeSourceFiles as
+      | Array<Record<string, unknown>>
+      | undefined;
+    const runtimeCopyFiles = validator?.runtimeCopyFiles as
+      | Array<Record<string, unknown>>
+      | undefined;
+    expect(runtimeSourceFiles?.length).toBeGreaterThan(0);
+    expect(runtimeCopyFiles?.map((file) => [file.path, file.sha256])).toEqual(
+      runtimeSourceFiles?.map((file) => [file.path, file.sha256]),
+    );
+    expect(
+      (validator?.results as Array<Record<string, unknown>>).every(
+        (result) =>
+          typeof result.childRuntimeMappingSha256 === 'string' &&
+          SHA.test(result.childRuntimeMappingSha256),
+      ),
+    ).toBe(true);
+    expect(
+      (validator?.results as Array<Record<string, unknown>> | undefined)?.every(
+        (item) =>
+          item.receiptMatch === true &&
+          Array.isArray(item.verificationCodes) &&
+          item.verificationCodes.length === 0,
+      ),
+    ).toBe(true);
+    expect(validator?.resultAggregateSha256).toMatch(SHA);
+    expect(existsSync(join(fixture.centralRoot, TEAM_RETURN_STAGING_RELATIVE_ROOT))).toBe(false);
+    expect({
+      normalize: sha256(readFileSync(normalizePath)),
+      types: sha256(readFileSync(typesPath)),
+    }).toEqual(before);
+  }, 120_000);
+
+  it('rejects installed runtime bytes that differ from authenticated package artifacts', async () => {
+    const fixture = makeCurrentHeadTeamBAuthorityProbe();
+    const requireFromCli = createRequire(join(process.cwd(), 'tools/content-cli/package.json'));
+    const sourcePackage = requireFromCli.resolve('zod/package.json');
+    const original = readFileSync(sourcePackage);
+    const mode = lstatSync(sourcePackage).mode & 0o777;
+    try {
+      chmodSync(sourcePackage, 0o600);
+      writeFileSync(sourcePackage, Buffer.concat([original, Buffer.from(' ')]));
+      chmodSync(sourcePackage, mode);
+
+      const result = await intakeTeamReturn(fixture.request);
+
+      expect(result.decision).toBe('REJECTED');
+      expect(codes(result)).toContain('PINNED_VALIDATOR_AUTHORITY_INVALID');
+    } finally {
+      chmodSync(sourcePackage, 0o600);
+      writeFileSync(sourcePackage, original);
+      chmodSync(sourcePackage, mode);
+    }
+  }, 120_000);
+
+  it('executes pinned candidate-validate rehash semantics instead of emulating them', async () => {
+    const fixture = makeCurrentHeadTeamBFixture();
+    const lessonId = fixture.lessonIds[0] as string;
+    const scriptPath = join(fixture.candidateRoot, lessonId, 'lesson-script.json');
+    writeFileSync(scriptPath, `${readFileSync(scriptPath, 'utf8').trimEnd()}\n\n`);
+    commitFixtureMutation(fixture, 'introduce exact-command rehash divergence');
+    const sourceSha256 = sha256(readFileSync(scriptPath));
+
+    const result = await intakeTeamReturn(fixture.request);
+    const identity = result.authority.validator?.results.find(
+      (candidate) => candidate.lessonId === lessonId,
+    );
+
+    expect(result.decision).toBe('REJECTED');
+    expect(
+      codes(result),
+      JSON.stringify({ exceptions: result.exceptions, validator: result.authority.validator }),
+    ).toContain('PINNED_VALIDATOR_RESULT_MISMATCH');
+    expect(identity?.mechanical).toMatchObject({
+      computedQuality: 'PASS',
+      normalization: 'PASS',
+      structural: 'PASS',
+    });
+    expect(identity?.verificationCodes).toContain('REHASH');
+    expect(sha256(readFileSync(scriptPath))).toBe(sourceSha256);
+  }, 180_000);
+
+  it('constructs the historical CLI argv without supplemental tsx arguments', () => {
+    const source = readFileSync(
+      join(REPOSITORY_ROOT, 'packages/content/src/lesson-factory/team-return-intake.ts'),
+      'utf8',
+    );
+
+    expect(source).not.toMatch(/arguments:\s*\[\s*'--tsconfig'/);
+  });
+
+  it('quarantines an owned validator snapshot before recursive pathname cleanup', () => {
+    const source = readFileSync(
+      join(REPOSITORY_ROOT, 'packages/content/src/lesson-factory/team-return-intake.ts'),
+      'utf8',
+    );
+
+    expect(source).not.toContain('rmSync(expectedRoot,');
+    expect(source).not.toMatch(/makeWritableForCleanup\(work\);\s*rmSync\(work,/);
+    expect(source).toContain('quarantineOwnedValidatorSnapshot(');
+  });
+
+  it('injects the integrity loader into the TSX validator child process', () => {
+    const supervisor = readFileSync(
+      join(
+        REPOSITORY_ROOT,
+        'packages/content/src/lesson-factory/team-return-runtime-supervisor.mjs',
+      ),
+      'utf8',
+    );
+
+    expect(supervisor).toContain('NODE_OPTIONS');
+    expect(supervisor).toContain('childBootstrap');
+    expect(supervisor).toContain('data:text/javascript;base64,');
+  });
+
+  it.each(['EXACT_COPY', 'CHANGED_BYTES'] as const)(
+    'rejects %s module replacement after supervisor observation and before import',
+    async (replacement) => {
+      const execution = await runSupervisorReplacementProbe(replacement);
+
+      expect(execution.status).not.toBe(0);
+      expect(execution.signal).toBeNull();
+    },
+    30_000,
+  );
+
+  it('rejects a tampered pinned repository bundle instead of falling back to central bytes', async () => {
+    const fixture = makeCurrentHeadTeamBAuthorityProbe({ copyAuthority: true });
+    const bundlePath = join(fixture.authorityRoot, 'mcat-prep-5fd019f.bundle');
+    const bytes = readFileSync(bundlePath);
+    const tamperOffset = Math.floor(bytes.length / 2);
+    bytes[tamperOffset] = (bytes[tamperOffset] ?? 0) ^ 0xff;
+    writeFileSync(bundlePath, bytes);
+
+    const result = await intakeTeamReturn(fixture.request);
+
+    expect(result.decision).toBe('REJECTED');
+    expect(codes(result)).toContain('PINNED_VALIDATOR_AUTHORITY_INVALID');
+    expect(codes(result)).not.toContain('CENTRAL_VALIDATOR_PIN_MISMATCH');
+  }, 120_000);
+
+  it.each(['MISSING', 'MODE', 'SYMLINK', 'WRONG_COMMIT'] as const)(
+    'rejects %s pinned repository bundle authority',
+    async (variant) => {
+      const fixture = makeCurrentHeadTeamBAuthorityProbe({ copyAuthority: true });
+      const bundlePath = join(fixture.authorityRoot, 'mcat-prep-5fd019f.bundle');
+      if (variant === 'MISSING') {
+        unlinkSync(bundlePath);
+      } else if (variant === 'MODE') {
+        chmodSync(bundlePath, 0o600);
+      } else if (variant === 'SYMLINK') {
+        unlinkSync(bundlePath);
+        symlinkSync(join(LIVE_AUTHORITY_ROOT, 'mcat-prep-5fd019f.bundle'), bundlePath);
+      } else {
+        cpSync(
+          join(
+            REPOSITORY_ROOT,
+            '.tmp/scratch/lesson-factory-2026-08-03T1727-0500/wp-08/team-B-wave-02-package/team-B-wave-02.bundle',
+          ),
+          bundlePath,
+        );
+      }
+
+      const result = await intakeTeamReturn(fixture.request);
+
+      expect(result.decision).toBe('REJECTED');
+      expect(codes(result)).toContain('PINNED_VALIDATOR_AUTHORITY_INVALID');
+      expect(codes(result)).not.toContain('CENTRAL_VALIDATOR_PIN_MISMATCH');
+      expect(existsSync(join(fixture.centralRoot, TEAM_RETURN_STAGING_RELATIVE_ROOT))).toBe(false);
+    },
+    120_000,
+  );
+
+  it.each(['PATH', 'BLOB'] as const)(
+    'rejects a generation-3 validator manifest with a wrong %s identity',
+    async (variant) => {
+      const fixture = makeCurrentHeadTeamBAuthorityProbe({ copyAuthority: true });
+      const manifest = readJson(fixture.kitManifestPath);
+      const validatorAuthority = manifest.validatorAuthority as Record<string, unknown>;
+      const files = validatorAuthority.files as Array<Record<string, unknown>>;
+      if (variant === 'PATH') {
+        files[0] = { ...files[0], path: 'packages/content/not-approved.ts' };
+      } else {
+        files[0] = {
+          ...files[0],
+          gitBlobSha256: '0'.repeat(64),
+          sha256: '0'.repeat(64),
+        };
+      }
+      validatorAuthority.aggregateSha256 = sha256(canonical(files));
+      writeJson(fixture.kitManifestPath, manifest);
+
+      const result = await intakeTeamReturn(fixture.request);
+
+      expect(result.decision).toBe('REJECTED');
+      expect(codes(result)).toEqual(
+        expect.arrayContaining([
+          'KIT_MANIFEST_HASH_MISMATCH',
+          'PINNED_VALIDATOR_AUTHORITY_INVALID',
+        ]),
+      );
+      expect(codes(result)).not.toContain('CENTRAL_VALIDATOR_PIN_MISMATCH');
+    },
+    120_000,
+  );
+
+  it('rejects dirty current runtime code while leaving historical validator pins separate', async () => {
+    const fixture = makeCurrentHeadTeamBAuthorityProbe();
+    writeFileSync(
+      join(fixture.centralRoot, 'packages/content/src/lesson-normalization/normalize.ts'),
+      '\n// uncommitted current runtime drift\n',
+      { flag: 'a' },
+    );
+
+    const result = await intakeTeamReturn(fixture.request);
+
+    expect(result.decision).toBe('REJECTED');
+    expect(codes(result)).toContain('CENTRAL_INTAKE_CODE_DRIFT');
+    expect(codes(result)).not.toContain('CENTRAL_VALIDATOR_PIN_MISMATCH');
+    expect(existsSync(join(fixture.centralRoot, TEAM_RETURN_STAGING_RELATIVE_ROOT))).toBe(false);
+  }, 120_000);
+
+  it('rejects a changed transitive current-intake module omitted by the old authority list', async () => {
+    const fixture = makeCurrentHeadTeamBAuthorityProbe();
+    const transitivePath = join(
+      fixture.centralRoot,
+      'packages/content/src/lesson-validator/proposed-kcs.ts',
+    );
+    writeFileSync(
+      transitivePath,
+      `${readFileSync(transitivePath, 'utf8')}\n// changed transitive module\n`,
+    );
+    commitAll(fixture.centralRoot, 'change transitive intake dependency', true);
+
+    const result = await intakeTeamReturn(fixture.request);
+
+    expect(result.decision).toBe('REJECTED');
+    expect(codes(result)).toContain('CENTRAL_INTAKE_CODE_DRIFT');
+    expect(existsSync(join(fixture.centralRoot, TEAM_RETURN_STAGING_RELATIVE_ROOT))).toBe(false);
+  }, 120_000);
+
+  it('owns and removes pinned validator material within one intake call', async () => {
+    const fixture = makeCurrentHeadTeamBAuthorityProbe();
+    const before = new Set(
+      readdirSync(tmpdir()).filter((name) => name.startsWith('mcat-team-validator-')),
+    );
+
+    await intakeTeamReturn(fixture.request);
+
+    const added = readdirSync(tmpdir()).filter(
+      (name) => name.startsWith('mcat-team-validator-') && !before.has(name),
+    );
+    expect(added).toEqual([]);
+  }, 120_000);
+
+  it('reclaims only an exact stale validator lease and preserves a live lease', async () => {
+    const fixture = makeCurrentHeadTeamBAuthorityProbe();
+    const recoveryRoot = join(tmpdir(), 'mcat-team-validator-recovery-v1');
+    mkdirSync(recoveryRoot, { recursive: true, mode: 0o700 });
+    const staleToken = 'a'.repeat(64);
+    const liveToken = 'b'.repeat(64);
+    const staleRoot = join(recoveryRoot, `snapshot-${staleToken}`);
+    const liveRoot = join(recoveryRoot, `snapshot-${liveToken}`);
+    rmSync(staleRoot, { force: true, recursive: true });
+    rmSync(liveRoot, { force: true, recursive: true });
+    rmSync(join(recoveryRoot, `lease-${staleToken}.json`), { force: true });
+    rmSync(join(recoveryRoot, `lease-${liveToken}.json`), { force: true });
+    mkdirSync(staleRoot, { mode: 0o700 });
+    mkdirSync(liveRoot, { mode: 0o700 });
+    const staleInfo = lstatSync(staleRoot);
+    const liveInfo = lstatSync(liveRoot);
+    const processInstance = (pid: number): string =>
+      sha256(
+        canonical({
+          pid,
+          startedAt: execFileSync('/bin/ps', ['-o', 'lstart=', '-p', String(pid)], {
+            encoding: 'utf8',
+          }).trim(),
+        }),
+      );
+    const lease = (
+      token: string,
+      root: string,
+      info: { readonly dev: number; readonly ino: number },
+      pid: number,
+      processInstanceSha256: string,
+    ): Record<string, unknown> => {
+      const unsigned = {
+        commandAuthoritySha256: 'c'.repeat(64),
+        expectedOutputsSha256: 'e'.repeat(64),
+        format: 'team-validator-recovery-lease/2',
+        processInstanceSha256,
+        processPid: pid,
+        root,
+        runNonce: token,
+        sequence: 3,
+        snapshot: { device: info.dev, inode: info.ino },
+        state: 'RESULTS_DURABLE',
+      };
+      return { ...unsigned, leaseSha256: sha256(canonical(unsigned)) };
+    };
+    writeJson(
+      join(recoveryRoot, `lease-${staleToken}.json`),
+      lease(staleToken, staleRoot, staleInfo, 2_147_483_647, 'd'.repeat(64)),
+    );
+    writeJson(
+      join(recoveryRoot, `lease-${liveToken}.json`),
+      lease(liveToken, liveRoot, liveInfo, process.pid, processInstance(process.pid)),
+    );
+
+    await intakeTeamReturn(fixture.request);
+
+    expect(existsSync(staleRoot)).toBe(false);
+    expect(existsSync(join(recoveryRoot, `lease-${staleToken}.json`))).toBe(false);
+    expect(existsSync(liveRoot)).toBe(true);
+    expect(existsSync(join(recoveryRoot, `lease-${liveToken}.json`))).toBe(true);
+    rmSync(liveRoot, { recursive: true });
+    rmSync(join(recoveryRoot, `lease-${liveToken}.json`));
+  }, 120_000);
+
+  it('recovers every durable validator lease state and an interrupted atomic rename', async () => {
+    const fixture = makeCurrentHeadTeamBAuthorityProbe();
+    const recoveryRoot = join(tmpdir(), 'mcat-team-validator-recovery-v1');
+    mkdirSync(recoveryRoot, { recursive: true, mode: 0o700 });
+    const states = ['PREPARED', 'RUNNING', 'RESULTS_DURABLE', 'CLEANED'] as const;
+    const artifacts: Array<{ leasePath: string; root: string }> = [];
+    const signedLease = (
+      token: string,
+      root: string,
+      state: (typeof states)[number],
+      snapshot: { readonly device: number | null; readonly inode: number | null },
+      sequence = states.indexOf(state),
+    ): Record<string, unknown> => {
+      const unsigned = {
+        commandAuthoritySha256: 'c'.repeat(64),
+        expectedOutputsSha256: 'e'.repeat(64),
+        format: 'team-validator-recovery-lease/2',
+        processInstanceSha256: 'd'.repeat(64),
+        processPid: 2_147_483_647,
+        root,
+        runNonce: token,
+        sequence,
+        snapshot,
+        state,
+      };
+      return { ...unsigned, leaseSha256: sha256(canonical(unsigned)) };
+    };
+    for (const [index, state] of states.entries()) {
+      const token = String(index + 1).repeat(64);
+      const root = join(recoveryRoot, `snapshot-${token}`);
+      const leasePath = join(recoveryRoot, `lease-${token}.json`);
+      rmSync(root, { force: true, recursive: true });
+      rmSync(leasePath, { force: true });
+      mkdirSync(root, { mode: 0o700 });
+      const info = lstatSync(root);
+      writeJson(leasePath, signedLease(token, root, state, { device: info.dev, inode: info.ino }));
+      artifacts.push({ leasePath, root });
+    }
+    const missingToken = '5'.repeat(64);
+    const missingRoot = join(recoveryRoot, `snapshot-${missingToken}`);
+    const missingLease = join(recoveryRoot, `lease-${missingToken}.json`);
+    rmSync(missingRoot, { force: true, recursive: true });
+    writeJson(
+      missingLease,
+      signedLease(missingToken, missingRoot, 'PREPARED', { device: null, inode: null }),
+    );
+    artifacts.push({ leasePath: missingLease, root: missingRoot });
+    const temporaryToken = '6'.repeat(64);
+    const temporaryRoot = join(recoveryRoot, `snapshot-${temporaryToken}`);
+    const temporaryLease = join(recoveryRoot, `lease-${temporaryToken}.json.tmp-${'7'.repeat(64)}`);
+    rmSync(temporaryRoot, { force: true, recursive: true });
+    rmSync(temporaryLease, { force: true });
+    writeJson(
+      temporaryLease,
+      signedLease(temporaryToken, temporaryRoot, 'PREPARED', {
+        device: null,
+        inode: null,
+      }),
+    );
+    artifacts.push({ leasePath: temporaryLease, root: temporaryRoot });
+    const preboundToken = '7'.repeat(64);
+    const preboundRoot = join(recoveryRoot, `snapshot-${preboundToken}`);
+    const preboundLease = join(recoveryRoot, `lease-${preboundToken}.json`);
+    rmSync(preboundRoot, { force: true, recursive: true });
+    rmSync(preboundLease, { force: true });
+    mkdirSync(preboundRoot, { mode: 0o700 });
+    writeJson(
+      preboundLease,
+      signedLease(preboundToken, preboundRoot, 'PREPARED', { device: null, inode: null }, 0),
+    );
+    artifacts.push({ leasePath: preboundLease, root: preboundRoot });
+    const newestToken = '8'.repeat(64);
+    const newestRoot = join(recoveryRoot, `snapshot-${newestToken}`);
+    const newestLease = join(recoveryRoot, `lease-${newestToken}.json`);
+    const newestTemporaryLease = `${newestLease}.tmp-${'9'.repeat(64)}`;
+    rmSync(newestRoot, { force: true, recursive: true });
+    rmSync(newestLease, { force: true });
+    rmSync(newestTemporaryLease, { force: true });
+    mkdirSync(newestRoot, { mode: 0o700 });
+    const newestInfo = lstatSync(newestRoot);
+    writeJson(
+      newestLease,
+      signedLease(newestToken, newestRoot, 'PREPARED', { device: null, inode: null }, 0),
+    );
+    writeJson(
+      newestTemporaryLease,
+      signedLease(
+        newestToken,
+        newestRoot,
+        'RUNNING',
+        { device: newestInfo.dev, inode: newestInfo.ino },
+        1,
+      ),
+    );
+    artifacts.push({ leasePath: newestLease, root: newestRoot });
+    artifacts.push({ leasePath: newestTemporaryLease, root: newestRoot });
+
+    await intakeTeamReturn(fixture.request);
+
+    for (const artifact of artifacts) {
+      expect(existsSync(artifact.root)).toBe(false);
+      expect(existsSync(artifact.leasePath)).toBe(false);
+    }
+  }, 120_000);
+
+  it.each(['BEFORE_MKDIR', 'AFTER_MKDIR_BEFORE_INODE_UPDATE', 'AFTER_INODE_UPDATE'] as const)(
+    'recovers an abruptly killed validator snapshot at %s',
+    async (boundary) => {
+      const fixture = makeCurrentHeadTeamBAuthorityProbe();
+      const artifact = await crashValidatorLeaseBoundary(fixture.request, boundary);
+
+      await intakeTeamReturn(fixture.request);
+
+      expect(existsSync(artifact.root)).toBe(false);
+      expect(existsSync(artifact.leasePath)).toBe(false);
+    },
+    180_000,
+  );
+
+  it('rejects a substituted current repository URL before pinned execution', async () => {
+    const fixture = makeCurrentHeadTeamBAuthorityProbe();
+    git(fixture.centralRoot, ['remote', 'set-url', 'origin', 'https://attacker.invalid/repo.git']);
+
+    const result = await intakeTeamReturn(fixture.request);
+
+    expect(result.decision).toBe('REJECTED');
+    expect(codes(result)).toContain('CENTRAL_INTAKE_CODE_DRIFT');
+    expect(codes(result)).not.toContain('CENTRAL_VALIDATOR_PIN_MISMATCH');
+  }, 120_000);
+
+  it('rejects a current intake commit outside the pinned repository ancestry', async () => {
+    const fixture = makeCurrentHeadTeamBAuthorityProbe();
+    const tree = git(fixture.centralRoot, ['rev-parse', 'HEAD^{tree}']);
+    const orphan = git(fixture.centralRoot, [
+      '-c',
+      'user.name=WP08 Test',
+      '-c',
+      'user.email=wp08-test@example.invalid',
+      'commit-tree',
+      tree,
+      '-m',
+      'unrelated current intake authority',
+    ]);
+    git(fixture.centralRoot, ['reset', '--hard', orphan]);
+
+    const result = await intakeTeamReturn(fixture.request);
+
+    expect(result.decision).toBe('REJECTED');
+    expect(codes(result)).toContain('PINNED_VALIDATOR_AUTHORITY_INVALID');
+    expect(codes(result)).not.toContain('CENTRAL_VALIDATOR_PIN_MISMATCH');
+  }, 120_000);
+
+  it('invalidates cached pinned results when reviewed receipt bytes change', async () => {
+    const fixture = makeCurrentHeadTeamBFixture();
+    const first = await intakeTeamReturn(fixture.request);
+    expect(first.decision, JSON.stringify(first.exceptions)).toBe('ACCEPTED');
+    const lessonId = fixture.lessonIds[0] as string;
+    const validationPath = join(fixture.candidateRoot, lessonId, 'validation/lesson-validate.json');
+    const validation = readJson(validationPath);
+    (validation.command as Record<string, unknown>).stdoutSha256 = '0'.repeat(64);
+    writeJson(validationPath, validation);
+    commitFixtureMutation(fixture, 'tamper historical validator result');
+
+    const replay = await intakeTeamReturn(fixture.request, {
+      mechanicalValidate: async () => mechanicalPass,
+    });
+
+    expect(replay.decision).toBe('REJECTED');
+    expect(codes(replay)).toContain('PINNED_VALIDATOR_RESULT_MISMATCH');
+    expect(codes(replay)).not.toContain('CENTRAL_VALIDATOR_PIN_MISMATCH');
+    expect(
+      replay.authority.validator?.results.find((item) => item.lessonId === lessonId),
+    ).toMatchObject({
+      receiptMatch: false,
+      verificationCodes: expect.arrayContaining(['COMMAND_STDIO']),
+    });
+  }, 180_000);
+
+  it('keeps pinned dry-run and ACCEPT receipts deterministic on disposable staging', async () => {
+    const fixture = makeCurrentHeadTeamBFixture();
+    const centralBefore = {
+      normalize: sha256(
+        readFileSync(
+          join(fixture.centralRoot, 'packages/content/src/lesson-normalization/normalize.ts'),
+        ),
+      ),
+      types: sha256(
+        readFileSync(
+          join(fixture.centralRoot, 'packages/content/src/lesson-normalization/types.ts'),
+        ),
+      ),
+    };
+
+    const projected = await intakeTeamReturn(fixture.request);
+    const accepted = await intakeTeamReturn({ ...fixture.request, mode: 'ACCEPT' });
+    const replayed = await intakeTeamReturn({ ...fixture.request, mode: 'ACCEPT' });
+
+    expect(projected.decision, JSON.stringify(projected.exceptions)).toBe('ACCEPTED');
+    expect(projected.copy.disposition).toBe('NOT_REQUESTED');
+    expect(accepted.decision, JSON.stringify(accepted.exceptions)).toBe('ACCEPTED');
+    expect(accepted.copy.disposition).toBe('STAGED_NEW');
+    expect(
+      replayed.decision,
+      JSON.stringify({
+        acceptedValidator: {
+          resultAggregateSha256: accepted.authority.validator?.resultAggregateSha256,
+          snapshotSha256: accepted.authority.validator?.snapshotSha256,
+        },
+        exceptions: replayed.exceptions,
+        projectedValidator: {
+          resultAggregateSha256: projected.authority.validator?.resultAggregateSha256,
+          snapshotSha256: projected.authority.validator?.snapshotSha256,
+        },
+        replayedValidator: {
+          resultAggregateSha256: replayed.authority.validator?.resultAggregateSha256,
+          snapshotSha256: replayed.authority.validator?.snapshotSha256,
+        },
+      }),
+    ).toBe('ACCEPTED');
+    expect(replayed.copy.disposition).toBe('PRESENT_IDENTICAL');
+    expect(projected.authority.validator?.snapshotSha256).toBe(
+      accepted.authority.validator?.snapshotSha256,
+    );
+    expect(projected.authority.validator?.resultAggregateSha256).toBe(
+      accepted.authority.validator?.resultAggregateSha256,
+    );
+    expect(projected.rows).toEqual(accepted.rows);
+    expect(
+      recursiveFiles(
+        join(fixture.centralRoot, TEAM_RETURN_STAGING_RELATIVE_ROOT, 'team-B', 'TEAM', 'lessons'),
+      ),
+    ).toHaveLength(30 * LESSON_FILES.length);
+    expect({
+      normalize: sha256(
+        readFileSync(
+          join(fixture.centralRoot, 'packages/content/src/lesson-normalization/normalize.ts'),
+        ),
+      ),
+      types: sha256(
+        readFileSync(
+          join(fixture.centralRoot, 'packages/content/src/lesson-normalization/types.ts'),
+        ),
+      ),
+    }).toEqual(centralBefore);
+  }, 180_000);
 
   it('rejects empty schema/template aggregate aliases outside the exact live legacy cohort', async () => {
     const fixture = makeFixture({ legacyIdentityAliases: true });
@@ -3418,7 +4455,7 @@ describe('deterministic Team A/B return intake', () => {
       alternatePriorCommit: alternatePrior,
     });
 
-    expect(() =>
+    await expect(
       loadTeamReturnAcceptanceArtifact({
         authorityRoot: fixture.request.authorityRoot,
         centralRepositoryRoot: fixture.request.centralRepositoryRoot,
@@ -3427,7 +4464,7 @@ describe('deterministic Team A/B return intake', () => {
         scopeId: 'TEAM',
         teamId: 'team-B',
       }),
-    ).toThrow();
+    ).rejects.toThrow();
     expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
   }, 240_000);
 
@@ -3444,7 +4481,7 @@ describe('deterministic Team A/B return intake', () => {
     const handle = accepted.copy.acceptance;
     if (handle === undefined) throw new Error('acceptance handle missing');
 
-    expect(() =>
+    await expect(
       loadTeamReturnAcceptanceArtifact({
         authorityRoot: fixture.request.authorityRoot,
         centralRepositoryRoot: fixture.request.centralRepositoryRoot,
@@ -3453,7 +4490,7 @@ describe('deterministic Team A/B return intake', () => {
         scopeId: 'TEAM',
         teamId: 'team-B',
       }),
-    ).toThrow();
+    ).rejects.toThrow();
     expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
   }, 240_000);
 
@@ -3571,7 +4608,7 @@ describe('deterministic Team A/B return intake', () => {
       );
       const forgedHandle = forgeAcceptanceHandle(finalRoot, accepted, forgeryKind);
 
-      expect(() =>
+      await expect(
         loadTeamReturnAcceptanceArtifact({
           authorityRoot: fixture.request.authorityRoot,
           centralRepositoryRoot: fixture.request.centralRepositoryRoot,
@@ -3580,7 +4617,7 @@ describe('deterministic Team A/B return intake', () => {
           scopeId: 'TEAM',
           teamId: 'team-B',
         }),
-      ).toThrow();
+      ).rejects.toThrow();
       expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
     },
     240_000,
@@ -3750,7 +4787,7 @@ describe('deterministic Team A/B return intake', () => {
       );
       chmodSync(archivePath, 0o400);
 
-      expect(() =>
+      await expect(
         loadTeamReturnAcceptanceArtifact({
           authorityRoot: fixture.request.authorityRoot,
           centralRepositoryRoot: fixture.request.centralRepositoryRoot,
@@ -3759,7 +4796,7 @@ describe('deterministic Team A/B return intake', () => {
           scopeId: 'TEAM',
           teamId: 'team-B',
         }),
-      ).toThrow();
+      ).rejects.toThrow();
       expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
     },
     240_000,
@@ -3780,7 +4817,7 @@ describe('deterministic Team A/B return intake', () => {
       writeFileSync(path, 'orphan\n', { mode: 0o400 });
     }
 
-    const loaded = loadTeamReturnAcceptanceArtifact({
+    const loaded = await loadTeamReturnAcceptanceArtifact({
       authorityRoot: fixture.request.authorityRoot,
       centralRepositoryRoot: fixture.request.centralRepositoryRoot,
       reviewedCheckoutRoot: fixture.checkoutRoot,
@@ -3828,7 +4865,7 @@ describe('deterministic Team A/B return intake', () => {
       },
     };
 
-    expect(() =>
+    await expect(
       loadTeamReturnAcceptanceArtifact({
         authorityRoot: fixture.request.authorityRoot,
         centralRepositoryRoot: fixture.request.centralRepositoryRoot,
@@ -3837,7 +4874,7 @@ describe('deterministic Team A/B return intake', () => {
         scopeId: 'TEAM',
         teamId: 'team-B',
       }),
-    ).toThrow();
+    ).rejects.toThrow();
     expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
   }, 240_000);
 
@@ -3856,7 +4893,7 @@ describe('deterministic Team A/B return intake', () => {
       symlinkSync(acceptance.manifestSha256, join(commitsRoot, name));
     }
 
-    expect(() =>
+    await expect(
       loadTeamReturnAcceptanceArtifact({
         authorityRoot: fixture.request.authorityRoot,
         centralRepositoryRoot: fixture.request.centralRepositoryRoot,
@@ -3865,7 +4902,7 @@ describe('deterministic Team A/B return intake', () => {
         scopeId: 'TEAM',
         teamId: 'team-B',
       }),
-    ).toThrow();
+    ).rejects.toThrow();
     expect(filesystemIdentity(finalRoot)).toBe(oldIdentity);
   }, 240_000);
 
@@ -3973,7 +5010,7 @@ describe('deterministic Team A/B return intake', () => {
       fixture.dependencies,
     );
     if (accepted.copy.acceptance === undefined) throw new Error('acceptance handle missing');
-    const loaded = loadTeamReturnAcceptanceArtifact({
+    const loaded = await loadTeamReturnAcceptanceArtifact({
       authorityRoot: fixture.request.authorityRoot,
       centralRepositoryRoot: fixture.request.centralRepositoryRoot,
       reviewedCheckoutRoot: fixture.checkoutRoot,
@@ -3992,7 +5029,7 @@ describe('deterministic Team A/B return intake', () => {
       ...accepted.copy.acceptance,
       markerRelativePath: `TEAM.acceptance-v1/aliases/${accepted.copy.acceptance?.generationId}`,
     };
-    expect(() =>
+    await expect(
       loadTeamReturnAcceptanceArtifact({
         authorityRoot: fixture.request.authorityRoot,
         centralRepositoryRoot: fixture.request.centralRepositoryRoot,
@@ -4001,7 +5038,7 @@ describe('deterministic Team A/B return intake', () => {
         scopeId: 'TEAM',
         teamId: 'team-B',
       }),
-    ).toThrow();
+    ).rejects.toThrow();
   }, 240_000);
 
   it('rejects FINAL_TEAM supersession for wrong prior identities and same-batch abuse', async () => {
@@ -4118,7 +5155,7 @@ describe('deterministic Team A/B return intake', () => {
     );
     expect(driftedMode.decision).toBe('REJECTED');
     expect(codes(driftedMode)).toContain('SUPERSESSION_PRIOR_INVALID');
-  }, 120_000);
+  }, 300_000);
 
   it('rejects a changed previously COMPLETE lesson even when the replacement validates', async () => {
     const { authority, finalRoot, fixture, prior } = await prepareFinalTeamSupersession({

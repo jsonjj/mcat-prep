@@ -1,9 +1,16 @@
-import { execFileSync, spawnSync } from 'node:child_process';
-import { createHash, createHmac, timingSafeEqual, verify as verifySignature } from 'node:crypto';
+import { execFile, execFileSync, spawn, spawnSync } from 'node:child_process';
+import {
+  createHash,
+  createHmac,
+  randomBytes,
+  timingSafeEqual,
+  verify as verifySignature,
+} from 'node:crypto';
 import {
   chmodSync,
   closeSync,
   constants as fsConstants,
+  cpSync,
   fchmodSync,
   existsSync,
   fstatSync,
@@ -20,13 +27,19 @@ import {
   realpathSync,
   renameSync,
   rmSync,
+  unlinkSync,
   writeSync,
   writeFileSync,
 } from 'node:fs';
 import { copyFile as nodeCopyFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { Readable } from 'node:stream';
+import { promisify } from 'node:util';
 import { inflateRawSync } from 'node:zlib';
+
+const execFileAsync = promisify(execFile);
 
 import { compileCanonicalLesson } from '../lesson-normalization';
 import {
@@ -69,8 +82,88 @@ const MAX_ARCHIVE_ENTRY_COMPRESSED_BYTES = 8 * 1024 * 1024;
 const MAX_ARCHIVE_ENTRY_EXPANDED_BYTES = 16 * 1024 * 1024;
 const MAX_ARCHIVE_TOTAL_EXPANDED_BYTES = 128 * 1024 * 1024;
 const MAX_ARCHIVE_COMPRESSION_RATIO = 200;
+const MAX_VALIDATOR_BUNDLE_BYTES = 64 * 1024 * 1024;
+const PINNED_TSX_CONFIG_BYTES =
+  '{"compilerOptions":{"baseUrl":"./snapshot","module":"NodeNext","moduleResolution":"NodeNext","paths":{"@mcat/content":["packages/content/src/index.ts"],"@mcat/content/lesson-normalization":["packages/content/src/lesson-normalization/index.ts"],"@mcat/content/lesson-validator":["packages/content/src/lesson-validator/index.ts"],"@mcat/contracts":["packages/contracts/src/index.ts"],"@mcat/domain":["packages/domain/src/index.ts"]},"target":"ES2022"}}\n';
 const GIT_EXECUTABLE = '/usr/bin/git';
+const REPOSITORY_URL = 'https://github.com/jsonjj/mcat-prep.git' as const;
+const PINNED_CURRICULUM_PATH = 'curriculum/v3/v3-lesson-authoring-manifest.json';
+const PINNED_TOOL_PATH = 'pnpm-lock.yaml';
+const RUNTIME_AUTHORIZATION_PATH =
+  'packages/content/src/lesson-factory/team-return-runtime-authorization.json';
+const RUNTIME_AUTHORIZATION_SHA256 =
+  'd45ea7f6f157980c79f432600d8bbbba3fd87baf2aa06cada6163387d98e490f';
+const RUNTIME_LOCKFILE_BLOB_SHA1 = 'fdc3955795b7028f6458b751f9f7b4b10f3cb6fb';
+const RUNTIME_PACKAGE_AUTHORITY = {
+  '@esbuild/darwin-arm64': {
+    integrity:
+      'sha512-TZbWkQY7kvTAXbXUT7uVACR5cMHsDiSz9z7ZKAX/RTq/WJEk3QyRr0wZpNhBDX+/0CtdqUIJlOiodQcta6tY3Q==',
+    version: '0.28.1',
+  },
+  esbuild: {
+    integrity:
+      'sha512-HrJrvZv5ayxBzPfwphOoNzkzOIIlifzk0KJrGK2c8R4+LKpMtpYLQeUdjnwjWv/LZlkH2laZk+4w78pi99D4Vw==',
+    version: '0.28.1',
+  },
+  tsx: {
+    integrity:
+      'sha512-GQHnkIfxyx1wYCOS/wonik5MVRZU9hi1TEZmzGZSCJB1y9YgoZ8H6itNE/u4suE+yLmOzuE4E5S4TZ/ZX2wcWQ==',
+    version: '4.23.1',
+  },
+  zod: {
+    integrity:
+      'sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==',
+    version: '3.24.1',
+  },
+  'zod-to-json-schema': {
+    integrity:
+      'sha512-5wlSS0bXfF/BrL4jPAbz9da5hDlDptdEppYfe+x4eIJ7jioqKG9uUxOwPzqof09u/XeVdrgFu29lZi+8XNDJtA==',
+    version: '3.23.5',
+  },
+} as const;
+const RUNTIME_REPOSITORY_ROOT = resolve(import.meta.dirname, '..', '..', '..', '..');
+const VALIDATOR_RECOVERY_ROOT = join(tmpdir(), 'mcat-team-validator-recovery-v1');
 const TEAM_IDS = ['team-A', 'team-B'] as const;
+const CURRENT_INTAKE_AUTHORITY_PATHS = [
+  'packages/content/package.json',
+  'packages/content/src/lesson-factory/kit-identity-aggregate.ts',
+  'packages/content/src/lesson-factory/team-return-acceptance-artifact.ts',
+  'packages/content/src/lesson-factory/team-return-intake.ts',
+  'packages/content/src/lesson-factory/team-return-runtime-authorization.json',
+  'packages/content/src/lesson-factory/team-return-runtime-child-bootstrap.mjs',
+  'packages/content/src/lesson-factory/team-return-runtime-supervisor.mjs',
+  'packages/content/src/lesson-normalization/index.ts',
+  'packages/content/src/lesson-normalization/normalize.ts',
+  'packages/content/src/lesson-normalization/types.ts',
+  'packages/content/src/lesson-validator/canonical.ts',
+  'packages/content/src/lesson-validator/computed-quality.ts',
+  'packages/content/src/lesson-validator/index.ts',
+  'packages/content/src/lesson-validator/proposed-kcs.ts',
+  'packages/content/src/lesson-validator/rehash.ts',
+  'packages/content/src/lesson-validator/resolvable.ts',
+  'packages/content/src/lesson-validator/rules.ts',
+  'packages/content/src/lesson-validator/types.ts',
+  'packages/content/src/lesson-validator/validate.ts',
+  'tools/content-cli/package.json',
+  'tools/content-cli/src/team-intake-main.ts',
+] as const;
+const GENERATION_THREE_VALIDATOR_PATHS = [
+  'packages/content/package.json',
+  'packages/content/src/lesson-normalization/index.ts',
+  'packages/content/src/lesson-normalization/normalize.ts',
+  'packages/content/src/lesson-normalization/types.ts',
+  'packages/content/src/lesson-validator/canonical.ts',
+  'packages/content/src/lesson-validator/computed-quality.ts',
+  'packages/content/src/lesson-validator/index.ts',
+  'packages/content/src/lesson-validator/rehash.ts',
+  'packages/content/src/lesson-validator/resolvable.ts',
+  'packages/content/src/lesson-validator/rules.ts',
+  'packages/content/src/lesson-validator/types.ts',
+  'packages/content/src/lesson-validator/validate.ts',
+  'tools/content-cli/package.json',
+  'tools/content-cli/src/entry.ts',
+  'tools/content-cli/src/main.ts',
+] as const;
 const LEGACY_GENERATION_THREE_COHORT = Object.freeze({
   finalizationReceiptSha256: '9a4007c9e574e8c82912acf66e6b7ff95ef00c0457f25ae46b7c7982d13fd5c4',
   manifests: Object.freeze({
@@ -154,6 +247,7 @@ export type TeamReturnIntakeCode =
   | 'AUTHORITY_CURRENT_INVALID'
   | 'BRANCH_INVALID'
   | 'BRANCH_TEAM_MISMATCH'
+  | 'CENTRAL_INTAKE_CODE_DRIFT'
   | 'CENTRAL_VALIDATOR_PIN_MISMATCH'
   | 'EVIDENCE_STALE'
   | 'FINALIZATION_RECEIPT_INVALID'
@@ -170,6 +264,8 @@ export type TeamReturnIntakeCode =
   | 'LESSON_NOT_ASSIGNED'
   | 'OFFICIAL_CLAIM_FORBIDDEN'
   | 'PACKET_PIN_MISMATCH'
+  | 'PINNED_VALIDATOR_AUTHORITY_INVALID'
+  | 'PINNED_VALIDATOR_RESULT_MISMATCH'
   | 'PROTECTED_BOUNDARY_LEAK'
   | 'READY_MISMATCH'
   | 'REPOSITORY_DIRTY'
@@ -211,6 +307,64 @@ export interface CentralMechanicalValidation {
   readonly normalization: 'PASS' | 'FAIL';
   readonly protectedBoundary: 'PASS' | 'FAIL';
   readonly validatorEvidenceSha256: string;
+}
+
+interface PinnedValidatorFileIdentity {
+  readonly gitBlobSha1: string;
+  readonly gitMode: '100644';
+  readonly path: string;
+  readonly sha256: string;
+  readonly size: number;
+}
+
+interface PinnedValidatorResultIdentity {
+  readonly childRuntimeMappingSha256: string;
+  readonly commandExitCode: 0 | 1;
+  readonly lessonId: string;
+  readonly mechanical: CentralMechanicalValidation;
+  readonly offeredReceiptSha256: string;
+  readonly receiptMatch: boolean;
+  readonly reportSha256: string;
+  readonly stderrSha256: string;
+  readonly stdoutSha256: string;
+  readonly verificationCodes: readonly string[];
+}
+
+export interface PinnedValidatorAuthorityReceipt {
+  readonly bundleMode: 420;
+  readonly bundleSha256: string;
+  readonly bundleSize: number;
+  readonly centralCommit: string;
+  readonly centralFiles: readonly PinnedValidatorFileIdentity[];
+  readonly centralFilesAggregateSha256: string;
+  readonly commandFiles: readonly PinnedValidatorFileIdentity[];
+  readonly commandFilesAggregateSha256: string;
+  readonly curriculum: PinnedValidatorFileIdentity;
+  readonly files: readonly PinnedValidatorFileIdentity[];
+  readonly format: 'lesson-generation-pinned-validator-authority/1';
+  readonly nodeExecutableSha256: string;
+  readonly nodeVersion: string;
+  readonly repositoryClean: true;
+  readonly repositoryCommit: string;
+  readonly repositoryTreeSha1: string;
+  readonly repositoryUrl: typeof REPOSITORY_URL;
+  readonly resultAggregateSha256: string;
+  readonly results: readonly PinnedValidatorResultIdentity[];
+  readonly runtimeCopyFiles: readonly RuntimeAuthorityFileIdentity[];
+  readonly runtimeCopyFilesAggregateSha256: string;
+  readonly runtimeExecutionBinding: 'SUPERVISED_KERNEL_BOUND';
+  readonly runtimeFilesAggregateSha256: string;
+  readonly runtimePrivate: true;
+  readonly runtimeAuthorization: RuntimeAuthorizationSummary;
+  readonly runtimeSourceFiles: readonly RuntimeAuthorityFileIdentity[];
+  readonly runtimeSourceFilesAggregateSha256: string;
+  readonly snapshotCount: 1;
+  readonly snapshotSha256: string;
+  readonly toolSha256: string;
+  readonly tsxCliSha256: string;
+  readonly tsxConfigSha256: string;
+  readonly tsxVersion: string;
+  readonly validatorAggregateSha256: string;
 }
 
 export interface TeamReturnIntakeDependencies {
@@ -323,6 +477,7 @@ export interface TeamReturnIntakeResult {
     readonly pinnedCommit: string;
     readonly readySha256: string;
     readonly sendMeSha256: string;
+    readonly validator?: PinnedValidatorAuthorityReceipt;
   };
   readonly source: {
     readonly branch: string;
@@ -438,6 +593,10 @@ function canonical(value: unknown): string {
 
 function digest(bytes: string | Buffer | Uint8Array): string {
   return createHash('sha256').update(bytes).digest('hex');
+}
+
+function gitBlobDigest(bytes: Buffer): string {
+  return createHash('sha1').update(`blob ${bytes.byteLength}\0`).update(bytes).digest('hex');
 }
 
 function record(value: unknown): JsonRecord | null {
@@ -716,6 +875,1999 @@ function gitBytes(root: string, args: readonly string[], maximumBytes: number): 
     shell: false,
     stdio: ['ignore', 'pipe', 'ignore'],
   });
+}
+
+interface PinnedValidatorExecution {
+  readonly childRuntimeMappingSha256: string;
+  readonly commandExitCode: 0 | 1;
+  readonly mechanical: CentralMechanicalValidation;
+  readonly report: JsonRecord;
+  readonly reportSha256: string;
+  readonly stderrSha256: string;
+  readonly stdoutSha256: string;
+}
+
+interface PinnedValidatorSnapshot {
+  readonly baseReceipt: Omit<PinnedValidatorAuthorityReceipt, 'resultAggregateSha256' | 'results'>;
+  readonly cachedValidate: (
+    requests: readonly { readonly lessonId: string; readonly lessonRoot: string }[],
+  ) => readonly PinnedValidatorExecution[];
+  readonly cleanup: () => void;
+  readonly validate: (
+    requests: readonly { readonly lessonId: string; readonly lessonRoot: string }[],
+  ) => Promise<readonly PinnedValidatorExecution[]>;
+  readonly verifyUnchanged: () => void;
+}
+
+function descriptorBoundRegularFile(
+  path: string,
+  maximumBytes: number,
+  requireSingleLink = true,
+): {
+  readonly bytes: Buffer;
+  readonly mode: number;
+  readonly size: number;
+} {
+  if (typeof fsConstants.O_NOFOLLOW !== 'number' || fsConstants.O_NOFOLLOW === 0) {
+    throw new Error('VALIDATOR_NOFOLLOW_UNAVAILABLE');
+  }
+  const descriptor = openSync(path, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW);
+  try {
+    const before = fstatSync(descriptor);
+    if (
+      !before.isFile() ||
+      (requireSingleLink && before.nlink !== 1) ||
+      !Number.isSafeInteger(before.size) ||
+      before.size < 1 ||
+      before.size > maximumBytes
+    ) {
+      throw new Error('VALIDATOR_AUTHORITY_FILE_INVALID');
+    }
+    const bytes = Buffer.allocUnsafe(before.size);
+    let offset = 0;
+    while (offset < bytes.byteLength) {
+      const read = readSync(descriptor, bytes, offset, bytes.byteLength - offset, offset);
+      if (read === 0) throw new Error('VALIDATOR_AUTHORITY_FILE_TRUNCATED');
+      offset += read;
+    }
+    const growth = Buffer.allocUnsafe(1);
+    if (readSync(descriptor, growth, 0, 1, before.size) !== 0) {
+      throw new Error('VALIDATOR_AUTHORITY_FILE_GREW');
+    }
+    const after = fstatSync(descriptor);
+    if (
+      after.dev !== before.dev ||
+      after.ino !== before.ino ||
+      after.mode !== before.mode ||
+      after.size !== before.size ||
+      after.mtimeMs !== before.mtimeMs ||
+      after.ctimeMs !== before.ctimeMs
+    ) {
+      throw new Error('VALIDATOR_AUTHORITY_FILE_CHANGED');
+    }
+    return { bytes, mode: before.mode & 0o777, size: before.size };
+  } finally {
+    closeSync(descriptor);
+  }
+}
+
+interface RuntimeAuthorityFileIdentity {
+  readonly mode: number;
+  readonly path: string;
+  readonly sha256: string;
+  readonly size: number;
+}
+
+interface RuntimeSourceBinding {
+  readonly absolutePath: string;
+  readonly identity: RuntimeAuthorityFileIdentity;
+}
+
+interface RuntimeAuthorizationSummary {
+  readonly authoritySha256: string;
+  readonly format: 'team-validator-runtime-authorization/1';
+  readonly lockfileSha256: string;
+  readonly node: {
+    readonly cdHash: string;
+    readonly executableSha256: string;
+    readonly machOUuid: string;
+  };
+  readonly packagesAggregateSha256: string;
+}
+
+interface RuntimeAuthorization {
+  readonly loadedPaths: ReadonlySet<string>;
+  readonly packages: ReadonlyMap<string, JsonRecord>;
+  readonly summary: RuntimeAuthorizationSummary;
+}
+
+function inspectNodeImageIdentity(path: string): RuntimeAuthorizationSummary['node'] {
+  const executable = descriptorBoundRegularFile(path, 256 * 1024 * 1024, false);
+  const uuid = spawnSync('/usr/bin/dwarfdump', ['--uuid', path], {
+    encoding: 'utf8',
+    shell: false,
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  const codesign = spawnSync('/usr/bin/codesign', ['-dvvv', '--verbose=4', path], {
+    encoding: 'utf8',
+    shell: false,
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  const machOUuid = /UUID: ([0-9A-F-]{36}) \([^)]+\)/.exec(uuid.stdout)?.[1];
+  const cdHash = /\nCDHash=([0-9a-f]{40})\n/.exec(`\n${codesign.stdout}${codesign.stderr}\n`)?.[1];
+  if (
+    uuid.error !== undefined ||
+    uuid.status !== 0 ||
+    uuid.signal !== null ||
+    codesign.error !== undefined ||
+    codesign.status !== 0 ||
+    codesign.signal !== null ||
+    machOUuid === undefined ||
+    cdHash === undefined
+  ) {
+    throw new Error('VALIDATOR_NODE_IMAGE_IDENTITY_UNAVAILABLE');
+  }
+  return {
+    cdHash,
+    executableSha256: digest(executable.bytes),
+    machOUuid,
+  };
+}
+
+function inspectActiveNodeAuthority(): JsonRecord {
+  const image = inspectNodeImageIdentity(process.execPath);
+  const executable = descriptorBoundRegularFile(process.execPath, 256 * 1024 * 1024, false);
+  const info = lstatSync(process.execPath);
+  const codesign = spawnSync('/usr/bin/codesign', ['-dvvv', '--verbose=4', process.execPath], {
+    encoding: 'utf8',
+    shell: false,
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  const teamIdentifier = /\nTeamIdentifier=([A-Z0-9]+)\n/.exec(
+    `\n${codesign.stdout}${codesign.stderr}\n`,
+  )?.[1];
+  if (teamIdentifier === undefined) throw new Error('VALIDATOR_NODE_IMAGE_IDENTITY_UNAVAILABLE');
+  return {
+    ...image,
+    gid: info.gid,
+    mode: executable.mode,
+    nlink: info.nlink,
+    ownerUid: info.uid,
+    size: executable.size,
+    teamIdentifier,
+    version: process.version,
+  };
+}
+
+function loadRuntimeAuthorization(
+  teamAuthority: TeamAuthority,
+  repositoryCommit: string,
+): RuntimeAuthorization {
+  const path = confined(RUNTIME_REPOSITORY_ROOT, RUNTIME_AUTHORIZATION_PATH);
+  const file = descriptorBoundRegularFile(path, 2 * 1024 * 1024);
+  const candidate = record(JSON.parse(file.bytes.toString('utf8')));
+  const lockfile = record(candidate?.lockfile);
+  const node = record(candidate?.node);
+  const platform = record(candidate?.platform);
+  const packages = Array.isArray(candidate?.packages) ? candidate.packages.map(record) : [];
+  if (candidate === null || lockfile === null || node === null || platform === null) {
+    throw new Error('VALIDATOR_RUNTIME_AUTHORITY_SCHEMA_INVALID');
+  }
+  if (
+    packages.some((entry) => entry === null) ||
+    candidate.format !== 'team-validator-runtime-authorization/1' ||
+    candidate.authoritySha256 !== RUNTIME_AUTHORIZATION_SHA256
+  ) {
+    throw new Error('VALIDATOR_RUNTIME_AUTHORITY_ROOT_INVALID');
+  }
+  if (
+    lockfile.repositoryCommit !== repositoryCommit ||
+    lockfile.gitBlobSha1 !== RUNTIME_LOCKFILE_BLOB_SHA1 ||
+    lockfile.sha256 !== teamAuthority.toolSha256
+  ) {
+    throw new Error('VALIDATOR_RUNTIME_LOCKFILE_AUTHORITY_INVALID');
+  }
+  if (platform.arch !== process.arch || platform.os !== process.platform) {
+    throw new Error('VALIDATOR_RUNTIME_PLATFORM_AUTHORITY_INVALID');
+  }
+  if (canonical(node) !== canonical(inspectActiveNodeAuthority())) {
+    throw new Error('VALIDATOR_RUNTIME_NODE_AUTHORITY_INVALID');
+  }
+  if (candidate.packagesAggregateSha256 !== digest(canonical(candidate.packages))) {
+    throw new Error('VALIDATOR_RUNTIME_PACKAGE_AGGREGATE_INVALID');
+  }
+  const { authoritySha256: _authoritySha256, ...unsigned } = candidate;
+  if (digest(canonical(unsigned)) !== candidate.authoritySha256) {
+    throw new Error('VALIDATOR_RUNTIME_AUTHORITY_SELF_HASH_INVALID');
+  }
+  const packageMap = new Map<string, JsonRecord>();
+  for (const entry of packages as JsonRecord[]) {
+    const files = Array.isArray(entry.files) ? entry.files : [];
+    const artifactFiles = Array.isArray(entry.artifactFiles) ? entry.artifactFiles : [];
+    const loadedFiles = Array.isArray(entry.loadedFiles) ? entry.loadedFiles : [];
+    const expected =
+      typeof entry.name === 'string'
+        ? RUNTIME_PACKAGE_AUTHORITY[entry.name as keyof typeof RUNTIME_PACKAGE_AUTHORITY]
+        : undefined;
+    if (
+      typeof entry.name !== 'string' ||
+      typeof entry.version !== 'string' ||
+      expected === undefined ||
+      entry.version !== expected.version ||
+      entry.integrity !== expected.integrity ||
+      !/^[0-9a-f]{128}$/.test(String(entry.tarballSha512)) ||
+      entry.tarballSha512 !==
+        Buffer.from(expected.integrity.slice('sha512-'.length), 'base64').toString('hex') ||
+      entry.artifactFilesAggregateSha256 !== digest(canonical(artifactFiles)) ||
+      entry.loadedFilesAggregateSha256 !== digest(canonical(loadedFiles)) ||
+      loadedFiles.some(
+        (loaded) => !files.some((file) => canonical(record(file)) === canonical(record(loaded))),
+      ) ||
+      !DIGEST.test(String(entry.filesAggregateSha256)) ||
+      entry.filesAggregateSha256 !== digest(canonical(files)) ||
+      packageMap.has(entry.name)
+    ) {
+      throw new Error('VALIDATOR_RUNTIME_PACKAGE_AUTHORITY_INVALID');
+    }
+    packageMap.set(entry.name, entry);
+  }
+  if (
+    canonical([...packageMap.keys()].sort()) !==
+    canonical(['@esbuild/darwin-arm64', 'esbuild', 'tsx', 'zod', 'zod-to-json-schema'])
+  ) {
+    throw new Error('VALIDATOR_RUNTIME_PACKAGE_SET_INVALID');
+  }
+  const prefixes: Readonly<Record<string, string>> = {
+    '@esbuild/darwin-arm64': 'runtime/node_modules/@esbuild/darwin-arm64',
+    esbuild: 'runtime/node_modules/esbuild',
+    tsx: 'runtime/node_modules/tsx',
+    zod: 'command-node-modules/zod',
+    'zod-to-json-schema': 'command-node-modules/zod-to-json-schema',
+  };
+  const loadedPaths = new Set<string>([
+    'runtime/child-bootstrap.mjs',
+    'runtime/node',
+    'runtime/supervisor.mjs',
+  ]);
+  for (const [name, entry] of packageMap) {
+    const prefix = prefixes[name];
+    if (prefix === undefined || !Array.isArray(entry.loadedFiles)) {
+      throw new Error('VALIDATOR_RUNTIME_LOADED_CLOSURE_INVALID');
+    }
+    for (const rawFile of entry.loadedFiles) {
+      const file = record(rawFile);
+      if (file === null || typeof file.path !== 'string' || !safeRelative(file.path)) {
+        throw new Error('VALIDATOR_RUNTIME_LOADED_CLOSURE_INVALID');
+      }
+      loadedPaths.add(`${prefix}/${file.path}`);
+    }
+  }
+  return {
+    loadedPaths,
+    packages: packageMap,
+    summary: {
+      authoritySha256: String(candidate.authoritySha256),
+      format: 'team-validator-runtime-authorization/1',
+      lockfileSha256: String(lockfile.sha256),
+      node: {
+        cdHash: String(node.cdHash),
+        executableSha256: String(node.executableSha256),
+        machOUuid: String(node.machOUuid),
+      },
+      packagesAggregateSha256: String(candidate.packagesAggregateSha256),
+    },
+  };
+}
+
+function assertAuthorizedPackageBindings(
+  authorization: RuntimeAuthorization,
+  packageName: string,
+  authorityPrefix: string,
+  bindings: readonly RuntimeSourceBinding[],
+): void {
+  const entry = authorization.packages.get(packageName);
+  const files = Array.isArray(entry?.files) ? entry.files.map(record) : [];
+  const actual = bindings
+    .filter((binding) => binding.identity.path.startsWith(`${authorityPrefix}/`))
+    .map((binding) => ({
+      mode: binding.identity.mode,
+      path: binding.identity.path.slice(authorityPrefix.length + 1),
+      sha256: binding.identity.sha256,
+      size: binding.identity.size,
+      type: 'FILE',
+    }));
+  if (canonical(actual) !== canonical(files)) {
+    throw new Error(`VALIDATOR_RUNTIME_ARTIFACT_MISMATCH:${packageName}`);
+  }
+}
+
+interface SupervisedExecution {
+  readonly childRuntimeMappingSha256: string;
+  readonly error?: Error;
+  readonly signal: NodeJS.Signals | null;
+  readonly status: number | null;
+  readonly stderr: string;
+  readonly stdout: string;
+}
+
+async function executeSupervisedValidator(
+  privateNode: string,
+  supervisorPath: string,
+  configuration: Buffer,
+  nonce: string,
+  expectedOpenFiles: readonly {
+    readonly device: number;
+    readonly inode: number;
+    readonly path: string;
+    readonly size: number;
+  }[],
+  deterministicMappingIdentity: unknown,
+  options: {
+    readonly cwd: string;
+    readonly env: NodeJS.ProcessEnv;
+  },
+): Promise<SupervisedExecution> {
+  return new Promise((resolveExecution, rejectExecution) => {
+    const supervisorSource = descriptorBoundRegularFile(supervisorPath, 256 * 1024).bytes;
+    const child = spawn(
+      privateNode,
+      [
+        '--input-type=module',
+        '--eval',
+        supervisorSource.toString('utf8'),
+        `base64:${configuration.toString('base64')}`,
+      ],
+      {
+        cwd: options.cwd,
+        env: options.env,
+        shell: false,
+        stdio: ['pipe', 'pipe', 'pipe', 'pipe'],
+      },
+    );
+    let stdout = '';
+    let stderr = '';
+    let observationBuffer = '';
+    let readyObserved = false;
+    const executableMappings: Array<{
+      readonly device: number;
+      readonly inode: number;
+      readonly path: string;
+    }> = [];
+    let settled = false;
+    let executionError: Error | undefined;
+    const fail = (error: Error): void => {
+      if (settled) return;
+      settled = true;
+      child.kill('SIGKILL');
+      rejectExecution(error);
+    };
+    const timeout = setTimeout(
+      () => fail(new Error('VALIDATOR_RUNTIME_HANDSHAKE_TIMEOUT')),
+      60_000,
+    );
+    child.stdout.setEncoding('utf8');
+    child.stderr.setEncoding('utf8');
+    child.stdout.on('data', (chunk: string) => {
+      stdout += chunk;
+      if (Buffer.byteLength(stdout) > 32 * 1024 * 1024) {
+        fail(new Error('VALIDATOR_STDOUT_LIMIT'));
+      }
+    });
+    child.stderr.on('data', (chunk: string) => {
+      stderr += chunk;
+      if (Buffer.byteLength(stderr) > 32 * 1024 * 1024) {
+        fail(new Error('VALIDATOR_STDERR_LIMIT'));
+      }
+    });
+    child.on('error', (error) => {
+      executionError = error;
+    });
+    const observation = child.stdio[3];
+    if (!(observation instanceof Readable)) {
+      clearTimeout(timeout);
+      fail(new Error('VALIDATOR_RUNTIME_HANDSHAKE_UNAVAILABLE'));
+      return;
+    }
+    observation.setEncoding('utf8');
+    const inspectLsof = async (
+      pid: number,
+      descriptors: string,
+    ): Promise<
+      Array<{
+        descriptor: string | undefined;
+        device: number;
+        inode: number;
+        path: string | undefined;
+      }>
+    > => {
+      const lsof = await execFileAsync(
+        '/usr/sbin/lsof',
+        ['-a', '-p', String(pid), '-d', descriptors, '-FfnDi'],
+        {
+          encoding: 'utf8',
+          maxBuffer: 32 * 1024 * 1024,
+          shell: false,
+        },
+      );
+      return lsof.stdout
+        .split(/\nf/)
+        .map((entry) => entry.split('\n'))
+        .map((lines) => ({
+          descriptor: lines[0]?.replace(/^p[0-9]+$/, ''),
+          device: Number.parseInt(lines.find((line) => line.startsWith('D'))?.slice(1) ?? '', 0),
+          inode: Number(lines.find((line) => line.startsWith('i'))?.slice(1)),
+          path: lines.find((line) => line.startsWith('n'))?.slice(1),
+        }));
+    };
+    const handleObservation = async (line: string): Promise<void> => {
+      let message: JsonRecord | null = null;
+      try {
+        message = record(JSON.parse(line));
+      } catch {
+        fail(new Error('VALIDATOR_RUNTIME_HANDSHAKE_INVALID'));
+        return;
+      }
+      if (
+        message?.type === 'EXECUTABLE_VERIFIED' &&
+        message.nonce === nonce &&
+        readyObserved &&
+        typeof message.path === 'string'
+      ) {
+        const expected = expectedOpenFiles.find(
+          (file) =>
+            realpathSync(file.path) === message.path &&
+            file.device === message.device &&
+            file.inode === message.inode,
+        );
+        if (expected === undefined) {
+          fail(new Error('VALIDATOR_RUNTIME_EXECUTABLE_AUTHORITY_INVALID'));
+          return;
+        }
+        executableMappings.push({
+          device: expected.device,
+          inode: expected.inode,
+          path: message.path,
+        });
+        return;
+      }
+      if (
+        message?.type === 'EXECUTABLE_READY' &&
+        message.nonce === nonce &&
+        readyObserved &&
+        Number.isSafeInteger(message.pid) &&
+        typeof message.path === 'string'
+      ) {
+        const expected = expectedOpenFiles.find(
+          (file) =>
+            realpathSync(file.path) === message.path &&
+            file.device === message.device &&
+            file.inode === message.inode,
+        );
+        if (expected === undefined) {
+          fail(new Error('VALIDATOR_RUNTIME_EXECUTABLE_AUTHORITY_INVALID'));
+          return;
+        }
+        let records:
+          | Array<{
+              descriptor: string | undefined;
+              device: number;
+              inode: number;
+              path: string | undefined;
+            }>
+          | undefined;
+        for (let attempt = 0; attempt < 20; attempt += 1) {
+          try {
+            records = await inspectLsof(Number(message.pid), 'txt');
+          } catch {
+            records = undefined;
+          }
+          if (
+            records?.some(
+              (record) =>
+                record.descriptor === 'txt' &&
+                record.path === message.path &&
+                record.device === expected.device &&
+                record.inode === expected.inode,
+            )
+          ) {
+            break;
+          }
+          await new Promise((resolveDelay) => setTimeout(resolveDelay, 5));
+        }
+        if (
+          records === undefined ||
+          !records.some(
+            (record) =>
+              record.descriptor === 'txt' &&
+              record.path === message.path &&
+              record.device === expected.device &&
+              record.inode === expected.inode,
+          )
+        ) {
+          fail(new Error('VALIDATOR_RUNTIME_EXECUTABLE_MAPPING_UNVERIFIED'));
+          return;
+        }
+        executableMappings.push({
+          device: expected.device,
+          inode: expected.inode,
+          path: message.path,
+        });
+        child.stdin.write(`EXEC_GO ${nonce} ${String(message.pid)}\n`);
+        return;
+      }
+      if (
+        readyObserved ||
+        message === null ||
+        message.nonce !== nonce ||
+        message.pid !== child.pid ||
+        message.openFileCount !== expectedOpenFiles.length ||
+        child.pid === undefined
+      ) {
+        fail(new Error('VALIDATOR_RUNTIME_HANDSHAKE_INVALID'));
+        return;
+      }
+      readyObserved = true;
+      let lsofRecords;
+      try {
+        lsofRecords = await inspectLsof(child.pid, 'txt,12-1024');
+      } catch {
+        fail(new Error('VALIDATOR_RUNTIME_LSOF_UNAVAILABLE'));
+        return;
+      }
+      if (settled) return;
+      const privateNodeInfo = lstatSync(privateNode);
+      if (
+        !lsofRecords.some(
+          (record) =>
+            record.descriptor === 'txt' &&
+            record.path === realpathSync(privateNode) &&
+            record.device === privateNodeInfo.dev &&
+            record.inode === privateNodeInfo.ino,
+        )
+      ) {
+        fail(new Error('VALIDATOR_RUNTIME_NODE_MAPPING_UNVERIFIED'));
+        return;
+      }
+      if (
+        !expectedOpenFiles.every((expected) =>
+          lsofRecords.some(
+            (observedFile) =>
+              observedFile.path === realpathSync(expected.path) &&
+              observedFile.device === expected.device &&
+              observedFile.inode === expected.inode,
+          ),
+        )
+      ) {
+        fail(new Error('VALIDATOR_RUNTIME_FILE_MAPPING_UNVERIFIED'));
+        return;
+      }
+      clearTimeout(timeout);
+      child.stdin.write(`GO ${nonce}\n`);
+    };
+    observation.on('data', (chunk: string) => {
+      observationBuffer += chunk;
+      for (;;) {
+        const newline = observationBuffer.indexOf('\n');
+        if (newline === -1) break;
+        const line = observationBuffer.slice(0, newline);
+        observationBuffer = observationBuffer.slice(newline + 1);
+        void handleObservation(line);
+      }
+    });
+    child.on('close', (status, signal) => {
+      clearTimeout(timeout);
+      if (settled) return;
+      if (!readyObserved) {
+        settled = true;
+        rejectExecution(new Error('VALIDATOR_RUNTIME_HANDSHAKE_MISSING'));
+        return;
+      }
+      settled = true;
+      resolveExecution({
+        childRuntimeMappingSha256: digest(
+          canonical({ authority: deterministicMappingIdentity, executableMappings }),
+        ),
+        ...(executionError === undefined ? {} : { error: executionError }),
+        signal,
+        status,
+        stderr,
+        stdout,
+      });
+    });
+  });
+}
+
+function copyAuthenticatedRuntimeTree(
+  sourceRoot: string,
+  destinationRoot: string,
+  authorityPrefix: string,
+): readonly RuntimeSourceBinding[] {
+  const bindings: RuntimeSourceBinding[] = [];
+  const visit = (
+    sourceDirectory: string,
+    destinationDirectory: string,
+    relativeRoot: string,
+  ): void => {
+    mkdirSync(destinationDirectory, { recursive: true, mode: 0o700 });
+    for (const entry of readdirSync(sourceDirectory, { withFileTypes: true })) {
+      if (entry.name === 'node_modules') continue;
+      const sourcePath = join(sourceDirectory, entry.name);
+      const destinationPath = join(destinationDirectory, entry.name);
+      const relativePath = relativeRoot === '' ? entry.name : `${relativeRoot}/${entry.name}`;
+      if (entry.isSymbolicLink()) throw new Error('VALIDATOR_RUNTIME_SOURCE_SYMLINK');
+      if (entry.isDirectory()) {
+        visit(sourcePath, destinationPath, relativePath);
+        continue;
+      }
+      if (!entry.isFile()) throw new Error('VALIDATOR_RUNTIME_SOURCE_NODE_INVALID');
+      const source = descriptorBoundRegularFile(sourcePath, 256 * 1024 * 1024, false);
+      writeFileSync(destinationPath, source.bytes, { flag: 'wx', mode: 0o600 });
+      const copied = descriptorBoundRegularFile(destinationPath, 256 * 1024 * 1024);
+      if (copied.size !== source.size || !copied.bytes.equals(source.bytes)) {
+        throw new Error('VALIDATOR_RUNTIME_COPY_MISMATCH');
+      }
+      bindings.push({
+        absolutePath: sourcePath,
+        identity: {
+          mode: source.mode,
+          path: `${authorityPrefix}/${relativePath}`,
+          sha256: digest(source.bytes),
+          size: source.size,
+        },
+      });
+    }
+  };
+  visit(sourceRoot, destinationRoot, '');
+  return bindings.sort((left, right) =>
+    left.identity.path < right.identity.path
+      ? -1
+      : left.identity.path > right.identity.path
+        ? 1
+        : 0,
+  );
+}
+
+function committedFileIdentities(
+  root: string,
+  commit: string,
+  paths: readonly string[],
+): readonly PinnedValidatorFileIdentity[] {
+  const entries = new Map(
+    gitOutput(root, ['ls-tree', commit, '--', ...paths])
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => {
+        const match = /^(100644) blob ([0-9a-f]{40})\t(.+)$/.exec(line);
+        if (match === null) throw new Error('VALIDATOR_TREE_ENTRY_INVALID');
+        return [match[3] as string, match[2] as string] as const;
+      }),
+  );
+  return paths.map((path) => {
+    const blobSha1 = entries.get(path);
+    if (blobSha1 === undefined) throw new Error('VALIDATOR_TREE_ENTRY_INVALID');
+    const worktreePath = confined(root, path);
+    const info = lstatSync(worktreePath);
+    const worktree = readFileSync(worktreePath);
+    if (
+      !info.isFile() ||
+      info.isSymbolicLink() ||
+      (info.mode & 0o777) !== 0o400 ||
+      gitBlobDigest(worktree) !== blobSha1
+    ) {
+      throw new Error('VALIDATOR_SNAPSHOT_FILE_DRIFT');
+    }
+    return {
+      gitBlobSha1: blobSha1,
+      gitMode: '100644' as const,
+      path,
+      sha256: digest(worktree),
+      size: worktree.byteLength,
+    };
+  });
+}
+
+function pinnedCommandClosurePaths(root: string): readonly string[] {
+  const closure = new Set<string>([
+    'packages/content/package.json',
+    'packages/contracts/package.json',
+    'packages/domain/package.json',
+    'tools/content-cli/package.json',
+  ]);
+  const roots = ['tools/content-cli/src/entry.ts', 'tools/content-cli/src/main.ts'];
+  const visited = new Set<string>();
+  const alias = (specifier: string): string | null => {
+    const aliases: Readonly<Record<string, string>> = {
+      '@mcat/content': 'packages/content/src/index.ts',
+      '@mcat/content/lesson-normalization': 'packages/content/src/lesson-normalization/index.ts',
+      '@mcat/content/lesson-validator': 'packages/content/src/lesson-validator/index.ts',
+      '@mcat/contracts': 'packages/contracts/src/index.ts',
+      '@mcat/domain': 'packages/domain/src/index.ts',
+    };
+    return aliases[specifier] ?? null;
+  };
+  const visit = (path: string): void => {
+    if (visited.has(path)) return;
+    visited.add(path);
+    closure.add(path);
+    const source = readFileSync(confined(root, path), 'utf8');
+    const specifiers = new Set<string>();
+    for (const match of source.matchAll(
+      /^(?:import|export)\s+(?:type\s+)?[\s\S]*?\s+from\s+['"]([^'"]+)['"]/gm,
+    )) {
+      if (match[1] !== undefined && /^(?:\.|@|node:|zod)/.test(match[1])) {
+        specifiers.add(match[1]);
+      }
+    }
+    for (const match of source.matchAll(/^import\s+['"]([^'"]+)['"]/gm)) {
+      if (match[1] !== undefined && /^(?:\.|@|node:|zod)/.test(match[1])) {
+        specifiers.add(match[1]);
+      }
+    }
+    for (const match of source.matchAll(/\bimport\(\s*['"]([^'"]+)['"]\s*\)/g)) {
+      if (match[1] !== undefined && /^(?:\.|@|node:|zod)/.test(match[1])) {
+        specifiers.add(match[1]);
+      }
+    }
+    for (const specifier of specifiers) {
+      if (path === 'tools/content-cli/src/entry.ts' && specifier !== './main') continue;
+      if (
+        specifier.startsWith('node:') ||
+        specifier === 'zod' ||
+        specifier === 'zod-to-json-schema'
+      ) {
+        continue;
+      }
+      const aliased = alias(specifier);
+      const base =
+        aliased === null
+          ? specifier.startsWith('.')
+            ? resolve(dirname(confined(root, path)), specifier)
+            : null
+          : confined(root, aliased);
+      if (base === null)
+        throw new Error(`VALIDATOR_COMMAND_IMPORT_UNRESOLVED:${path}:${specifier}`);
+      const dependency = [base, `${base}.ts`, join(base, 'index.ts')].find(
+        (candidate) => existsSync(candidate) && lstatSync(candidate).isFile(),
+      );
+      if (dependency === undefined) {
+        throw new Error(`VALIDATOR_COMMAND_IMPORT_UNRESOLVED:${path}:${specifier}`);
+      }
+      const relativePath = relative(root, dependency).split(sep).join('/');
+      if (relativePath.startsWith('../')) throw new Error('VALIDATOR_COMMAND_IMPORT_OUTSIDE_ROOT');
+      visit(relativePath);
+    }
+  };
+  for (const path of roots) visit(path);
+  return [...closure].sort();
+}
+
+function centralIntakeIdentities(
+  centralRoot: string,
+  repositoryUrl: string,
+): {
+  readonly commit: string;
+  readonly files: readonly PinnedValidatorFileIdentity[];
+} {
+  if (gitOutput(centralRoot, ['remote', 'get-url', 'origin']) !== repositoryUrl) {
+    throw new Error('CENTRAL_REPOSITORY_URL_MISMATCH');
+  }
+  const commit = gitOutput(centralRoot, ['rev-parse', 'HEAD']);
+  if (!COMMIT.test(commit)) throw new Error('CENTRAL_HEAD_INVALID');
+  if (
+    gitOutput(centralRoot, [
+      'status',
+      '--porcelain',
+      '--untracked-files=all',
+      '--',
+      ...CURRENT_INTAKE_AUTHORITY_PATHS,
+    ]) !== ''
+  ) {
+    throw new Error('CENTRAL_INTAKE_CODE_DIRTY');
+  }
+  const entries = new Map(
+    gitOutput(centralRoot, ['ls-tree', commit, '--', ...CURRENT_INTAKE_AUTHORITY_PATHS])
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => {
+        const match = /^(100644) blob ([0-9a-f]{40})\t(.+)$/.exec(line);
+        if (match === null) throw new Error('CENTRAL_INTAKE_PATH_INVALID');
+        return [match[3] as string, match[2] as string] as const;
+      }),
+  );
+  const files = CURRENT_INTAKE_AUTHORITY_PATHS.map((path) => {
+    const blobSha1 = entries.get(path);
+    if (blobSha1 === undefined) throw new Error('CENTRAL_INTAKE_PATH_INVALID');
+    const worktree = readFileSync(confined(centralRoot, path));
+    const activeRuntime = readFileSync(confined(RUNTIME_REPOSITORY_ROOT, path));
+    if (!worktree.equals(activeRuntime) || gitBlobDigest(worktree) !== blobSha1) {
+      throw new Error('CENTRAL_INTAKE_BYTES_DRIFT');
+    }
+    return {
+      gitBlobSha1: blobSha1,
+      gitMode: '100644' as const,
+      path,
+      sha256: digest(worktree),
+      size: worktree.byteLength,
+    };
+  });
+  const sourceAuthorityPaths = CURRENT_INTAKE_AUTHORITY_PATHS.filter((path) =>
+    path.endsWith('.ts'),
+  );
+  const closure = new Set<string>();
+  const visit = (path: string): void => {
+    if (closure.has(path)) return;
+    closure.add(path);
+    const source = readFileSync(confined(RUNTIME_REPOSITORY_ROOT, path), 'utf8');
+    const references = source.matchAll(
+      /(?:import|export)\s+(?:type\s+)?(?:[\s\S]*?\s+from\s+)?['"](\.[^'"]+)['"]/g,
+    );
+    for (const match of references) {
+      const specifier = match[1];
+      if (specifier === undefined) continue;
+      const base = resolve(dirname(confined(RUNTIME_REPOSITORY_ROOT, path)), specifier);
+      const candidates = [base, `${base}.ts`, join(base, 'index.ts')];
+      const dependency = candidates.find(
+        (candidate) => existsSync(candidate) && lstatSync(candidate).isFile(),
+      );
+      if (dependency === undefined) throw new Error('CENTRAL_INTAKE_IMPORT_UNRESOLVED');
+      const relativePath = relative(RUNTIME_REPOSITORY_ROOT, dependency).split(sep).join('/');
+      if (relativePath.startsWith('../'))
+        throw new Error('CENTRAL_INTAKE_IMPORT_OUTSIDE_AUTHORITY');
+      visit(relativePath);
+    }
+  };
+  for (const root of [
+    'packages/content/src/lesson-factory/team-return-intake.ts',
+    'tools/content-cli/src/team-intake-main.ts',
+  ]) {
+    visit(root);
+  }
+  if (canonical([...closure].sort()) !== canonical([...sourceAuthorityPaths].sort())) {
+    throw new Error('CENTRAL_INTAKE_AUTHORITY_CLOSURE_INVALID');
+  }
+  return { commit, files };
+}
+
+function makeWritableForCleanup(root: string): void {
+  if (!existsSync(root)) return;
+  const info = lstatSync(root);
+  if (info.isSymbolicLink()) return;
+  if (!info.isDirectory()) {
+    chmodSync(root, 0o600);
+    return;
+  }
+  chmodSync(root, 0o700);
+  for (const name of readdirSync(root)) makeWritableForCleanup(join(root, name));
+}
+
+type ValidatorLeaseState = 'PREPARED' | 'RUNNING' | 'RESULTS_DURABLE' | 'CLEANED';
+
+interface ValidatorLeaseUnsigned {
+  readonly commandAuthoritySha256: string;
+  readonly expectedOutputsSha256: string;
+  readonly format: 'team-validator-recovery-lease/2';
+  readonly processInstanceSha256: string;
+  readonly processPid: number;
+  readonly root: string;
+  readonly runNonce: string;
+  readonly sequence: number;
+  readonly snapshot: { readonly device: number | null; readonly inode: number | null };
+  readonly state: ValidatorLeaseState;
+}
+
+function processInstanceSha256(pid: number): string | null {
+  const inspected = spawnSync('/bin/ps', ['-o', 'lstart=', '-p', String(pid)], {
+    encoding: 'utf8',
+    shell: false,
+    stdio: ['ignore', 'pipe', 'ignore'],
+  });
+  if (inspected.status !== 0 || inspected.signal !== null || inspected.stdout.trim() === '') {
+    return null;
+  }
+  return digest(canonical({ pid, startedAt: inspected.stdout.trim() }));
+}
+
+function durableDirectorySync(path: string): void {
+  const descriptor = openSync(path, fsConstants.O_RDONLY);
+  try {
+    fsyncSync(descriptor);
+  } finally {
+    closeSync(descriptor);
+  }
+}
+
+function durableTreeSync(root: string): void {
+  const info = lstatSync(root);
+  if (info.isSymbolicLink()) throw new Error('VALIDATOR_DURABLE_TREE_SYMLINK');
+  if (info.isDirectory()) {
+    for (const name of readdirSync(root)) durableTreeSync(join(root, name));
+    durableDirectorySync(root);
+    return;
+  }
+  if (!info.isFile()) throw new Error('VALIDATOR_DURABLE_TREE_NODE_INVALID');
+  const descriptor = openSync(root, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW);
+  try {
+    fsyncSync(descriptor);
+  } finally {
+    closeSync(descriptor);
+  }
+}
+
+function durableWriteValidatorLease(leasePath: string, unsigned: ValidatorLeaseUnsigned): void {
+  const leaseSha256 = digest(canonical(unsigned));
+  const bytes = Buffer.from(`${canonical({ ...unsigned, leaseSha256 })}\n`);
+  const temporaryPath = `${leasePath}.tmp-${randomBytes(32).toString('hex')}`;
+  const descriptor = openSync(
+    temporaryPath,
+    fsConstants.O_CREAT | fsConstants.O_EXCL | fsConstants.O_WRONLY | fsConstants.O_NOFOLLOW,
+    0o600,
+  );
+  try {
+    writeSync(descriptor, bytes);
+    fsyncSync(descriptor);
+  } finally {
+    closeSync(descriptor);
+  }
+  renameSync(temporaryPath, leasePath);
+  durableDirectorySync(dirname(leasePath));
+}
+
+function durableRemoveValidatorLease(leasePath: string): void {
+  if (existsSync(leasePath)) unlinkSync(leasePath);
+  durableDirectorySync(dirname(leasePath));
+}
+
+function quarantineOwnedValidatorSnapshot(
+  path: string,
+  expected: { readonly device: number; readonly inode: number },
+): boolean {
+  if (
+    dirname(path) !== VALIDATOR_RECOVERY_ROOT ||
+    !/^snapshot-[0-9a-f]{64}$/.test(basename(path))
+  ) {
+    return false;
+  }
+  const quarantinePath = join(
+    VALIDATOR_RECOVERY_ROOT,
+    `.cleanup-${basename(path)}-${randomBytes(32).toString('hex')}`,
+  );
+  renameSync(path, quarantinePath);
+  durableDirectorySync(VALIDATOR_RECOVERY_ROOT);
+  const quarantined = lstatSync(quarantinePath);
+  if (
+    quarantined.isSymbolicLink() ||
+    !quarantined.isDirectory() ||
+    quarantined.dev !== expected.device ||
+    quarantined.ino !== expected.inode
+  ) {
+    if (!existsSync(path)) {
+      renameSync(quarantinePath, path);
+      durableDirectorySync(VALIDATOR_RECOVERY_ROOT);
+    }
+    return false;
+  }
+  makeWritableForCleanup(quarantinePath);
+  const finalIdentity = lstatSync(quarantinePath);
+  if (
+    finalIdentity.isSymbolicLink() ||
+    !finalIdentity.isDirectory() ||
+    finalIdentity.dev !== expected.device ||
+    finalIdentity.ino !== expected.inode
+  ) {
+    return false;
+  }
+  rmSync(quarantinePath, { force: true, recursive: true });
+  durableDirectorySync(VALIDATOR_RECOVERY_ROOT);
+  return true;
+}
+
+function parseValidatorLease(path: string, token: string): ValidatorLeaseUnsigned | null {
+  let lease: JsonRecord | null = null;
+  try {
+    lease = record(JSON.parse(descriptorBoundRegularFile(path, 64 * 1024).bytes.toString()));
+  } catch {
+    return null;
+  }
+  const snapshot = record(lease?.snapshot);
+  if (
+    lease === null ||
+    snapshot === null ||
+    !hasExactKeys(lease, [
+      'commandAuthoritySha256',
+      'expectedOutputsSha256',
+      'format',
+      'leaseSha256',
+      'processInstanceSha256',
+      'processPid',
+      'root',
+      'runNonce',
+      'sequence',
+      'snapshot',
+      'state',
+    ]) ||
+    !hasExactKeys(snapshot, ['device', 'inode']) ||
+    lease.format !== 'team-validator-recovery-lease/2' ||
+    lease.runNonce !== token ||
+    lease.root !== join(VALIDATOR_RECOVERY_ROOT, `snapshot-${token}`) ||
+    !DIGEST.test(String(lease.commandAuthoritySha256)) ||
+    !DIGEST.test(String(lease.expectedOutputsSha256)) ||
+    !DIGEST.test(String(lease.processInstanceSha256)) ||
+    !Number.isSafeInteger(lease.processPid) ||
+    !Number.isSafeInteger(lease.sequence) ||
+    !['PREPARED', 'RUNNING', 'RESULTS_DURABLE', 'CLEANED'].includes(String(lease.state)) ||
+    !(
+      (snapshot.device === null && snapshot.inode === null) ||
+      (Number.isSafeInteger(snapshot.device) && Number.isSafeInteger(snapshot.inode))
+    )
+  ) {
+    return null;
+  }
+  const { leaseSha256, ...unsigned } = lease;
+  if (!DIGEST.test(String(leaseSha256)) || digest(canonical(unsigned)) !== leaseSha256) {
+    return null;
+  }
+  return unsigned as unknown as ValidatorLeaseUnsigned;
+}
+
+function reclaimStaleValidatorSnapshots(): void {
+  mkdirSync(VALIDATOR_RECOVERY_ROOT, { recursive: true, mode: 0o700 });
+  chmodSync(VALIDATOR_RECOVERY_ROOT, 0o700);
+  for (const name of readdirSync(VALIDATOR_RECOVERY_ROOT)) {
+    const match = /^lease-([0-9a-f]{64})\.json\.tmp-[0-9a-f]{64}$/.exec(name);
+    if (match === null) continue;
+    const token = match[1] as string;
+    const temporaryPath = join(VALIDATOR_RECOVERY_ROOT, name);
+    const temporaryLease = parseValidatorLease(temporaryPath, token);
+    if (temporaryLease === null) continue;
+    const leasePath = join(VALIDATOR_RECOVERY_ROOT, `lease-${token}.json`);
+    if (!existsSync(leasePath)) {
+      renameSync(temporaryPath, leasePath);
+      durableDirectorySync(VALIDATOR_RECOVERY_ROOT);
+      continue;
+    }
+    const currentLease = parseValidatorLease(leasePath, token);
+    const sameRun =
+      currentLease !== null &&
+      currentLease.runNonce === temporaryLease.runNonce &&
+      currentLease.commandAuthoritySha256 === temporaryLease.commandAuthoritySha256 &&
+      currentLease.expectedOutputsSha256 === temporaryLease.expectedOutputsSha256 &&
+      currentLease.processInstanceSha256 === temporaryLease.processInstanceSha256 &&
+      currentLease.processPid === temporaryLease.processPid &&
+      currentLease.root === temporaryLease.root;
+    if (sameRun && temporaryLease.sequence > currentLease.sequence) {
+      renameSync(temporaryPath, leasePath);
+      durableDirectorySync(VALIDATOR_RECOVERY_ROOT);
+    } else if (sameRun) {
+      unlinkSync(temporaryPath);
+      durableDirectorySync(VALIDATOR_RECOVERY_ROOT);
+    }
+  }
+  for (const name of readdirSync(VALIDATOR_RECOVERY_ROOT)) {
+    const match = /^lease-([0-9a-f]{64})\.json$/.exec(name);
+    if (match === null) continue;
+    const token = match[1] as string;
+    const leasePath = join(VALIDATOR_RECOVERY_ROOT, name);
+    const lease = parseValidatorLease(leasePath, token);
+    const expectedRoot = join(VALIDATOR_RECOVERY_ROOT, `snapshot-${token}`);
+    if (lease === null) continue;
+    const ownerAlive = processInstanceSha256(lease.processPid) === lease.processInstanceSha256;
+    if (ownerAlive) continue;
+    const cleanedLease = {
+      ...lease,
+      sequence: lease.sequence + 1,
+      state: 'CLEANED' as const,
+    };
+    if (!existsSync(expectedRoot)) {
+      durableWriteValidatorLease(leasePath, cleanedLease);
+      durableRemoveValidatorLease(leasePath);
+      continue;
+    }
+    const info = lstatSync(expectedRoot);
+    if (
+      lease.state === 'PREPARED' &&
+      lease.sequence === 0 &&
+      lease.snapshot.device === null &&
+      lease.snapshot.inode === null &&
+      !info.isSymbolicLink() &&
+      info.isDirectory() &&
+      (info.mode & 0o777) === 0o700 &&
+      info.uid === process.getuid?.() &&
+      info.gid === process.getgid?.() &&
+      info.nlink === 2 &&
+      readdirSync(expectedRoot).length === 0
+    ) {
+      durableWriteValidatorLease(leasePath, cleanedLease);
+      if (
+        quarantineOwnedValidatorSnapshot(expectedRoot, {
+          device: info.dev,
+          inode: info.ino,
+        })
+      ) {
+        durableRemoveValidatorLease(leasePath);
+      }
+      continue;
+    }
+    if (
+      info.isSymbolicLink() ||
+      !info.isDirectory() ||
+      info.dev !== lease.snapshot.device ||
+      info.ino !== lease.snapshot.inode
+    ) {
+      continue;
+    }
+    durableWriteValidatorLease(leasePath, cleanedLease);
+    if (
+      quarantineOwnedValidatorSnapshot(expectedRoot, {
+        device: lease.snapshot.device,
+        inode: lease.snapshot.inode,
+      })
+    ) {
+      durableRemoveValidatorLease(leasePath);
+    }
+  }
+}
+
+function materializePinnedValidatorSnapshot(
+  authorityRoot: string,
+  centralRoot: string,
+  finalization: FinalizationAuthority,
+  teamAuthority: TeamAuthority,
+): PinnedValidatorSnapshot {
+  const validatorAuthority = record(teamAuthority.kit.validatorAuthority);
+  const manifestFiles = Array.isArray(validatorAuthority?.files)
+    ? (validatorAuthority.files as unknown[])
+    : [];
+  const repositoryCommit = String(validatorAuthority?.repositoryCommit ?? '');
+  const repositoryUrl = String(teamAuthority.kit.repositoryUrl ?? '');
+  if (
+    !isExactLegacyGenerationThreeCohort(finalization) ||
+    repositoryUrl !== REPOSITORY_URL ||
+    repositoryCommit !== finalization.pins.repositoryCommit ||
+    canonical(
+      manifestFiles
+        .map(record)
+        .map((file) => file?.path)
+        .sort(),
+    ) !== canonical(GENERATION_THREE_VALIDATOR_PATHS) ||
+    validatorAuthority?.aggregateSha256 !== digest(canonical(manifestFiles))
+  ) {
+    throw new Error('VALIDATOR_MANIFEST_CLOSURE_INVALID');
+  }
+  const central = centralIntakeIdentities(centralRoot, repositoryUrl);
+  try {
+    execFileSync(
+      GIT_EXECUTABLE,
+      ['-C', centralRoot, 'merge-base', '--is-ancestor', repositoryCommit, central.commit],
+      {
+        shell: false,
+        stdio: 'ignore',
+      },
+    );
+  } catch {
+    throw new Error('VALIDATOR_PIN_NOT_ANCESTOR');
+  }
+  const bundlePath = confined(authorityRoot, `mcat-prep-${repositoryCommit.slice(0, 7)}.bundle`);
+  const bundle = descriptorBoundRegularFile(bundlePath, MAX_VALIDATOR_BUNDLE_BYTES);
+  if (bundle.mode !== 0o644) throw new Error('VALIDATOR_BUNDLE_MODE_INVALID');
+  const toolVersions = record(record(teamAuthority.kit.pins)?.toolVersions);
+  const nodeVersion = `v${process.versions.node}`;
+  const requireFromIntake = createRequire(
+    join(RUNTIME_REPOSITORY_ROOT, 'tools/content-cli/package.json'),
+  );
+  const tsxCliPath = requireFromIntake.resolve('tsx/cli');
+  const tsxPackagePath = requireFromIntake.resolve('tsx/package.json');
+  const esbuildPackagePath = requireFromIntake.resolve('esbuild/package.json');
+  const zodPackagePath = requireFromIntake.resolve('zod/package.json');
+  let zodToJsonSchemaRoot = dirname(requireFromIntake.resolve('zod-to-json-schema'));
+  while (
+    readJson(join(zodToJsonSchemaRoot, 'package.json'))?.name !== 'zod-to-json-schema' &&
+    dirname(zodToJsonSchemaRoot) !== zodToJsonSchemaRoot
+  ) {
+    zodToJsonSchemaRoot = dirname(zodToJsonSchemaRoot);
+  }
+  const zodToJsonSchemaPackagePath = join(zodToJsonSchemaRoot, 'package.json');
+  const tsxPackage = readJson(tsxPackagePath);
+  const nodeExecutable = descriptorBoundRegularFile(process.execPath, 256 * 1024 * 1024);
+  const tsxCli = descriptorBoundRegularFile(tsxCliPath, 4 * 1024 * 1024);
+  if (toolVersions?.node !== nodeVersion || tsxPackage?.version !== '4.23.1') {
+    throw new Error('VALIDATOR_RUNTIME_IDENTITY_INVALID');
+  }
+  reclaimStaleValidatorSnapshots();
+  const recoveryToken = randomBytes(32).toString('hex');
+  const work = join(VALIDATOR_RECOVERY_ROOT, `snapshot-${recoveryToken}`);
+  const recoveryLease = join(VALIDATOR_RECOVERY_ROOT, `lease-${recoveryToken}.json`);
+  const processInstance = processInstanceSha256(process.pid);
+  if (processInstance === null) throw new Error('VALIDATOR_PROCESS_INSTANCE_UNAVAILABLE');
+  let lease: ValidatorLeaseUnsigned = {
+    commandAuthoritySha256: digest(
+      canonical({
+        arguments: ['candidate-validate', '{lessonRoot}', '--json'],
+        entry: 'tools/content-cli/src/entry.ts',
+        repositoryCommit,
+        validatorAggregateSha256: validatorAuthority.aggregateSha256,
+      }),
+    ),
+    expectedOutputsSha256: digest(
+      canonical(
+        teamAuthority.team.lessonIds.map((lessonId) => ({
+          command: 'candidate-validate',
+          lessonId,
+          report: 'json-stdout',
+        })),
+      ),
+    ),
+    format: 'team-validator-recovery-lease/2',
+    processInstanceSha256: processInstance,
+    processPid: process.pid,
+    root: work,
+    runNonce: recoveryToken,
+    sequence: 0,
+    snapshot: { device: null, inode: null },
+    state: 'PREPARED',
+  };
+  durableWriteValidatorLease(recoveryLease, lease);
+  mkdirSync(work, { mode: 0o700 });
+  durableDirectorySync(VALIDATOR_RECOVERY_ROOT);
+  const workInfo = lstatSync(work);
+  const owned = { device: workInfo.dev, inode: workInfo.ino };
+  lease = {
+    ...lease,
+    sequence: 1,
+    snapshot: { device: owned.device, inode: owned.inode },
+  };
+  durableWriteValidatorLease(recoveryLease, lease);
+  const privateBundle = join(work, 'authority.bundle');
+  const snapshotRoot = join(work, 'snapshot');
+  const tsxConfigPath = join(work, 'runtime-tsconfig.json');
+  const privateRuntimeRoot = join(work, 'runtime');
+  const privateNode = join(privateRuntimeRoot, 'node');
+  const runtimeSupervisorSource = confined(
+    RUNTIME_REPOSITORY_ROOT,
+    'packages/content/src/lesson-factory/team-return-runtime-supervisor.mjs',
+  );
+  const runtimeChildBootstrapSource = confined(
+    RUNTIME_REPOSITORY_ROOT,
+    'packages/content/src/lesson-factory/team-return-runtime-child-bootstrap.mjs',
+  );
+  const privateRuntimeSupervisor = join(privateRuntimeRoot, 'supervisor.mjs');
+  const privateRuntimeChildBootstrap = join(privateRuntimeRoot, 'child-bootstrap.mjs');
+  const privateTsxRoot = join(privateRuntimeRoot, 'node_modules/tsx');
+  const privateEsbuildRoot = join(privateRuntimeRoot, 'node_modules/esbuild');
+  const esbuildPlatform = `${process.platform}-${process.arch}`;
+  const esbuildPlatformRoot = join(
+    dirname(dirname(esbuildPackagePath)),
+    '@esbuild',
+    esbuildPlatform,
+  );
+  const privateEsbuildPlatformRoot = join(
+    privateRuntimeRoot,
+    'node_modules/@esbuild',
+    esbuildPlatform,
+  );
+  const privateTsxCli = join(privateTsxRoot, relative(dirname(tsxPackagePath), tsxCliPath));
+  let cleaned = false;
+  const transitionLease = (state: ValidatorLeaseState): void => {
+    lease = { ...lease, sequence: lease.sequence + 1, state };
+    durableWriteValidatorLease(recoveryLease, lease);
+  };
+  const cleanup = (): void => {
+    if (cleaned) return;
+    if (!existsSync(work)) {
+      transitionLease('CLEANED');
+      durableRemoveValidatorLease(recoveryLease);
+      cleaned = true;
+      return;
+    }
+    const current = lstatSync(work);
+    if (
+      current.isSymbolicLink() ||
+      !current.isDirectory() ||
+      current.dev !== owned.device ||
+      current.ino !== owned.inode
+    ) {
+      return;
+    }
+    transitionLease('CLEANED');
+    if (quarantineOwnedValidatorSnapshot(work, owned)) {
+      durableRemoveValidatorLease(recoveryLease);
+      cleaned = true;
+    }
+  };
+  try {
+    const runtimeAuthorization = loadRuntimeAuthorization(teamAuthority, repositoryCommit);
+    writeFileSync(privateBundle, bundle.bytes, { flag: 'wx', mode: 0o400 });
+    writeFileSync(tsxConfigPath, PINNED_TSX_CONFIG_BYTES, { flag: 'wx', mode: 0o400 });
+    mkdirSync(join(privateRuntimeRoot, 'node_modules'), { recursive: true, mode: 0o700 });
+    const runtimeSourceBindings: RuntimeSourceBinding[] = [];
+    const sourceNode = descriptorBoundRegularFile(process.execPath, 256 * 1024 * 1024, false);
+    writeFileSync(privateNode, sourceNode.bytes, { flag: 'wx', mode: 0o700 });
+    runtimeSourceBindings.push({
+      absolutePath: process.execPath,
+      identity: {
+        mode: sourceNode.mode,
+        path: 'runtime/node',
+        sha256: digest(sourceNode.bytes),
+        size: sourceNode.size,
+      },
+    });
+    const childBootstrapSource = descriptorBoundRegularFile(runtimeChildBootstrapSource, 64 * 1024);
+    writeFileSync(privateRuntimeChildBootstrap, childBootstrapSource.bytes, {
+      flag: 'wx',
+      mode: 0o600,
+    });
+    runtimeSourceBindings.push({
+      absolutePath: runtimeChildBootstrapSource,
+      identity: {
+        mode: childBootstrapSource.mode,
+        path: 'runtime/child-bootstrap.mjs',
+        sha256: digest(childBootstrapSource.bytes),
+        size: childBootstrapSource.size,
+      },
+    });
+    const supervisorSource = descriptorBoundRegularFile(runtimeSupervisorSource, 64 * 1024);
+    writeFileSync(privateRuntimeSupervisor, supervisorSource.bytes, { flag: 'wx', mode: 0o600 });
+    runtimeSourceBindings.push({
+      absolutePath: runtimeSupervisorSource,
+      identity: {
+        mode: supervisorSource.mode,
+        path: 'runtime/supervisor.mjs',
+        sha256: digest(supervisorSource.bytes),
+        size: supervisorSource.size,
+      },
+    });
+    runtimeSourceBindings.push(
+      ...copyAuthenticatedRuntimeTree(
+        dirname(tsxPackagePath),
+        privateTsxRoot,
+        'runtime/node_modules/tsx',
+      ),
+      ...copyAuthenticatedRuntimeTree(
+        dirname(esbuildPackagePath),
+        privateEsbuildRoot,
+        'runtime/node_modules/esbuild',
+      ),
+      ...copyAuthenticatedRuntimeTree(
+        esbuildPlatformRoot,
+        privateEsbuildPlatformRoot,
+        `runtime/node_modules/@esbuild/${esbuildPlatform}`,
+      ),
+    );
+    assertAuthorizedPackageBindings(
+      runtimeAuthorization,
+      'tsx',
+      'runtime/node_modules/tsx',
+      runtimeSourceBindings,
+    );
+    assertAuthorizedPackageBindings(
+      runtimeAuthorization,
+      'esbuild',
+      'runtime/node_modules/esbuild',
+      runtimeSourceBindings,
+    );
+    assertAuthorizedPackageBindings(
+      runtimeAuthorization,
+      '@esbuild/darwin-arm64',
+      `runtime/node_modules/@esbuild/${esbuildPlatform}`,
+      runtimeSourceBindings,
+    );
+    hardenIncomingTree(privateRuntimeRoot, chmodSync);
+    chmodSync(privateNode, 0o500);
+    const privateEsbuildExecutable = join(privateEsbuildRoot, 'bin/esbuild');
+    if (existsSync(privateEsbuildExecutable)) chmodSync(privateEsbuildExecutable, 0o500);
+    const privatePlatformExecutable = join(privateEsbuildPlatformRoot, 'bin/esbuild');
+    if (existsSync(privatePlatformExecutable)) chmodSync(privatePlatformExecutable, 0o500);
+    if (
+      canonical(inspectNodeImageIdentity(privateNode)) !==
+      canonical(runtimeAuthorization.summary.node)
+    ) {
+      throw new Error('VALIDATOR_RUNTIME_PRIVATE_NODE_AUTHORITY_INVALID');
+    }
+    const verify = spawnSync(GIT_EXECUTABLE, ['bundle', 'verify', privateBundle], {
+      cwd: centralRoot,
+      encoding: 'utf8',
+      env: { GIT_CONFIG_NOSYSTEM: '1', GIT_OPTIONAL_LOCKS: '0', HOME: work },
+      maxBuffer: 1024 * 1024,
+      shell: false,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    const heads = spawnSync(GIT_EXECUTABLE, ['bundle', 'list-heads', privateBundle], {
+      cwd: centralRoot,
+      encoding: 'utf8',
+      env: { GIT_CONFIG_NOSYSTEM: '1', GIT_OPTIONAL_LOCKS: '0', HOME: work },
+      maxBuffer: 1024 * 1024,
+      shell: false,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    if (
+      verify.status !== 0 ||
+      heads.status !== 0 ||
+      heads.stdout.trim() !== `${repositoryCommit} refs/heads/lesson-factory-kit-v1`
+    ) {
+      throw new Error('VALIDATOR_BUNDLE_INVALID');
+    }
+    const clone = spawnSync(
+      GIT_EXECUTABLE,
+      ['clone', '--no-checkout', '--', privateBundle, snapshotRoot],
+      {
+        cwd: work,
+        encoding: 'utf8',
+        env: { GIT_CONFIG_NOSYSTEM: '1', GIT_OPTIONAL_LOCKS: '0', HOME: work },
+        maxBuffer: 1024 * 1024,
+        shell: false,
+        stdio: ['ignore', 'pipe', 'pipe'],
+      },
+    );
+    if (clone.status !== 0) throw new Error('VALIDATOR_BUNDLE_CLONE_FAILED');
+    gitOutput(snapshotRoot, ['checkout', '--detach', repositoryCommit]);
+    gitOutput(snapshotRoot, ['remote', 'set-url', 'origin', repositoryUrl]);
+    if (
+      gitOutput(snapshotRoot, ['rev-parse', 'HEAD']) !== repositoryCommit ||
+      gitOutput(snapshotRoot, ['remote', 'get-url', 'origin']) !== repositoryUrl ||
+      gitOutput(snapshotRoot, ['status', '--porcelain', '--untracked-files=all']) !== ''
+    ) {
+      throw new Error('VALIDATOR_SNAPSHOT_STATE_INVALID');
+    }
+    const commandNodeModulesRoot = join(snapshotRoot, 'node_modules');
+    runtimeSourceBindings.push(
+      ...copyAuthenticatedRuntimeTree(
+        dirname(zodPackagePath),
+        join(commandNodeModulesRoot, 'zod'),
+        'command-node-modules/zod',
+      ),
+      ...copyAuthenticatedRuntimeTree(
+        dirname(zodToJsonSchemaPackagePath),
+        join(commandNodeModulesRoot, 'zod-to-json-schema'),
+        'command-node-modules/zod-to-json-schema',
+      ),
+    );
+    assertAuthorizedPackageBindings(
+      runtimeAuthorization,
+      'zod',
+      'command-node-modules/zod',
+      runtimeSourceBindings,
+    );
+    assertAuthorizedPackageBindings(
+      runtimeAuthorization,
+      'zod-to-json-schema',
+      'command-node-modules/zod-to-json-schema',
+      runtimeSourceBindings,
+    );
+    const commandPaths = pinnedCommandClosurePaths(snapshotRoot);
+    const workspacePackageAliases = [
+      { name: 'content', prefix: 'packages/content/' },
+      { name: 'contracts', prefix: 'packages/contracts/' },
+      { name: 'domain', prefix: 'packages/domain/' },
+    ] as const;
+    for (const workspacePackage of workspacePackageAliases) {
+      const aliasRoot = join(commandNodeModulesRoot, '@mcat', workspacePackage.name);
+      for (const path of commandPaths.filter((path) => path.startsWith(workspacePackage.prefix))) {
+        const relativePath = path.slice(workspacePackage.prefix.length);
+        const source = descriptorBoundRegularFile(confined(snapshotRoot, path), 4 * 1024 * 1024);
+        const destination = confined(aliasRoot, relativePath);
+        mkdirSync(dirname(destination), { recursive: true, mode: 0o700 });
+        writeFileSync(destination, source.bytes, { flag: 'wx', mode: source.mode });
+      }
+    }
+    for (const path of GENERATION_THREE_VALIDATOR_PATHS) {
+      chmodSync(confined(snapshotRoot, path), 0o400);
+    }
+    chmodSync(confined(snapshotRoot, PINNED_CURRICULUM_PATH), 0o400);
+    chmodSync(confined(snapshotRoot, PINNED_TOOL_PATH), 0o400);
+    const files = committedFileIdentities(
+      snapshotRoot,
+      repositoryCommit,
+      GENERATION_THREE_VALIDATOR_PATHS,
+    );
+    const curriculum = committedFileIdentities(snapshotRoot, repositoryCommit, [
+      PINNED_CURRICULUM_PATH,
+    ])[0];
+    if (
+      curriculum === undefined ||
+      curriculum.sha256 !== record(teamAuthority.kit.pins)?.curriculumSha256
+    ) {
+      throw new Error('VALIDATOR_CURRICULUM_IDENTITY_INVALID');
+    }
+    const tool = committedFileIdentities(snapshotRoot, repositoryCommit, [PINNED_TOOL_PATH])[0];
+    if (tool === undefined || tool.sha256 !== teamAuthority.toolSha256) {
+      throw new Error('VALIDATOR_TOOL_IDENTITY_INVALID');
+    }
+    for (const [index, rawManifestFile] of manifestFiles.entries()) {
+      const manifestFile = record(rawManifestFile);
+      const actual = files[index];
+      if (
+        manifestFile === null ||
+        actual === undefined ||
+        manifestFile.path !== actual.path ||
+        manifestFile.sha256 !== actual.sha256 ||
+        manifestFile.gitBlobSha256 !== actual.sha256
+      ) {
+        throw new Error('VALIDATOR_MANIFEST_FILE_MISMATCH');
+      }
+    }
+    const contentPackage = readJson(join(snapshotRoot, 'packages/content/package.json'));
+    const cliPackage = readJson(join(snapshotRoot, 'tools/content-cli/package.json'));
+    const tsxVersion = String(record(cliPackage?.devDependencies)?.tsx ?? '');
+    if (
+      contentPackage?.name !== '@mcat/content' ||
+      cliPackage?.name !== '@mcat/content-cli' ||
+      toolVersions?.node !== nodeVersion ||
+      tsxVersion !== '4.23.1' ||
+      tsxPackage?.version !== tsxVersion
+    ) {
+      throw new Error('VALIDATOR_RUNTIME_IDENTITY_INVALID');
+    }
+    hardenIncomingTree(snapshotRoot, chmodSync);
+    for (const line of gitOutput(snapshotRoot, ['ls-files', '--stage']).split('\n')) {
+      const match = /^(100755) [0-9a-f]{40} [0-3]\t(.+)$/.exec(line);
+      if (match !== null) chmodSync(confined(snapshotRoot, match[2] as string), 0o500);
+    }
+    const snapshotInfo = lstatSync(snapshotRoot);
+    const snapshotIdentity = { device: snapshotInfo.dev, inode: snapshotInfo.ino };
+    const commandFiles = committedFileIdentities(snapshotRoot, repositoryCommit, commandPaths);
+    const commandAliasFiles = workspacePackageAliases.flatMap((workspacePackage) =>
+      commandFiles
+        .filter((file) => file.path.startsWith(workspacePackage.prefix))
+        .map((file) => ({
+          ...file,
+          absolutePath: confined(
+            join(commandNodeModulesRoot, '@mcat', workspacePackage.name),
+            file.path.slice(workspacePackage.prefix.length),
+          ),
+        })),
+    );
+    const commandFilesAggregateSha256 = digest(canonical(commandFiles));
+    const runtimeFiles = [
+      ...inventory(privateRuntimeRoot, listFiles(privateRuntimeRoot)).map((file) => ({
+        ...file,
+        mode: lstatSync(confined(privateRuntimeRoot, file.path)).mode & 0o777,
+        path: `runtime/${file.path}`,
+      })),
+      ...inventory(commandNodeModulesRoot, listFiles(commandNodeModulesRoot))
+        .filter((file) => !file.path.startsWith('@mcat/'))
+        .map((file) => ({
+          ...file,
+          mode: lstatSync(confined(commandNodeModulesRoot, file.path)).mode & 0o777,
+          path: `command-node-modules/${file.path}`,
+        })),
+    ].sort((left, right) => (left.path < right.path ? -1 : left.path > right.path ? 1 : 0));
+    const supervisedOpenPaths = [
+      ...runtimeFiles
+        .filter((file) => runtimeAuthorization.loadedPaths.has(file.path))
+        .map((file) =>
+          file.path.startsWith('runtime/')
+            ? confined(privateRuntimeRoot, file.path.slice('runtime/'.length))
+            : confined(commandNodeModulesRoot, file.path.slice('command-node-modules/'.length)),
+        ),
+      ...commandPaths.map((path) => confined(snapshotRoot, path)),
+      ...commandAliasFiles.map((file) => file.absolutePath),
+    ]
+      .filter((path, index, values) => values.indexOf(path) === index)
+      .sort();
+    const supervisedSha256 = new Map<string, string>([
+      ...runtimeFiles.map(
+        (file) =>
+          [
+            file.path.startsWith('runtime/')
+              ? confined(privateRuntimeRoot, file.path.slice('runtime/'.length))
+              : confined(commandNodeModulesRoot, file.path.slice('command-node-modules/'.length)),
+            file.sha256,
+          ] as const,
+      ),
+      ...commandFiles.map((file) => [confined(snapshotRoot, file.path), file.sha256] as const),
+      ...commandAliasFiles.map((file) => [file.absolutePath, file.sha256] as const),
+    ]);
+    const runtimeSourceFiles = runtimeSourceBindings
+      .map((binding) => binding.identity)
+      .sort((left, right) => (left.path < right.path ? -1 : left.path > right.path ? 1 : 0));
+    const runtimeCopyFiles = runtimeFiles.map(({ path, sha256, size, mode }) => ({
+      mode,
+      path,
+      sha256,
+      size,
+    }));
+    if (
+      canonical(runtimeSourceFiles.map(({ path, sha256, size }) => ({ path, sha256, size }))) !==
+      canonical(runtimeCopyFiles.map(({ path, sha256, size }) => ({ path, sha256, size })))
+    ) {
+      throw new Error('VALIDATOR_RUNTIME_COPY_MISMATCH');
+    }
+    const runtimeSourceFilesAggregateSha256 = digest(canonical(runtimeSourceFiles));
+    const runtimeCopyFilesAggregateSha256 = digest(canonical(runtimeCopyFiles));
+    const runtimeFilesAggregateSha256 = digest(canonical(runtimeFiles));
+    const repositoryTreeSha1 = gitOutput(snapshotRoot, ['rev-parse', `${repositoryCommit}^{tree}`]);
+    const staticIdentity = {
+      bundleMode: 0o644 as const,
+      bundleSha256: digest(bundle.bytes),
+      bundleSize: bundle.size,
+      centralCommit: central.commit,
+      centralFiles: central.files,
+      centralFilesAggregateSha256: digest(canonical(central.files)),
+      commandFiles,
+      commandFilesAggregateSha256,
+      curriculum,
+      files,
+      format: 'lesson-generation-pinned-validator-authority/1' as const,
+      nodeExecutableSha256: digest(nodeExecutable.bytes),
+      nodeVersion,
+      repositoryClean: true as const,
+      repositoryCommit,
+      repositoryTreeSha1,
+      repositoryUrl: REPOSITORY_URL,
+      runtimeCopyFiles,
+      runtimeCopyFilesAggregateSha256,
+      runtimeExecutionBinding: 'SUPERVISED_KERNEL_BOUND' as const,
+      runtimeFilesAggregateSha256,
+      runtimePrivate: true as const,
+      runtimeAuthorization: runtimeAuthorization.summary,
+      runtimeSourceFiles,
+      runtimeSourceFilesAggregateSha256,
+      snapshotCount: 1 as const,
+      toolSha256: tool.sha256,
+      tsxCliSha256: digest(tsxCli.bytes),
+      tsxConfigSha256: digest(PINNED_TSX_CONFIG_BYTES),
+      tsxVersion,
+      validatorAggregateSha256: String(validatorAuthority.aggregateSha256),
+    };
+    const baseReceipt = {
+      ...staticIdentity,
+      snapshotSha256: digest(canonical(staticIdentity)),
+    };
+    const durableResultsRoot = join(work, 'results');
+    let durableResultsAggregateSha256: string | null = null;
+    const verifyUnchanged = (): void => {
+      const currentWork = lstatSync(work);
+      const currentSnapshot = lstatSync(snapshotRoot);
+      const currentBundle = descriptorBoundRegularFile(privateBundle, MAX_VALIDATOR_BUNDLE_BYTES);
+      const currentTsxConfig = descriptorBoundRegularFile(tsxConfigPath, 64 * 1024);
+      const currentRuntimeFiles = [
+        ...inventory(privateRuntimeRoot, listFiles(privateRuntimeRoot)).map((file) => ({
+          ...file,
+          mode: lstatSync(confined(privateRuntimeRoot, file.path)).mode & 0o777,
+          path: `runtime/${file.path}`,
+        })),
+        ...inventory(commandNodeModulesRoot, listFiles(commandNodeModulesRoot))
+          .filter((file) => !file.path.startsWith('@mcat/'))
+          .map((file) => ({
+            ...file,
+            mode: lstatSync(confined(commandNodeModulesRoot, file.path)).mode & 0o777,
+            path: `command-node-modules/${file.path}`,
+          })),
+      ].sort((left, right) => (left.path < right.path ? -1 : left.path > right.path ? 1 : 0));
+      const currentRuntimeSources = runtimeSourceBindings
+        .map((binding) => {
+          const source = descriptorBoundRegularFile(binding.absolutePath, 256 * 1024 * 1024, false);
+          return {
+            mode: source.mode,
+            path: binding.identity.path,
+            sha256: digest(source.bytes),
+            size: source.size,
+          };
+        })
+        .sort((left, right) => (left.path < right.path ? -1 : left.path > right.path ? 1 : 0));
+      const currentResultsAggregateSha256 = existsSync(durableResultsRoot)
+        ? digest(canonical(inventory(durableResultsRoot, listFiles(durableResultsRoot))))
+        : null;
+      if (
+        currentWork.isSymbolicLink() ||
+        !currentWork.isDirectory() ||
+        (currentWork.mode & 0o777) !== 0o700 ||
+        currentWork.dev !== owned.device ||
+        currentWork.ino !== owned.inode ||
+        currentSnapshot.isSymbolicLink() ||
+        !currentSnapshot.isDirectory() ||
+        (currentSnapshot.mode & 0o777) !== 0o500 ||
+        currentSnapshot.dev !== snapshotIdentity.device ||
+        currentSnapshot.ino !== snapshotIdentity.inode ||
+        currentBundle.mode !== 0o400 ||
+        currentBundle.size !== bundle.size ||
+        digest(currentBundle.bytes) !== digest(bundle.bytes) ||
+        currentTsxConfig.mode !== 0o400 ||
+        currentTsxConfig.bytes.toString('utf8') !== PINNED_TSX_CONFIG_BYTES ||
+        digest(canonical(currentRuntimeFiles)) !== runtimeFilesAggregateSha256 ||
+        canonical(currentRuntimeSources) !== canonical(runtimeSourceFiles) ||
+        currentResultsAggregateSha256 !== durableResultsAggregateSha256 ||
+        descriptorBoundRegularFile(privateNode, 256 * 1024 * 1024).mode !== 0o500 ||
+        gitOutput(snapshotRoot, ['rev-parse', 'HEAD']) !== repositoryCommit ||
+        gitOutput(snapshotRoot, ['remote', 'get-url', 'origin']) !== repositoryUrl ||
+        gitOutput(snapshotRoot, ['status', '--porcelain', '--untracked-files=no']) !== '' ||
+        canonical(
+          committedFileIdentities(snapshotRoot, repositoryCommit, GENERATION_THREE_VALIDATOR_PATHS),
+        ) !== canonical(files) ||
+        canonical(
+          committedFileIdentities(snapshotRoot, repositoryCommit, [PINNED_CURRICULUM_PATH])[0],
+        ) !== canonical(curriculum) ||
+        canonical(
+          committedFileIdentities(snapshotRoot, repositoryCommit, [PINNED_TOOL_PATH])[0],
+        ) !== canonical(tool) ||
+        canonical(committedFileIdentities(snapshotRoot, repositoryCommit, commandPaths)) !==
+          canonical(commandFiles)
+      ) {
+        throw new Error('VALIDATOR_SNAPSHOT_DRIFT');
+      }
+    };
+    const executionCache = new Map<string, PinnedValidatorExecution>();
+    const requestKey = (request: {
+      readonly lessonId: string;
+      readonly lessonRoot: string;
+    }): string =>
+      digest(
+        canonical({
+          inventory: inventory(request.lessonRoot, listFiles(request.lessonRoot)),
+          lessonId: request.lessonId,
+        }),
+      );
+    const cachedValidate: PinnedValidatorSnapshot['cachedValidate'] = (requests) =>
+      requests.map((request) => {
+        const result = executionCache.get(requestKey(request));
+        if (result === undefined) throw new Error('VALIDATOR_RESULT_CACHE_MISS');
+        return result;
+      });
+    let preparedDurable = false;
+    const validate: PinnedValidatorSnapshot['validate'] = async (requests) => {
+      verifyUnchanged();
+      const keyedRequests = requests.map((request) => ({
+        key: requestKey(request),
+        request,
+      }));
+      const pending = keyedRequests.filter(({ key }) => !executionCache.has(key));
+      if (pending.length === 0) {
+        return keyedRequests.map(({ key }) => executionCache.get(key) as PinnedValidatorExecution);
+      }
+      if (!preparedDurable) {
+        durableTreeSync(work);
+        preparedDurable = true;
+      }
+      transitionLease('RUNNING');
+      const executePending = async ({
+        key,
+        request,
+      }: (typeof pending)[number]): Promise<PinnedValidatorExecution> => {
+        const privateCandidateRoot = join(work, 'candidates', key, request.lessonId);
+        mkdirSync(dirname(privateCandidateRoot), { recursive: true, mode: 0o700 });
+        cpSync(request.lessonRoot, privateCandidateRoot, {
+          dereference: true,
+          recursive: true,
+        });
+        makeWritableForCleanup(privateCandidateRoot);
+        const executionNonce = randomBytes(32).toString('hex');
+        const supervisorConfigurationPath = join(
+          dirname(privateCandidateRoot),
+          'runtime-supervisor.json',
+        );
+        const openFiles = supervisedOpenPaths.map((path) => {
+          const info = lstatSync(path);
+          if (!info.isFile() || info.isSymbolicLink()) {
+            throw new Error('VALIDATOR_RUNTIME_OPEN_FILE_INVALID');
+          }
+          return {
+            device: info.dev,
+            inode: info.ino,
+            path,
+            sha256: supervisedSha256.get(path),
+            size: info.size,
+          };
+        });
+        if (openFiles.some((file) => file.sha256 === undefined)) {
+          throw new Error('VALIDATOR_RUNTIME_OPEN_FILE_AUTHORITY_MISSING');
+        }
+        const supervisorConfigurationBytes = Buffer.from(
+          `${canonical({
+            arguments: [
+              join(snapshotRoot, 'tools/content-cli/src/entry.ts'),
+              'candidate-validate',
+              privateCandidateRoot,
+              '--json',
+            ],
+            childBootstrap: privateRuntimeChildBootstrap,
+            configurationPath: supervisorConfigurationPath,
+            files: openFiles,
+            node: privateNode,
+            nonce: executionNonce,
+            sealedRoots: [privateRuntimeRoot, commandNodeModulesRoot, snapshotRoot],
+            tsxCli: privateTsxCli,
+          })}\n`,
+        );
+        writeFileSync(supervisorConfigurationPath, supervisorConfigurationBytes, {
+          flag: 'wx',
+          mode: 0o400,
+        });
+        const execution = await executeSupervisedValidator(
+          privateNode,
+          privateRuntimeSupervisor,
+          supervisorConfigurationBytes,
+          executionNonce,
+          openFiles,
+          {
+            commandFiles,
+            node: runtimeAuthorization.summary.node,
+            runtimeFiles,
+          },
+          {
+            cwd: snapshotRoot,
+            env: {
+              GIT_CONFIG_NOSYSTEM: '1',
+              GIT_OPTIONAL_LOCKS: '0',
+              ESBUILD_BINARY_PATH: privatePlatformExecutable,
+              HOME: work,
+              LANG: 'C',
+              LC_ALL: 'C',
+              NODE_NO_WARNINGS: '1',
+              NODE_PATH: join(privateRuntimeRoot, 'node_modules'),
+              PATH: dirname(privateNode),
+              TSX_CACHE: 'false',
+            },
+          },
+        );
+        if (execution.error !== undefined || execution.signal !== null || execution.stderr !== '') {
+          throw new Error(
+            `VALIDATOR_EXECUTION_FAILED:${execution.error?.message ?? digest(execution.stderr ?? '')}`,
+          );
+        }
+        let raw: unknown;
+        try {
+          raw = JSON.parse(execution.stdout);
+        } catch {
+          throw new Error('VALIDATOR_RESULT_INVALID');
+        }
+        const report = record(raw);
+        const structural = record(report?.structural);
+        const computedQuality = record(report?.computedQuality);
+        const normalization = record(report?.normalization);
+        const rehash = record(report?.rehash);
+        const candidateFailure =
+          report?.code === 'CANDIDATE_VALIDATION_FAILED' &&
+          report.ok === false &&
+          DIGEST.test(String(report.errorSha256 ?? ''));
+        const rawCommandExitCode = execution.status;
+        if (
+          (rawCommandExitCode !== 0 && rawCommandExitCode !== 1) ||
+          report === null ||
+          report.lessonId !== request.lessonId ||
+          report.command !== 'candidate-validate' ||
+          report.commandVersion !== '1' ||
+          (!candidateFailure &&
+            (structural === null ||
+              computedQuality === null ||
+              normalization === null ||
+              rehash === null)) ||
+          execution.stdout !== `${JSON.stringify(report)}\n` ||
+          rawCommandExitCode !== (report.ok === true ? 0 : 1) ||
+          (!candidateFailure &&
+            report.ok !==
+              (structural?.ok === true &&
+                computedQuality?.ok === true &&
+                normalization?.ok === true))
+        ) {
+          throw new Error('VALIDATOR_RESULT_INVALID');
+        }
+        const commandExitCode = rawCommandExitCode as 0 | 1;
+        const mechanicalCore = candidateFailure
+          ? {
+              computedQuality: 'FAIL' as const,
+              normalization: 'FAIL' as const,
+              protectedBoundary: 'FAIL' as const,
+              structural: 'FAIL' as const,
+            }
+          : {
+              computedQuality: computedQuality?.ok === true ? ('PASS' as const) : ('FAIL' as const),
+              normalization: normalization?.ok === true ? ('PASS' as const) : ('FAIL' as const),
+              protectedBoundary: 'PASS' as const,
+              structural: structural?.ok === true ? ('PASS' as const) : ('FAIL' as const),
+            };
+        const result = {
+          childRuntimeMappingSha256: execution.childRuntimeMappingSha256,
+          commandExitCode,
+          mechanical: {
+            ...mechanicalCore,
+            validatorEvidenceSha256: digest(canonical({ report, result: mechanicalCore })),
+          },
+          report,
+          reportSha256: digest(JSON.stringify(report)),
+          stderrSha256: digest(execution.stderr),
+          stdoutSha256: digest(execution.stdout),
+        };
+        mkdirSync(durableResultsRoot, { recursive: true, mode: 0o700 });
+        const durableResultPath = join(durableResultsRoot, `${request.lessonId}.json`);
+        const durableBytes = Buffer.from(
+          `${canonical({
+            childRuntimeMappingSha256: result.childRuntimeMappingSha256,
+            commandExitCode: result.commandExitCode,
+            report,
+            reportSha256: result.reportSha256,
+            stderr: execution.stderr,
+            stderrSha256: result.stderrSha256,
+            stdout: execution.stdout,
+            stdoutSha256: result.stdoutSha256,
+          })}\n`,
+        );
+        writeFileSync(durableResultPath, durableBytes, { flag: 'wx', mode: 0o400 });
+        if (
+          !descriptorBoundRegularFile(durableResultPath, 32 * 1024 * 1024).bytes.equals(
+            durableBytes,
+          )
+        ) {
+          throw new Error('VALIDATOR_RESULT_NOT_DURABLE');
+        }
+        return result;
+      };
+      const results: PinnedValidatorExecution[] = [];
+      for (let index = 0; index < pending.length; index += 6) {
+        const settled = await Promise.allSettled(
+          pending.slice(index, index + 6).map(executePending),
+        );
+        const rejected = settled.find(
+          (result): result is PromiseRejectedResult => result.status === 'rejected',
+        );
+        if (rejected !== undefined) throw rejected.reason;
+        results.push(
+          ...settled.map(
+            (result) => (result as PromiseFulfilledResult<PinnedValidatorExecution>).value,
+          ),
+        );
+      }
+      for (const [index, { key }] of pending.entries()) {
+        const result = results[index];
+        if (result === undefined) throw new Error('VALIDATOR_RESULT_COUNT_MISMATCH');
+        executionCache.set(key, result);
+      }
+      durableTreeSync(durableResultsRoot);
+      durableResultsAggregateSha256 = digest(
+        canonical(inventory(durableResultsRoot, listFiles(durableResultsRoot))),
+      );
+      verifyUnchanged();
+      transitionLease('RESULTS_DURABLE');
+      return keyedRequests.map(({ key }) => {
+        const result = executionCache.get(key);
+        if (result === undefined) throw new Error('VALIDATOR_RESULT_COUNT_MISMATCH');
+        return result;
+      });
+    };
+    const snapshot = { baseReceipt, cachedValidate, cleanup, validate, verifyUnchanged };
+    return {
+      ...snapshot,
+      cachedValidate: (requests) => {
+        const currentCentral = centralIntakeIdentities(centralRoot, repositoryUrl);
+        if (
+          currentCentral.commit !== central.commit ||
+          canonical(currentCentral.files) !== canonical(central.files)
+        ) {
+          throw new Error('CENTRAL_INTAKE_CODE_DRIFT');
+        }
+        return snapshot.cachedValidate(requests);
+      },
+      validate: async (requests) => {
+        const currentCentral = centralIntakeIdentities(centralRoot, repositoryUrl);
+        if (
+          currentCentral.commit !== central.commit ||
+          canonical(currentCentral.files) !== canonical(central.files)
+        ) {
+          throw new Error('CENTRAL_INTAKE_CODE_DRIFT');
+        }
+        const results = await snapshot.validate(requests);
+        const finalCentral = centralIntakeIdentities(centralRoot, repositoryUrl);
+        if (
+          finalCentral.commit !== central.commit ||
+          canonical(finalCentral.files) !== canonical(central.files)
+        ) {
+          throw new Error('CENTRAL_INTAKE_CODE_DRIFT');
+        }
+        return results;
+      },
+      verifyUnchanged: () => {
+        snapshot.verifyUnchanged();
+        const currentCentral = centralIntakeIdentities(centralRoot, repositoryUrl);
+        if (
+          currentCentral.commit !== central.commit ||
+          canonical(currentCentral.files) !== canonical(central.files)
+        ) {
+          throw new Error('CENTRAL_INTAKE_CODE_DRIFT');
+        }
+      },
+    };
+  } catch (error) {
+    cleanup();
+    throw error;
+  }
 }
 
 function snapshotHeadCheckout(
@@ -1239,6 +3391,7 @@ function verifyTeamAuthority(
     kit.format === 'lesson-generation-kit-v1/2' &&
     kit.teamId === teamId &&
     kit.runId === finalization.receipt.runId &&
+    kit.repositoryUrl === REPOSITORY_URL &&
     kit.repositoryCommit === finalization.pins.repositoryCommit &&
     kit.assignmentId === assignment.assignment_id &&
     kit.assignmentSha256 === team.assignmentSha256 &&
@@ -1255,7 +3408,14 @@ function verifyTeamAuthority(
     validatorAuthority.repositoryCommit === finalization.pins.repositoryCommit &&
     Array.isArray(validatorAuthority.files) &&
     validatorAuthority.files.length > 0 &&
-    validatorAuthority.aggregateSha256 === digest(canonical(validatorAuthority.files));
+    validatorAuthority.aggregateSha256 === digest(canonical(validatorAuthority.files)) &&
+    (!isExactLegacyGenerationThreeCohort(finalization) ||
+      canonical(
+        (validatorAuthority.files as unknown[])
+          .map(record)
+          .map((file) => file?.path)
+          .sort(),
+      ) === canonical(GENERATION_THREE_VALIDATOR_PATHS));
   if (!kitIdentityValid) {
     addException(exceptions, 'KIT_AUTHORITY_INVALID', 'AUTHORITY', { teamId });
   }
@@ -1295,18 +3455,20 @@ function verifyTeamAuthority(
       addException(exceptions, 'PACKET_PIN_MISMATCH', 'AUTHORITY', { lessonId });
     }
   }
-  for (const item of (validatorAuthority?.files as unknown[] | undefined) ?? []) {
-    const file = record(item);
-    if (
-      file === null ||
-      !safeRelative(file.path) ||
-      typeof file.sha256 !== 'string' ||
-      !regularFile(join(centralRoot, file.path)) ||
-      digest(readFileSync(join(centralRoot, file.path))) !== file.sha256
-    ) {
-      addException(exceptions, 'CENTRAL_VALIDATOR_PIN_MISMATCH', 'AUTHORITY', {
-        pathSha256: digest(canonical(file?.path ?? null)),
-      });
+  if (!isExactLegacyGenerationThreeCohort(finalization)) {
+    for (const item of (validatorAuthority?.files as unknown[] | undefined) ?? []) {
+      const file = record(item);
+      if (
+        file === null ||
+        !safeRelative(file.path) ||
+        typeof file.sha256 !== 'string' ||
+        !regularFile(join(centralRoot, file.path)) ||
+        digest(readFileSync(join(centralRoot, file.path))) !== file.sha256
+      ) {
+        addException(exceptions, 'CENTRAL_VALIDATOR_PIN_MISMATCH', 'AUTHORITY', {
+          pathSha256: digest(canonical(file?.path ?? null)),
+        });
+      }
     }
   }
   return {
@@ -2576,6 +4738,143 @@ export function validateTeamReturnCandidateMechanically(
   }
 }
 
+function bindPinnedValidatorResult(
+  lessonRoot: string,
+  lessonId: string,
+  execution: PinnedValidatorExecution,
+  snapshot: PinnedValidatorSnapshot,
+  teamAuthority: TeamAuthority,
+): { readonly identity: PinnedValidatorResultIdentity; readonly matches: boolean } {
+  const validation = readJson(join(lessonRoot, 'validation/lesson-validate.json'));
+  const quality = readJson(join(lessonRoot, 'validation/computed-quality.json'));
+  const normalization = readJson(join(lessonRoot, 'validation/normalization-smoke.json'));
+  const protectedReceipt = readJson(join(lessonRoot, 'validation/protected-scan.json'));
+  const command = record(validation?.command);
+  const report = execution.report;
+  const structural = record(report.structural);
+  const computedQuality = record(report.computedQuality);
+  const freshNormalization = record(report.normalization);
+  const freshRehash = record(report.rehash);
+  const offeredNormalizationKeys =
+    freshNormalization === null ? [] : Object.keys(freshNormalization);
+  const manifestValidator = record(teamAuthority.kit.validatorAuthority);
+  const manifestFiles = Array.isArray(manifestValidator?.files)
+    ? (manifestValidator.files as unknown[])
+    : [];
+  const cliEntry = manifestFiles
+    .map(record)
+    .find((file) => file?.path === 'tools/content-cli/src/entry.ts');
+  const cliMain = manifestFiles
+    .map(record)
+    .find((file) => file?.path === 'tools/content-cli/src/main.ts');
+  const freshProtectedFindings: string[] = [];
+  for (const path of PUBLIC_SCAN_FILES) {
+    const value = readJson(join(lessonRoot, path));
+    if (value !== null) protectedFindings(value, freshProtectedFindings, path);
+  }
+  const mechanicalCore = {
+    computedQuality: execution.mechanical.computedQuality,
+    normalization: execution.mechanical.normalization,
+    protectedBoundary: freshProtectedFindings.length === 0 ? ('PASS' as const) : ('FAIL' as const),
+    structural: execution.mechanical.structural,
+  };
+  const mechanical: CentralMechanicalValidation = {
+    ...mechanicalCore,
+    validatorEvidenceSha256: digest(
+      canonical({
+        offeredReceiptSha256: digest(
+          canonical({ normalization, protectedReceipt, quality, validation }),
+        ),
+        reportSha256: execution.reportSha256,
+        result: mechanicalCore,
+      }),
+    ),
+  };
+  const checks: Readonly<Record<string, boolean>> = {
+    COMMAND_EXIT: command?.exitCode === execution.commandExitCode,
+    COMMAND_RUNTIME:
+      DIGEST.test(String(command?.executableSha256 ?? '')) &&
+      command?.tsxCliSha256 === snapshot.baseReceipt.tsxCliSha256 &&
+      command?.toolVersion === 'candidate-validate/1' &&
+      canonical(command?.argv) ===
+        canonical([
+          'node',
+          'tools/content-cli/node_modules/tsx/dist/cli.mjs',
+          'tools/content-cli/src/entry.ts',
+          'candidate-validate',
+          '<candidate>',
+          '--json',
+        ]),
+    COMMAND_SOURCE:
+      command?.cliEntrySha256 === cliEntry?.sha256 && command?.cliMainSha256 === cliMain?.sha256,
+    COMMAND_STDIO:
+      command?.stdoutSha256 === execution.stdoutSha256 &&
+      command?.stderrSha256 === execution.stderrSha256,
+    COMMAND_VALIDATOR:
+      command?.validatorAggregateSha256 === manifestValidator?.aggregateSha256 &&
+      canonical(command?.validatorFiles) === canonical(manifestFiles),
+    COMPUTED_QUALITY:
+      quality !== null &&
+      computedQuality !== null &&
+      canonical(quality.checks) === canonical(computedQuality.checks) &&
+      quality.status ===
+        (computedQuality.ok === true
+          ? (computedQuality.checks as unknown[]).every((raw) => record(raw)?.status === 'na')
+            ? 'N/A'
+            : 'SCREENED'
+          : 'FAILED'),
+    NORMALIZATION:
+      normalization !== null &&
+      freshNormalization !== null &&
+      normalization.status === (freshNormalization.ok === true ? 'PASS' : 'FAILED') &&
+      offeredNormalizationKeys.every(
+        (key) => canonical(normalization[key]) === canonical(freshNormalization[key]),
+      ),
+    PROTECTED_LOG:
+      DIGEST.test(String(record(protectedReceipt?.logHashes)?.stdoutSha256 ?? '')) &&
+      record(protectedReceipt?.logHashes)?.stderrSha256 === digest(''),
+    RECEIPTS_PRESENT:
+      validation !== null &&
+      quality !== null &&
+      normalization !== null &&
+      protectedReceipt !== null &&
+      command !== null &&
+      structural !== null &&
+      computedQuality !== null &&
+      freshNormalization !== null &&
+      freshRehash !== null,
+    REPORT_IDENTITY: report.lessonId === lessonId && validation?.lessonId === lessonId,
+    REPORT_STATUS:
+      validation?.status === (report.ok === true ? 'PASS' : 'FAILED') &&
+      (mechanical.structural === 'PASS' &&
+        mechanical.computedQuality === 'PASS' &&
+        mechanical.normalization === 'PASS') ===
+        (report.ok === true),
+    REHASH: canonical(validation?.rehash ?? null) === canonical(freshRehash),
+    STRUCTURAL: canonical(validation?.results ?? null) === canonical(structural?.results ?? null),
+  };
+  const verificationCodes = Object.entries(checks)
+    .filter(([, ok]) => !ok)
+    .map(([code]) => code)
+    .sort();
+  const matches = verificationCodes.length === 0;
+  const identity = {
+    childRuntimeMappingSha256: execution.childRuntimeMappingSha256,
+    commandExitCode: execution.commandExitCode,
+    lessonId,
+    mechanical,
+    offeredReceiptSha256: digest(
+      canonical({ normalization, protectedReceipt, quality, validation }),
+    ),
+    receiptMatch: matches,
+    reportSha256: execution.reportSha256,
+    stderrSha256: execution.stderrSha256,
+    stdoutSha256: execution.stdoutSha256,
+    verificationCodes,
+  };
+  return { identity, matches };
+}
+
 function compareStaged(
   finalRoot: string,
   expected: readonly { readonly path: string; readonly sha256: string; readonly size: number }[],
@@ -2686,12 +4985,255 @@ function validReceiptSelfIdentity(receipt: JsonRecord): boolean {
   return intakeReceiptIdentity(unsigned) === receipt.receiptSha256;
 }
 
+function pinnedValidatorReceiptValid(
+  value: unknown,
+  expectedLessonIds?: readonly string[],
+): boolean {
+  const receipt = record(value);
+  if (
+    receipt === null ||
+    !hasExactKeys(receipt, [
+      'bundleMode',
+      'bundleSha256',
+      'bundleSize',
+      'centralCommit',
+      'centralFiles',
+      'centralFilesAggregateSha256',
+      'commandFiles',
+      'commandFilesAggregateSha256',
+      'curriculum',
+      'files',
+      'format',
+      'nodeExecutableSha256',
+      'nodeVersion',
+      'repositoryClean',
+      'repositoryCommit',
+      'repositoryTreeSha1',
+      'repositoryUrl',
+      'resultAggregateSha256',
+      'results',
+      'runtimeCopyFiles',
+      'runtimeCopyFilesAggregateSha256',
+      'runtimeExecutionBinding',
+      'runtimeFilesAggregateSha256',
+      'runtimePrivate',
+      'runtimeAuthorization',
+      'runtimeSourceFiles',
+      'runtimeSourceFilesAggregateSha256',
+      'snapshotCount',
+      'snapshotSha256',
+      'toolSha256',
+      'tsxCliSha256',
+      'tsxConfigSha256',
+      'tsxVersion',
+      'validatorAggregateSha256',
+    ]) ||
+    receipt.format !== 'lesson-generation-pinned-validator-authority/1' ||
+    receipt.bundleMode !== 0o644 ||
+    !Number.isSafeInteger(receipt.bundleSize) ||
+    Number(receipt.bundleSize) < 1 ||
+    !COMMIT.test(String(receipt.centralCommit)) ||
+    !COMMIT.test(String(receipt.repositoryCommit)) ||
+    receipt.repositoryClean !== true ||
+    receipt.runtimeExecutionBinding !== 'SUPERVISED_KERNEL_BOUND' ||
+    receipt.runtimePrivate !== true ||
+    !/^[0-9a-f]{40}$/.test(String(receipt.repositoryTreeSha1)) ||
+    receipt.repositoryUrl !== REPOSITORY_URL ||
+    receipt.snapshotCount !== 1 ||
+    receipt.nodeVersion !== `v${process.versions.node}` ||
+    receipt.tsxVersion !== '4.23.1' ||
+    receipt.tsxConfigSha256 !== digest(PINNED_TSX_CONFIG_BYTES) ||
+    ![
+      'bundleSha256',
+      'centralFilesAggregateSha256',
+      'commandFilesAggregateSha256',
+      'nodeExecutableSha256',
+      'resultAggregateSha256',
+      'runtimeCopyFilesAggregateSha256',
+      'runtimeFilesAggregateSha256',
+      'runtimeSourceFilesAggregateSha256',
+      'snapshotSha256',
+      'toolSha256',
+      'tsxCliSha256',
+      'tsxConfigSha256',
+      'validatorAggregateSha256',
+    ].every((key) => DIGEST.test(String(receipt[key]))) ||
+    !Array.isArray(receipt.files) ||
+    !Array.isArray(receipt.centralFiles) ||
+    !Array.isArray(receipt.commandFiles) ||
+    !Array.isArray(receipt.results) ||
+    !Array.isArray(receipt.runtimeCopyFiles) ||
+    !Array.isArray(receipt.runtimeSourceFiles) ||
+    receipt.files.length !== GENERATION_THREE_VALIDATOR_PATHS.length ||
+    receipt.centralFiles.length !== CURRENT_INTAKE_AUTHORITY_PATHS.length
+  ) {
+    return false;
+  }
+  const runtimeAuthorization = record(receipt.runtimeAuthorization);
+  const runtimeNode = record(runtimeAuthorization?.node);
+  if (
+    runtimeAuthorization === null ||
+    runtimeNode === null ||
+    !hasExactKeys(runtimeAuthorization, [
+      'authoritySha256',
+      'format',
+      'lockfileSha256',
+      'node',
+      'packagesAggregateSha256',
+    ]) ||
+    !hasExactKeys(runtimeNode, ['cdHash', 'executableSha256', 'machOUuid']) ||
+    runtimeAuthorization.format !== 'team-validator-runtime-authorization/1' ||
+    runtimeAuthorization.authoritySha256 !== RUNTIME_AUTHORIZATION_SHA256 ||
+    runtimeAuthorization.lockfileSha256 !== receipt.toolSha256 ||
+    !DIGEST.test(String(runtimeAuthorization.packagesAggregateSha256)) ||
+    !DIGEST.test(String(runtimeNode.executableSha256)) ||
+    runtimeNode.executableSha256 !== receipt.nodeExecutableSha256 ||
+    !/^[0-9a-f]{40}$/.test(String(runtimeNode.cdHash)) ||
+    !/^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/.test(
+      String(runtimeNode.machOUuid),
+    )
+  ) {
+    return false;
+  }
+  const validFiles = (
+    values: readonly unknown[],
+    expectedPaths: readonly string[],
+  ): values is readonly PinnedValidatorFileIdentity[] =>
+    values.every((raw, index) => {
+      const file = record(raw);
+      return (
+        file !== null &&
+        hasExactKeys(file, ['gitBlobSha1', 'gitMode', 'path', 'sha256', 'size']) &&
+        file.gitMode === '100644' &&
+        file.path === expectedPaths[index] &&
+        /^[0-9a-f]{40}$/.test(String(file.gitBlobSha1)) &&
+        DIGEST.test(String(file.sha256)) &&
+        Number.isSafeInteger(file.size) &&
+        Number(file.size) >= 0
+      );
+    });
+  const validRuntimeFiles = (values: readonly unknown[]): boolean =>
+    values.length > 0 &&
+    values.every((raw, index) => {
+      const file = record(raw);
+      const previous = index === 0 ? null : record(values[index - 1]);
+      return (
+        file !== null &&
+        hasExactKeys(file, ['mode', 'path', 'sha256', 'size']) &&
+        typeof file.path === 'string' &&
+        safeRelative(file.path) &&
+        (previous === null || String(previous.path) < file.path) &&
+        Number.isSafeInteger(file.mode) &&
+        Number(file.mode) >= 0 &&
+        Number(file.mode) <= 0o777 &&
+        DIGEST.test(String(file.sha256)) &&
+        Number.isSafeInteger(file.size) &&
+        Number(file.size) > 0
+      );
+    });
+  const commandPaths = receipt.commandFiles.map((raw) => String(record(raw)?.path ?? ''));
+  if (
+    !validFiles(receipt.files, GENERATION_THREE_VALIDATOR_PATHS) ||
+    !validFiles(receipt.centralFiles, CURRENT_INTAKE_AUTHORITY_PATHS) ||
+    !validFiles(receipt.commandFiles, commandPaths) ||
+    !validFiles([receipt.curriculum], [PINNED_CURRICULUM_PATH]) ||
+    !validRuntimeFiles(receipt.runtimeSourceFiles) ||
+    !validRuntimeFiles(receipt.runtimeCopyFiles) ||
+    canonical(
+      receipt.runtimeSourceFiles.map((raw) => {
+        const file = record(raw) as JsonRecord;
+        return { path: file.path, sha256: file.sha256, size: file.size };
+      }),
+    ) !==
+      canonical(
+        receipt.runtimeCopyFiles.map((raw) => {
+          const file = record(raw) as JsonRecord;
+          return { path: file.path, sha256: file.sha256, size: file.size };
+        }),
+      ) ||
+    !commandPaths.includes('tools/content-cli/src/entry.ts') ||
+    !commandPaths.includes('tools/content-cli/src/main.ts') ||
+    receipt.centralFilesAggregateSha256 !== digest(canonical(receipt.centralFiles)) ||
+    receipt.commandFilesAggregateSha256 !== digest(canonical(receipt.commandFiles)) ||
+    receipt.runtimeSourceFilesAggregateSha256 !== digest(canonical(receipt.runtimeSourceFiles)) ||
+    receipt.runtimeCopyFilesAggregateSha256 !== digest(canonical(receipt.runtimeCopyFiles)) ||
+    receipt.runtimeFilesAggregateSha256 !== digest(canonical(receipt.runtimeCopyFiles))
+  ) {
+    return false;
+  }
+  const results: PinnedValidatorResultIdentity[] = [];
+  for (const raw of receipt.results) {
+    const result = record(raw);
+    const mechanical = record(result?.mechanical);
+    if (
+      result === null ||
+      mechanical === null ||
+      !hasExactKeys(result, [
+        'childRuntimeMappingSha256',
+        'commandExitCode',
+        'lessonId',
+        'mechanical',
+        'offeredReceiptSha256',
+        'receiptMatch',
+        'reportSha256',
+        'stderrSha256',
+        'stdoutSha256',
+        'verificationCodes',
+      ]) ||
+      !hasExactKeys(mechanical, [
+        'computedQuality',
+        'normalization',
+        'protectedBoundary',
+        'structural',
+        'validatorEvidenceSha256',
+      ]) ||
+      typeof result.lessonId !== 'string' ||
+      !LESSON_ID.test(result.lessonId) ||
+      result.commandExitCode !== 0 ||
+      result.receiptMatch !== true ||
+      !Array.isArray(result.verificationCodes) ||
+      result.verificationCodes.length !== 0 ||
+      !DIGEST.test(String(result.offeredReceiptSha256)) ||
+      !DIGEST.test(String(result.childRuntimeMappingSha256)) ||
+      !DIGEST.test(String(result.reportSha256)) ||
+      !DIGEST.test(String(result.stderrSha256)) ||
+      !DIGEST.test(String(result.stdoutSha256)) ||
+      result.stderrSha256 !== digest('') ||
+      !DIGEST.test(String(mechanical.validatorEvidenceSha256)) ||
+      !['PASS', 'FAIL'].includes(String(mechanical.computedQuality)) ||
+      !['PASS', 'FAIL'].includes(String(mechanical.normalization)) ||
+      !['PASS', 'FAIL'].includes(String(mechanical.protectedBoundary)) ||
+      !['PASS', 'FAIL'].includes(String(mechanical.structural))
+    ) {
+      return false;
+    }
+    results.push(result as unknown as PinnedValidatorResultIdentity);
+  }
+  const {
+    resultAggregateSha256: _resultAggregateSha256,
+    results: _results,
+    snapshotSha256: _snapshotSha256,
+    ...staticIdentity
+  } = receipt;
+  return (
+    new Set(results.map((result) => result.lessonId)).size === results.length &&
+    (expectedLessonIds === undefined ||
+      canonical(results.map((result) => result.lessonId)) === canonical(expectedLessonIds)) &&
+    receipt.resultAggregateSha256 === digest(canonical(results)) &&
+    receipt.snapshotSha256 === digest(canonical(staticIdentity))
+  );
+}
+
 function verifyStagedState(finalRoot: string): VerifiedStagedState | null {
   try {
-    if (!directory(finalRoot) || !readOnlyModesValid(finalRoot)) return null;
+    if (!directory(finalRoot) || !readOnlyModesValid(finalRoot)) {
+      return null;
+    }
     const rootEntries = readdirSync(finalRoot).sort();
     const expectedRootEntries = ['INTAKE-RECEIPT.json', 'lessons'].sort();
-    if (canonical(rootEntries) !== canonical(expectedRootEntries)) return null;
+    if (canonical(rootEntries) !== canonical(expectedRootEntries)) {
+      return null;
+    }
     const receiptRecord = readJson(join(finalRoot, 'INTAKE-RECEIPT.json'));
     if (
       receiptRecord === null ||
@@ -2752,6 +5294,7 @@ function verifyStagedState(finalRoot: string): VerifiedStagedState | null {
         'pinnedCommit',
         'readySha256',
         'sendMeSha256',
+        ...(authority.validator === undefined ? [] : ['validator']),
       ]) ||
       !DIGEST.test(String(authority.finalizationReceiptSha256)) ||
       !Number.isInteger(authority.generation) ||
@@ -2759,6 +5302,15 @@ function verifyStagedState(finalRoot: string): VerifiedStagedState | null {
       !COMMIT.test(String(authority.pinnedCommit)) ||
       !DIGEST.test(String(authority.readySha256)) ||
       !DIGEST.test(String(authority.sendMeSha256)) ||
+      (authority.validator !== undefined &&
+        !pinnedValidatorReceiptValid(
+          authority.validator,
+          Array.isArray(receiptRecord.rows)
+            ? (receiptRecord.rows as unknown[])
+                .map(record)
+                .map((row) => String(row?.lessonId ?? ''))
+            : undefined,
+        )) ||
       source === null ||
       !hasExactKeys(source, ['branch', 'headCommit', 'kind', 'sourceSha256']) ||
       typeof source.branch !== 'string' ||
@@ -2949,8 +5501,18 @@ function makePromotedAdmissions(
   teamAuthority: TeamAuthority,
   mechanicalAdmissions: ReadonlyMap<string, CentralMechanicalValidation>,
   centralRoot: string,
+  validatorSnapshot?: PinnedValidatorSnapshot,
 ): readonly PromotedAdmission[] {
-  return binding.newlyCompleteLessonIds.map((lessonId) => {
+  const pinnedExecutions =
+    validatorSnapshot === undefined
+      ? undefined
+      : validatorSnapshot.cachedValidate(
+          binding.newlyCompleteLessonIds.map((lessonId) => ({
+            lessonId,
+            lessonRoot: join(candidateRoot, lessonId),
+          })),
+        );
+  return binding.newlyCompleteLessonIds.map((lessonId, index) => {
     const row = result.rows.find((candidate) => candidate.lessonId === lessonId);
     if (row === undefined) throw new Error('PROMOTED_ADMISSION_ROW_MISSING');
     const exceptions: TeamReturnException[] = [];
@@ -2962,14 +5524,24 @@ function makePromotedAdmissions(
       exceptions,
     );
     const mechanical = mechanicalAdmissions.get(lessonId);
-    const freshMechanical = validateTeamReturnCandidateMechanically(
-      join(candidateRoot, lessonId),
-      lessonId,
-      centralRoot,
-    );
+    const pinnedExecution = pinnedExecutions?.[index];
+    const pinnedBinding =
+      pinnedExecution === undefined || validatorSnapshot === undefined
+        ? undefined
+        : bindPinnedValidatorResult(
+            join(candidateRoot, lessonId),
+            lessonId,
+            pinnedExecution,
+            validatorSnapshot,
+            teamAuthority,
+          );
+    const freshMechanical =
+      pinnedBinding?.identity.mechanical ??
+      validateTeamReturnCandidateMechanically(join(candidateRoot, lessonId), lessonId, centralRoot);
     if (
       mechanical === undefined ||
       canonical(mechanical) !== canonical(freshMechanical) ||
+      (validatorSnapshot !== undefined && pinnedBinding?.matches !== true) ||
       exceptions.length !== 0 ||
       canonical(validated.row) !== canonical(row) ||
       mechanical.structural !== 'PASS' ||
@@ -3127,6 +5699,7 @@ function makeAcceptanceArtifacts(
   centralRoot: string,
   teamAuthority: TeamAuthority,
   mechanicalAdmissions: ReadonlyMap<string, CentralMechanicalValidation>,
+  validatorSnapshot?: PinnedValidatorSnapshot,
 ): AcceptanceArtifacts {
   const closedSourceProof: AcceptanceSourceProof = {
     ...sourceProof,
@@ -3143,6 +5716,7 @@ function makeAcceptanceArtifacts(
     teamAuthority,
     mechanicalAdmissions,
     centralRoot,
+    validatorSnapshot,
   );
   const acceptanceArchiveResult = acceptanceArchive(candidateRoot, expected);
   const archiveBytes = acceptanceArchiveResult.bytes;
@@ -3366,6 +5940,7 @@ function acceptanceIntakeSchemaValid(
       'pinnedCommit',
       'readySha256',
       'sendMeSha256',
+      ...(receipt.authority.validator === undefined ? [] : ['validator']),
     ]) ||
     !Number.isInteger(receipt.authority.generation) ||
     !DIGEST.test(receipt.authority.finalizationReceiptSha256) ||
@@ -3373,6 +5948,11 @@ function acceptanceIntakeSchemaValid(
     !COMMIT.test(receipt.authority.pinnedCommit) ||
     !DIGEST.test(receipt.authority.readySha256) ||
     !DIGEST.test(receipt.authority.sendMeSha256) ||
+    (receipt.authority.validator !== undefined &&
+      !pinnedValidatorReceiptValid(
+        receipt.authority.validator,
+        receipt.rows.map((row) => row.lessonId),
+      )) ||
     !hasExactKeys(receipt.source as unknown as JsonRecord, [
       'branch',
       'headCommit',
@@ -3527,8 +6107,19 @@ function promotedAdmissionsValid(
   authority: TeamAuthority,
   value: unknown,
   centralRoot: string,
+  validatorSnapshot?: PinnedValidatorSnapshot,
 ): boolean {
   if (!Array.isArray(value) || value.length !== binding.newlyCompleteLessonIds.length) return false;
+  const recordedValidator = receipt.authority.validator;
+  if (validatorSnapshot !== undefined) {
+    if (recordedValidator === undefined) return false;
+    const {
+      resultAggregateSha256: _resultAggregateSha256,
+      results: _results,
+      ...recordedBase
+    } = recordedValidator;
+    if (canonical(recordedBase) !== canonical(validatorSnapshot.baseReceipt)) return false;
+  }
   const admissions = new Map<string, PromotedAdmission>();
   for (const raw of value) {
     const admission = record(raw);
@@ -3594,7 +6185,37 @@ function promotedAdmissionsValid(
     ) {
       return false;
     }
+    const pinnedExecutions =
+      validatorSnapshot === undefined
+        ? undefined
+        : validatorSnapshot.cachedValidate(
+            receipt.rows.map((row) => ({
+              lessonId: row.lessonId,
+              lessonRoot: join(work, row.lessonId),
+            })),
+          );
+    if (validatorSnapshot !== undefined && recordedValidator !== undefined) {
+      for (const [index, row] of receipt.rows.entries()) {
+        const execution = pinnedExecutions?.[index];
+        const recordedResult = recordedValidator.results[index];
+        if (execution === undefined || recordedResult === undefined) return false;
+        const bindingResult = bindPinnedValidatorResult(
+          join(work, row.lessonId),
+          row.lessonId,
+          execution,
+          validatorSnapshot,
+          authority,
+        );
+        if (
+          bindingResult.matches !== true ||
+          canonical(bindingResult.identity) !== canonical(recordedResult)
+        ) {
+          return false;
+        }
+      }
+    }
     for (const lessonId of binding.newlyCompleteLessonIds) {
+      const index = receipt.rows.findIndex((row) => row.lessonId === lessonId);
       const admission = admissions.get(lessonId);
       const row = receipt.rows.find((candidate) => candidate.lessonId === lessonId);
       if (admission === undefined || row === undefined || admission.rowSha256 !== row.rowSha256) {
@@ -3609,15 +6230,25 @@ function promotedAdmissionsValid(
         receipt.teamId as TeamId,
         exceptions,
       );
-      const freshMechanical = validateTeamReturnCandidateMechanically(
-        lessonRoot,
-        lessonId,
-        centralRoot,
-      );
+      const pinnedExecution = pinnedExecutions?.[index];
+      const pinnedBinding =
+        pinnedExecution === undefined || validatorSnapshot === undefined
+          ? undefined
+          : bindPinnedValidatorResult(
+              lessonRoot,
+              lessonId,
+              pinnedExecution,
+              validatorSnapshot,
+              authority,
+            );
+      const freshMechanical =
+        pinnedBinding?.identity.mechanical ??
+        validateTeamReturnCandidateMechanically(lessonRoot, lessonId, centralRoot);
       if (
         exceptions.length !== 0 ||
         canonical(validated.row) !== canonical(row) ||
         canonical(freshMechanical) !== canonical(admission.mechanical) ||
+        (validatorSnapshot !== undefined && pinnedBinding?.matches !== true) ||
         freshMechanical.structural !== 'PASS' ||
         freshMechanical.computedQuality !== 'PASS' ||
         freshMechanical.normalization !== 'PASS' ||
@@ -3805,6 +6436,7 @@ function loadAcceptanceState(
     readonly centralRoot: string;
     readonly gitRoot?: string;
     readonly teamAuthority: TeamAuthority;
+    readonly validatorSnapshot?: PinnedValidatorSnapshot;
   },
 ): LoadedAcceptanceState | null {
   try {
@@ -4061,6 +6693,7 @@ function loadAcceptanceState(
       admissionAuthority as unknown as TeamAuthority,
       manifest.promotedAdmissions,
       trustedAuthority?.centralRoot ?? centralRootFromTeamRoot(teamRoot),
+      trustedAuthority?.validatorSnapshot,
     );
     if (
       canonical(receiptBytes) !== canonical(expectedReceipt) ||
@@ -4137,10 +6770,13 @@ function acceptanceTransitionValid(
 ): boolean {
   const priorRows = new Map(predecessor.receipt.rows.map((row) => [row.lessonId, row]));
   const replacementRows = new Map(successor.state.receipt.rows.map((row) => [row.lessonId, row]));
+  const { validator: _priorValidator, ...priorAuthority } = predecessor.receipt.authority;
+  const { validator: _replacementValidator, ...replacementAuthority } =
+    successor.state.receipt.authority;
   if (
     predecessor.receipt.teamId !== successor.state.receipt.teamId ||
     predecessor.receipt.assignmentIdSha256 !== successor.state.receipt.assignmentIdSha256 ||
-    canonical(predecessor.receipt.authority) !== canonical(successor.state.receipt.authority) ||
+    canonical(priorAuthority) !== canonical(replacementAuthority) ||
     predecessor.receipt.source.kind !== successor.state.receipt.source.kind ||
     canonical(predecessor.receipt.rows.map((row) => row.lessonId)) !==
       canonical(successor.state.receipt.rows.map((row) => row.lessonId)) ||
@@ -4212,6 +6848,7 @@ function validatedSupersessionChain(
     readonly centralRoot: string;
     readonly gitRoot?: string;
     readonly teamAuthority: TeamAuthority;
+    readonly validatorSnapshot?: PinnedValidatorSnapshot;
   },
 ): readonly VerifiedStagedState[] | null {
   const acceptedRoot = verifyStagedState(finalRoot);
@@ -4289,14 +6926,14 @@ export interface TeamReturnAcceptanceLoadResult {
   readonly intakeReceipt: TeamReturnIntakeResult;
 }
 
-export function loadTeamReturnAcceptanceArtifact(input: {
+export async function loadTeamReturnAcceptanceArtifact(input: {
   readonly authorityRoot: string;
   readonly centralRepositoryRoot: string;
   readonly reviewedCheckoutRoot: string;
   readonly handle: TeamReturnAcceptanceHandle;
   readonly scopeId: 'TEAM';
   readonly teamId: TeamId;
-}): TeamReturnAcceptanceLoadResult {
+}): Promise<TeamReturnAcceptanceLoadResult> {
   if (
     input.scopeId !== 'TEAM' ||
     !TEAM_IDS.includes(input.teamId) ||
@@ -4306,138 +6943,213 @@ export function loadTeamReturnAcceptanceArtifact(input: {
     throw new Error('ACCEPTANCE_HANDLE_INVALID');
   }
   const centralRoot = realpathSync(input.centralRepositoryRoot);
+  const authorityRoot = realpathSync(input.authorityRoot);
   const authorityExceptions: TeamReturnException[] = [];
-  const finalization = verifyAuthorityRoot(realpathSync(input.authorityRoot), authorityExceptions);
+  const finalization = verifyAuthorityRoot(authorityRoot, authorityExceptions);
   const teamAuthority =
     finalization === null
       ? null
       : verifyTeamAuthority(
-          realpathSync(input.authorityRoot),
+          authorityRoot,
           centralRoot,
           finalization,
           input.teamId,
           authorityExceptions,
         );
-  if (teamAuthority === null || authorityExceptions.length !== 0) {
+  if (finalization === null || teamAuthority === null || authorityExceptions.length !== 0) {
     throw new Error('ACCEPTANCE_AUTHORITY_INVALID');
   }
-  const trustedAuthority = {
-    centralRoot,
-    gitRoot: realpathSync(input.reviewedCheckoutRoot),
-    teamAuthority,
-  };
-  const finalRoot = join(
-    centralRoot,
-    TEAM_RETURN_STAGING_RELATIVE_ROOT,
-    input.teamId,
-    input.scopeId,
-  );
-  const teamRoot = dirname(finalRoot);
-  const marker = inspectAcceptanceMarker(
-    teamRoot,
-    input.handle.markerRelativePath,
-    input.handle.manifestSha256,
-  );
-  if (
-    marker === null ||
-    canonical(marker) !== canonical(input.handle.marker) ||
-    input.handle.markerRelativePath !==
-      `${ACCEPTANCE_RELATIVE_ROOT}/commits/${input.handle.markerRelativePath.split('/').at(-1)}`
-  ) {
-    throw new Error('ACCEPTANCE_MARKER_INVALID');
-  }
-  const loaded = loadAcceptanceState(
-    teamRoot,
-    input.handle.manifestSha256,
-    input.handle.objects,
-    trustedAuthority,
-  );
-  const chain = validatedSupersessionChain(finalRoot, trustedAuthority);
-  if (
-    loaded === null ||
-    chain === null ||
-    chain.at(-1)?.receipt.receiptSha256 !== loaded.state.receipt.receiptSha256 ||
-    loaded.binding.acceptanceMarkerRelativePath !== input.handle.markerRelativePath ||
-    loaded.binding.generationId !== input.handle.generationId ||
-    loaded.binding.replacement.treeSha256 !== input.handle.sourceTreeSha256 ||
-    loaded.state.receipt.source.headCommit !== input.handle.sourceCommit ||
-    loaded.state.receipt.source.headCommit !==
-      gitOutput(trustedAuthority.gitRoot, ['rev-parse', 'HEAD'])
-  ) {
-    throw new Error('ACCEPTANCE_CHAIN_INVALID');
-  }
-  const extractedRoot = mkdtempSync(join(tmpdir(), 'mcat-team-acceptance-'));
-  const extractedInfo = lstatSync(extractedRoot);
-  const extractedIdentity = { device: extractedInfo.dev, inode: extractedInfo.ino };
+  let validatorSnapshot: PinnedValidatorSnapshot | undefined;
   try {
-    mkdirSync(join(extractedRoot, 'lessons'), { mode: 0o700 });
-    for (const [relativePath, bytes] of [...loaded.archive.files.entries()].sort(
-      ([left], [right]) => left.localeCompare(right),
-    )) {
-      const destination = confined(
-        extractedRoot,
-        relativePath === 'TEAM-HANDOFF.json' || /^waves\/[^/]+\.json$/.test(relativePath)
-          ? relativePath
-          : `lessons/${relativePath}`,
+    if (isExactLegacyGenerationThreeCohort(finalization)) {
+      validatorSnapshot = materializePinnedValidatorSnapshot(
+        authorityRoot,
+        centralRoot,
+        finalization,
+        teamAuthority,
       );
-      mkdirSync(dirname(destination), { recursive: true, mode: 0o700 });
-      const descriptor = openSync(
-        destination,
-        fsConstants.O_WRONLY | fsConstants.O_CREAT | fsConstants.O_EXCL | fsConstants.O_NOFOLLOW,
-        0o600,
-      );
-      try {
-        let offset = 0;
-        while (offset < bytes.byteLength) {
-          offset += writeSync(descriptor, bytes, offset, bytes.byteLength - offset);
-        }
-        fchmodSync(descriptor, 0o400);
-        fsyncSync(descriptor);
-      } finally {
-        closeSync(descriptor);
-      }
     }
-    const directories = collectDirectories(extractedRoot).sort(
-      (left, right) => right.length - left.length,
+  } catch {
+    throw new Error('ACCEPTANCE_AUTHORITY_INVALID');
+  }
+  try {
+    const trustedAuthority = {
+      centralRoot,
+      gitRoot: realpathSync(input.reviewedCheckoutRoot),
+      teamAuthority,
+      ...(validatorSnapshot === undefined ? {} : { validatorSnapshot }),
+    };
+    const finalRoot = join(
+      centralRoot,
+      TEAM_RETURN_STAGING_RELATIVE_ROOT,
+      input.teamId,
+      input.scopeId,
     );
-    for (const path of directories) {
-      chmodSync(path, 0o500);
-      const descriptor = openSync(
-        path,
-        fsConstants.O_RDONLY | fsConstants.O_DIRECTORY | fsConstants.O_NOFOLLOW,
-      );
-      try {
-        fsyncSync(descriptor);
-      } finally {
-        closeSync(descriptor);
-      }
-    }
-    const extractedInventory = inventory(
-      join(extractedRoot, 'lessons'),
-      listFiles(join(extractedRoot, 'lessons')),
-    );
-    const extractedCandidateInventory = inventory(extractedRoot, listFiles(extractedRoot)).map(
-      (entry) => ({
-        ...entry,
-        kind: 'FILE',
-        mode: lstatSync(confined(extractedRoot, entry.path)).mode & 0o777,
-      }),
+    const teamRoot = dirname(finalRoot);
+    const marker = inspectAcceptanceMarker(
+      teamRoot,
+      input.handle.markerRelativePath,
+      input.handle.manifestSha256,
     );
     if (
-      canonical(extractedInventory) !== canonical(loaded.archive.inventory) ||
-      canonical(extractedCandidateInventory) !== canonical(loaded.archive.candidateInventory) ||
-      !readOnlyModesValid(extractedRoot)
+      marker === null ||
+      canonical(marker) !== canonical(input.handle.marker) ||
+      input.handle.markerRelativePath !==
+        `${ACCEPTANCE_RELATIVE_ROOT}/commits/${input.handle.markerRelativePath.split('/').at(-1)}`
     ) {
-      throw new Error('ACCEPTANCE_EXTRACTION_INVALID');
+      throw new Error('ACCEPTANCE_MARKER_INVALID');
     }
-    return {
-      extractedRoot,
-      handle: input.handle as TeamReturnAcceptanceLoadResult['handle'],
-      intakeReceipt: loaded.state.receipt,
-    };
-  } catch (error) {
-    cleanupOwnedIncoming(extractedRoot, extractedIdentity);
-    throw error;
+    if (validatorSnapshot !== undefined) {
+      const archiveObject = readImmutableObject(
+        teamRoot,
+        'archive',
+        input.handle.archiveSha256,
+        digest,
+        input.handle.objects.archive,
+      );
+      const manifestObject = readImmutableObject(
+        teamRoot,
+        'manifest',
+        input.handle.manifestSha256,
+        digest,
+        input.handle.objects.manifest,
+      );
+      const preliminaryArchive = parseAcceptanceArchive(archiveObject.bytes);
+      let preliminaryReceipt: TeamReturnIntakeResult | null = null;
+      try {
+        preliminaryReceipt = record(
+          record(JSON.parse(manifestObject.bytes.toString('utf8')))?.intake,
+        ) as unknown as TeamReturnIntakeResult;
+      } catch {
+        preliminaryReceipt = null;
+      }
+      if (
+        preliminaryArchive === null ||
+        preliminaryReceipt === null ||
+        !Array.isArray(preliminaryReceipt.rows)
+      ) {
+        throw new Error('ACCEPTANCE_CHAIN_INVALID');
+      }
+      const validationRoot = mkdtempSync(join(tmpdir(), 'mcat-team-acceptance-validation-'));
+      try {
+        for (const entry of preliminaryArchive.candidateInventory) {
+          const sourceKey = entry.path.startsWith('lessons/')
+            ? entry.path.slice('lessons/'.length)
+            : entry.path;
+          const bytes = preliminaryArchive.files.get(sourceKey);
+          if (bytes === undefined) throw new Error('ACCEPTANCE_ARCHIVE_INVALID');
+          const destination = confined(
+            validationRoot,
+            entry.path.startsWith('lessons/') ? entry.path.slice('lessons/'.length) : entry.path,
+          );
+          mkdirSync(dirname(destination), { recursive: true, mode: 0o700 });
+          writeFileSync(destination, bytes, { flag: 'wx', mode: 0o600 });
+        }
+        await validatorSnapshot.validate(
+          preliminaryReceipt.rows.map((row) => ({
+            lessonId: row.lessonId,
+            lessonRoot: join(validationRoot, row.lessonId),
+          })),
+        );
+      } finally {
+        rmSync(validationRoot, { force: true, recursive: true });
+      }
+    }
+    const loaded = loadAcceptanceState(
+      teamRoot,
+      input.handle.manifestSha256,
+      input.handle.objects,
+      trustedAuthority,
+    );
+    const chain = validatedSupersessionChain(finalRoot, trustedAuthority);
+    if (
+      loaded === null ||
+      chain === null ||
+      chain.at(-1)?.receipt.receiptSha256 !== loaded.state.receipt.receiptSha256 ||
+      loaded.binding.acceptanceMarkerRelativePath !== input.handle.markerRelativePath ||
+      loaded.binding.generationId !== input.handle.generationId ||
+      loaded.binding.replacement.treeSha256 !== input.handle.sourceTreeSha256 ||
+      loaded.state.receipt.source.headCommit !== input.handle.sourceCommit ||
+      loaded.state.receipt.source.headCommit !==
+        gitOutput(trustedAuthority.gitRoot, ['rev-parse', 'HEAD'])
+    ) {
+      throw new Error('ACCEPTANCE_CHAIN_INVALID');
+    }
+    const extractedRoot = mkdtempSync(join(tmpdir(), 'mcat-team-acceptance-'));
+    const extractedInfo = lstatSync(extractedRoot);
+    const extractedIdentity = { device: extractedInfo.dev, inode: extractedInfo.ino };
+    try {
+      mkdirSync(join(extractedRoot, 'lessons'), { mode: 0o700 });
+      for (const [relativePath, bytes] of [...loaded.archive.files.entries()].sort(
+        ([left], [right]) => left.localeCompare(right),
+      )) {
+        const destination = confined(
+          extractedRoot,
+          relativePath === 'TEAM-HANDOFF.json' || /^waves\/[^/]+\.json$/.test(relativePath)
+            ? relativePath
+            : `lessons/${relativePath}`,
+        );
+        mkdirSync(dirname(destination), { recursive: true, mode: 0o700 });
+        const descriptor = openSync(
+          destination,
+          fsConstants.O_WRONLY | fsConstants.O_CREAT | fsConstants.O_EXCL | fsConstants.O_NOFOLLOW,
+          0o600,
+        );
+        try {
+          let offset = 0;
+          while (offset < bytes.byteLength) {
+            offset += writeSync(descriptor, bytes, offset, bytes.byteLength - offset);
+          }
+          fchmodSync(descriptor, 0o400);
+          fsyncSync(descriptor);
+        } finally {
+          closeSync(descriptor);
+        }
+      }
+      const directories = collectDirectories(extractedRoot).sort(
+        (left, right) => right.length - left.length,
+      );
+      for (const path of directories) {
+        chmodSync(path, 0o500);
+        const descriptor = openSync(
+          path,
+          fsConstants.O_RDONLY | fsConstants.O_DIRECTORY | fsConstants.O_NOFOLLOW,
+        );
+        try {
+          fsyncSync(descriptor);
+        } finally {
+          closeSync(descriptor);
+        }
+      }
+      const extractedInventory = inventory(
+        join(extractedRoot, 'lessons'),
+        listFiles(join(extractedRoot, 'lessons')),
+      );
+      const extractedCandidateInventory = inventory(extractedRoot, listFiles(extractedRoot)).map(
+        (entry) => ({
+          ...entry,
+          kind: 'FILE',
+          mode: lstatSync(confined(extractedRoot, entry.path)).mode & 0o777,
+        }),
+      );
+      if (
+        canonical(extractedInventory) !== canonical(loaded.archive.inventory) ||
+        canonical(extractedCandidateInventory) !== canonical(loaded.archive.candidateInventory) ||
+        !readOnlyModesValid(extractedRoot)
+      ) {
+        throw new Error('ACCEPTANCE_EXTRACTION_INVALID');
+      }
+      return {
+        extractedRoot,
+        handle: input.handle as TeamReturnAcceptanceLoadResult['handle'],
+        intakeReceipt: loaded.state.receipt,
+      };
+    } catch (error) {
+      cleanupOwnedIncoming(extractedRoot, extractedIdentity);
+      throw error;
+    }
+  } finally {
+    validatorSnapshot?.cleanup();
   }
 }
 
@@ -4448,6 +7160,7 @@ function findSupersessionPredecessor(
     readonly centralRoot: string;
     readonly gitRoot?: string;
     readonly teamAuthority: TeamAuthority;
+    readonly validatorSnapshot?: PinnedValidatorSnapshot;
   },
 ): VerifiedStagedState | null {
   const chain = validatedSupersessionChain(finalRoot, trustedAuthority);
@@ -4475,6 +7188,7 @@ function makeSupersessionBinding(input: {
   readonly centralRoot: string;
   readonly gitRoot: string;
   readonly teamAuthority: TeamAuthority;
+  readonly validatorSnapshot?: PinnedValidatorSnapshot;
 }): TeamReturnSupersessionBinding | null {
   if (
     input.request.action !== 'SUPERSEDE_FINAL_TEAM' ||
@@ -4494,6 +7208,9 @@ function makeSupersessionBinding(input: {
     centralRoot: input.centralRoot,
     gitRoot: input.gitRoot,
     teamAuthority: input.teamAuthority,
+    ...(input.validatorSnapshot === undefined
+      ? {}
+      : { validatorSnapshot: input.validatorSnapshot }),
   };
   const prior = findSupersessionPredecessor(input.finalRoot, input.request, trustedAuthority);
   if (prior === null) {
@@ -4519,6 +7236,8 @@ function makeSupersessionBinding(input: {
     );
     return null;
   }
+  const { validator: _priorValidator, ...priorAuthority } = prior.receipt.authority;
+  const { validator: _replacementValidator, ...replacementAuthority } = input.result.authority;
   if (
     prior.receipt.teamId !== input.result.teamId ||
     prior.receipt.scope.kind !== 'FINAL_TEAM' ||
@@ -4527,7 +7246,7 @@ function makeSupersessionBinding(input: {
     prior.receipt.aggregates.sourceBatchSha256 !== input.request.expectedPriorSourceBatchSha256 ||
     prior.receipt.copy.stagingIdentitySha256 !== input.request.expectedPriorStagingIdentitySha256 ||
     prior.receipt.assignmentIdSha256 !== input.result.assignmentIdSha256 ||
-    canonical(prior.receipt.authority) !== canonical(input.result.authority)
+    canonical(priorAuthority) !== canonical(replacementAuthority)
   ) {
     addException(input.exceptions, 'SUPERSESSION_AUTHORITY_INVALID', 'COPY', {
       expectedPriorSourceBatchSha256: input.request.expectedPriorSourceBatchSha256,
@@ -4743,6 +7462,7 @@ function makePartialResult(input: {
   readonly aggregates: TeamReturnIntakeResult['aggregates'];
   readonly exceptions: readonly TeamReturnException[];
   readonly copy: TeamReturnIntakeResult['copy'];
+  readonly validatorReceipt?: PinnedValidatorAuthorityReceipt;
 }): TeamReturnIntakeResult {
   return constantResult({
     aggregates: input.aggregates,
@@ -4755,6 +7475,7 @@ function makePartialResult(input: {
       pinnedCommit: input.finalization?.pins.repositoryCommit ?? '',
       readySha256: input.teamAuthority?.readySha256 ?? '',
       sendMeSha256: input.teamAuthority?.sendMeSha256 ?? '',
+      ...(input.validatorReceipt === undefined ? {} : { validator: input.validatorReceipt }),
     },
     copy: input.copy,
     decision: input.decision,
@@ -4810,6 +7531,7 @@ function bindSupersessionResult(
   centralRoot: string,
   teamAuthority: TeamAuthority,
   mechanicalAdmissions: ReadonlyMap<string, CentralMechanicalValidation>,
+  validatorSnapshot?: PinnedValidatorSnapshot,
 ): TeamReturnIntakeResult {
   const { receiptSha256: _receiptSha256, ...base } = result;
   const publication = constantResult({
@@ -4834,6 +7556,7 @@ function bindSupersessionResult(
     centralRoot,
     teamAuthority,
     mechanicalAdmissions,
+    validatorSnapshot,
   );
   const selected =
     result.mode === 'ACCEPT'
@@ -4964,6 +7687,7 @@ async function commitAcceptanceArtifact(input: {
   readonly reviewedGitRoot: string;
   readonly teamAuthority: TeamAuthority;
   readonly mechanicalAdmissions: ReadonlyMap<string, CentralMechanicalValidation>;
+  readonly validatorSnapshot?: PinnedValidatorSnapshot;
 }): Promise<TeamReturnIntakeResult> {
   const teamRoot = dirname(input.finalRoot);
   const handle = input.result.copy.acceptance;
@@ -4972,6 +7696,9 @@ async function commitAcceptanceArtifact(input: {
     centralRoot: input.centralRoot,
     gitRoot: input.reviewedGitRoot,
     teamAuthority: input.teamAuthority,
+    ...(input.validatorSnapshot === undefined
+      ? {}
+      : { validatorSnapshot: input.validatorSnapshot }),
   };
   const replay = (): TeamReturnIntakeResult | null => {
     const marker = inspectAcceptanceMarker(
@@ -5048,6 +7775,7 @@ async function commitAcceptanceArtifact(input: {
       input.centralRoot,
       input.teamAuthority,
       input.mechanicalAdmissions,
+      input.validatorSnapshot,
     );
     if (
       artifacts.handle.archiveSha256 !== handle.archiveSha256 ||
@@ -5187,6 +7915,7 @@ async function stageAcceptedBatch(input: {
   readonly reviewedGitRoot: string;
   readonly teamAuthority: TeamAuthority;
   readonly mechanicalAdmissions: ReadonlyMap<string, CentralMechanicalValidation>;
+  readonly validatorSnapshot?: PinnedValidatorSnapshot;
   readonly onBeforeAcceptanceObjectValidation?: TeamReturnIntakeDependencies['onBeforeAcceptanceObjectValidation'];
   readonly onBeforeSupersessionPublish?: (destination: string) => void;
   readonly onSupersessionBoundary?: (boundary: TeamReturnSupersessionBoundary) => void;
@@ -5347,6 +8076,8 @@ export async function intakeTeamReturn(
   let finalization: FinalizationAuthority | null = null;
   let materialized: MaterializedSource | null = null;
   let teamAuthority: TeamAuthority | null = null;
+  let validatorSnapshot: PinnedValidatorSnapshot | null = null;
+  let validatorReceipt: PinnedValidatorAuthorityReceipt | undefined;
   let derived: { readonly candidateRoot: string; readonly teamId: TeamId } | null = null;
   let scope: TeamReturnIntakeResult['scope'] = { id: 'UNKNOWN', kind: 'UNKNOWN', rowCount: 0 };
   const rows: TeamReturnIntakeRow[] = [];
@@ -5404,6 +8135,27 @@ export async function intakeTeamReturn(
       exceptions,
     );
     if (teamAuthority === null) throw new Error('TEAM_AUTHORITY_NOT_AVAILABLE');
+    if (isExactLegacyGenerationThreeCohort(finalization)) {
+      try {
+        validatorSnapshot = materializePinnedValidatorSnapshot(
+          authorityRoot,
+          centralRoot,
+          finalization,
+          teamAuthority,
+        );
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        addException(
+          exceptions,
+          message.startsWith('CENTRAL_')
+            ? 'CENTRAL_INTAKE_CODE_DRIFT'
+            : 'PINNED_VALIDATOR_AUTHORITY_INVALID',
+          'AUTHORITY',
+          { error: message },
+        );
+        throw new Error('PINNED_VALIDATOR_NOT_AVAILABLE');
+      }
+    }
     assignmentId = teamAuthority.assignmentId;
     const assignmentOrder = new Map(
       teamAuthority.team.lessonIds.map((lessonId, index) => [lessonId, index]),
@@ -5521,6 +8273,7 @@ export async function intakeTeamReturn(
         reason: 'ASSIGNMENT_CLOSURE',
       });
     }
+    const pinnedRequests: Array<{ readonly lessonId: string; readonly lessonRoot: string }> = [];
     for (const offeredRow of offered.rows) {
       if (!assignmentOrder.has(offeredRow.lessonId)) continue;
       const lessonRoot = join(derived.candidateRoot, offeredRow.lessonId);
@@ -5533,7 +8286,9 @@ export async function intakeTeamReturn(
         exceptions,
       );
       rows.push(validated.row);
-      if (offeredRow.status === 'COMPLETE') {
+      if (validatorSnapshot !== null) {
+        pinnedRequests.push({ lessonId: offeredRow.lessonId, lessonRoot });
+      } else if (offeredRow.status === 'COMPLETE') {
         const mechanical = await (
           dependencies.mechanicalValidate ?? validateTeamReturnCandidateMechanically
         )(lessonRoot, offeredRow.lessonId, centralRoot);
@@ -5551,6 +8306,74 @@ export async function intakeTeamReturn(
           });
         }
       }
+    }
+    if (validatorSnapshot !== null) {
+      let executions: readonly PinnedValidatorExecution[];
+      try {
+        executions = await validatorSnapshot.validate(pinnedRequests);
+      } catch (error) {
+        addException(exceptions, 'PINNED_VALIDATOR_AUTHORITY_INVALID', 'AUTHORITY', {
+          error: error instanceof Error ? error.message : String(error),
+        });
+        throw new Error('PINNED_VALIDATOR_EXECUTION_UNAVAILABLE');
+      }
+      const identities: PinnedValidatorResultIdentity[] = [];
+      for (const [index, request] of pinnedRequests.entries()) {
+        const execution = executions[index];
+        const offeredRow = offered.rows.find((row) => row.lessonId === request.lessonId);
+        if (execution === undefined || offeredRow === undefined) {
+          addException(exceptions, 'PINNED_VALIDATOR_AUTHORITY_INVALID', 'AUTHORITY', {
+            lessonId: request.lessonId,
+            reason: 'RESULT_COUNT',
+          });
+          continue;
+        }
+        const binding = bindPinnedValidatorResult(
+          request.lessonRoot,
+          request.lessonId,
+          execution,
+          validatorSnapshot,
+          teamAuthority,
+        );
+        identities.push(binding.identity);
+        if (execution.commandExitCode !== 0) {
+          addException(exceptions, 'PINNED_VALIDATOR_AUTHORITY_INVALID', 'AUTHORITY', {
+            commandExitCode: execution.commandExitCode,
+            lessonId: request.lessonId,
+            stderrSha256: execution.stderrSha256,
+            stdoutSha256: execution.stdoutSha256,
+          });
+        }
+        if (!binding.matches) {
+          addException(exceptions, 'PINNED_VALIDATOR_RESULT_MISMATCH', 'LESSON', {
+            lessonId: request.lessonId,
+            offeredReceiptSha256: binding.identity.offeredReceiptSha256,
+            reportSha256: binding.identity.reportSha256,
+          });
+        }
+        if (offeredRow.status === 'COMPLETE') {
+          mechanicalAdmissions.set(request.lessonId, binding.identity.mechanical);
+          if (
+            binding.identity.mechanical.structural !== 'PASS' ||
+            binding.identity.mechanical.computedQuality !== 'PASS' ||
+            binding.identity.mechanical.normalization !== 'PASS' ||
+            binding.identity.mechanical.protectedBoundary !== 'PASS' ||
+            !DIGEST.test(binding.identity.mechanical.validatorEvidenceSha256)
+          ) {
+            addException(exceptions, 'FALSE_COMPLETE', 'LESSON', {
+              lessonId: request.lessonId,
+              validatorEvidenceSha256: binding.identity.mechanical.validatorEvidenceSha256,
+            });
+          }
+        }
+      }
+      validatorReceipt = {
+        ...validatorSnapshot.baseReceipt,
+        resultAggregateSha256: digest(canonical(identities)),
+        results: identities,
+      };
+      validatorSnapshot.verifyUnchanged();
+      await new Promise<void>((resolveYield) => setImmediate(resolveYield));
     }
     const rowCores = rows.map(({ code: _code, rowSha256: _rowSha256, ...row }) => row);
     const rootCores = rows.map((row) => ({ lessonId: row.lessonId, rootSha256: row.rootSha256 }));
@@ -5594,6 +8417,7 @@ export async function intakeTeamReturn(
           sourceKind: request.source.kind,
           teamAuthority,
           teamId: derived.teamId,
+          ...(validatorReceipt === undefined ? {} : { validatorReceipt }),
         });
         makeSupersessionBinding({
           centralRoot,
@@ -5604,6 +8428,7 @@ export async function intakeTeamReturn(
           result: provisional,
           gitRoot: materialized.checkoutRoot as string,
           teamAuthority,
+          ...(validatorSnapshot === null ? {} : { validatorSnapshot }),
         });
       }
       return makePartialResult({
@@ -5624,6 +8449,7 @@ export async function intakeTeamReturn(
         sourceKind: request.source.kind,
         teamAuthority,
         teamId: derived.teamId,
+        ...(validatorReceipt === undefined ? {} : { validatorReceipt }),
       });
     }
     let accepted = makePartialResult({
@@ -5651,6 +8477,7 @@ export async function intakeTeamReturn(
       sourceKind: request.source.kind,
       teamAuthority,
       teamId: derived.teamId,
+      ...(validatorReceipt === undefined ? {} : { validatorReceipt }),
     });
     let supersession: TeamReturnSupersessionBinding | undefined;
     let acceptanceSourceProof = materialized.checkoutEvidence;
@@ -5674,6 +8501,7 @@ export async function intakeTeamReturn(
           result: accepted,
           gitRoot: materialized.checkoutRoot as string,
           teamAuthority,
+          ...(validatorSnapshot === null ? {} : { validatorSnapshot }),
         }) ?? undefined;
       if (supersession === undefined) {
         return reviseResult(
@@ -5692,6 +8520,7 @@ export async function intakeTeamReturn(
           centralRoot,
           gitRoot: materialized.checkoutRoot as string,
           teamAuthority,
+          ...(validatorSnapshot === null ? {} : { validatorSnapshot }),
         });
         if (predecessor === null) throw new Error('SUPERSESSION_PREDECESSOR_UNAVAILABLE');
         const reviewedSource = reviewedSupersessionSource(
@@ -5716,6 +8545,7 @@ export async function intakeTeamReturn(
           centralRoot,
           teamAuthority,
           mechanicalAdmissions,
+          validatorSnapshot ?? undefined,
         );
         if (mode === 'DRY_RUN') {
           const teamRoot = dirname(finalRoot);
@@ -5735,11 +8565,13 @@ export async function intakeTeamReturn(
                     centralRoot,
                     gitRoot: materialized.checkoutRoot as string,
                     teamAuthority,
+                    ...(validatorSnapshot === null ? {} : { validatorSnapshot }),
                   });
             const chain = validatedSupersessionChain(finalRoot, {
               centralRoot,
               gitRoot: materialized.checkoutRoot as string,
               teamAuthority,
+              ...(validatorSnapshot === null ? {} : { validatorSnapshot }),
             });
             if (
               stagedGeneration === null ||
@@ -5830,6 +8662,7 @@ export async function intakeTeamReturn(
       reviewedGitRoot: validatedMaterialized.checkoutRoot as string,
       teamAuthority,
       mechanicalAdmissions,
+      ...(validatorSnapshot === null ? {} : { validatorSnapshot }),
     });
   } catch (error) {
     if (
@@ -5838,6 +8671,8 @@ export async function intakeTeamReturn(
         'TEAM_NOT_DERIVED',
         'TEAM_AUTHORITY_NOT_AVAILABLE',
         'HANDOFF_NOT_AVAILABLE',
+        'PINNED_VALIDATOR_EXECUTION_UNAVAILABLE',
+        'PINNED_VALIDATOR_NOT_AVAILABLE',
       ].includes(error instanceof Error ? error.message : '')
     ) {
       addException(exceptions, 'INTERNAL_INTAKE_ERROR', 'SOURCE', {
@@ -5864,8 +8699,11 @@ export async function intakeTeamReturn(
       sourceKind: request.source.kind,
       teamAuthority,
       teamId: derived?.teamId ?? null,
+      ...(validatorReceipt === undefined ? {} : { validatorReceipt }),
     });
   } finally {
+    validatorSnapshot?.cleanup();
     materialized?.cleanup?.();
+    await new Promise<void>((resolveYield) => setImmediate(resolveYield));
   }
 }
