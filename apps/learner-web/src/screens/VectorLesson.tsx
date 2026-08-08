@@ -244,7 +244,16 @@ function LessonScreen({
   if (screen.kind === 'FEEDBACK') {
     return (
       <section className="mc-vector-lesson__screen mc-vector-lesson__feedback">
-        <h1 id="mc-vector-lesson-heading" ref={setFocusTarget} tabIndex={-1} className="mc-h1">
+        <h1
+          id="mc-vector-lesson-heading"
+          ref={setFocusTarget}
+          tabIndex={-1}
+          className={`mc-h1 ${
+            screen.outcome === 'CORRECT' || screen.outcome === 'REPAIR_CONFIRMED'
+              ? 'mc-reveal__key--ok'
+              : 'mc-reveal__key--wrong'
+          }`}
+        >
           {screen.heading}
         </h1>
         <div className="mc-vector-lesson__body" role="status" aria-live="polite">

@@ -73,7 +73,8 @@ export function Study() {
     answerChanges,
   });
 
-  if (session.isLoading || !step) return <div className="mc-center mc-muted">Loading your task…</div>;
+  if (session.isLoading || !step)
+    return <div className="mc-center mc-muted">Loading your task…</div>;
 
   if (step.kind === 'locked') {
     return (
@@ -232,7 +233,10 @@ export function Study() {
         <fieldset className="mc-choices">
           <legend className="mc-visually-hidden">Answer choices</legend>
           {q.choices.map((c) => (
-            <label key={c.id} className={`mc-choice ${choice === c.id ? 'mc-choice--selected' : ''}`}>
+            <label
+              key={c.id}
+              className={`mc-choice ${choice === c.id ? 'mc-choice--selected' : ''}`}
+            >
               <input
                 type="radio"
                 name="answer"
@@ -308,7 +312,9 @@ function Reveal({
     <Card elevated>
       <Stack gap={3}>
         <div className="mc-inline">
-          <span className="mc-reveal__key">Answer: {reveal.correctChoiceId}</span>
+          <span className={`mc-reveal__key ${missed ? 'mc-reveal__key--wrong' : ''}`}>
+            Answer: {reveal.correctChoiceId}
+          </span>
         </div>
         <p>{reveal.correctRationale}</p>
         {missed && reveal.choiceRationales[chosen] ? (

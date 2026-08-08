@@ -134,7 +134,8 @@ export function PracticeSession() {
    * that could only fail. See `PracticeSession.test.ts`.
    */
   const finish = (complete: boolean) => {
-    if (returnTo) navigate(returnTo, complete ? { state: { completedActivityId: activityId } } : {});
+    if (returnTo)
+      navigate(returnTo, complete ? { state: { completedActivityId: activityId } } : {});
     else navigate('/app/practice');
   };
 
@@ -287,7 +288,9 @@ export function PracticeSession() {
               source={{
                 rationale: feedback.rationale,
                 ...(feedback.wrongChoiceId !== null && feedback.wrongChoiceRationale !== null
-                  ? { choiceRationales: { [feedback.wrongChoiceId]: feedback.wrongChoiceRationale } }
+                  ? {
+                      choiceRationales: { [feedback.wrongChoiceId]: feedback.wrongChoiceRationale },
+                    }
                   : {}),
               }}
               gate={{ skill: item.skill, section: q.section, dok: item.dok }}
@@ -326,10 +329,7 @@ function ChoiceList({
     <fieldset className="mc-choices">
       <legend className="mc-visually-hidden">Answer choices</legend>
       {q.choices.map((c) => (
-        <label
-          key={c.id}
-          className={`mc-choice ${choice === c.id ? 'mc-choice--selected' : ''}`}
-        >
+        <label key={c.id} className={`mc-choice ${choice === c.id ? 'mc-choice--selected' : ''}`}>
           <input
             type="radio"
             name={name}
@@ -364,7 +364,9 @@ function FeedbackCard({
     <Card elevated>
       <Stack gap={3}>
         <div className="mc-inline">
-          <span className={`mc-reveal__key ${feedback.correct ? 'mc-reveal__key--ok' : ''}`}>
+          <span
+            className={`mc-reveal__key ${feedback.correct ? 'mc-reveal__key--ok' : 'mc-reveal__key--wrong'}`}
+          >
             {`${feedback.correct ? 'Correct' : 'Answer'}: ${feedback.correctChoiceId}`}
           </span>
         </div>

@@ -97,7 +97,9 @@ function PassageQuestionCard({
         {grade ? (
           <Stack gap={2}>
             <div className="mc-inline">
-              <span className={`mc-reveal__key ${grade.correct ? 'mc-reveal__key--ok' : ''}`}>
+              <span
+                className={`mc-reveal__key ${grade.correct ? 'mc-reveal__key--ok' : 'mc-reveal__key--wrong'}`}
+              >
                 {grade.correct ? 'Correct' : 'Answer'}: {grade.correctChoiceId}
               </span>
             </div>

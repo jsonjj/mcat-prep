@@ -220,7 +220,12 @@ function CatalogLessonScreen({
         <div className="mc-vector-lesson__body">
           <p>{screen.prompt}</p>
         </div>
-        <Button variant="primary" size="lg" disabled={pending} onClick={() => onAction({ type: 'CONTINUE' })}>
+        <Button
+          variant="primary"
+          size="lg"
+          disabled={pending}
+          onClick={() => onAction({ type: 'CONTINUE' })}
+        >
           {pending ? 'Saving…' : 'Continue'}
         </Button>
       </section>
@@ -241,10 +246,20 @@ function CatalogLessonScreen({
   if (screen.kind === 'FEEDBACK') {
     return (
       <section className="mc-vector-lesson__screen mc-vector-lesson__feedback">
-        <h1 id="mc-catalog-lesson-heading" ref={setFocusTarget} tabIndex={-1} className="mc-h1">
+        <h1
+          id="mc-catalog-lesson-heading"
+          ref={setFocusTarget}
+          tabIndex={-1}
+          className={`mc-h1 ${screen.outcome === 'CORRECT' ? 'mc-reveal__key--ok' : 'mc-reveal__key--wrong'}`}
+        >
           {screen.outcome === 'CORRECT' ? 'Correct' : 'Not quite'}
         </h1>
-        <Button variant="primary" size="lg" disabled={pending} onClick={() => onAction({ type: 'CONTINUE' })}>
+        <Button
+          variant="primary"
+          size="lg"
+          disabled={pending}
+          onClick={() => onAction({ type: 'CONTINUE' })}
+        >
           {pending ? 'Saving…' : 'Continue'}
         </Button>
       </section>
@@ -304,12 +319,18 @@ function QuestionScreen({
     event.preventDefault();
     if (isMultipleChoice) {
       if (choice !== null) {
-        onAction({ type: 'SUBMIT_RESPONSE', response: { kind: 'MULTIPLE_CHOICE', choiceId: choice } });
+        onAction({
+          type: 'SUBMIT_RESPONSE',
+          response: { kind: 'MULTIPLE_CHOICE', choiceId: choice },
+        });
       }
       return;
     }
     const trimmed = text.trim();
-    onAction({ type: 'SUBMIT_RESPONSE', response: { kind: 'SHORT', text: trimmed === '' ? null : trimmed } });
+    onAction({
+      type: 'SUBMIT_RESPONSE',
+      response: { kind: 'SHORT', text: trimmed === '' ? null : trimmed },
+    });
   };
 
   const canSubmit = isMultipleChoice ? choice !== null : text.trim() !== '';

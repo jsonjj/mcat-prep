@@ -2,7 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Callout, Card, Eyebrow, Stack } from '@mcat/ui-web';
 import type { PracticeAttemptResult, PracticeQueueItem, RepairItemView } from '@mcat/contracts';
-import { useRepairFresh, useRepairQueue, useSubmitPracticeAttempt } from '../../app/practice-queries';
+import {
+  useRepairFresh,
+  useRepairQueue,
+  useSubmitPracticeAttempt,
+} from '../../app/practice-queries';
 import { feedbackFor, subAfterAttempt, type Feedback, type Sub } from '../practice/session-flow';
 import {
   afterFreshAttempt,
@@ -55,7 +59,11 @@ const DEFAULT_COUNT = 5;
 export function MistakesRepair() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { count = DEFAULT_COUNT, returnTo, activityId } = (location.state as RunnerState | null) ?? {};
+  const {
+    count = DEFAULT_COUNT,
+    returnTo,
+    activityId,
+  } = (location.state as RunnerState | null) ?? {};
 
   const queue = useRepairQueue(count);
   const submit = useSubmitPracticeAttempt();
@@ -94,7 +102,8 @@ export function MistakesRepair() {
 
   /** Return to the plan (or the Mistakes tab). `complete` marks the plan activity done. */
   const finish = (complete: boolean): void => {
-    if (returnTo) navigate(returnTo, complete ? { state: { completedActivityId: activityId } } : {});
+    if (returnTo)
+      navigate(returnTo, complete ? { state: { completedActivityId: activityId } } : {});
     else navigate('/app/mistakes');
   };
 
@@ -222,7 +231,8 @@ export function MistakesRepair() {
             </Button>
             {dwellLocked ? (
               <p className="mc-fineprint mc-muted" role="status" aria-live="polite">
-                Take a moment to read what went wrong — the fresh question unlocks in {dwellRemaining}
+                Take a moment to read what went wrong — the fresh question unlocks in{' '}
+                {dwellRemaining}
                 s.
               </p>
             ) : null}
@@ -330,7 +340,12 @@ export function MistakesRepair() {
         />
       ) : (
         <Stack gap={3}>
-          <ChoiceList q={q} name={`repair-${index}-${tryCount}`} choice={choice} onSelect={selectAnswer} />
+          <ChoiceList
+            q={q}
+            name={`repair-${index}-${tryCount}`}
+            choice={choice}
+            onSelect={selectAnswer}
+          />
           <Button
             variant="primary"
             size="lg"
@@ -502,7 +517,9 @@ function RepairFeedbackCard({
     <Card elevated>
       <Stack gap={3}>
         <div className="mc-inline">
-          <span className={`mc-reveal__key ${feedback.correct ? 'mc-reveal__key--ok' : ''}`}>
+          <span
+            className={`mc-reveal__key ${feedback.correct ? 'mc-reveal__key--ok' : 'mc-reveal__key--wrong'}`}
+          >
             {`${feedback.correct ? 'Correct' : 'Answer'}: ${feedback.correctChoiceId}`}
           </span>
         </div>

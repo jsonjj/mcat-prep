@@ -4876,6 +4876,11 @@ body {
 .mc-reveal__key--ok {
   color: var(--mc-state-strong);
 }
+/* A wrong answer's reveal reads red, not the neutral/teal default, so "Answer: X"
+   after a miss is unmistakably a miss (not confusable with the green "Correct: X"). */
+.mc-reveal__key--wrong {
+  color: var(--mc-danger);
+}
 
 /* ---- Today's Path (daily plan + guided runner) ---- */
 .mc-plan__budgetrow {
