@@ -12,6 +12,7 @@ import { PRACTICE_TEST_ENABLED } from './capabilities';
 import { REGISTERED_LESSONS, lessonBySlug } from './lesson-catalog';
 import { useMasteryLessons } from './queries';
 import { useRecallLoad, useRecallService } from './recall-queries';
+import type { RecallService } from '../recall/recall-service';
 import { PLAN_ACTIVITY_COMPLETE_INVALIDATE, TODAYS_PATH_INVALIDATE } from './invalidation-keys';
 
 /**
@@ -108,21 +109,49 @@ export function useCatalogComplete(): CatalogCompletion {
 export const useTodaysPath = () =>
   useQuery({ queryKey: ['todays-path'], queryFn: () => authority.getTodaysPath() });
 
+/**
+ * Recall load is an OPTIONAL input to the plan: it sizes/injects the Recall block,
+ * but the day MUST build without it. Estimating it scans the whole local deck in
+ * IndexedDB, which can be slow (or effectively hang) on a large imported Anki deck.
+ * The build used to `await service.estimateLoad()` UNCONDITIONALLY before POSTing, so
+ * a slow scan froze the screen on "Building today's path…" indefinitely (the POST was
+ * never sent). Bound the estimate: if it doesn't return quickly, build with an empty
+ * load — the recall re-injection in {@link useEnsureTodaysPath} adds Recall the moment
+ * the estimate lands, so nothing is lost.
+ */
+const RECALL_LOAD_TIMEOUT_MS = 2500;
+
+async function estimateRecallLoad(service: RecallService | null): Promise<RecallLoadInput> {
+  if (!service) return EMPTY_RECALL_LOAD;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    const load = await Promise.race([
+      service.estimateLoad(),
+      new Promise<null>((resolve) => {
+        timer = setTimeout(() => resolve(null), RECALL_LOAD_TIMEOUT_MS);
+      }),
+    ]);
+    if (!load) return EMPTY_RECALL_LOAD;
+    return {
+      dueLearning: load.dueLearning,
+      dueReviews: load.dueReviews,
+      newAvailable: load.newAvailable,
+      due: load.due,
+      estimatedMinutesForDue: load.estimatedMinutesForDue,
+    };
+  } catch {
+    return EMPTY_RECALL_LOAD;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 export function useBuildTodaysPath() {
   const qc = useQueryClient();
   const service = useRecallService();
   return useMutation({
     mutationFn: async (opts?: { force?: boolean }) => {
-      const load = service ? await service.estimateLoad() : null;
-      const recallLoad: RecallLoadInput = load
-        ? {
-            dueLearning: load.dueLearning,
-            dueReviews: load.dueReviews,
-            newAvailable: load.newAvailable,
-            due: load.due,
-            estimatedMinutesForDue: load.estimatedMinutesForDue,
-          }
-        : EMPTY_RECALL_LOAD;
+      const recallLoad = await estimateRecallLoad(service);
       return authority.buildTodaysPath({
         recallLoad,
         candidateLessons: buildCandidateLessons(),
