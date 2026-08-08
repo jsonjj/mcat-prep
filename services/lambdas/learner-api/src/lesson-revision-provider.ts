@@ -64,9 +64,13 @@ export async function loadLessonRevisionProvider(deps: {
     releaseId = active.rows[0]?.release_id as string | undefined;
   }
 
-  const artifactsById = new Map<string, RawLessonArtifacts>();
-  const scriptById = new Map<string, Record<string, unknown>>();
-
+  // Load the COMPRESSED serve bytes at cold start (one query), grouped by lesson, but
+  // DON'T gunzip/parse them yet. Decoding all ~111 lessons up front (gzip+base64 ->
+  // ~22MB JSON) added ~0.5-0.7s to every cold start — dead weight for the plan,
+  // progress, and bootstrap paths, which never call this provider. Instead decode each
+  // lesson's artifacts on first access (synchronously, then cache), so cold start only
+  // pays the query while lessons stay immediately servable (their bytes are in memory).
+  const compressedByLesson = new Map<string, Map<string, string>>();
   if (releaseId !== undefined) {
     const rows = (
       await deps.db.query(
@@ -80,39 +84,47 @@ export async function loadLessonRevisionProvider(deps: {
       )
     ).rows as Array<{ lesson_id: string; artifact_path: string; bytes: string }>;
 
-    const byLesson = new Map<string, Map<string, string>>();
     for (const row of rows) {
-      const forLesson = byLesson.get(row.lesson_id) ?? new Map<string, string>();
+      const forLesson = compressedByLesson.get(row.lesson_id) ?? new Map<string, string>();
       forLesson.set(row.artifact_path, row.bytes);
-      byLesson.set(row.lesson_id, forLesson);
-    }
-
-    for (const [lessonId, files] of byLesson) {
-      const scriptText = files.get('lesson-script.json');
-      if (scriptText === undefined) continue; // no script -> not servable; skip
-      const script = JSON.parse(decodeArtifact(scriptText)) as Record<string, unknown>;
-      const learnerSafe = files.get('learner-safe-items.json');
-      const protectedItems = files.get('protected-items.json');
-      artifactsById.set(lessonId, {
-        script,
-        learnerSafeItems:
-          learnerSafe === undefined ? undefined : JSON.parse(decodeArtifact(learnerSafe)),
-        protectedItems:
-          protectedItems === undefined ? undefined : JSON.parse(decodeArtifact(protectedItems)),
-      });
-      scriptById.set(lessonId, script);
+      compressedByLesson.set(row.lesson_id, forLesson);
     }
   }
 
-  const ids = [...artifactsById.keys()].sort();
+  const hasScript = (lessonId: string): boolean =>
+    compressedByLesson.get(lessonId)?.has('lesson-script.json') ?? false;
+  const ids = [...compressedByLesson.keys()].filter(hasScript).sort();
+
+  const artifactCache = new Map<string, RawLessonArtifacts>();
+  const scriptCache = new Map<string, Record<string, unknown>>();
+  const materialize = (lessonId: string): RawLessonArtifacts => {
+    const cached = artifactCache.get(lessonId);
+    if (cached !== undefined) return cached;
+    const files = compressedByLesson.get(lessonId);
+    const scriptText = files?.get('lesson-script.json');
+    if (files === undefined || scriptText === undefined) throw new UnknownLessonError(lessonId, ids);
+    const script = JSON.parse(decodeArtifact(scriptText)) as Record<string, unknown>;
+    const learnerSafe = files.get('learner-safe-items.json');
+    const protectedItems = files.get('protected-items.json');
+    const artifacts: RawLessonArtifacts = {
+      script,
+      learnerSafeItems:
+        learnerSafe === undefined ? undefined : JSON.parse(decodeArtifact(learnerSafe)),
+      protectedItems:
+        protectedItems === undefined ? undefined : JSON.parse(decodeArtifact(protectedItems)),
+    };
+    artifactCache.set(lessonId, artifacts);
+    scriptCache.set(lessonId, script);
+    return artifacts;
+  };
+
   return createLessonContentProvider({
     listLessonIds: () => ids,
-    hasLesson: (lessonId) => artifactsById.has(lessonId),
-    readArtifacts: (lessonId) => {
-      const artifacts = artifactsById.get(lessonId);
-      if (artifacts === undefined) throw new UnknownLessonError(lessonId, ids);
-      return artifacts;
+    hasLesson: (lessonId) => hasScript(lessonId),
+    readArtifacts: (lessonId) => materialize(lessonId),
+    readScriptRecord: (lessonId) => {
+      if (!scriptCache.has(lessonId) && hasScript(lessonId)) materialize(lessonId);
+      return scriptCache.get(lessonId);
     },
-    readScriptRecord: (lessonId) => scriptById.get(lessonId),
   });
 }
