@@ -39,12 +39,16 @@ export const queryClient = new QueryClient({
       // a transient 401, and under a blanket `retry: false` it failed PERMANENTLY:
       // progress/mastery blanked out, and — worse — the Today's-Path GET erroring
       // meant useEnsureTodaysPath never saw `isSuccess`, so the build POST was never
-      // sent and the plan hung. Retry ONLY unauthorized reads, a few times with a
-      // short backoff, so they re-issue once the session lands. Genuine sign-out is
+      // sent and the plan hung. Retry ONLY unauthorized reads, with a growing backoff,
+      // so they re-issue once the session lands. The budget is generous (~6 tries /
+      // ~10s) because a COLD RELOAD re-runs the session bootstrap, which rotates the
+      // `__Host-` cookie: reads firing in that window 401 until it settles, and the
+      // window can exceed the old ~2s/3-try budget — that overflow is exactly what
+      // surfaced the lesson "could not be restored" on reload. Genuine sign-out is
       // still handled by RequireAuth (bootstrap), and every other error class still
       // fails fast — no hammering a truly broken endpoint.
-      retry: (failureCount, error) => failureCount < 3 && isUnauthenticatedError(error),
-      retryDelay: (attempt) => Math.min(300 * 2 ** attempt, 1500),
+      retry: (failureCount, error) => failureCount < 6 && isUnauthenticatedError(error),
+      retryDelay: (attempt) => Math.min(300 * 2 ** attempt, 3000),
     },
     mutations: {
       // Same session-race tolerance as reads. A state-changing write (rebuild the
@@ -53,9 +57,10 @@ export const queryClient = new QueryClient({
       // just failed: a budget change or deck import silently never re-planned the day.
       // A 401 means the request was rejected BEFORE doing anything, so re-issuing it
       // once the session lands is safe (no double-write). Only unauthorized errors
-      // retry; every other failure still surfaces immediately.
-      retry: (failureCount, error) => failureCount < 3 && isUnauthenticatedError(error),
-      retryDelay: (attempt) => Math.min(300 * 2 ** attempt, 1500),
+      // retry; every other failure still surfaces immediately. Budget matches the
+      // reads (~6 tries / ~10s) to outlast a cold-reload bootstrap.
+      retry: (failureCount, error) => failureCount < 6 && isUnauthenticatedError(error),
+      retryDelay: (attempt) => Math.min(300 * 2 ** attempt, 3000),
     },
   },
 });
