@@ -166,7 +166,7 @@ export function createWebDelivery(
       sampledRequestsEnabled: false,
     },
     rules: [
-      managedRule('AWSManagedCommonRuleSet', 'AWSManagedRulesCommonRuleSet', 10),
+      managedRule('AWSManagedCommonRuleSet', 'AWSManagedRulesCommonRuleSet', 10, ALLOW_LARGE_JSON_BODY),
       managedRule('AWSManagedKnownBadInputsRuleSet', 'AWSManagedRulesKnownBadInputsRuleSet', 20),
       {
         name: 'SourceIpRateLimit',
@@ -283,6 +283,7 @@ function managedRule(
   name: string,
   managedRuleGroupName: string,
   priority: number,
+  ruleActionOverrides?: wafv2.CfnWebACL.RuleActionOverrideProperty[],
 ): wafv2.CfnWebACL.RuleProperty {
   return {
     name,
@@ -292,6 +293,7 @@ function managedRule(
       managedRuleGroupStatement: {
         name: managedRuleGroupName,
         vendorName: 'AWS',
+        ...(ruleActionOverrides ? { ruleActionOverrides } : {}),
       },
     },
     visibilityConfig: {
@@ -301,6 +303,15 @@ function managedRule(
     },
   };
 }
+
+// The learner API is a JSON API: the Today's-Path build legitimately POSTs the full
+// candidate-lesson catalog (~30-40KB), and the Lambda enforces its OWN body cap. The
+// Common Rule Set's SizeRestrictions_BODY blocks bodies >8KB, which rejected that write
+// at the CloudFront edge with a 403 before it ever reached the API. Count (don't block)
+// oversize bodies so large JSON writes pass; every other Common Rule Set protection stays.
+const ALLOW_LARGE_JSON_BODY: wafv2.CfnWebACL.RuleActionOverrideProperty[] = [
+  { name: 'SizeRestrictions_BODY', actionToUse: { count: {} } },
+];
 
 function createResponseHeadersPolicy(
   scope: Construct,
