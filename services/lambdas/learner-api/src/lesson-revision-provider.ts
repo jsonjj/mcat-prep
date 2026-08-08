@@ -7,12 +7,12 @@ import {
 } from './lesson-content-provider';
 
 /**
- * DB/storage-backed lesson provider (design note D5). It resolves a content
- * release's immutable lesson revisions from Aurora and fetches each revision's
- * raw artifacts (lesson-script.json + learner-safe-items.json + protected
- * -items.json) from content-addressed storage (S3 in prod; local files in tests),
- * then serves them through the SAME normalization + answer-key core the repo
- * provider uses. Nothing here is learner-specific and no bytes are mutated.
+ * DB-backed lesson provider (design note D5). Resolves a content release's immutable
+ * lesson revisions from Aurora and reads each revision's serve-time artifacts
+ * (lesson-script.json + learner-safe-items.json + protected-items.json) — whose bytes
+ * are stored in `lesson_revision_objects.bytes` — then serves them through the SAME
+ * normalization + answer-key core the repo provider uses. No object store at serve
+ * time; no learner-specific state; no bytes mutated.
  */
 
 /** Minimal query surface — a `pg` Pool or Client satisfies it. */
@@ -23,10 +23,7 @@ export interface LessonRevisionQuery {
   ): Promise<{ rows: Array<Record<string, unknown>> }>;
 }
 
-/** Fetches an object's bytes (utf8) by its `content_objects.storage_key`. */
-export type ObjectFetcher = (storageKey: string) => Promise<string>;
-
-/** The three artifacts the normalizer + answer-key resolver need. */
+/** The three artifacts the normalizer + answer-key resolver need (carry bytes). */
 const REQUIRED_ARTIFACTS = [
   'lesson-script.json',
   'learner-safe-items.json',
@@ -34,18 +31,15 @@ const REQUIRED_ARTIFACTS = [
 ] as const;
 
 /**
- * Load a DB/storage-backed provider for one content release. The
- * `LessonContentProvider` surface is synchronous, so every revision's artifacts
- * are fetched up front (cold start) into memory and served in-process.
- *
- * Defaults to the single ACTIVE release for the environment (the release gate);
- * pass `releaseId` to load a specific candidate (verification before activation).
- * If there is no matching release, the provider is simply empty — a safe no-op
- * the caller can compose with the repo provider.
+ * Load a DB-backed provider for one content release. The `LessonContentProvider`
+ * surface is synchronous, so every revision's artifact bytes are read up front (cold
+ * start) into memory and served in-process. Defaults to the single ACTIVE release for
+ * the environment (the release gate); pass `releaseId` to load a specific candidate
+ * (verification before activation). No matching release -> an empty provider (a safe
+ * no-op the caller composes with the repo pilots).
  */
 export async function loadLessonRevisionProvider(deps: {
   db: LessonRevisionQuery;
-  fetchObject: ObjectFetcher;
   environment?: string;
   releaseId?: string;
 }): Promise<LessonContentProvider> {
@@ -66,34 +60,33 @@ export async function loadLessonRevisionProvider(deps: {
   if (releaseId !== undefined) {
     const rows = (
       await deps.db.query(
-        `select lr.lesson_id, lro.artifact_path, co.storage_key
+        `select lr.lesson_id, lro.artifact_path, lro.bytes
            from lesson_revisions lr
            join lesson_revision_objects lro using (lesson_id, content_sha256)
-           join content_objects co on co.content_version_id = lro.content_version_id
-          where lr.release_id = $1 and lro.artifact_path = any($2::text[])`,
+          where lr.release_id = $1
+            and lro.artifact_path = any($2::text[])
+            and lro.bytes is not null`,
         [releaseId, [...REQUIRED_ARTIFACTS]],
       )
-    ).rows as Array<{ lesson_id: string; artifact_path: string; storage_key: string }>;
+    ).rows as Array<{ lesson_id: string; artifact_path: string; bytes: string }>;
 
-    const storageKey = new Map<string, string>();
-    const lessonIds = new Set<string>();
+    const byLesson = new Map<string, Map<string, string>>();
     for (const row of rows) {
-      lessonIds.add(row.lesson_id);
-      storageKey.set(`${row.lesson_id}\u0000${row.artifact_path}`, row.storage_key);
+      const forLesson = byLesson.get(row.lesson_id) ?? new Map<string, string>();
+      forLesson.set(row.artifact_path, row.bytes);
+      byLesson.set(row.lesson_id, forLesson);
     }
 
-    for (const lessonId of lessonIds) {
-      const keyOf = (artifact: string): string | undefined =>
-        storageKey.get(`${lessonId}\u0000${artifact}`);
-      const scriptKey = keyOf('lesson-script.json');
-      if (scriptKey === undefined) continue; // no script -> not servable; skip
-      const script = JSON.parse(await deps.fetchObject(scriptKey)) as Record<string, unknown>;
-      const learnerKey = keyOf('learner-safe-items.json');
-      const protectedKey = keyOf('protected-items.json');
+    for (const [lessonId, files] of byLesson) {
+      const scriptText = files.get('lesson-script.json');
+      if (scriptText === undefined) continue; // no script -> not servable; skip
+      const script = JSON.parse(scriptText) as Record<string, unknown>;
+      const learnerSafe = files.get('learner-safe-items.json');
+      const protectedItems = files.get('protected-items.json');
       artifactsById.set(lessonId, {
         script,
-        learnerSafeItems: learnerKey ? JSON.parse(await deps.fetchObject(learnerKey)) : undefined,
-        protectedItems: protectedKey ? JSON.parse(await deps.fetchObject(protectedKey)) : undefined,
+        learnerSafeItems: learnerSafe === undefined ? undefined : JSON.parse(learnerSafe),
+        protectedItems: protectedItems === undefined ? undefined : JSON.parse(protectedItems),
       });
       scriptById.set(lessonId, script);
     }

@@ -524,5 +524,42 @@ export function createRepoLessonContentProvider(
   });
 }
 
-/** Default catalog-backed provider for the deployed learner runtime. */
-export const lessonContentProvider = createRepoLessonContentProvider();
+/**
+ * A composite provider: a synchronous base (the repo pilots, available at module
+ * load) plus an optional secondary (the DB-backed release catalog) installed
+ * asynchronously at Lambda cold start via {@link AttachableLessonContentProvider.attach}.
+ * A lesson is served by the secondary when it has it, else the base — so the three
+ * pilots keep working synchronously and the 111 build-a lessons resolve once the DB
+ * provider is attached, WITHOUT threading a provider through the runtime call chain.
+ */
+export interface AttachableLessonContentProvider extends LessonContentProvider {
+  attach(secondary: LessonContentProvider): void;
+}
+
+export function createCompositeLessonContentProvider(
+  base: LessonContentProvider,
+): AttachableLessonContentProvider {
+  let secondary: LessonContentProvider | undefined;
+  const providerFor = (lessonId: string): LessonContentProvider =>
+    secondary?.hasLesson(lessonId) ? secondary : base;
+  return {
+    attach: (next) => {
+      secondary = next;
+    },
+    listLessonIds: () =>
+      [...new Set([...base.listLessonIds(), ...(secondary?.listLessonIds() ?? [])])].sort(),
+    hasLesson: (lessonId) => base.hasLesson(lessonId) || (secondary?.hasLesson(lessonId) ?? false),
+    getNormalizedLesson: (lessonId) => providerFor(lessonId).getNormalizedLesson(lessonId),
+    getAnswerKey: (lessonId) => providerFor(lessonId).getAnswerKey(lessonId),
+    getDefinitionHash: (lessonId) => providerFor(lessonId).getDefinitionHash(lessonId),
+    getAuthoredBindings: (lessonId) => providerFor(lessonId).getAuthoredBindings(lessonId),
+  };
+}
+
+/**
+ * Default provider for the deployed learner runtime: the repo pilots now, with the
+ * DB-backed release catalog attached at cold start (see the learner Lambda's
+ * `createRuntime`). Consumers that import this keep using the same seam.
+ */
+export const lessonContentProvider: AttachableLessonContentProvider =
+  createCompositeLessonContentProvider(createRepoLessonContentProvider());

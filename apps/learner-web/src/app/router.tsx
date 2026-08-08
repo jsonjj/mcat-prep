@@ -1,5 +1,5 @@
 import { Suspense, lazy, type ReactElement, type ReactNode } from 'react';
-import { Link, Navigate, createBrowserRouter, useRouteError } from 'react-router-dom';
+import { Link, Navigate, createBrowserRouter, useParams, useRouteError } from 'react-router-dom';
 import { Card, Eyebrow, Stack } from '@mcat/ui-web';
 import { RequireAuth } from './RequireAuth';
 import { AppShell } from '../screens/AppShell';
@@ -12,6 +12,23 @@ import { Curriculum } from '../screens/Curriculum';
 import { VectorLesson } from '../screens/VectorLesson';
 import { CatalogLesson } from '../screens/CatalogLesson';
 import { DIAGNOSTIC_ENABLED, PRACTICE_TEST_ENABLED } from './capabilities';
+import { lessonBySlug } from './lesson-catalog';
+
+/**
+ * Dynamic route for the DB-backed normalized lesson catalog: resolves the URL slug
+ * to a registered normalized lesson and plays it through the shared CatalogLesson.
+ * The three pilot lessons keep their explicit routes above; every other registered
+ * normalized lesson (the 111 build-a lessons) is served here without a per-lesson
+ * route or component (the contract forbids 111 hardcoded routes).
+ */
+function NormalizedCatalogRoute(): ReactElement {
+  const { lessonSlug } = useParams();
+  const lesson = lessonSlug === undefined ? undefined : lessonBySlug(lessonSlug);
+  if (lesson === undefined || lesson.runtime !== 'normalized') {
+    return <Navigate to="/app" replace />;
+  }
+  return <CatalogLesson lessonId={lesson.lessonId} />;
+}
 
 // Route-level code-splitting: every screen below is fetched on demand, so the
 // initial bundle carries only the shell, the auth guard, and the three
@@ -206,6 +223,9 @@ export const router = createBrowserRouter([
           // slug; the registration manifest is the source of truth for these paths.
           { path: 'lessons/v3-les-789208', element: <CatalogLesson lessonId="V3-LES-789208" /> },
           { path: 'lessons/v3-les-844372', element: <CatalogLesson lessonId="V3-LES-844372" /> },
+          // Every other registered normalized lesson (the 111 build-a catalog) plays
+          // through one dynamic route — no per-lesson route/component.
+          { path: 'lessons/:lessonSlug', element: <NormalizedCatalogRoute /> },
           // Today's Path — the daily learning-plan engine (guided one-at-a-time runner).
           { path: 'today', element: suspense(<TodaysPath />) },
           // The standalone `/app/learn` Study loop was retired: it duplicated adaptive
