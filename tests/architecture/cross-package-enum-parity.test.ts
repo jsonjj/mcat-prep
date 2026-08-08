@@ -9,7 +9,9 @@ import {
 import {
   AcceptedLessonObservationSchema,
   LessonItemBindingSchema,
+  LessonObservationAttributionSchema,
 } from '../../packages/contracts/src/lesson-observation';
+import { EXIT_FUNCTIONS } from '../../packages/content/src/lesson-normalization/types';
 import {
   ChangeDimensionSchema,
   EvidenceKindSchema as DomainEvidenceKindSchema,
@@ -295,5 +297,19 @@ describe('cross-package enum parity (@mcat/domain ↔ @mcat/contracts)', () => {
     expect(probed).toEqual([...ContractsEvidenceKindSchema.options]);
     expect(probed.length).toBeGreaterThan(1);
     expect(probed).not.toContain(PROBE_SENTINEL);
+  });
+
+  it('keeps normalized lesson exit functions identical to lesson attribution', () => {
+    const attributionMembers = probeEnumMembers(
+      'contracts lesson attribution exit function',
+      LessonObservationAttributionSchema,
+      { exitFunction: PROBE_SENTINEL },
+      ['exitFunction'],
+    );
+
+    expect(
+      [...attributionMembers].sort(),
+      'The exitFunction vocabulary has DIVERGED between normalized lesson content and lesson attribution.',
+    ).toEqual([...EXIT_FUNCTIONS].sort());
   });
 });

@@ -1,6 +1,6 @@
 import {
+  LessonObservationAttributionSchema,
   LessonRuntimeResponseFactsSchema,
-  type AssistanceLevel,
   type LessonItemBinding,
 } from '@mcat/contracts';
 import {
@@ -9,18 +9,16 @@ import {
   type ServerScoringResolution,
 } from '@mcat/domain';
 
-import {
-  lessonContentProvider,
-  type LessonContentProvider,
-  type ServerItemAnswer,
-} from './lesson-content-provider';
+import { type LoadedLessonRevision, type ServerItemAnswer } from './lesson-content-provider';
 import type { LessonBindingResolution, LessonResponseSubmission } from './lesson-response-seam';
 import {
+  isEngineResponseInvalid,
   isEngineResponseOmitted,
   scoreEngineResponse,
   type EngineResponse,
   type NormalizedLessonRun,
   type NormalizedResponseRecord,
+  type NormalizedResponseRuntimeFacts,
 } from './normalized-lesson-runtime';
 
 /**
@@ -44,14 +42,10 @@ import {
  * - Correctness is RE-DERIVED server-side from `getAnswerKey` and the learner's
  *   raw response, never read off `record.correct` — a tampered projection cannot
  *   assert an outcome.
- * - The runtime emits FACTS only. This engine displays no scaffold, no
- *   content-bearing cue, and reveals nothing before commitment, so every
- *   administration is independent and MEASURED as such (`A0`, observed). That is
- *   an honest property of the delivery, not a fail-open default; when the engine
- *   grows assistance affordances it will report the level it displayed.
+ * - The runtime emits FACTS only. Observed commit facts are read from the
+ *   immutable response record. A legacy record without those facts fails closed;
+ *   authored assistance affordance strings are never consulted.
  */
-
-const INDEPENDENT_LEVEL: AssistanceLevel = 'A0';
 
 /**
  * Internal-draft instructional lessons resolve `serverItemVersion` 1 and are not
@@ -70,28 +64,23 @@ interface NormalizedBindingLoad {
   readonly envelopeBindingVersion: string;
 }
 
-// Per (provider, lessonId) binding load. The QEP is stable for a content
-// revision, so parsing it once and reusing keeps "one response, one lookup"
-// cheap without re-normalizing 40 bindings on every committed answer.
-const loadCacheByProvider = new WeakMap<LessonContentProvider, Map<string, NormalizedBindingLoad>>();
+// Per exact immutable revision binding load. Keying by the loaded revision object
+// makes an active-pointer lookup structurally impossible on this path.
+const loadCacheByRevision = new WeakMap<LoadedLessonRevision, NormalizedBindingLoad>();
 
-function bindingLoadFor(provider: LessonContentProvider, lessonId: string): NormalizedBindingLoad {
-  let byLesson = loadCacheByProvider.get(provider);
-  if (byLesson === undefined) {
-    byLesson = new Map();
-    loadCacheByProvider.set(provider, byLesson);
-  }
-  const cached = byLesson.get(lessonId);
+function bindingLoadFor(revision: LoadedLessonRevision): NormalizedBindingLoad {
+  const cached = loadCacheByRevision.get(revision);
   if (cached !== undefined) return cached;
 
-  const authored = provider.getAuthoredBindings(lessonId);
-  const envelope = { lessonId, artifactVersion: authored.artifactVersion };
+  const authored = revision.authoredBindings;
+  const envelope = { lessonId: revision.lessonId, artifactVersion: authored.artifactVersion };
   const bindings = new Map<string, LessonItemBinding>();
   const resolutionByItemBindingId = new Map<string, LessonBindingResolution>();
 
   for (const entry of authored.entries) {
     const parsed = parseAuthoredLessonBinding(envelope, entry);
-    const itemBindingId = typeof entry.item_binding_id === 'string' ? entry.item_binding_id : undefined;
+    const itemBindingId =
+      typeof entry.item_binding_id === 'string' ? entry.item_binding_id : undefined;
     if (itemBindingId !== undefined) {
       resolutionByItemBindingId.set(itemBindingId, {
         status: parsed.status,
@@ -106,7 +95,7 @@ function bindingLoadFor(provider: LessonContentProvider, lessonId: string): Norm
     resolutionByItemBindingId,
     envelopeBindingVersion: authored.artifactVersion ?? '(unversioned)',
   };
-  byLesson.set(lessonId, load);
+  loadCacheByRevision.set(revision, load);
   return load;
 }
 
@@ -118,17 +107,24 @@ function bindingLoadFor(provider: LessonContentProvider, lessonId: string): Norm
 function resolveNormalizedScoring(
   binding: LessonItemBinding | null,
   answer: ServerItemAnswer | undefined,
-  response: EngineResponse,
+  record: NormalizedResponseRecord,
 ): ServerScoringResolution {
   if (binding === null || binding.measurementKind !== 'MEASURABLE' || answer === undefined) {
     return { scoringValid: false };
   }
-  const outcome: EvidenceOutcome = isEngineResponseOmitted(response)
+  const outcome: EvidenceOutcome = isEngineResponseOmitted(record.response)
     ? 'omitted'
-    : scoreEngineResponse(answer, response)
-      ? 'correct'
-      : 'incorrect';
-  return { scoringValid: true, serverItemVersion: SCORED_SERVER_ITEM_VERSION, outcome, protectedScoring: false };
+    : record.outcome === 'INVALID' || isEngineResponseInvalid(record.response)
+      ? 'incorrect'
+      : scoreEngineResponse(answer, record.response)
+        ? 'correct'
+        : 'incorrect';
+  return {
+    scoringValid: true,
+    serverItemVersion: SCORED_SERVER_ITEM_VERSION,
+    outcome,
+    protectedScoring: false,
+  };
 }
 
 type ResponseFacts =
@@ -141,40 +137,101 @@ type ResponseFacts =
  * `LessonRuntimeResponseFacts` represents a non-multiple-choice answer.
  */
 function toResponseFacts(response: EngineResponse): ResponseFacts {
-  if (response.kind === 'MULTIPLE_CHOICE') return { kind: 'MULTIPLE_CHOICE', chosenChoiceId: response.choiceId };
-  if (response.kind === 'SHORT') return { kind: 'CONSTRUCTED', fields: { response: response.text } };
+  if (response.kind === 'MULTIPLE_CHOICE')
+    return { kind: 'MULTIPLE_CHOICE', chosenChoiceId: response.choiceId };
+  if (response.kind === 'SHORT')
+    return { kind: 'CONSTRUCTED', fields: { response: response.text } };
   return { kind: 'CONSTRUCTED', fields: { ...response.fields } };
+}
+
+interface RuntimeFactResolution {
+  readonly observed: boolean;
+  readonly facts: NormalizedResponseRuntimeFacts;
+}
+
+function runtimeFactsFor(
+  record: NormalizedResponseRecord,
+  lessonId: string,
+): RuntimeFactResolution {
+  if (record.runtimeFacts !== undefined) {
+    return { observed: true, facts: record.runtimeFacts };
+  }
+  return {
+    observed: false,
+    facts: {
+      responseId: `legacy:${lessonId}:${record.itemId}:${record.committedAt}`,
+      attemptIndex: 2,
+      firstAttempt: false,
+      isRetry: true,
+      isDiagnosticRetry: false,
+      assistanceRequested: false,
+      assistanceTaken: false,
+      assistanceLevel: 'A3',
+      contentBearingHintUsed: false,
+      revealUsed: false,
+      mixedAdministration: false,
+      passageAdministration: false,
+      timedAdministration: false,
+    },
+  };
 }
 
 /** One engine-committed response, expressed only in seam vocabulary. */
 export function normalizedLessonResponseSubmission(
   record: NormalizedResponseRecord,
-  lessonId: string,
-  provider: LessonContentProvider = lessonContentProvider,
+  revision: LoadedLessonRevision,
 ): LessonResponseSubmission {
-  const load = bindingLoadFor(provider, lessonId);
+  const load = bindingLoadFor(revision);
   const binding = load.bindings.get(record.itemId) ?? null;
   const bindingVersion = binding?.bindingVersion ?? load.envelopeBindingVersion;
-  const answer = provider.getAnswerKey(lessonId).byItemId[record.itemId];
+  const questionId = binding?.measurementKind === 'MEASURABLE' ? binding.questionId : record.itemId;
+  const answer = revision.protectedAuthority.answerKey.byItemId[record.itemId];
+  const runtime = runtimeFactsFor(record, revision.lessonId);
+  const scoring = resolveNormalizedScoring(binding, answer, record);
+  const lessonAttribution =
+    binding?.measurementKind === 'MEASURABLE' && scoring.scoringValid
+      ? LessonObservationAttributionSchema.parse({
+          lessonId: revision.lessonId,
+          definitionHash: revision.definitionHash,
+          questionId: binding.questionId,
+          itemBindingId: binding.itemBindingId,
+          bindingVersion,
+          serverItemVersion: scoring.serverItemVersion,
+          primaryKcId: binding.primaryKcId,
+          activityRole: binding.activityRole,
+          exitFunction: record.exitFunction,
+          semanticFamilyId: binding.semanticFamilyId,
+          responseId: runtime.facts.responseId,
+          responseOccurredAt: record.committedAt,
+          serverScoringAuthorityRef: binding.serverScoringAuthorityRef,
+          isReentry: record.isReentry,
+        })
+      : undefined;
 
   return {
-    lessonId,
+    lessonId: revision.lessonId,
     envelopeBindingVersion: load.envelopeBindingVersion,
     binding,
     bindingResolution: load.resolutionByItemBindingId.get(record.itemId) ?? ABSENT_BINDING,
-    // Measured, not assumed: this engine has no support affordance to display.
-    assistanceObserved: true,
+    assistanceObserved: runtime.observed,
+    ...(runtime.observed
+      ? {
+          runtimeObservation: {
+            firstAttempt: runtime.facts.firstAttempt,
+            assistanceRequested: runtime.facts.assistanceRequested,
+            assistanceTaken: runtime.facts.assistanceTaken,
+          },
+        }
+      : {}),
     response: LessonRuntimeResponseFactsSchema.parse({
-      questionId: record.itemId,
-      itemBindingId: record.itemId,
+      questionId,
+      itemBindingId: binding?.itemBindingId ?? record.itemId,
       // The server resolves the version match before acceptance (§4); the
       // runtime never states which binding cut it believes it ran against.
       bindingVersion,
-      // The engine records one committed response per item and has no retry
-      // channel — re-entries are distinct items with their own bindings.
-      attemptIndex: 1,
-      isRetry: false,
-      isDiagnosticRetry: false,
+      attemptIndex: runtime.facts.attemptIndex,
+      isRetry: runtime.facts.isRetry,
+      isDiagnosticRetry: runtime.facts.isDiagnosticRetry,
       response: toResponseFacts(record.response),
       omitted: isEngineResponseOmitted(record.response),
       // The engine's only timestamps are envelope times; a computed elapsed
@@ -182,16 +239,16 @@ export function normalizedLessonResponseSubmission(
       // channel exists, so `answerChanges` is a true zero.
       elapsedMs: 0,
       answerChanges: 0,
-      assistanceLevel: INDEPENDENT_LEVEL,
-      contentBearingHintUsed: false,
-      revealUsed: false,
-      // Administration facts: one item at a time, no passage, no timer.
-      mixedAdministration: false,
-      passageAdministration: false,
-      timedAdministration: false,
+      assistanceLevel: runtime.facts.assistanceLevel,
+      contentBearingHintUsed: runtime.facts.contentBearingHintUsed,
+      revealUsed: runtime.facts.revealUsed,
+      mixedAdministration: runtime.facts.mixedAdministration,
+      passageAdministration: runtime.facts.passageAdministration,
+      timedAdministration: runtime.facts.timedAdministration,
       occurredAt: record.committedAt,
     }),
-    scoring: resolveNormalizedScoring(binding, answer, record.response),
+    scoring,
+    ...(lessonAttribution === undefined ? {} : { lessonAttribution }),
   };
 }
 
@@ -205,9 +262,9 @@ export function normalizedLessonResponseSubmission(
 export function normalizedLessonResponseSubmissions(
   before: NormalizedLessonRun,
   after: NormalizedLessonRun,
-  provider: LessonContentProvider = lessonContentProvider,
+  revision: LoadedLessonRevision,
 ): readonly LessonResponseSubmission[] {
   return Object.values(after.responses)
     .filter((record) => before.responses[record.itemId] === undefined)
-    .map((record) => normalizedLessonResponseSubmission(record, after.lessonId, provider));
+    .map((record) => normalizedLessonResponseSubmission(record, revision));
 }

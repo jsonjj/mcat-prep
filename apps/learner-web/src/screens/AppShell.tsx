@@ -1,6 +1,5 @@
-import { Navigate, NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import { SkipLink, useTheme } from '@mcat/ui-web';
-import { useBootstrap } from '../app/queries';
 import {
   IconBrain,
   IconCarsDuel,
@@ -46,17 +45,7 @@ const SIDEBAR = [
 ];
 
 export function AppShell() {
-  const bootstrap = useBootstrap();
   const { resolved, setPreference } = useTheme();
-
-  if (bootstrap.isLoading) {
-    return <div className="mc-center mc-muted">Restoring your session…</div>;
-  }
-  // Authentication is RequireAuth's job, so by here the caller is signed in and
-  // the only remaining gate is placement + plan.
-  if (bootstrap.data?.authenticated === true && !bootstrap.data.onboardingComplete) {
-    return <Navigate to="/onboarding" replace />;
-  }
 
   return (
     <div className="mc-shell">

@@ -9,6 +9,7 @@ import { normalizeLesson, type RawLessonArtifacts } from '@mcat/content/lesson-n
 import {
   AnswerKeyResolutionError,
   UnknownLessonError,
+  createLessonRevisionProviderCompatibilityAdapter,
   createRepoLessonContentProvider,
   resolveModuleDir,
 } from './lesson-content-provider';
@@ -82,6 +83,25 @@ describe('LessonContentProvider — discovery and the learner-safe surface', () 
   });
 });
 
+describe('storage-neutral revision adapter', () => {
+  it('preserves teaching delivery steps for the Aurora-compatible provider surface', async () => {
+    const revisions = createLessonRevisionProviderCompatibilityAdapter(provider);
+    const loaded = await revisions.loadActiveRevision({ lessonId: L2 });
+
+    expect(loaded.definitionHash).toBe(provider.getDefinitionHash(L2));
+    expect(loaded.lesson.kcs[0]?.cleanBaselineSteps.slice(0, 7).map((step) => step.stage)).toEqual([
+      'ENTRY_CHECK_BOUNDARY',
+      'ORIENTATION',
+      'EXPLANATION',
+      'MENTAL_MODEL',
+      'EXPERT_THINK_ALOUD',
+      'WORKED_EXAMPLE',
+      'GUIDED_PRACTICE',
+    ]);
+    await expect(revisions.loadExactRevision(L2, loaded.definitionHash)).resolves.toBe(loaded);
+  });
+});
+
 describe('getAnswerKey — a total, self-consistent join over every SCORED item', () => {
   for (const id of ALL) {
     it(`${id}: keys exactly the scored items (worked examples excluded), each answer internally consistent`, () => {
@@ -108,7 +128,10 @@ describe('getAnswerKey — a total, self-consistent join over every SCORED item'
           expect(item.projection.choices).toHaveLength(0);
         } else {
           const choice = item.projection.choices.find((c) => c.choiceId === answer.correctChoiceId);
-          expect(choice, `${item.itemId} correctChoiceId does not resolve to a real option`).toBeDefined();
+          expect(
+            choice,
+            `${item.itemId} correctChoiceId does not resolve to a real option`,
+          ).toBeDefined();
           expect(answer.acceptedResponses[0]).toBe(choice?.text);
         }
       }

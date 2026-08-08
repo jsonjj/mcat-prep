@@ -1,413 +1,99 @@
 {
   "artifact_type": "KC_COVERAGE_MATRIX",
-  "artifact_id": "V3-KCOV-844372",
-  "artifact_version": "0.2.5-internal-draft",
+  "artifact_id": "V3-KCOV-000000",
+  "artifact_version": "1.0.0-canonical-template",
   "artifact_status": "DRAFT",
-  "schema_binding": {
-    "schema_id": "mcat-spec04-kc-coverage-internal-draft",
-    "schema_version": "0.1-candidate-local-1",
-    "schema_sha256": "fe27d9b76c670d069a600f9ac5f50dc3272b69eb55acfe641b0e6b9d6d25c895",
-    "canonicalization_profile": "INTERNAL_DRAFT_SORTED_JSON_SHA256_V1"
-  },
-  "content_sha256": "8983e736933f3fb4f025525f88958f9a8976cdeb652031a4ed17df8d65135ffb",
-  "registry_binding": {
-    "registry_artifact_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
-    "registry_sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
-    "phase_0_freeze_id": "MCAT-V3-PHASE0-FRZ-2026-07-22-01",
-    "canonical_freeze_id": "MCAT-V3-CANONICAL-FRZ-2026-07-22-01",
-    "graph_freeze_id": "MCAT-V3-GRAPH-FRZ-2026-07-22-01",
-    "sequence_freeze_id": "MCAT-V3-SEQUENCE-FRZ-2026-07-22-01",
-    "manifest_schema_id": "mcat-v3-lessons-public",
-    "manifest_schema_version": "1",
-    "manifest_sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
-    "lesson_id": "V3-LES-000000",
-    "grouping_id": "V3-CL-844372",
-    "ordered_kc_ids": [
-      "V3-KC-452593",
-      "V3-KC-008681",
-      "V3-KC-238607"
-    ],
-    "ordered_required_kc_ids": [
-      "V3-KC-452593",
-      "V3-KC-008681",
-      "V3-KC-238607"
-    ]
-  },
-  "authors": [
-    {
-      "identity": "gpt-5.6-terra",
-      "role": "PRIMARY_CONTENT_AUTHOR",
-      "run_id": "V3-LES-000000-CONSTRUCTED-CONTEXT-FIX-2026-07-23",
-      "contribution": "Corrected constructed-response learner prompts and protected authority context alignment."
-    }
-  ],
-  "reviewers": [],
-  "input_bindings": [
-    {
-      "input_id": "V3-SCLD-844372",
-      "version": "0.1.0-draft.1",
-      "sha256": "c320dec45739269a0ba4b5ecbd201ce7295f2baec53030c43f97392f57194c03",
-      "kind": "SOURCE_CLAIM_LEDGER",
-      "use": "Original scope trace, source-occurrence governance, and rights boundary."
-    },
-    {
-      "input_id": "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
-      "version": "mcat-v3-authoritative-registry-1",
-      "sha256": "635c39e9c0ebb28a3892399449aa9b74893aae3264924cd739b92b6e370ba26a",
-      "kind": "CURRICULUM_REGISTRY",
-      "use": "Canonical identity, scope, order, attachments, holds, and placement."
-    },
-    {
-      "input_id": "MCAT-V3-LEARNER-FACING-LESSONS",
-      "version": "mcat-v3-lessons-public-1",
-      "sha256": "1ab18b78f830602401d5673d941346a5d6b31befcee774866a839300df62916d",
-      "kind": "GENERATED_MANIFEST",
-      "use": "Learner title and catalog cross-check only."
-    },
-    {
-      "input_id": "MCAT-V3-CANONICAL-KCS",
-      "version": "2026-07-23-targeted-read",
-      "sha256": "31d304a7f6ea51ac4847ede01824bb14cd8b98ed7a6bc61bb05617d53f9860fd",
-      "kind": "CANONICAL_KC_LEDGER",
-      "use": "Competency statements, scope bounds, representations, and source anchors."
-    },
-    {
-      "input_id": "MCAT-V3-TEACHING-SEQUENCES",
-      "version": "2026-07-23-targeted-read",
-      "sha256": "b2bbd9f8a14cbff1250013e8d717eb1c8195ccbf6335e605c64f1469a94246aa",
-      "kind": "CANONICAL_SEQUENCE",
-      "use": "First-delivery position, ordered KC relation, revisit, and no-bypass context."
-    },
-    {
-      "input_id": "MCAT-V3-PREREQUISITE-GRAPH",
-      "version": "2026-07-23-targeted-read",
-      "sha256": "fe0fffdd16bd10d3f7c046951cbe642add8ef2639f5b3f68a3224d9648f59e10",
-      "kind": "CANONICAL_GRAPH",
-      "use": "Hard/helpful prerequisite state and successor context."
-    },
-    {
-      "input_id": "MCAT-V3-EXTENSIONS-CAPSTONES-SUPPORT",
-      "version": "2026-07-23-targeted-read",
-      "sha256": "23bbea9e358c4aa0ff255964d203c0081b4ff3ba28e4e123eed0cfc0b7a54831",
-      "kind": "ATTACHMENT_LEDGER",
-      "use": "Extension and bounded conditional support context."
-    },
-    {
-      "input_id": "MCAT-V3-SOURCE-CROSSWALK",
-      "version": "mcat-v3-source-crosswalk-1",
-      "sha256": "a87fd1634a5a9e9dd522293ef98db10b783971f02e0bdfbf558b276cc0b9cea3",
-      "kind": "SOURCE_LEDGER",
-      "use": "Direct-scope and source-anchor trace; no expressive source prose is copied."
-    },
-    {
-      "input_id": "MCAT-V3-SPEC-03",
-      "version": "2026-07-23-targeted-read",
-      "sha256": "d3d3cfb3cc0e2314dc7f01bc9d1cc9c68049527f317e2ad2cb270a7b43fff598",
-      "kind": "INSTRUCTIONAL_RUNTIME_SPECIFICATION",
-      "use": "Microcycle, freshness, assistance, repair, and route constraints."
-    },
-    {
-      "input_id": "MCAT-V3-SPEC-04",
-      "version": "2026-07-23-targeted-read",
-      "sha256": "4fc88c3001bae4d8d1c843020106b6ba30059b243ea0d993a6d87ff009099761",
-      "kind": "AUTHORING_SPECIFICATION",
-      "use": "Artifact structure, coverage, learner/reviewer separation, and accessibility requirements."
-    },
-    {
-      "input_id": "AAMC-2020-SUPPLIED-CEILING",
-      "version": "2020-supplied",
-      "sha256": "324858748d5e7396b4441f659fec94a4b5f590ea87d9de73b3f2f7c56848132d",
-      "kind": "SOURCE_CEILING",
-      "use": "Scope ceiling only; no expressive source wording or source questions are reused."
-    }
-  ],
+  "content_sha256": "cce835a4fba8eee12be01281e910fce51708347b6d190d76c01c92c104a88637",
   "dependency_bindings": {
-    "lesson_script_id": "V3-LSCR-844372",
-    "lesson_script_sha256": "72e16e4d7a37bd1e8025bd373826b33e8a2e6a07b23b478af74e885f83c295eb"
-  },
-  "lineage": {
-    "supersedes": {
-      "artifact_id": "V3-KCOV-844372",
-      "content_sha256": "c3a3841750bbc20dcf6784d2856a5152dee77c5c4b2f9af9b24e28b81b1122b6"
-    },
-    "change_reason": "ALIGN_CONSTRUCTED_LEARNER_PROMPTS_WITH_PROTECTED_AUTHORITY",
-    "authoring_run_id": "V3-LES-000000-CONSTRUCTED-CONTEXT-FIX-2026-07-23",
-    "derived_input_ids": [
-      "V3-SCLD-844372",
-      "MCAT-V3-AUTHORITATIVE-REGISTRY-2026-07-22-01",
-      "MCAT-V3-LEARNER-FACING-LESSONS",
-      "MCAT-V3-CANONICAL-KCS",
-      "MCAT-V3-TEACHING-SEQUENCES",
-      "MCAT-V3-PREREQUISITE-GRAPH",
-      "MCAT-V3-EXTENSIONS-CAPSTONES-SUPPORT",
-      "MCAT-V3-SOURCE-CROSSWALK",
-      "MCAT-V3-SPEC-03",
-      "MCAT-V3-SPEC-04",
-      "AAMC-2020-SUPPLIED-CEILING"
-    ]
+    "lesson_script_id": "V3-LSCR-000000",
+    "lesson_script_sha256": "ea5a3239f66fd79dbf463302e73b140dd07a9be61f1e7a774b04f18ce576012f"
   },
   "payload": {
     "lesson_id": "V3-LES-000000",
-    "ordered_required_kc_ids": [
-      "V3-KC-452593"
-    ],
-    "lesson_script_id": "V3-LSCR-844372",
-    "lesson_script_sha256": "72e16e4d7a37bd1e8025bd373826b33e8a2e6a07b23b478af74e885f83c295eb",
+    "ordered_required_kc_ids": ["V3-KC-452593"],
+    "lesson_script_id": "V3-LSCR-000000",
+    "lesson_script_sha256": "ea5a3239f66fd79dbf463302e73b140dd07a9be61f1e7a774b04f18ce576012f",
     "rows": [
       {
         "kc_id": "V3-KC-452593",
         "canonical_ordinal": 1,
         "objective_ref": "objective:V3-KC-452593",
-        "scope_in_refs": [
-          "V3-KC-452593:SCOPE_IN:0",
-          "V3-KC-452593:SCOPE_IN:1",
-          "V3-KC-452593:SCOPE_IN:2",
-          "V3-KC-452593:SCOPE_IN:3"
-        ],
-        "scope_out_refs": [
-          "V3-KC-452593:SCOPE_OUT:0"
-        ],
-        "source_claim_refs": [
-          "ALG-GRAPH-CLAIM-01"
-        ],
-        "prerequisite_point_refs": [
-          "NO_CANONICAL_PREDECESSOR; BASELINE_ONLY",
-          "SEQUENCE_CONTEXT:V3-LES-789208:MEASUREMENT_LABELS_AND_UNITS:NONBLOCKING"
-        ],
-        "entry_check_boundary_id": "ALG-GRAPH-ENTRY-BOUNDARY-01",
-        "orientation_node_id": "ALG-GRAPH-ORIENT-01",
-        "explanation_node_ids": [
-          "ALG-GRAPH-EXPLAIN-01"
-        ],
-        "mental_model_node_ids": [
-          "ALG-GRAPH-MODEL-01"
-        ],
-        "expert_think_aloud_node_ids": [
-          "ALG-GRAPH-THINK-01"
-        ],
-        "worked_example_node_ids": [
-          "ALG-GRAPH-WORKED-01"
-        ],
-        "guided_activity_ids": [
-          "ALG-GRAPH-GUIDED-01"
-        ],
-        "light_support_activity_ids": [
-          "ALG-GRAPH-LIGHT-01"
-        ],
-        "solo_activity_ids": [
-          "ALG-GRAPH-SOLO-01"
-        ],
-        "contrast_boundary_node_ids": [
-          "ALG-GRAPH-BOUNDARY-01"
-        ],
-        "near_exit_item_ids": [
-          "ALG-GRAPH-NEAR-01"
-        ],
-        "near_exit_family_ids": [
-          "ALG-GRAPH-FAM-NEAR-01"
-        ],
-        "changed_exit_item_ids": [
-          "ALG-GRAPH-CHANGED-01"
-        ],
-        "changed_exit_family_ids": [
-          "ALG-GRAPH-FAM-CHANGED-01"
-        ],
-        "misconception_feature_ids": [
-          "ALG-GRAPH-FEATURE-RISE_RUN_ORDER",
-          "ALG-GRAPH-FEATURE-ADDITIVE_LOG_SCALE"
-        ],
-        "repair_node_ids": [
-          "ALG-GRAPH-REPAIR-SLOPE-01",
-          "ALG-GRAPH-REPAIR-SCALE-01"
-        ],
-        "repair_family_ids": [
-          "ALG-GRAPH-FAM-REPAIR-SLOPE-01",
-          "ALG-GRAPH-FAM-REPAIR-01"
-        ],
-        "fresh_confirmation_item_ids": [
-          "ALG-GRAPH-REPAIR-SLOPE-CONFIRM-01",
-          "ALG-GRAPH-REPAIR-CONFIRM-01"
-        ],
-        "exact_reentry_refs": [
-          "ALG-GRAPH-REENTRY-NEAR-01",
-          "ALG-GRAPH-REENTRY-CHANGED-01"
-        ],
-        "exact_reentry_confirmation_family_ids": [
-          "ALG-GRAPH-FAM-REENTRY-NEAR-01",
-          "ALG-GRAPH-FAM-REENTRY-CHANGED-01"
-        ],
-        "recap_node_id": "ALG-GRAPH-RECAP-01",
-        "representation_ids": [
-          "ALG-GRAPH-REP-SCALE-01",
-          "ALG-GRAPH-REP-LINEAR-SLOPE-01"
-        ],
-        "accessibility_equivalent_ids": [
-          "ALG-GRAPH-REP-TEXT-01"
-        ],
+        "entry_check_boundary_id": "TPL-GRAPH-NODE-ENTRY",
+        "orientation_node_id": "TPL-GRAPH-NODE-ORIENTATION",
+        "explanation_node_ids": ["TPL-GRAPH-NODE-EXPLANATION"],
+        "mental_model_node_ids": ["TPL-GRAPH-NODE-MODEL"],
+        "expert_think_aloud_node_ids": ["TPL-GRAPH-NODE-THINK"],
+        "worked_example_node_ids": ["TPL-GRAPH-NODE-WORKED"],
+        "practice_item_ids": ["TPL-GRAPH-GUIDED", "TPL-GRAPH-LIGHT", "TPL-GRAPH-SOLO"],
+        "near_exit_item_ids": ["TPL-GRAPH-NEAR"],
+        "changed_exit_item_ids": ["TPL-GRAPH-CHANGED"],
+        "repair_node_ids": ["TPL-GRAPH-NODE-REPAIR-NEAR", "TPL-GRAPH-NODE-REPAIR-CHANGED"],
+        "fresh_confirmation_item_ids": ["TPL-GRAPH-REPAIR-NEAR", "TPL-GRAPH-REPAIR-CHANGED"],
+        "exact_reentry_refs": ["TPL-GRAPH-NODE-REENTRY-NEAR", "TPL-GRAPH-NODE-REENTRY-CHANGED"],
+        "recap_node_id": "TPL-GRAPH-NODE-RECAP",
         "route_coverage": {
           "concise": {
             "teaching_ids": [
-              "ALG-GRAPH-EXPLAIN-01"
+              "TPL-GRAPH-NODE-ORIENTATION",
+              "TPL-GRAPH-NODE-EXPLANATION",
+              "TPL-GRAPH-NODE-MODEL",
+              "TPL-GRAPH-NODE-THINK",
+              "TPL-GRAPH-NODE-WORKED"
             ],
-            "model_ids": [
-              "ALG-GRAPH-MODEL-01",
-              "ALG-GRAPH-THINK-01",
-              "ALG-GRAPH-WORKED-01"
-            ],
-            "practice_ids": [
-              "ALG-GRAPH-GUIDED-01",
-              "ALG-GRAPH-LIGHT-01",
-              "ALG-GRAPH-SOLO-01"
-            ],
-            "exit_ids": [
-              "ALG-GRAPH-NEAR-01",
-              "ALG-GRAPH-CHANGED-01"
-            ],
+            "practice_ids": ["TPL-GRAPH-GUIDED", "TPL-GRAPH-LIGHT", "TPL-GRAPH-SOLO"],
+            "exit_ids": ["TPL-GRAPH-NEAR", "TPL-GRAPH-CHANGED"],
             "repair_ids": [
-              "ALG-GRAPH-REPAIR-SLOPE-01",
-              "ALG-GRAPH-REPAIR-SCALE-01",
-              "ALG-GRAPH-REENTRY-NEAR-01",
-              "ALG-GRAPH-REENTRY-CHANGED-01",
-              "ALG-GRAPH-PLANNER-HANDOFF-01"
+              "TPL-GRAPH-NODE-REPAIR-NEAR",
+              "TPL-GRAPH-NODE-REENTRY-NEAR",
+              "TPL-GRAPH-NODE-REPAIR-CHANGED",
+              "TPL-GRAPH-NODE-REENTRY-CHANGED"
             ],
-            "recap_ids": [
-              "ALG-GRAPH-RECAP-01"
-            ],
-            "coverage_status": "BLOCKED",
-            "blocker_code": "BLOCKED_SHARED_RUNTIME"
+            "recap_ids": ["TPL-GRAPH-NODE-RECAP"],
+            "coverage_status": "CONTENT_AUTHORED"
           },
           "standard": {
             "teaching_ids": [
-              "ALG-GRAPH-EXPLAIN-01"
+              "TPL-GRAPH-NODE-ORIENTATION",
+              "TPL-GRAPH-NODE-EXPLANATION",
+              "TPL-GRAPH-NODE-MODEL",
+              "TPL-GRAPH-NODE-THINK",
+              "TPL-GRAPH-NODE-WORKED"
             ],
-            "model_ids": [
-              "ALG-GRAPH-MODEL-01",
-              "ALG-GRAPH-THINK-01",
-              "ALG-GRAPH-WORKED-01"
-            ],
-            "practice_ids": [
-              "ALG-GRAPH-GUIDED-01",
-              "ALG-GRAPH-LIGHT-01",
-              "ALG-GRAPH-SOLO-01"
-            ],
-            "exit_ids": [
-              "ALG-GRAPH-NEAR-01",
-              "ALG-GRAPH-CHANGED-01"
-            ],
+            "practice_ids": ["TPL-GRAPH-GUIDED", "TPL-GRAPH-LIGHT", "TPL-GRAPH-SOLO"],
+            "exit_ids": ["TPL-GRAPH-NEAR", "TPL-GRAPH-CHANGED"],
             "repair_ids": [
-              "ALG-GRAPH-REPAIR-SLOPE-01",
-              "ALG-GRAPH-REPAIR-SCALE-01",
-              "ALG-GRAPH-REENTRY-NEAR-01",
-              "ALG-GRAPH-REENTRY-CHANGED-01",
-              "ALG-GRAPH-PLANNER-HANDOFF-01"
+              "TPL-GRAPH-NODE-REPAIR-NEAR",
+              "TPL-GRAPH-NODE-REENTRY-NEAR",
+              "TPL-GRAPH-NODE-REPAIR-CHANGED",
+              "TPL-GRAPH-NODE-REENTRY-CHANGED"
             ],
-            "recap_ids": [
-              "ALG-GRAPH-RECAP-01"
-            ],
-            "coverage_status": "BLOCKED",
-            "blocker_code": "BLOCKED_SHARED_RUNTIME"
+            "recap_ids": ["TPL-GRAPH-NODE-RECAP"],
+            "coverage_status": "CONTENT_AUTHORED"
           },
           "misconception": {
             "teaching_ids": [
-              "ALG-GRAPH-EXPLAIN-01",
-              "ALG-GRAPH-BOUNDARY-01"
+              "TPL-GRAPH-NODE-ORIENTATION",
+              "TPL-GRAPH-NODE-EXPLANATION",
+              "TPL-GRAPH-NODE-MODEL",
+              "TPL-GRAPH-NODE-THINK",
+              "TPL-GRAPH-NODE-WORKED",
+              "TPL-GRAPH-NODE-CONTRAST"
             ],
-            "model_ids": [
-              "ALG-GRAPH-MODEL-01",
-              "ALG-GRAPH-THINK-01",
-              "ALG-GRAPH-WORKED-01"
-            ],
-            "practice_ids": [
-              "ALG-GRAPH-GUIDED-01",
-              "ALG-GRAPH-LIGHT-01",
-              "ALG-GRAPH-SOLO-01"
-            ],
-            "exit_ids": [
-              "ALG-GRAPH-NEAR-01",
-              "ALG-GRAPH-CHANGED-01"
-            ],
+            "practice_ids": ["TPL-GRAPH-GUIDED", "TPL-GRAPH-LIGHT", "TPL-GRAPH-SOLO"],
+            "exit_ids": ["TPL-GRAPH-NEAR", "TPL-GRAPH-CHANGED"],
             "repair_ids": [
-              "ALG-GRAPH-REPAIR-SLOPE-01",
-              "ALG-GRAPH-REPAIR-SCALE-01",
-              "ALG-GRAPH-REENTRY-NEAR-01",
-              "ALG-GRAPH-REENTRY-CHANGED-01",
-              "ALG-GRAPH-PLANNER-HANDOFF-01"
+              "TPL-GRAPH-NODE-REPAIR-NEAR",
+              "TPL-GRAPH-NODE-REENTRY-NEAR",
+              "TPL-GRAPH-NODE-REPAIR-CHANGED",
+              "TPL-GRAPH-NODE-REENTRY-CHANGED"
             ],
-            "recap_ids": [
-              "ALG-GRAPH-RECAP-01"
-            ],
-            "coverage_status": "BLOCKED",
-            "blocker_code": "BLOCKED_SHARED_RUNTIME"
-          },
-          "prerequisite_support": {
-            "teaching_ids": [
-              "ALG-GRAPH-EXPLAIN-01"
-            ],
-            "model_ids": [
-              "ALG-GRAPH-MODEL-01",
-              "ALG-GRAPH-THINK-01",
-              "ALG-GRAPH-WORKED-01"
-            ],
-            "practice_ids": [
-              "ALG-GRAPH-GUIDED-01",
-              "ALG-GRAPH-LIGHT-01",
-              "ALG-GRAPH-SOLO-01"
-            ],
-            "exit_ids": [
-              "ALG-GRAPH-NEAR-01",
-              "ALG-GRAPH-CHANGED-01"
-            ],
-            "repair_ids": [
-              "ALG-GRAPH-REPAIR-SLOPE-01",
-              "ALG-GRAPH-REPAIR-SCALE-01",
-              "ALG-GRAPH-REENTRY-NEAR-01",
-              "ALG-GRAPH-REENTRY-CHANGED-01",
-              "ALG-GRAPH-PLANNER-HANDOFF-01"
-            ],
-            "recap_ids": [
-              "ALG-GRAPH-RECAP-01"
-            ],
-            "coverage_status": "BLOCKED",
-            "blocker_code": "BLOCKED_SHARED_RUNTIME"
+            "recap_ids": ["TPL-GRAPH-NODE-RECAP"],
+            "coverage_status": "CONTENT_AUTHORED"
           }
         },
-        "compiled_node_evidence": {
-          "content_validator_ref": "validate.mjs:STATIC_REFERENCE_AND_COVERAGE_CHECK",
-          "static_reference_status": "PASS",
-          "runtime_compilation_status": "BLOCKED",
-          "blocker_code": "BLOCKED_SHARED_RUNTIME"
-        },
-        "row_status": "BLOCKED",
-        "accessibility_equivalence_status": "BLOCKED",
-        "accessibility_equivalence_blocker": "CONSTRUCT_EQUIVALENCE_REVIEW_REQUIRED"
+        "row_status": "CONTENT_AUTHORED_RUNTIME_PENDING"
       }
     ],
-    "automated_questions": [
-      {
-        "check_id": "KCOV-844372-EXACT-ROW-SET",
-        "question": "Does the ordered row set exactly equal the canonical required KC set?",
-        "status": "PASS",
-        "evidence_refs": [
-          "validate.mjs:CANONICAL_IDENTITY"
-        ]
-      },
-      {
-        "check_id": "KCOV-844372-MICROCYCLE",
-        "question": "Does each KC map every required microcycle function to a concrete node, activity, family, or screen?",
-        "status": "REVISE",
-        "evidence_refs": [
-          "validate.mjs:STATIC_MICROCYCLE_AND_EXACT_REENTRY_CHECK"
-        ]
-      },
-      {
-        "check_id": "KCOV-844372-FAMILY-FIREWALL",
-        "question": "Are near, changed, repair, and re-entry families unique and unexposed before the declared role?",
-        "status": "REVISE",
-        "evidence_refs": [
-          "validate.mjs:STATIC_FAMILY_METADATA_AND_CUE_SAFETY_CHECK"
-        ]
-      }
-    ],
-    "matrix_status": "BLOCKED"
+    "matrix_status": "CANDIDATE"
   }
 }

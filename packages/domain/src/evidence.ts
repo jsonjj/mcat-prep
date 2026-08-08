@@ -2,6 +2,7 @@ import { z } from 'zod';
 import {
   AssistanceLevelSchema,
   LessonItemIdSchema,
+  LessonObservationAttributionSchema,
   OperationTagSchema,
   PolicyVersionSchema,
   SkillClusterSchema,
@@ -141,6 +142,8 @@ export const EvidenceRecordSchema = z.object({
   sequence: z.number().int().nonnegative(),
   contentRelease: z.string().min(1),
   policies: z.array(PolicyVersionSchema),
+  /** Exact normalized-lesson provenance; absent on non-lesson evidence channels. */
+  lessonAttribution: LessonObservationAttributionSchema.optional(),
 });
 export type EvidenceRecord = z.infer<typeof EvidenceRecordSchema>;
 

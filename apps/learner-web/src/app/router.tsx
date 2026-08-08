@@ -1,8 +1,17 @@
 import { Suspense, lazy, type ReactElement, type ReactNode } from 'react';
-import { Link, Navigate, createBrowserRouter, useParams, useRouteError } from 'react-router-dom';
+import {
+  Link,
+  Navigate,
+  createBrowserRouter,
+  useParams,
+  useRouteError,
+  type RouteObject,
+} from 'react-router-dom';
 import { Card, Eyebrow, Stack } from '@mcat/ui-web';
 import { RequireAuth } from './RequireAuth';
+import { AppAccessGate } from './AppAccessGate';
 import { AppShell } from '../screens/AppShell';
+import { FocusedLessonShell } from '../screens/FocusedLessonShell';
 // Curriculum, VectorLesson and CatalogLesson stay STATIC named imports on
 // purpose: the architecture contracts (curriculum-ui-contract,
 // vector-lesson-ui-contract, catalog-lesson-routes-contract) pin these exact
@@ -14,13 +23,7 @@ import { CatalogLesson } from '../screens/CatalogLesson';
 import { DIAGNOSTIC_ENABLED, PRACTICE_TEST_ENABLED } from './capabilities';
 import { lessonBySlug } from './lesson-catalog';
 
-/**
- * Dynamic route for the DB-backed normalized lesson catalog: resolves the URL slug
- * to a registered normalized lesson and plays it through the shared CatalogLesson.
- * The three pilot lessons keep their explicit routes above; every other registered
- * normalized lesson (the 111 build-a lessons) is served here without a per-lesson
- * route or component (the contract forbids 111 hardcoded routes).
- */
+/** Resolve every DB-backed normalized lesson through one focused route. */
 function NormalizedCatalogRoute(): ReactElement {
   const { lessonSlug } = useParams();
   const lesson = lessonSlug === undefined ? undefined : lessonBySlug(lessonSlug);
@@ -53,7 +56,9 @@ const ForgotPassword = lazy(() =>
 const Diagnostic = lazy(() =>
   import('../screens/Diagnostic').then((m) => ({ default: m.Diagnostic })),
 );
-const PlanSetup = lazy(() => import('../screens/PlanSetup').then((m) => ({ default: m.PlanSetup })));
+const PlanSetup = lazy(() =>
+  import('../screens/PlanSetup').then((m) => ({ default: m.PlanSetup })),
+);
 const Home = lazy(() => import('../screens/Home').then((m) => ({ default: m.Home })));
 const TodaysPath = lazy(() =>
   import('../screens/today/TodaysPath').then((m) => ({ default: m.TodaysPath })),
@@ -161,7 +166,8 @@ function NotFound() {
   );
 }
 
-export const router = createBrowserRouter([
+/** One production route definition shared by browser runtime and memory-router integration tests. */
+export const APP_ROUTES = [
   {
     // A pathless root route gives every descendant one shared error boundary and
     // hosts the catch-all 404 below, without changing any child's own path.
@@ -209,66 +215,78 @@ export const router = createBrowserRouter([
       { path: '/cars-preview', element: suspense(<CarsPreview />) },
       {
         path: '/app',
-        element: (
-          <RequireAuth>
-            <AppShell />
-          </RequireAuth>
-        ),
+        element: <AppAccessGate />,
         children: [
-          { index: true, element: suspense(<Home />) },
-          { path: 'curriculum', element: <Curriculum /> },
-          { path: 'lessons/vectors-and-trigonometry', element: <VectorLesson /> },
-          // The normalized-engine catalog (L2/L3) plays through the shared CatalogLesson
-          // player on real routes matching L1's shape. WHICH lesson runs is fixed by the
-          // slug; the registration manifest is the source of truth for these paths.
-          { path: 'lessons/v3-les-789208', element: <CatalogLesson lessonId="V3-LES-789208" /> },
-          { path: 'lessons/v3-les-844372', element: <CatalogLesson lessonId="V3-LES-844372" /> },
-          // Every other registered normalized lesson (the 111 build-a catalog) plays
-          // through one dynamic route — no per-lesson route/component.
-          { path: 'lessons/:lessonSlug', element: <NormalizedCatalogRoute /> },
-          // Today's Path — the daily learning-plan engine (guided one-at-a-time runner).
-          { path: 'today', element: suspense(<TodaysPath />) },
-          // The standalone `/app/learn` Study loop was retired: it duplicated adaptive
-          // Practice and was only reachable from orphaned entry points. Study.tsx is kept
-          // (its no-cause-picker contract is still asserted) but no longer routed.
-          // Recall (Anki-style flashcards): the tab landing plus its child surfaces.
-          { path: 'recall', element: suspense(<RecallHome />) },
-          { path: 'recall/review', element: suspense(<RecallReview />) },
-          { path: 'recall/browse', element: suspense(<CardBrowser />) },
-          { path: 'recall/new', element: suspense(<CardEditor />) },
-          { path: 'recall/edit/:cardId', element: suspense(<CardEditor />) },
-          { path: 'recall/import', element: suspense(<ImportApkg />) },
-          { path: 'mistakes', element: suspense(<Mistakes />) },
-          // The guided Review-Mistakes repair runner (one mistake at a time + a fresh one).
-          { path: 'mistakes/repair', element: suspense(<MistakesRepair />) },
-          { path: 'progress', element: suspense(<Progress />) },
-          // The standalone Skills page is merged into Progress (Concept B): its seven
-          // reasoning-skill readouts now render as the Progress dashboard's left rail.
-          // The nav item still points at /app/skills (kept for the app-shell contract),
-          // so this redirect lands it on the merged dashboard. The per-cluster detail
-          // (linked from the brain) keeps its own route below.
-          { path: 'skills', element: <Navigate to="/app/progress" replace /> },
-          { path: 'skills/:skillId', element: suspense(<SkillDetail />) },
-          // Hooks now surface contextually rather than living under a Practice tab.
-          { path: 'passage', element: suspense(<PassageOfDay />) },
-          { path: 'cars', element: suspense(<CarsDuel />) },
-          { path: 'wrapped', element: suspense(<Wrapped />) },
-          // Adaptive Practice: the hub plus its in-place session.
-          { path: 'practice', element: suspense(<PracticeHome />) },
-          { path: 'practice/session', element: suspense(<PracticeSession />) },
-          // The periodic, scored practice TEST (fixed-form, block-by-block runner).
-          // GATED: the runner is dev/preview-only (no deployed backend), so in prod
-          // this route redirects to the Practice hub instead of loading a dead runner.
-          // See ./capabilities.ts (PRACTICE_TEST_ENABLED).
           {
-            path: 'practice/test',
-            element: PRACTICE_TEST_ENABLED ? (
-              suspense(<PracticeTest />)
-            ) : (
-              <Navigate to="/app/practice" replace />
-            ),
+            element: <AppShell />,
+            children: [
+              { index: true, element: suspense(<Home />) },
+              { path: 'curriculum', element: <Curriculum /> },
+              // Today's Path — the daily learning-plan engine (guided one-at-a-time runner).
+              { path: 'today', element: suspense(<TodaysPath />) },
+              // The standalone `/app/learn` Study loop was retired: it duplicated adaptive
+              // Practice and was only reachable from orphaned entry points. Study.tsx is kept
+              // (its no-cause-picker contract is still asserted) but no longer routed.
+              // Recall (Anki-style flashcards): the tab landing plus its child surfaces.
+              { path: 'recall', element: suspense(<RecallHome />) },
+              { path: 'recall/review', element: suspense(<RecallReview />) },
+              { path: 'recall/browse', element: suspense(<CardBrowser />) },
+              { path: 'recall/new', element: suspense(<CardEditor />) },
+              { path: 'recall/edit/:cardId', element: suspense(<CardEditor />) },
+              { path: 'recall/import', element: suspense(<ImportApkg />) },
+              { path: 'mistakes', element: suspense(<Mistakes />) },
+              // The guided Review-Mistakes repair runner (one mistake at a time + a fresh one).
+              { path: 'mistakes/repair', element: suspense(<MistakesRepair />) },
+              { path: 'progress', element: suspense(<Progress />) },
+              // The standalone Skills page is merged into Progress (Concept B): its seven
+              // reasoning-skill readouts now render as the Progress dashboard's left rail.
+              // The nav item still points at /app/skills (kept for the app-shell contract),
+              // so this redirect lands it on the merged dashboard. The per-cluster detail
+              // (linked from the brain) keeps its own route below.
+              { path: 'skills', element: <Navigate to="/app/progress" replace /> },
+              { path: 'skills/:skillId', element: suspense(<SkillDetail />) },
+              // Hooks now surface contextually rather than living under a Practice tab.
+              { path: 'passage', element: suspense(<PassageOfDay />) },
+              { path: 'cars', element: suspense(<CarsDuel />) },
+              { path: 'wrapped', element: suspense(<Wrapped />) },
+              // Adaptive Practice: the hub plus its in-place session.
+              { path: 'practice', element: suspense(<PracticeHome />) },
+              { path: 'practice/session', element: suspense(<PracticeSession />) },
+              // The periodic, scored practice TEST (fixed-form, block-by-block runner).
+              // GATED: the runner is dev/preview-only (no deployed backend), so in prod
+              // this route redirects to the Practice hub instead of loading a dead runner.
+              // See ./capabilities.ts (PRACTICE_TEST_ENABLED).
+              {
+                path: 'practice/test',
+                element: PRACTICE_TEST_ENABLED ? (
+                  suspense(<PracticeTest />)
+                ) : (
+                  <Navigate to="/app/practice" replace />
+                ),
+              },
+              { path: 'profile', element: suspense(<Profile />) },
+            ],
           },
-          { path: 'profile', element: suspense(<Profile />) },
+          {
+            element: <FocusedLessonShell />,
+            children: [
+              { path: 'lessons/vectors-and-trigonometry', element: <VectorLesson /> },
+              // The normalized-engine catalog (L2/L3) plays through the shared
+              // CatalogLesson player. The registration manifest fixes which lesson
+              // each route runs; WP-05F will replace this static route list.
+              {
+                path: 'lessons/v3-les-789208',
+                element: <CatalogLesson lessonId="V3-LES-789208" />,
+              },
+              {
+                path: 'lessons/v3-les-844372',
+                element: <CatalogLesson lessonId="V3-LES-844372" />,
+              },
+              // The 111 DB-backed lessons share the same normalized runtime and
+              // focused renderer; the catalog fixes which lesson each slug runs.
+              { path: 'lessons/:lessonSlug', element: <NormalizedCatalogRoute /> },
+            ],
+          },
         ],
       },
       // Catch-all 404: any URL that matches nothing above lands on a calm, styled
@@ -276,4 +294,6 @@ export const router = createBrowserRouter([
       { path: '*', element: <NotFound /> },
     ],
   },
-]);
+] satisfies RouteObject[];
+
+export const router = createBrowserRouter(APP_ROUTES);
