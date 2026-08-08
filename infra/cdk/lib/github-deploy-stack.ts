@@ -187,6 +187,14 @@ export class GithubDeployStack extends Stack {
         actions: ['cloudfront:CreateInvalidation', 'cloudfront:GetInvalidation'],
         resources: [`arn:aws:cloudfront::${account}:distribution/*`],
       }),
+      // Invoke the in-VPC migration Lambda: the `migrate` step applies forward-only
+      // migrations through it because the Aurora cluster is in isolated subnets and
+      // the runner cannot reach it directly. Scoped to the single migration runner.
+      new iam.PolicyStatement({
+        sid: 'InvokeMigrationLambda',
+        actions: ['lambda:InvokeFunction'],
+        resources: [`arn:aws:lambda:${region}:${account}:function:mcat-dev-migration-runner`],
+      }),
     ];
   }
 }
