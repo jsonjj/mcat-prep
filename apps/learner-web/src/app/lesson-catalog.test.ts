@@ -9,6 +9,7 @@ import {
   REGISTERED_LESSONS,
   type RegisteredLesson,
 } from './lesson-catalog';
+import { DB_BACKED_LESSONS } from './registered-lessons.generated';
 
 /**
  * The registration manifest is the app's SOLE servability source, so its boot
@@ -38,18 +39,27 @@ const withEntry = (override: Partial<RegisteredLesson>): RegisteredLesson => ({
 });
 
 describe('the registration manifest', () => {
-  it('registers exactly the three real catalog lessons on their real runtimes', () => {
-    expect(REGISTERED_LESSONS.map((lesson) => lesson.lessonId)).toEqual([
+  it('registers the three pilots plus the DB-backed build-a catalog on their real runtimes', () => {
+    // The three pilots lead the manifest on their bespoke runtimes (L1 vector; L2/L3
+    // normalized), followed by the DB-backed build-a catalog.
+    expect(REGISTERED_LESSONS.slice(0, 3).map((lesson) => lesson.lessonId)).toEqual([
       'V3-LES-130923',
       'V3-LES-789208',
       'V3-LES-844372',
     ]);
-    // L1 keeps its bespoke vector runtime; L2/L3 run on the shared normalized engine.
-    expect(REGISTERED_LESSONS.map((lesson) => lesson.runtime)).toEqual([
+    expect(REGISTERED_LESSONS.slice(0, 3).map((lesson) => lesson.runtime)).toEqual([
       'vector',
       'normalized',
       'normalized',
     ]);
+    // Every DB-backed build-a lesson is registered exactly once on the normalized runtime.
+    for (const seed of DB_BACKED_LESSONS) {
+      const entry = REGISTERED_LESSONS.find((lesson) => lesson.lessonId === seed.lessonId);
+      expect(entry?.runtime).toBe('normalized');
+    }
+    const ids = REGISTERED_LESSONS.map((lesson) => lesson.lessonId);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(REGISTERED_LESSONS.length).toBe(3 + DB_BACKED_LESSONS.length);
     // Every route is the one canonical `/app/lessons/<slug>` shape.
     for (const lesson of REGISTERED_LESSONS) {
       expect(lesson.routePath).toBe(`/app/lessons/${lesson.slug}`);
@@ -65,10 +75,10 @@ describe('the registration manifest', () => {
     expect(lessonBySlug('v3-les-844372')?.lessonId).toBe('V3-LES-844372');
     expect(isRegisteredLessonId('V3-LES-789208')).toBe(true);
 
-    // A preview lesson that is NOT in the catalog is not servable.
-    expect(lessonById('V3-LES-329622')).toBeUndefined();
+    // A well-formed id that no pilot or build-a lesson uses is not servable.
+    expect(lessonById('V3-LES-999999')).toBeUndefined();
     expect(lessonBySlug('biological-redox')).toBeUndefined();
-    expect(isRegisteredLessonId('V3-LES-329622')).toBe(false);
+    expect(isRegisteredLessonId('V3-LES-999999')).toBe(false);
   });
 
   describe('the boot guard rejects', () => {
@@ -77,9 +87,9 @@ describe('the registration manifest', () => {
     });
 
     it('a malformed lesson id', () => {
-      expect(() =>
-        assertValidLessonRegistry([withEntry({ lessonId: 'redox-lesson' })]),
-      ).toThrow(/is not a V3-LES/);
+      expect(() => assertValidLessonRegistry([withEntry({ lessonId: 'redox-lesson' })])).toThrow(
+        /is not a V3-LES/,
+      );
     });
 
     it('a lesson absent from the curriculum manifest', () => {
@@ -109,15 +119,13 @@ describe('the registration manifest', () => {
         ]),
       ).toThrow(/kcIds/);
       // Missing a KC.
-      expect(() =>
-        assertValidLessonRegistry([withEntry({ kcIds: ['V3-KC-399019'] })]),
-      ).toThrow(/kcIds/);
+      expect(() => assertValidLessonRegistry([withEntry({ kcIds: ['V3-KC-399019'] })])).toThrow(
+        /kcIds/,
+      );
     });
 
     it('a cluster that disagrees with the atlas', () => {
-      expect(() =>
-        assertValidLessonRegistry([withEntry({ cluster: 'BB1' })]),
-      ).toThrow(/cluster/);
+      expect(() => assertValidLessonRegistry([withEntry({ cluster: 'BB1' })])).toThrow(/cluster/);
     });
 
     it('a route that is not derived from the slug', () => {

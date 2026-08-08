@@ -239,6 +239,14 @@ $role$`,
       // only ever selected here. Their absence is what 503'd login — the
       // cold-start content-health probe selects passages/questions.
       'grant select on table questions, question_protected, passages, passage_questions, cars_duel_topics to mcat_learner_api',
+      // Canonical LESSON content (build-a import): the DB-backed lesson provider reads the
+      // immutable revisions + their content_objects and relational metadata, and the release
+      // gate reads the active content_releases pointer. SELECT ONLY — authored/imported by
+      // mcat_admin. Protected authority BYTES live in server-only storage (storage_key /
+      // protected archive), never in these metadata rows; the provider's learner-safe path
+      // reads only is_protected=false, and getAnswerKey (protected) stays server-side —
+      // mirroring the questions/question_protected precedent. publication_runs stays ungranted.
+      'grant select on table content_releases, content_objects, lesson_revisions, lesson_revision_objects, lesson_kc_membership, lesson_prerequisites, lesson_attachments, lesson_mastery_definitions, lesson_receipts to mcat_learner_api',
       // Adaptive-practice and placement-diagnostic bookkeeping the runtime owns
       // per learner. Read + append + update, but deliberately NO DELETE: expiry
       // is by timestamp, so withholding DELETE keeps a compromised runtime from

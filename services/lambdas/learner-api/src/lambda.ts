@@ -25,6 +25,8 @@ import { createGuestProjection } from './guest-projection';
 import { createPostgresDiagnosticPort } from './diagnostic-port';
 import { createPostgresPracticeTestPort } from './practice-test-port';
 import { createRepositoryLearnerApi, type LearnerApi, type PassagePort } from './handler';
+import { lessonContentProvider } from './lesson-content-provider';
+import { loadLessonRevisionProvider } from './lesson-revision-provider';
 import type { LambdaApiGatewayEvent, LambdaApiGatewayResult, SafeLogger } from './http';
 
 interface DatabaseSecret {
@@ -371,6 +373,18 @@ async function createRuntime(): Promise<LearnerApi> {
   });
   // Loudly flag an unseeded database at cold start (best-effort; never blocks boot).
   await logContentHealth(pool);
+  // Attach the DB-backed lesson catalog for the ACTIVE content release (this IS the
+  // release gate): before activation it resolves nothing and only the file-based
+  // pilots serve; once a release is activated the imported lessons resolve from
+  // Aurora. Best-effort — a failure here must never take down the API.
+  try {
+    const dbLessons = await loadLessonRevisionProvider({ db: pool, environment: 'dev' });
+    lessonContentProvider.attach(dbLessons);
+  } catch {
+    // Best-effort: a failure to attach the DB catalog must never take down the API.
+    // The file-based pilots still serve, and an unattached release simply surfaces as
+    // the imported lessons not resolving (diagnosable from content_releases lifecycle).
+  }
   const authority = new Authority(undefined, systemClock);
   const repository = new PostgresAuthorityRepository(pool, {
     newGuestProjection: createGuestProjection,

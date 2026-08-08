@@ -48,9 +48,9 @@ describe('catalogCompletion — the honest Today’s Path empty state', () => {
   });
 
   it('counts only registered lessons — a mastered non-catalog lesson never completes it', () => {
-    // All three real lessons still unmastered, plus a mastered preview id that is
-    // NOT in the manifest. Completion is manifest-scoped, so this stays incomplete.
-    const learner = [...ALL_IDS.map((id) => mastery(id, false)), mastery('V3-LES-765609', true)];
+    // Every registered lesson still unmastered, plus a mastered id that is NOT in the
+    // manifest (V3-LES-999999). Completion is manifest-scoped, so this stays incomplete.
+    const learner = [...ALL_IDS.map((id) => mastery(id, false)), mastery('V3-LES-999999', true)];
     const state = catalogCompletion(learner);
     expect(state.complete).toBe(0);
     expect(state.allComplete).toBe(false);

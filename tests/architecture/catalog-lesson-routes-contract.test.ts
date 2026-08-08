@@ -3,13 +3,16 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { REGISTERED_LESSONS } from '../../apps/learner-web/src/app/lesson-catalog';
+import { DB_BACKED_LESSONS } from '../../apps/learner-web/src/app/registered-lessons.generated';
 
 /**
- * Phase 6 wave 6B contract: the registration manifest is the app's sole
- * servability source, and every registered lesson has a real playable route of
- * L1's shape. This is the "route test + three-entry render" evidence the plan
- * requires — pinned against the manifest itself, so it can never drift from what
- * the app actually serves.
+ * Phase 6 wave 6B contract: the registration manifest is the app's sole servability
+ * source. Two lesson populations now coexist:
+ *  - the three bespoke PILOTS (L1 vector + two normalized) served from on-disk
+ *    content/lessons/* on explicit routes, and
+ *  - the DB-BACKED build-a catalog (the 111 canonical lessons) served from Aurora
+ *    through ONE dynamic normalized route (no per-lesson routes/components).
+ * Both play through L1's shared route shape; a mis-registration still fails CI here.
  */
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -19,31 +22,35 @@ const curriculumPath = join(learnerSrc, 'screens/Curriculum.tsx');
 const playerPath = join(learnerSrc, 'screens/CatalogLesson.tsx');
 const read = (path: string): string => (existsSync(path) ? readFileSync(path, 'utf8') : '');
 
+const PILOT_IDS = ['V3-LES-130923', 'V3-LES-789208', 'V3-LES-844372'];
+const DB_BACKED_IDS = new Set(DB_BACKED_LESSONS.map((seed) => seed.lessonId));
+
 describe('Real Lesson Catalog routes + servability contract', () => {
-  it('registers exactly the three real lessons, each on the one canonical route shape', () => {
-    expect(REGISTERED_LESSONS.map((lesson) => lesson.lessonId)).toEqual([
-      'V3-LES-130923',
-      'V3-LES-789208',
-      'V3-LES-844372',
-    ]);
+  it('registers the three pilots plus the DB-backed build-a catalog on the canonical route shape', () => {
+    const ids = REGISTERED_LESSONS.map((lesson) => lesson.lessonId);
+    // The three bespoke pilots remain registered.
+    expect(ids).toEqual(expect.arrayContaining(PILOT_IDS));
+    // Every DB-backed build-a lesson is registered exactly once.
+    for (const seed of DB_BACKED_LESSONS) expect(ids).toContain(seed.lessonId);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(REGISTERED_LESSONS.length).toBe(PILOT_IDS.length + DB_BACKED_LESSONS.length);
     for (const lesson of REGISTERED_LESSONS) {
       expect(lesson.routePath).toBe(`/app/lessons/${lesson.slug}`);
     }
   });
 
-  it('router serves a real route for every registered lesson, matching runtime to renderer', () => {
+  it('router serves the pilots explicitly and the DB-backed catalog via one dynamic route', () => {
     const router = read(routerPath);
-    for (const lesson of REGISTERED_LESSONS) {
-      expect(router).toMatch(new RegExp(`path:\\s*'lessons/${lesson.slug}'`));
-    }
-    // L1 keeps its bespoke screen; every normalized lesson plays through the shared
-    // CatalogLesson on its own id.
+    // L1 keeps its bespoke screen; the two normalized pilots keep explicit routes.
     expect(router).toMatch(/lessons\/vectors-and-trigonometry'[\s\S]*?<VectorLesson/);
-    for (const lesson of REGISTERED_LESSONS.filter((entry) => entry.runtime === 'normalized')) {
-      expect(router).toMatch(
-        new RegExp(`<CatalogLesson\\s+lessonId="${lesson.lessonId}"`),
-      );
-    }
+    expect(router).toMatch(/path:\s*'lessons\/v3-les-789208'/);
+    expect(router).toMatch(/path:\s*'lessons\/v3-les-844372'/);
+    // The 111 build-a lessons play through ONE dynamic route (no per-lesson routes),
+    // resolving the slug to a registered lesson and rendering the shared player.
+    expect(router).toMatch(/path:\s*'lessons\/:lessonSlug'/);
+    expect(router).toMatch(/<NormalizedCatalogRoute\s*\/>/);
+    expect(router).toMatch(/lessonBySlug\(/);
+    expect(router).toMatch(/<CatalogLesson\s+lessonId=\{/);
   });
 
   it('the shared catalog player is server-authoritative and ships no answer key', () => {
@@ -65,14 +72,14 @@ describe('Real Lesson Catalog routes + servability contract', () => {
     expect(source).not.toMatch(/\/app\/lesson\//);
   });
 
-  // Registration plumbing (for lessons authored as they land): a registered lesson
-  // MUST have real authored content on disk, or it would 404/500 the moment a
-  // learner launches it in prod (the Lambda serves lessons from content/lessons/*,
-  // keyed by the lower-cased lesson id). This catches a "phantom" registration —
-  // an entry added to the manifest before its content artifacts exist — at CI time
-  // rather than at runtime. See docs/lesson-registration.md for the full steps.
-  it('every registered lesson has authored content on disk (no phantom registrations)', () => {
+  // Registration plumbing: a FILE-BACKED (pilot) registered lesson MUST have real
+  // authored content on disk, or it would 404/500 at launch (that Lambda serves the
+  // pilots from content/lessons/*). DB-backed build-a lessons are served from Aurora
+  // (their content is verified by the importer + provider tests), so they are
+  // exempt from the on-disk check.
+  it('every FILE-BACKED registered lesson has authored content on disk (no phantom registrations)', () => {
     for (const lesson of REGISTERED_LESSONS) {
+      if (DB_BACKED_IDS.has(lesson.lessonId)) continue; // served from Aurora, not disk
       const scriptPath = join(
         root,
         'content/lessons',

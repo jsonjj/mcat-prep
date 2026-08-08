@@ -420,9 +420,79 @@ function buildAnswerKey(
 }
 
 /**
+ * A storage-agnostic source of a lesson's raw artifacts. Both the filesystem
+ * (repo) provider and the DB/S3-backed revision provider build one of these and
+ * share the grammar-agnostic normalization + answer-key resolution below, so the
+ * protection split and the L1/L2/L3 answer logic can never diverge by storage.
+ */
+export interface LessonArtifactSource {
+  listLessonIds(): readonly string[];
+  hasLesson(lessonId: string): boolean;
+  /** lesson-script.json + learner-safe-items.json (+ protected-items.json for the key). */
+  readArtifacts(lessonId: string): RawLessonArtifacts;
+  /** The parsed lesson-script.json object (for authored bindings). */
+  readScriptRecord(lessonId: string): Record<string, unknown> | undefined;
+}
+
+/**
+ * Build a provider over any artifact source. Normalization + answer keys are
+ * resolved lazily and cached, exactly as the repo provider always did — the only
+ * thing that varies is WHERE the raw artifacts come from (design note D5). The
+ * learner-safe surface stays answer-free; keys resolve only via getAnswerKey.
+ */
+export function createLessonContentProvider(source: LessonArtifactSource): LessonContentProvider {
+  const normalizedCache = new Map<string, NormalizedLesson>();
+  const answerCache = new Map<string, ServerAnswerKey>();
+  const authoringCache = new Map<string, AuthoredLessonBindings>();
+
+  const ensureKnown = (lessonId: string): void => {
+    if (!source.hasLesson(lessonId)) throw new UnknownLessonError(lessonId, source.listLessonIds());
+  };
+  const normalizedOf = (lessonId: string): NormalizedLesson => {
+    const cached = normalizedCache.get(lessonId);
+    if (cached !== undefined) return cached;
+    ensureKnown(lessonId);
+    const normalized = normalizeLesson(source.readArtifacts(lessonId));
+    normalizedCache.set(lessonId, normalized);
+    return normalized;
+  };
+
+  return {
+    listLessonIds: () => source.listLessonIds(),
+    hasLesson: (lessonId) => source.hasLesson(lessonId),
+    getNormalizedLesson: normalizedOf,
+    getDefinitionHash: (lessonId) => normalizedOf(lessonId).definitionHash,
+    getAnswerKey: (lessonId) => {
+      const cached = answerCache.get(lessonId);
+      if (cached !== undefined) return cached;
+      const key = buildAnswerKey(normalizedOf(lessonId), source.readArtifacts(lessonId));
+      answerCache.set(lessonId, key);
+      return key;
+    },
+    getAuthoredBindings: (lessonId) => {
+      const cached = authoringCache.get(lessonId);
+      if (cached !== undefined) return cached;
+      ensureKnown(lessonId);
+      const script = asRecord(source.readScriptRecord(lessonId));
+      const payload = asRecord(script?.payload);
+      const entries = asArray(payload?.question_evidence_plan)
+        .map(asRecord)
+        .filter((entry): entry is JsonRecord => entry !== undefined);
+      const value: AuthoredLessonBindings = {
+        lessonId,
+        artifactVersion:
+          typeof script?.artifact_version === 'string' ? script.artifact_version : undefined,
+        entries,
+      };
+      authoringCache.set(lessonId, value);
+      return value;
+    },
+  };
+}
+
+/**
  * The repo-backed provider. Discovers every `content/lessons/<id>/` carrying a
  * `lesson-script.json`, keyed by the script's own `payload.lesson_id`.
- * Normalization and answer keys are resolved lazily and cached.
  */
 export function createRepoLessonContentProvider(
   contentRoot: string = DEFAULT_CONTENT_ROOT,
@@ -440,54 +510,56 @@ export function createRepoLessonContentProvider(
     }
   }
   const ids = [...dirById.keys()].sort();
-  const normalizedCache = new Map<string, NormalizedLesson>();
-  const answerCache = new Map<string, ServerAnswerKey>();
-  const authoringCache = new Map<string, AuthoredLessonBindings>();
-
   const dirOf = (lessonId: string): string => {
     const dir = dirById.get(lessonId);
     if (dir === undefined) throw new UnknownLessonError(lessonId, ids);
     return dir;
   };
-  const normalizedOf = (lessonId: string): NormalizedLesson => {
-    const cached = normalizedCache.get(lessonId);
-    if (cached !== undefined) return cached;
-    const normalized = normalizeLesson(readArtifacts(dirOf(lessonId)));
-    normalizedCache.set(lessonId, normalized);
-    return normalized;
-  };
-
-  return {
+  return createLessonContentProvider({
     listLessonIds: () => ids,
     hasLesson: (lessonId) => dirById.has(lessonId),
-    getNormalizedLesson: normalizedOf,
-    getDefinitionHash: (lessonId) => normalizedOf(lessonId).definitionHash,
-    getAnswerKey: (lessonId) => {
-      const cached = answerCache.get(lessonId);
-      if (cached !== undefined) return cached;
-      const key = buildAnswerKey(normalizedOf(lessonId), readArtifacts(dirOf(lessonId)));
-      answerCache.set(lessonId, key);
-      return key;
+    readArtifacts: (lessonId) => readArtifacts(dirOf(lessonId)),
+    readScriptRecord: (lessonId) =>
+      asRecord(readJsonFile(join(dirOf(lessonId), 'lesson-script.json'))),
+  });
+}
+
+/**
+ * A composite provider: a synchronous base (the repo pilots, available at module
+ * load) plus an optional secondary (the DB-backed release catalog) installed
+ * asynchronously at Lambda cold start via {@link AttachableLessonContentProvider.attach}.
+ * A lesson is served by the secondary when it has it, else the base — so the three
+ * pilots keep working synchronously and the 111 build-a lessons resolve once the DB
+ * provider is attached, WITHOUT threading a provider through the runtime call chain.
+ */
+export interface AttachableLessonContentProvider extends LessonContentProvider {
+  attach(secondary: LessonContentProvider): void;
+}
+
+export function createCompositeLessonContentProvider(
+  base: LessonContentProvider,
+): AttachableLessonContentProvider {
+  let secondary: LessonContentProvider | undefined;
+  const providerFor = (lessonId: string): LessonContentProvider =>
+    secondary?.hasLesson(lessonId) ? secondary : base;
+  return {
+    attach: (next) => {
+      secondary = next;
     },
-    getAuthoredBindings: (lessonId) => {
-      const cached = authoringCache.get(lessonId);
-      if (cached !== undefined) return cached;
-      const script = asRecord(readJsonFile(join(dirOf(lessonId), 'lesson-script.json')));
-      const payload = asRecord(script?.payload);
-      const entries = asArray(payload?.question_evidence_plan)
-        .map(asRecord)
-        .filter((entry): entry is JsonRecord => entry !== undefined);
-      const value: AuthoredLessonBindings = {
-        lessonId,
-        artifactVersion:
-          typeof script?.artifact_version === 'string' ? script.artifact_version : undefined,
-        entries,
-      };
-      authoringCache.set(lessonId, value);
-      return value;
-    },
+    listLessonIds: () =>
+      [...new Set([...base.listLessonIds(), ...(secondary?.listLessonIds() ?? [])])].sort(),
+    hasLesson: (lessonId) => base.hasLesson(lessonId) || (secondary?.hasLesson(lessonId) ?? false),
+    getNormalizedLesson: (lessonId) => providerFor(lessonId).getNormalizedLesson(lessonId),
+    getAnswerKey: (lessonId) => providerFor(lessonId).getAnswerKey(lessonId),
+    getDefinitionHash: (lessonId) => providerFor(lessonId).getDefinitionHash(lessonId),
+    getAuthoredBindings: (lessonId) => providerFor(lessonId).getAuthoredBindings(lessonId),
   };
 }
 
-/** Default catalog-backed provider for the deployed learner runtime. */
-export const lessonContentProvider = createRepoLessonContentProvider();
+/**
+ * Default provider for the deployed learner runtime: the repo pilots now, with the
+ * DB-backed release catalog attached at cold start (see the learner Lambda's
+ * `createRuntime`). Consumers that import this keep using the same seam.
+ */
+export const lessonContentProvider: AttachableLessonContentProvider =
+  createCompositeLessonContentProvider(createRepoLessonContentProvider());

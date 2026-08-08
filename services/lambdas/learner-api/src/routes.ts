@@ -891,30 +891,39 @@ const PASSAGE_TODAY_PATH = /^\/v1\/passage\/today\/(-?\d{1,4})$/;
  * reaching the engine), and the L1 slug can never collide with a normalized
  * match. A new lesson joins the catalog by adding one entry here.
  */
+/**
+ * Legacy explicit slug->id map for the two pilot normalized lessons. Retained for
+ * back-compat/reference only; route matching below is now generic over the whole
+ * normalized catalog (any `v3-les-######` slug), so a new lesson needs no entry.
+ */
 export const NORMALIZED_LESSON_ROUTE_SLUGS: Readonly<Record<string, string>> = {
   'v3-les-789208': 'V3-LES-789208',
   'v3-les-844372': 'V3-LES-844372',
 };
 
-const NORMALIZED_LESSON_SLUG_GROUP = Object.keys(NORMALIZED_LESSON_ROUTE_SLUGS).join('|');
+// Normalized lessons are served under their lesson-id slug (`v3-les-######`). This
+// pattern matches the ENTIRE normalized catalog without enumerating each lesson and
+// never collides with L1's friendly slug (`vectors-and-trigonometry`), which keeps
+// its own explicit routes. Whether a matched id is actually servable is a
+// content-provider question the handler answers (UnknownLessonError -> 404).
+const NORMALIZED_LESSON_SLUG = String.raw`v3-les-\d{6}`;
 const normalizedLessonPathFor = (verb: string): RegExp =>
-  new RegExp(`^/v1/lessons/(?:${NORMALIZED_LESSON_SLUG_GROUP})/${verb}$`);
+  new RegExp(`^/v1/lessons/(${NORMALIZED_LESSON_SLUG})/${verb}$`);
 const NORMALIZED_LESSON_STATUS_PATH = normalizedLessonPathFor('status');
 const NORMALIZED_LESSON_START_PATH = normalizedLessonPathFor('start');
 const NORMALIZED_LESSON_RUN_PATH = normalizedLessonPathFor('run');
 const NORMALIZED_LESSON_COMMANDS_PATH = normalizedLessonPathFor('commands');
-const NORMALIZED_LESSON_SLUG_PATH = /^\/v1\/lessons\/([a-z0-9-]+)\/(?:status|start|run|commands)$/;
+const NORMALIZED_LESSON_SLUG_PATH = /^\/v1\/lessons\/(v3-les-\d{6})\/(?:status|start|run|commands)$/;
 
 /**
- * The catalog lesson id a normalized-lesson request targets, or null when the
- * slug is unregistered (including L1's own slug). The route match already
- * guarantees a registered slug for a matched `normalizedLesson*` route; this is
- * how the handler recovers the lesson id from the path to drive the engine.
+ * The catalog lesson id a normalized-lesson request targets, or null when the path
+ * is not a normalized-lesson path. The slug IS the lower-cased lesson id, so the id
+ * is its upper-cased form; the content provider validates servability downstream.
  */
 export function normalizedLessonIdFor(path: string): string | null {
   const slug = NORMALIZED_LESSON_SLUG_PATH.exec(path)?.[1];
   if (slug === undefined) return null;
-  return NORMALIZED_LESSON_ROUTE_SLUGS[slug] ?? null;
+  return slug.toUpperCase();
 }
 
 function routeMatches(route: RouteDefinition, path: string): boolean {
