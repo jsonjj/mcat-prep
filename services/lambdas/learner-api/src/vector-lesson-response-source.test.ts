@@ -323,6 +323,7 @@ describe('vector lesson response source', () => {
     // still refuses the assisted ones on assistance grounds.
     const qualified: string[] = [];
     const refusedOnAssistance: string[] = [];
+    const refusedAsProcessEvidence: string[] = [];
 
     for (const authored of AUTHORED_BINDINGS) {
       const answer = VECTOR_LESSON_PROTECTED_ANSWERS[authored.item_binding_id]!;
@@ -347,13 +348,21 @@ describe('vector lesson response source', () => {
         qualified.push(authored.item_binding_id);
       } else if (adaptation.qualification.rejectionCodes.includes('ASSISTANCE_NOT_A0')) {
         refusedOnAssistance.push(authored.item_binding_id);
+      } else if (
+        adaptation.qualification.rejectionCodes.includes(
+          'RESOLVED_EVIDENCE_KIND_CONTEXTUAL_ONLY',
+        )
+      ) {
+        refusedAsProcessEvidence.push(authored.item_binding_id);
       }
     }
 
-    // 30 unscaffolded administrations qualify, 12 scaffolded ones do not. Was
-    // 0 and 42.
-    expect(qualified).toHaveLength(30);
+    // Repair confirmations are process evidence, not independent capability
+    // measurements. Of the remaining administrations, 18 are clean and 12 were
+    // scaffolded.
+    expect(qualified).toHaveLength(18);
     expect(refusedOnAssistance).toHaveLength(12);
+    expect(refusedAsProcessEvidence).toHaveLength(12);
     expect(qualified).toContain('vtr-vec-changed-exit-initial');
     expect(refusedOnAssistance).toContain('vtr-vec-guided-practice-1');
   });
