@@ -53,12 +53,11 @@ import {
  * plus one re-entry per KC, across 3 KCs) declare `candidate_evidence_modes:
  * ['TRANSFER']` and a `reasoning_operation`, per `changed-task-license`.
  * `NEAR_EXIT` was deliberately left instructional, so it contributes 0.
- * `V3-LES-844372` carries 6 by the identical rule: its three changed-task KCs
- * (GRAPH/SYS/LOG) each license one initial `CHANGED_EXIT` plus its `CHANGED`
- * re-entry — the latter authored as a `REPAIR_CONFIRMATION` role with a
- * `CHANGED_TASK` exit function, which the production adapter qualifies on
- * `candidate_evidence_modes` + `reasoning_operation`, never on the role label.
- * `NEAR_EXIT` and every instructional stage stay ineligible, contributing 0.
+ * `V3-LES-844372` carries 3 in this artifact-only check: its three initial
+ * `CHANGED_EXIT` bindings qualify. The re-entry bindings are authored with a
+ * `REPAIR_CONFIRMATION` role, so they remain process evidence unless the runtime
+ * supplies exact immutable re-entry attribution. Runtime integration tests own
+ * that additional proof.
  * `V3-LES-789208` carries 8 by the same rule: its four QMS KCs (units,
  * precision, ratios, notation) each license two `CHANGED_EXIT` terminal checks —
  * the `INITIAL` changed task and its `CHANGED_TASK` re-delivery. Its legacy
@@ -70,14 +69,14 @@ import {
 const EXPECTED_QUALIFIED_BKT_OBSERVATIONS: Readonly<Record<string, number>> = {
   'V3-LES-130923': 6,
   'V3-LES-789208': 8,
-  'V3-LES-844372': 6,
+  'V3-LES-844372': 3,
 };
 
 // The whole catalog is expected to move exactly this many qualified BKT
 // observations. Pinned as an explicit literal (not derived from the map above)
 // so licensing a lesson — or a per-lesson pin drifting — forces a conscious
 // edit to this catalog-wide total as well.
-const EXPECTED_CATALOG_TOTAL = 20;
+const EXPECTED_CATALOG_TOTAL = 17;
 
 const OBSERVATION_ID = '9c0ffee0-0000-4000-8000-000000000001';
 const EVIDENCE_ID = '9c0ffee0-0000-4000-8000-000000000002';
