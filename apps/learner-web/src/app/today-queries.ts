@@ -121,6 +121,22 @@ export const useTodaysPath = () =>
  */
 const RECALL_LOAD_TIMEOUT_MS = 2500;
 
+function toRecallLoadInput(load: {
+  readonly dueLearning: number;
+  readonly dueReviews: number;
+  readonly newAvailable: number;
+  readonly due: number;
+  readonly estimatedMinutesForDue: number;
+}): RecallLoadInput {
+  return {
+    dueLearning: load.dueLearning,
+    dueReviews: load.dueReviews,
+    newAvailable: load.newAvailable,
+    due: load.due,
+    estimatedMinutesForDue: load.estimatedMinutesForDue,
+  };
+}
+
 async function estimateRecallLoad(service: RecallService | null): Promise<RecallLoadInput> {
   if (!service) return EMPTY_RECALL_LOAD;
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -132,13 +148,7 @@ async function estimateRecallLoad(service: RecallService | null): Promise<Recall
       }),
     ]);
     if (!load) return EMPTY_RECALL_LOAD;
-    return {
-      dueLearning: load.dueLearning,
-      dueReviews: load.dueReviews,
-      newAvailable: load.newAvailable,
-      due: load.due,
-      estimatedMinutesForDue: load.estimatedMinutesForDue,
-    };
+    return toRecallLoadInput(load);
   } catch {
     return EMPTY_RECALL_LOAD;
   } finally {
@@ -149,9 +159,18 @@ async function estimateRecallLoad(service: RecallService | null): Promise<Recall
 export function useBuildTodaysPath() {
   const qc = useQueryClient();
   const service = useRecallService();
+  const load = useRecallLoad();
   return useMutation({
     mutationFn: async (opts?: { force?: boolean }) => {
-      const recallLoad = await estimateRecallLoad(service);
+      // Prefer the COMPLETE recall load that useRecallLoad computes in the background
+      // (no timeout). The bounded estimate below exists only so the FIRST build never
+      // blocks on a slow IndexedDB scan — but once the scan lands (e.g. after importing
+      // an Anki deck), re-estimating with the 2.5s cap would drop those cards from the
+      // plan. Using the cached load is what makes newly added flashcards actually show
+      // up in Today's Path on the re-injection rebuild.
+      const recallLoad = load.data
+        ? toRecallLoadInput(load.data)
+        : await estimateRecallLoad(service);
       return authority.buildTodaysPath({
         recallLoad,
         candidateLessons: buildCandidateLessons(),

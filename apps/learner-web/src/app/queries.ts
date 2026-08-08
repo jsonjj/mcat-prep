@@ -46,6 +46,17 @@ export const queryClient = new QueryClient({
       retry: (failureCount, error) => failureCount < 3 && isUnauthenticatedError(error),
       retryDelay: (attempt) => Math.min(300 * 2 ** attempt, 1500),
     },
+    mutations: {
+      // Same session-race tolerance as reads. A state-changing write (rebuild the
+      // plan, set the daily budget, record an activity) that loses the bootstrap race
+      // gets a transient 401 — and mutations do NOT retry by default, so the write
+      // just failed: a budget change or deck import silently never re-planned the day.
+      // A 401 means the request was rejected BEFORE doing anything, so re-issuing it
+      // once the session lands is safe (no double-write). Only unauthorized errors
+      // retry; every other failure still surfaces immediately.
+      retry: (failureCount, error) => failureCount < 3 && isUnauthenticatedError(error),
+      retryDelay: (attempt) => Math.min(300 * 2 ** attempt, 1500),
+    },
   },
 });
 

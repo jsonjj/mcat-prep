@@ -76,7 +76,13 @@ const strictCsp = ({ supabaseOrigin, allowWasmEval = false }: StrictCspOptions =
     "media-src 'self' blob:",
     "object-src 'none'",
     allowWasmEval ? "script-src 'self' 'wasm-unsafe-eval'" : "script-src 'self'",
-    "style-src 'self'",
+    // Allow inline styles: the app applies element/style-attribute styles (React
+    // inline `style` props and, critically, imported Anki card HTML which carries
+    // its own `style="..."` attributes). `style-src 'self'` blocked all of these,
+    // spamming CSP violations and breaking Recall card rendering. Inline STYLES
+    // cannot execute script, so this is materially different from allowing inline
+    // scripts; the landing site already uses the same allowance.
+    "style-src 'self' 'unsafe-inline'",
     "worker-src 'self' blob:",
     'upgrade-insecure-requests',
   ].join('; ');
