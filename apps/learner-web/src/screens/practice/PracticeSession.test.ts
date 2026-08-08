@@ -215,15 +215,17 @@ describe('a session shorter than the learner asked for', () => {
     expect(rendered).toContain('2 of the 8 questions you asked for');
   });
 
-  it('reports a taught gap even when the queue came back full', async () => {
-    // Reachable: the taught-set gate drops science units only, so CARS can fill
-    // every requested slot and leave `shortfall` at zero with every science
-    // question the learner expected still missing.
+  it('does not nag about a taught gap when the queue came back full', async () => {
+    // The taught-set gate drops science units only, so CARS can fill every slot and
+    // leave `shortfall` at zero even with a taught gap. There is nothing missing from
+    // THIS session, so the "some questions are sitting out" note is suppressed (it read
+    // as noise) — the learner just practices what they were served.
     queueData.mockReturnValue(view({ requested: 2, shortfall: 0, taughtGap: true }));
     const rendered = text(await render());
 
     expect(rendered).toContain('Stem for q-1');
-    expect(rendered).toContain('lessons you haven’t finished yet');
+    expect(rendered).not.toContain('sitting out');
+    expect(rendered).not.toContain('lessons you haven’t finished yet');
     expect(rendered).not.toContain('questions you asked for');
   });
 

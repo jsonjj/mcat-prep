@@ -4077,6 +4077,14 @@ body {
      fills the widened shell. */
   max-width: none;
 }
+/* The Practice SESSION (single-column question/passage flow) shares `.mc-practice`
+   with the two-column dashboard, so it inherits the widened shell — but a reading
+   flow shouldn't span the full ~1280px. Cap it to a comfortable reading measure and
+   centre it, so the passage box hugs its text instead of stretching edge to edge. */
+.mc-practice.mc-study {
+  max-width: 820px;
+  margin-inline: auto;
+}
 /* Two EQUAL-width Practice columns: the live Practice-questions card (teal accent)
    beside the presentational Practice-test dashboard (warm-amber accent). They stretch
    to a shared height (as in the mockup) and stack into one column on narrow screens. */

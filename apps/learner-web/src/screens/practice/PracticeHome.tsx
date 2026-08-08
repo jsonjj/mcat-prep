@@ -20,6 +20,10 @@ const MIN_QUESTIONS = 1;
 const MAX_QUESTIONS = 30;
 const DEFAULT_QUESTIONS = 10;
 const WEAKEST_ROWS = 3;
+// Practice tests unlock after this many COMPLETED lessons (mirrors the planner's
+// TODAYS_PATH_CONFIG.practiceUnlockLessons). Named in the locked state so "when can I
+// test?" has a concrete answer instead of the vague "after your first checkpoint".
+const PRACTICE_TEST_UNLOCK_LESSONS = 3;
 
 const clampCount = (n: number): number =>
   Math.max(MIN_QUESTIONS, Math.min(MAX_QUESTIONS, Math.round(n)));
@@ -29,7 +33,8 @@ const LESSON_TITLE: Record<string, string> = (() => {
   const map: Record<string, string> = {};
   for (const rg of ATLAS_REGION_GROUPS) for (const l of rg.lessons) map[l.lesson_id] = l.title;
   for (const phase of CURRICULUM_PHASES)
-    for (const mod of phase.modules) for (const lesson of mod.lessons) map[lesson.id] = lesson.shortTitle;
+    for (const mod of phase.modules)
+      for (const lesson of mod.lessons) map[lesson.id] = lesson.shortTitle;
   return map;
 })();
 
@@ -129,7 +134,9 @@ export function PracticeHome() {
         <h1 className="mc-h1">Practice</h1>
       </header>
 
-      <div className={`mc-practice__cols${PRACTICE_TEST_ENABLED ? '' : ' mc-practice__cols--single'}`}>
+      <div
+        className={`mc-practice__cols${PRACTICE_TEST_ENABLED ? '' : ' mc-practice__cols--single'}`}
+      >
         {/* LEFT — Practice questions. Fully functional: real mastery data + real
             navigation (count stepper → session, weakest rings → curriculum). */}
         <Card elevated className="mc-practice__card mc-practice__card--questions">
@@ -212,7 +219,11 @@ export function PracticeHome() {
                   <div className="mc-weakest__rings mc-weakest__rings--ghost" aria-hidden="true">
                     {[0, 1, 2].map((i) => (
                       <div key={i} className="mc-weakest__ghost">
-                        <svg className="mc-ring mc-ring--ghost" viewBox="0 0 100 100" aria-hidden="true">
+                        <svg
+                          className="mc-ring mc-ring--ghost"
+                          viewBox="0 0 100 100"
+                          aria-hidden="true"
+                        >
                           <circle
                             className="mc-ring__track mc-ring__track--ghost"
                             cx="50"
@@ -260,98 +271,106 @@ export function PracticeHome() {
             summary when one exists, or its honest empty states until the first
             sitting. See app/capabilities.ts + docs/practice-test-prod.md. */}
         {PRACTICE_TEST_ENABLED ? (
-        <Card elevated className="mc-practice__card mc-practice__card--test">
-          <Stack gap={4}>
-            <div className="mc-testdash__head">
-              <Eyebrow>Practice test</Eyebrow>
-              <h2 className="mc-h3">Practice Test</h2>
-              <p className="mc-muted mc-testdash__sub">
-                {dueTest ? `about ${dueTest.estimatedMinutes} min · scored` : 'scored · length adapts'}
-              </p>
-            </div>
+          <Card elevated className="mc-practice__card mc-practice__card--test">
+            <Stack gap={4}>
+              <div className="mc-testdash__head">
+                <Eyebrow>Practice test</Eyebrow>
+                <h2 className="mc-h3">Practice Test</h2>
+                <p className="mc-muted mc-testdash__sub">
+                  {dueTest
+                    ? `about ${dueTest.estimatedMinutes} min · scored`
+                    : 'scored · length adapts'}
+                </p>
+              </div>
 
-            <hr className="mc-practice__rule" />
+              <hr className="mc-practice__rule" />
 
-            <div className="mc-testdash__grid">
-              <section className="mc-testdash__section mc-testdash__trends">
-                <h3 className="mc-label">Improvement over time</h3>
+              <div className="mc-testdash__grid">
+                <section className="mc-testdash__section mc-testdash__trends">
+                  <h3 className="mc-label">Improvement over time</h3>
+                  {dashboard ? (
+                    <TrendChart pastTests={dashboard.pastTests} />
+                  ) : (
+                    <div
+                      className="mc-emptyframe mc-emptyframe--chart"
+                      role="img"
+                      aria-label="No section trends yet"
+                    >
+                      <p className="mc-emptyframe__note mc-muted">
+                        Your section trends will appear here after your first checkpoint.
+                      </p>
+                    </div>
+                  )}
+                </section>
+
+                <div className="mc-testdash__side">
+                  <section className="mc-testdash__stat">
+                    <h3 className="mc-label">Readiness</h3>
+                    {dashboard ? (
+                      <ReadinessPill label={dashboard.readinessLabel} />
+                    ) : (
+                      <p className="mc-testdash__empty mc-muted">
+                        Available after your first test.
+                      </p>
+                    )}
+                  </section>
+                  <section className="mc-testdash__stat">
+                    <h3 className="mc-label">Estimated range</h3>
+                    {dashboard ? (
+                      <EstimatedRange range={dashboard.estimatedScore} />
+                    ) : (
+                      <p className="mc-testdash__empty mc-muted">
+                        Available after your first test.
+                      </p>
+                    )}
+                  </section>
+                </div>
+              </div>
+
+              <section className="mc-testdash__section">
+                <h3 className="mc-label">Past tests</h3>
                 {dashboard ? (
-                  <TrendChart pastTests={dashboard.pastTests} />
+                  <PastTestsStrip pastTests={dashboard.pastTests} />
                 ) : (
-                  <div
-                    className="mc-emptyframe mc-emptyframe--chart"
-                    role="img"
-                    aria-label="No section trends yet"
-                  >
-                    <p className="mc-emptyframe__note mc-muted">
-                      Your section trends will appear here after your first checkpoint.
-                    </p>
+                  <div className="mc-emptyframe mc-emptyframe--strip">
+                    <p className="mc-emptyframe__note mc-muted">No tests yet.</p>
                   </div>
                 )}
               </section>
 
-              <div className="mc-testdash__side">
-                <section className="mc-testdash__stat">
-                  <h3 className="mc-label">Readiness</h3>
-                  {dashboard ? (
-                    <ReadinessPill label={dashboard.readinessLabel} />
-                  ) : (
-                    <p className="mc-testdash__empty mc-muted">Available after your first test.</p>
-                  )}
-                </section>
-                <section className="mc-testdash__stat">
-                  <h3 className="mc-label">Estimated range</h3>
-                  {dashboard ? (
-                    <EstimatedRange range={dashboard.estimatedScore} />
-                  ) : (
-                    <p className="mc-testdash__empty mc-muted">Available after your first test.</p>
-                  )}
-                </section>
-              </div>
-            </div>
-
-            <section className="mc-testdash__section">
-              <h3 className="mc-label">Past tests</h3>
-              {dashboard ? (
-                <PastTestsStrip pastTests={dashboard.pastTests} />
+              {dueTest ? (
+                <button
+                  type="button"
+                  className="mc-teststart mc-teststart--ready"
+                  onClick={() => launch(dueTest)}
+                  aria-label={`Start practice test — about ${dueTest.estimatedMinutes} minutes`}
+                >
+                  <span className="mc-teststart__main">
+                    <IconClock className="mc-teststart__icon" />
+                    <span className="mc-teststart__label">Start test</span>
+                  </span>
+                  <span className="mc-teststart__soon">&#8776; {dueTest.estimatedMinutes} min</span>
+                </button>
               ) : (
-                <div className="mc-emptyframe mc-emptyframe--strip">
-                  <p className="mc-emptyframe__note mc-muted">No tests yet.</p>
-                </div>
+                <button
+                  type="button"
+                  className="mc-teststart"
+                  disabled
+                  aria-label="No practice test due yet"
+                >
+                  <span className="mc-teststart__main">
+                    <IconClock className="mc-teststart__icon" />
+                    <span className="mc-teststart__label">Start test</span>
+                  </span>
+                  <span className="mc-teststart__soon">
+                    {dashboard
+                      ? 'next one on your plan'
+                      : `after ${PRACTICE_TEST_UNLOCK_LESSONS} completed lessons`}
+                  </span>
+                </button>
               )}
-            </section>
-
-            {dueTest ? (
-              <button
-                type="button"
-                className="mc-teststart mc-teststart--ready"
-                onClick={() => launch(dueTest)}
-                aria-label={`Start practice test — about ${dueTest.estimatedMinutes} minutes`}
-              >
-                <span className="mc-teststart__main">
-                  <IconClock className="mc-teststart__icon" />
-                  <span className="mc-teststart__label">Start test</span>
-                </span>
-                <span className="mc-teststart__soon">&#8776; {dueTest.estimatedMinutes} min</span>
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="mc-teststart"
-                disabled
-                aria-label="No practice test due yet"
-              >
-                <span className="mc-teststart__main">
-                  <IconClock className="mc-teststart__icon" />
-                  <span className="mc-teststart__label">Start test</span>
-                </span>
-                <span className="mc-teststart__soon">
-                  {dashboard ? 'next one on your plan' : 'after your first checkpoint'}
-                </span>
-              </button>
-            )}
-          </Stack>
-        </Card>
+            </Stack>
+          </Card>
         ) : null}
       </div>
     </div>
@@ -424,14 +443,7 @@ function TrendChart({ pastTests }: { pastTests: readonly PastPracticeTest[] }) {
         aria-label={`Section percent-correct across ${n} past test${n === 1 ? '' : 's'}`}
       >
         {/* A soft tinted panel + hairline frame so the chart reads as its own surface. */}
-        <rect
-          className="mc-trend__plot"
-          x={ml}
-          y={mt}
-          width={plotW}
-          height={plotH}
-          rx={10}
-        />
+        <rect className="mc-trend__plot" x={ml} y={mt} width={plotW} height={plotH} rx={10} />
         {gridlines.map((g) => (
           <g key={g}>
             {/* 0% / 100% ride the frame; only the interior lines are drawn. */}

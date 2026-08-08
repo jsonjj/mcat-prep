@@ -258,9 +258,12 @@ export function PracticeSession() {
         >
           <span style={{ width: `${((index + 1) / sequence.length) * 100}%` }} />
         </div>
-        {notices.length > 0 ? (
+        {notices.some((n) => n !== 'taught-gap') ? (
           <p className="mc-muted mc-fineprint">
-            {notices.map((notice) => noticeText(notice, delivered, requested)).join(' ')}
+            {notices
+              .filter((n) => n !== 'taught-gap')
+              .map((notice) => noticeText(notice, delivered, requested))
+              .join(' ')}
           </p>
         ) : null}
       </div>
