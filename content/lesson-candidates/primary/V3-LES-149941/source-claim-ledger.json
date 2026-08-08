@@ -1,0 +1,260 @@
+{
+  "artifact_type": "SOURCE_CLAIM_LEDGER",
+  "artifact_id": "V3-SCLD-149941",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT_TRACE_ONLY",
+  "canonical_lesson_binding": {
+    "lesson_id": "V3-LES-149941",
+    "grouping_id": "V3-CL-149941",
+    "ordered_kc_ids": [
+      "V3-KC-149607",
+      "V3-KC-969899",
+      "V3-KC-060896",
+      "V3-KC-241449"
+    ]
+  },
+  "authority_boundary": {
+    "source_ids": [
+      "AAMC-2020",
+      "AAMC-2020-MCAT-CONTENT"
+    ],
+    "source_classes": [
+      "PUBLIC_PRIMARY_RESEARCH"
+    ],
+    "source_anchor_ids": [
+      "PS-SA-AAMC-7C"
+    ],
+    "present_day_authority_refreshed": false,
+    "source_use_status": "PERMITTED_FOR_BOUNDED_INTERNAL_AUTHORING",
+    "human_rights_clearance_claimed": false,
+    "learner_validation_claimed": false
+  },
+  "source_trace_governance": {
+    "packet_sha256": "f9ad0a36c210b9dc8843d07ed870b097deb05cf4312152ccf553df648786a44d",
+    "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+    "permitted_use": [
+      "DERIVED_SCOPE_METADATA",
+      "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+      "INTERNAL_HUMAN_REVIEW"
+    ],
+    "prohibited_use": [
+      "RAW_SOURCE_TEXT",
+      "QUOTATION",
+      "PASSAGE_REPRODUCTION",
+      "FIGURE_REPRODUCTION",
+      "PROPRIETARY_ITEM_REUSE",
+      "PRIVATE_COMPARISON_CONTENT"
+    ],
+    "expressive_copy_flag": false
+  },
+  "source_records": [
+    {
+      "source_record_id": "149941-V3-SRC-100147",
+      "source_occurrence_id": "V3-SRC-100147",
+      "occurrence_kind": "AAMC_TEACHABLE_TOPIC",
+      "source_id": "AAMC-2020",
+      "source_class": "PUBLIC_PRIMARY_RESEARCH",
+      "official_topic": "Observational Learning",
+      "printed_pages": [
+        91
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-7C"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "149941-V3-SRC-200091",
+      "source_occurrence_id": "V3-SRC-200091",
+      "occurrence_kind": "AAMC_SOURCE_ANCHOR",
+      "source_id": "AAMC-2020-MCAT-CONTENT",
+      "source_class": "PUBLIC_PRIMARY_RESEARCH",
+      "official_topic": null,
+      "printed_pages": [
+        90,
+        91
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-7C"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "149941-V3-SRC-100148",
+      "source_occurrence_id": "V3-SRC-100148",
+      "occurrence_kind": "AAMC_TEACHABLE_TOPIC",
+      "source_id": "AAMC-2020",
+      "source_class": "PUBLIC_PRIMARY_RESEARCH",
+      "official_topic": "Theories of Attitude and Behavior Change",
+      "printed_pages": [
+        91
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-7C"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    }
+  ],
+  "source_claims": [
+    {
+      "claim_id": "MOD-CLAIM-SCOPE",
+      "target_kc_id": "V3-KC-149607",
+      "authorial_claim": "The learner can explain observational learning through modeled behavior, vicarious emotional and consequence information, and introductory brain-process evidence including mirror neurons while explicitly avoiding a claim that any one mechanism fully explains observation, emotion, or imitation.",
+      "scope_in_refs": [
+        "V3-KC-149607:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-149607:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-7C"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100147",
+        "V3-SRC-200091"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600583",
+        "V3-MAP-601142"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "OBS-CLAIM-SCOPE",
+      "target_kc_id": "V3-KC-969899",
+      "authorial_claim": "The learner can use model characteristics, observed rewards or costs, and vicarious cognitive or emotional processes to explain or predict an individual’s behavior without crossing into behavior-change program design.",
+      "scope_in_refs": [
+        "V3-KC-969899:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-969899:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-7C"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100147",
+        "V3-SRC-200091"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600088",
+        "V3-MAP-601143"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "ELM-CLAIM-SCOPE",
+      "target_kc_id": "V3-KC-060896",
+      "authorial_claim": "The learner can apply and contrast the elaboration likelihood model and social cognitive theory to predict attitude or behavior change from message processing, self-efficacy, modeled behavior, and person-behavior-environment relations without expanding into a comprehensive taxonomy.",
+      "scope_in_refs": [
+        "V3-KC-060896:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-060896:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-7C"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100148",
+        "V3-SRC-200091"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600532",
+        "V3-MAP-601408"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "ATT-CLAIM-SCOPE",
+      "target_kc_id": "V3-KC-241449",
+      "authorial_claim": "The learner can predict attitude change by varying each of the four packet-listed factor classes—behavior, message characteristics, target characteristics, and social factors—while avoiding unlisted marketing tactics or clinical program design.",
+      "scope_in_refs": [
+        "V3-KC-241449:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-241449:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-7C"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100148",
+        "V3-SRC-200091"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600533",
+        "V3-MAP-601450"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    }
+  ],
+  "canonical_context": {
+    "placements": {
+      "phase_ids": [
+        "V3-PHS-280641",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-938420",
+        "V3-MOD-741509"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 47,
+          "relation_ids": [
+            "R14-PL-581402-047"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 47,
+          "relation_ids": [
+            "R14-PL-904137-047"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-315978",
+          "position": 10,
+          "relation_ids": [
+            "R14-PL-315978-010"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-149941",
+      "revisit_relation_ids": [
+        "R14-RV-149941"
+      ]
+    },
+    "hard_prerequisites": [],
+    "attachment_relation_ids": [
+      "R14-CAP-262807",
+      "R14-FD-149941",
+      "R14-FD-225658"
+    ],
+    "route_scope_code": "STANDARD_ONLY"
+  },
+  "lineage_and_limits": {
+    "open_hold_ids": [
+      "V3-HOLD-110001",
+      "V3-HOLD-110003",
+      "V3-HOLD-110005",
+      "V3-HOLD-110008",
+      "V3-HOLD-110009"
+    ],
+    "nonclaims": [
+      "No present-day AAMC authority refresh or current endorsement is claimed.",
+      "The lesson boundary, transfer, remediation, and sequence are not learner-validated.",
+      "Hard-edge necessity, representation readiness, and sequence remain provisional.",
+      "Knowledge-type assignments are canonical but not human-ratified or learner-validated.",
+      "No adaptive bypass or numeric threshold is calibrated or authorized."
+    ]
+  }
+}

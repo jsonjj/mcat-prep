@@ -1,0 +1,398 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes; an unresolved fresh re-entry returns control without exit credit.",
+  "items": [
+    {
+      "prompt_key": "APR_ENTRY",
+      "title": "Starting check: identify the approach",
+      "prompt": "A model explains a pattern using genetic vulnerability, learned threat expectations, and ongoing housing instability. Which approach is represented?",
+      "response_type": "single_select",
+      "options": [
+        "Biomedical approach only",
+        "Biopsychosocial approach",
+        "Classification without any explanatory model",
+        "A rate estimate"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "APR_GUIDED",
+      "title": "Guided practice: purpose of classification",
+      "prompt": "Which is a defensible introductory purpose of psychological-disorder classification?",
+      "response_type": "single_select",
+      "options": [
+        "Prove one complete cause for every classified person.",
+        "Replace an individual assessment with a family label.",
+        "Define a person’s identity permanently.",
+        "Organize patterns for communication and research."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "APR_LIGHT",
+      "title": "Less help: read prevalence",
+      "prompt": "A survey reports that 80 of 4,000 sampled adults meet its stated case definition during one year. What is the one-year prevalence in that sample?",
+      "response_type": "single_select",
+      "options": [
+        "2%",
+        "0.2%",
+        "20%",
+        "80%"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "APR_SOLO",
+      "title": "On your own: compare matched rates",
+      "prompt": "Study A finds 120 cases among 6,000 people; Study B finds 90 among 3,000 using the same interval and case definition. Which sample has the higher proportion?",
+      "response_type": "single_select",
+      "options": [
+        "Study A",
+        "They are equal",
+        "Study B",
+        "No proportion can be calculated"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "APR_NEAR",
+      "title": "Near exit: incidence versus prevalence",
+      "prompt": "A cohort excludes existing cases at baseline and records newly emerging cases during the next 12 months. Which type of measure is described?",
+      "response_type": "single_select",
+      "options": [
+        "Point prevalence",
+        "Period prevalence",
+        "Incidence",
+        "A classification-validity estimate"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "APR_CHANGED",
+      "title": "Changed exit: audit a rate comparison",
+      "prompt": "Two reports show 4% and 7%, but one uses lifetime self-report and the other uses clinician-rated cases during one month. What is the best interpretation?",
+      "response_type": "single_select",
+      "options": [
+        "The percentages are not directly comparable.",
+        "The 7% report proves the population has greater biological risk.",
+        "The 4% report must contain a calculation error.",
+        "The percentages can be compared because both use a percent sign."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "APR_REPAIR_NEAR",
+      "title": "Repair: distinguish an existing-case measure",
+      "prompt": "A survey asks which residents currently meet a case definition on one specified day. Which measure is being estimated?",
+      "response_type": "single_select",
+      "options": [
+        "Incidence rate over a follow-up interval",
+        "Lifetime risk of ever developing the condition",
+        "New-case proportion after excluding baseline cases",
+        "Point prevalence in the defined population"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "APR_REENTRY_NEAR",
+      "title": "Fresh re-entry: distinguish a new-case measure",
+      "prompt": "A campus registry removes students with existing cases at enrollment and counts first-onset cases during the semester. Which measure is described?",
+      "response_type": "single_select",
+      "options": [
+        "Point prevalence at enrollment",
+        "Incidence during the semester",
+        "Period prevalence including all existing cases",
+        "A causal effect of enrollment on the condition"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "APR_REPAIR_CHANGED",
+      "title": "Repair: four fields for a rate",
+      "prompt": "Which set is required to interpret and compare a reported disorder rate?",
+      "response_type": "single_select",
+      "options": [
+        "Cases, denominator, interval, definition",
+        "Cases and a disorder-family name only",
+        "Percentage and graph color only",
+        "Sample size and one causal explanation"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "APR_REENTRY_CHANGED",
+      "title": "Fresh re-entry: compare new-case data",
+      "prompt": "Cohort X records 30 new cases among 3,000 at-risk people; Cohort Y records 24 among 1,200 over the same year with the same definition. Which has higher incidence proportion?",
+      "response_type": "single_select",
+      "options": [
+        "Cohort X",
+        "They are equal",
+        "Cohort Y",
+        "Neither, because incidence never uses a denominator"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAM_ENTRY",
+      "title": "Starting check: obsession and compulsion",
+      "prompt": "A fictional vignette describes intrusive contamination thoughts and repeated washing used to reduce the resulting distress. Which introductory family is the closest match?",
+      "response_type": "single_select",
+      "options": [
+        "Anxiety family",
+        "Obsessive-compulsive family",
+        "Dissociative family",
+        "Personality-disorder family"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAM_GUIDED",
+      "title": "Guided practice: event linkage",
+      "prompt": "After a severe accident, a fictional character has recurring event-related intrusions and avoids reminders. Which family best organizes the stated linkage?",
+      "response_type": "single_select",
+      "options": [
+        "Somatic-symptom family",
+        "Schizophrenia family",
+        "Personality-disorder family",
+        "Trauma- and stressor-related family"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAM_LIGHT",
+      "title": "Less help: physical-symptom distress",
+      "prompt": "A fictional case reports persistent physical symptoms plus extensive distress and repeated health-related checking. The prompt does not say the symptoms are fabricated. Which family is closest?",
+      "response_type": "single_select",
+      "options": [
+        "Dissociative family",
+        "Bipolar family",
+        "Schizophrenia family",
+        "Somatic-symptom family"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAM_SOLO",
+      "title": "On your own: elevated-energy episode",
+      "prompt": "A fictional character has a distinct period of unusually elevated mood, markedly increased activity, and little perceived need for sleep. Which family is closest?",
+      "response_type": "single_select",
+      "options": [
+        "Depressive family",
+        "Bipolar family",
+        "Anxiety family",
+        "Dissociative family"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAM_NEAR",
+      "title": "Near exit: psychosis and disorganization",
+      "prompt": "A fictional presentation centers on hallucination-like experiences, fixed false beliefs, and disorganized speech. Which introductory family is closest?",
+      "response_type": "single_select",
+      "options": [
+        "Dissociative family",
+        "Depressive family",
+        "Schizophrenia family",
+        "Personality-disorder family"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAM_CHANGED",
+      "title": "Changed exit: compare two records",
+      "prompt": "Record A centers on gaps in autobiographical memory and disrupted identity continuity. Record B centers on an enduring inflexible interpersonal pattern across settings. Which pairing is correct?",
+      "response_type": "single_select",
+      "options": [
+        "A: dissociative; B: personality-disorder",
+        "A: schizophrenia; B: trauma/stressor",
+        "A: depressive; B: anxiety",
+        "A: somatic-symptom; B: bipolar"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAM_REPAIR_NEAR",
+      "title": "Repair: choose the organizing feature",
+      "prompt": "Which feature most specifically distinguishes a depressive-family presentation in this introductory matrix?",
+      "response_type": "single_select",
+      "options": [
+        "Intrusive thoughts followed by repetitive rituals",
+        "A distinct elevated-energy mood episode",
+        "Sustained low mood or loss of interest",
+        "Disruption of identity continuity"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAM_REENTRY_NEAR",
+      "title": "Fresh re-entry: depressive pattern",
+      "prompt": "A fictional vignette emphasizes persistent low mood and markedly reduced interest in previously valued activities. Which family is closest?",
+      "response_type": "single_select",
+      "options": [
+        "Depressive family",
+        "Bipolar family",
+        "Anxiety family",
+        "Somatic-symptom family"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAM_REPAIR_CHANGED",
+      "title": "Repair: separate worry from compulsion",
+      "prompt": "Which contrast best separates anxiety-family worry from an obsessive-compulsive pattern?",
+      "response_type": "single_select",
+      "options": [
+        "Low mood versus elevated-energy episode",
+        "Psychosis versus identity disruption",
+        "Physical symptom distress versus trauma linkage",
+        "Broad fear or worry versus obsession-linked ritual"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAM_REENTRY_CHANGED",
+      "title": "Fresh re-entry: anxiety pattern",
+      "prompt": "A fictional case centers on excessive worry across several ordinary domains, with no rituals, trauma linkage, psychosis, or mood elevation stated. Which family is closest?",
+      "response_type": "single_select",
+      "options": [
+        "Obsessive-compulsive family",
+        "Anxiety family",
+        "Trauma- and stressor-related family",
+        "Bipolar family"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BIO_ENTRY",
+      "title": "Starting check: bounded evidence claim",
+      "prompt": "A group study finds a dopamine-signaling difference associated with schizophrenia. Which statement is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "The measure diagnoses every participant with certainty.",
+        "Dopamine signaling may contribute to the disorder.",
+        "One transmitter completely explains every presentation.",
+        "Biological evidence is irrelevant to schizophrenia."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BIO_GUIDED",
+      "title": "Guided practice: Parkinson’s mechanism",
+      "prompt": "Degeneration reduces dopamine-producing neurons in the substantia nigra. Which functional prediction is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Autobiographical identity must split.",
+        "Every memory trace is immediately erased.",
+        "A clinical diagnosis is proven from this sentence alone.",
+        "Movement regulation is disrupted."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BIO_LIGHT",
+      "title": "Less help: Alzheimer’s memory context",
+      "prompt": "Which pairing is most consistent with introductory Alzheimer’s biological evidence?",
+      "response_type": "single_select",
+      "options": [
+        "Progressive neurodegeneration with memory decline",
+        "Stable lifelong personality style with no neural change",
+        "Brief worry caused only by one upcoming event",
+        "Dopamine-neuron loss limited to movement circuits only"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BIO_SOLO",
+      "title": "On your own: depression evidence limit",
+      "prompt": "A depression study reports differences in stress-response and monoamine-related systems at the group level. Which conclusion is warranted?",
+      "response_type": "single_select",
+      "options": [
+        "One chemical deficit diagnoses each individual.",
+        "Social and psychological variables cannot matter.",
+        "Multiple biological systems may contribute.",
+        "The findings prove one treatment works for everyone."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BIO_NEAR",
+      "title": "Near exit: identify the strongest claim",
+      "prompt": "Researchers observe a neural-circuit difference more often in a disorder group than in controls, with substantial overlap between groups. What is the strongest claim?",
+      "response_type": "single_select",
+      "options": [
+        "The circuit measure perfectly classifies every person.",
+        "The circuit difference is the only possible cause.",
+        "A group-level circuit association",
+        "The observation has no scientific relevance."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BIO_CHANGED",
+      "title": "Changed exit: match four evidence records",
+      "prompt": "Which evidence-to-disorder pairing is most direct at introductory depth?",
+      "response_type": "single_select",
+      "options": [
+        "Nigral dopamine-neuron loss → Parkinson’s",
+        "Amyloid and tau pathology → uncomplicated temporary worry",
+        "Movement-circuit dopamine loss → dissociative family",
+        "One monoamine measure → certain depression diagnosis"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BIO_REPAIR_NEAR",
+      "title": "Repair: association is not diagnosis",
+      "prompt": "Which phrase correctly reports a group-level biological finding?",
+      "response_type": "single_select",
+      "options": [
+        "The finding proves the disorder in any individual.",
+        "The finding is the sole cause in all cases.",
+        "The finding makes context irrelevant.",
+        "The finding is associated with the disorder group."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BIO_REENTRY_NEAR",
+      "title": "Fresh re-entry: overlapping distributions",
+      "prompt": "A biomarker average differs between groups, but many values overlap. Which inference is justified?",
+      "response_type": "single_select",
+      "options": [
+        "The marker separates every individual without error.",
+        "The marker may inform a group-level mechanism.",
+        "The marker establishes one complete causal pathway.",
+        "The marker determines treatment for each person."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BIO_REPAIR_CHANGED",
+      "title": "Repair: disorder–mechanism map",
+      "prompt": "Which introductory map is accurate?",
+      "response_type": "single_select",
+      "options": [
+        "Alzheimer’s: neurodegeneration and memory decline",
+        "Parkinson’s: amyloid alone proves diagnosis",
+        "Schizophrenia: one transmitter explains all cases",
+        "Depression: biology excludes stress context"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BIO_REENTRY_CHANGED",
+      "title": "Fresh re-entry: compare mechanisms",
+      "prompt": "Record A describes progressive memory decline with neurodegenerative pathology. Record B describes loss of substantia nigra dopamine neurons with movement effects. Which pairing fits?",
+      "response_type": "single_select",
+      "options": [
+        "A: Parkinson’s; B: Alzheimer’s",
+        "A: depression; B: schizophrenia",
+        "A: Alzheimer’s; B: Parkinson’s",
+        "A: anxiety; B: dissociation"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    }
+  ]
+}

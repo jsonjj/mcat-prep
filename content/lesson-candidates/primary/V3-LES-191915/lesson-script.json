@@ -1,0 +1,3582 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-191915",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "6b4fc31b69ec7333a42e7289b4642a898c7227b56d11b0d2f90cb9884ba8eedc",
+  "payload": {
+    "lesson_id": "V3-LES-191915",
+    "grouping_id": "V3-CL-191915",
+    "ordered_kc_ids": [
+      "V3-KC-304296",
+      "V3-KC-028740",
+      "V3-KC-444504"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-304296",
+      "V3-KC-028740",
+      "V3-KC-444504"
+    ],
+    "throughline": "Account for reaction energy, combine enthalpy and entropy to determine direction, then separate equilibrium position from reaction rate.",
+    "curriculum_context": {
+      "canonical_title": "Chemical free energy and bioenergetics",
+      "phase_ids": [
+        "V3-PHS-280641",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-760348",
+        "V3-MOD-273816"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 40,
+          "relation_ids": [
+            "R14-PL-581402-040"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 40,
+          "relation_ids": [
+            "R14-PL-904137-040"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-749320",
+          "position": 24,
+          "relation_ids": [
+            "R14-PL-749320-024"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-191915",
+      "revisit_relation_ids": [
+        "R14-RV-191915"
+      ],
+      "hard_prerequisites": [
+        {
+          "lesson_id": "V3-LES-067950",
+          "relation_ids": [
+            "V3-EDG-536219"
+          ],
+          "source_kc_ids": [
+            "V3-KC-318276",
+            "V3-KC-891246",
+            "V3-KC-360631",
+            "V3-KC-365979"
+          ],
+          "taught_at_sequence_position": 44,
+          "checked_at_activity_ids": [
+            "ENTH-ACT-ENTRY",
+            "GIBB-ACT-ENTRY"
+          ],
+          "failed_check_handoff_node_ids": [
+            "ENTH-NODE-HANDOFF",
+            "GIBB-NODE-HANDOFF"
+          ],
+          "failed_check_predicate": "HARD_PREREQUISITE_CHECK_NOT_PASSED",
+          "planner_behavior": "BLOCK_CURRENT_PROGRESSION_AND_RETURN_TO_CANONICAL_PREREQUISITE",
+          "prerequisite_support_route_authored": false
+        },
+        {
+          "lesson_id": "V3-LES-315313",
+          "relation_ids": [
+            "V3-EDG-163436",
+            "V3-EDG-472444",
+            "V3-EDG-760962"
+          ],
+          "source_kc_ids": [
+            "V3-KC-947249",
+            "V3-KC-980903",
+            "V3-KC-573055",
+            "V3-KC-538252",
+            "V3-KC-714060"
+          ],
+          "taught_at_sequence_position": 13,
+          "checked_at_activity_ids": [
+            "EQDG-ACT-ENTRY"
+          ],
+          "failed_check_handoff_node_ids": [
+            "EQDG-NODE-HANDOFF"
+          ],
+          "failed_check_predicate": "HARD_PREREQUISITE_CHECK_NOT_PASSED",
+          "planner_behavior": "BLOCK_CURRENT_PROGRESSION_AND_RETURN_TO_CANONICAL_PREREQUISITE",
+          "prerequisite_support_route_authored": false
+        }
+      ],
+      "route_scope_code": "STANDARD_ONLY",
+      "applicable_routes": [
+        "STANDARD"
+      ],
+      "item_level_dok_labels_authored": false,
+      "mastery_eligibility_claimed": false
+    },
+    "nodes": [
+      {
+        "node_id": "ENTH-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Low-stakes readiness check: activate prior work on thermodynamic systems, state functions, and First-Law energy accounting before the first target demand.",
+          "An unresolved readiness check returns control to the canonical prerequisite lesson; it cannot satisfy an exit or select another authored route."
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "activity_ids": [
+          "ENTH-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "ENTH-CP-ENTRY",
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "ENTH-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Objective: Compute a reaction enthalpy by preserving signs and stoichiometric scaling across thermochemical equations or by inventorying bonds broken and formed.",
+          "Use the prior thermodynamic-system and First-Law work from the prerequisite sequence: energy is accounted for at a stated system boundary, and enthalpy is a state function."
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ENTH-CP-ORIENTATION",
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "ENTH-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "For a thermochemical equation, a negative reaction enthalpy means the written reaction releases heat at constant pressure; a positive value means it absorbs heat.",
+          "Hess’s law works because enthalpy depends on initial and final states. Reverse an equation and reverse its enthalpy sign; multiply every coefficient and multiply its enthalpy by the same factor.",
+          "When only average bond energies are supplied, estimate reaction enthalpy as the energy required to break reactant bonds minus the energy released when product bonds form."
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ENTH-CP-EXPLANATION",
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "ENTH-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Treat reaction enthalpy as an energy ledger: transform whole equations, cancel intermediates, and total the signed entries. For bond data, make two explicit inventories—broken and formed—before subtracting."
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ENTH-CP-MODEL",
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "ENTH-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "I first inspect the data type. Complete thermochemical equations call for a Hess combination; a list of average bond energies calls for a bond inventory. I do not mix the two methods or use activation energy as reaction enthalpy."
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ENTH-CP-THINK",
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "ENTH-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Suppose A → B has ΔH = +32 kJ/mol and B → C has ΔH = −50 kJ/mol. Adding the equations cancels B, so A → C has ΔH = −18 kJ/mol.",
+          "If the target instead required C → A, I would reverse the net equation and report +18 kJ/mol. The direction of the written reaction controls the sign."
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ENTH-CP-WORKED",
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "ENTH-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided attempt: identify what changed in the written thermochemical equation before touching the enthalpy value."
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "activity_ids": [
+          "ENTH-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "ENTH-CP-GUIDED",
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "ENTH-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less support: transform and combine two equations, keeping a signed ledger."
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "activity_ids": [
+          "ENTH-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "ENTH-CP-LIGHT",
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "ENTH-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Independent practice: choose the appropriate enthalpy method from the supplied data."
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "activity_ids": [
+          "ENTH-ACT-SOLO"
+        ],
+        "checkpoint_ref": "ENTH-CP-SOLO",
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "ENTH-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: activation energy describes the barrier along a pathway, not the energy difference between products and reactants. A catalyst can lower that barrier while leaving reaction enthalpy unchanged."
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ENTH-CP-CONTRAST",
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "ENTH-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near-use exit: apply the practiced function to new values without answer-bearing support."
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "activity_ids": [
+          "ENTH-ACT-NEAR"
+        ],
+        "checkpoint_ref": "ENTH-CP-NEAR",
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "ENTH-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: preserve the knowledge component while selecting the operation in a substantively different situation."
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "activity_ids": [
+          "ENTH-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "ENTH-CP-CHANGED",
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "ENTH-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the Hess function with a cancellation ledger. Write the target species and side, reverse any equation needed to place an intermediate on the opposite side, scale all coefficients, then add only after the intermediate cancels."
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "activity_ids": [
+          "ENTH-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "ENTH-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "ENTH-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry checks only the failed near-use function with new values and an unexposed semantic family."
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "activity_ids": [
+          "ENTH-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "ENTH-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "ENTH-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the bond-energy function with two columns. Count every bond broken in reactants, count every bond formed in products, total each column, and compute broken minus formed."
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "activity_ids": [
+          "ENTH-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "ENTH-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "ENTH-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry checks only the failed changed-task function in a new context and does not reuse the exposed answer."
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "activity_ids": [
+          "ENTH-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "ENTH-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "ENTH-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Enthalpy accounting is direction-sensitive and stoichiometry-sensitive: reverse flips the sign, scaling multiplies the value, and bond estimates use broken minus formed."
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ENTH-CP-RECAP",
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "ENTH-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "This branch stops current progression and returns control for the canonical prerequisite lesson on thermodynamic systems, state functions, and First-Law energy accounting.",
+          "No target exit credit is granted on this handoff, and this STANDARD candidate does not invent a prerequisite-support route."
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ENTH-CP-HANDOFF",
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "GIBB-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Low-stakes readiness check: activate prior work on entropy, temperature, and thermodynamic-system reasoning before the first target demand.",
+          "An unresolved readiness check returns control to the canonical prerequisite lesson; it cannot satisfy an exit or select another authored route."
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "activity_ids": [
+          "GIBB-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "GIBB-CP-ENTRY",
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "GIBB-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Objective: Relate enthalpy and entropy through ΔG = ΔH − TΔS, preserve units and signs, and predict the spontaneous direction under stated conditions.",
+          "Use the prior lesson’s system boundary, temperature, and entropy-direction reasoning. This lesson combines those quantities into a free-energy criterion rather than reteaching their full foundations."
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GIBB-CP-ORIENTATION",
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "GIBB-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "At constant temperature and pressure, a negative ΔG supports the forward process as thermodynamically spontaneous under the stated conditions; a positive ΔG supports the reverse direction.",
+          "In ΔG = ΔH − TΔS, temperature is in kelvin and ΔH and TΔS must use the same energy units. Convert joules to kilojoules when needed before combining terms.",
+          "Sign pairs give a useful temperature map: ΔH < 0 and ΔS > 0 is favorable at all temperatures; ΔH > 0 and ΔS < 0 is unfavorable at all temperatures. Same-sign pairs depend on temperature."
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GIBB-CP-EXPLANATION",
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "GIBB-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Picture an enthalpy–entropy balance. The ΔH term keeps its sign; the entropy contribution enters as −TΔS and grows in magnitude as temperature rises."
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GIBB-CP-MODEL",
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "GIBB-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "I decide whether a sign-only prediction is sufficient. If the signs settle the result, I do not invent numbers. If temperature can change the result, I either calculate ΔG or find the crossover after matching units."
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GIBB-CP-THINK",
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "GIBB-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "For ΔH = +30 kJ/mol and ΔS = +120 J/(mol·K), convert ΔS to 0.120 kJ/(mol·K). At 350 K, ΔG = 30 − 350(0.120) = −12 kJ/mol.",
+          "The positive entropy term wins at this temperature, so the forward process is thermodynamically favored even though it is endothermic."
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GIBB-CP-WORKED",
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "GIBB-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided attempt: preserve the minus sign on TΔS and convert entropy units before calculating."
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "activity_ids": [
+          "GIBB-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "GIBB-CP-GUIDED",
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "GIBB-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less support: classify the sign pair before deciding whether temperature matters."
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "activity_ids": [
+          "GIBB-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "GIBB-CP-LIGHT",
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "GIBB-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Independent practice: determine a temperature condition for spontaneity."
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "activity_ids": [
+          "GIBB-ACT-SOLO"
+        ],
+        "checkpoint_ref": "GIBB-CP-SOLO",
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "GIBB-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: spontaneous does not mean rapid. ΔG describes thermodynamic direction under stated conditions; activation energy and rate constants describe how quickly the system approaches change."
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GIBB-CP-CONTRAST",
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "GIBB-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near-use exit: apply the practiced function to new values without answer-bearing support."
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "activity_ids": [
+          "GIBB-ACT-NEAR"
+        ],
+        "checkpoint_ref": "GIBB-CP-NEAR",
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "GIBB-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: preserve the knowledge component while selecting the operation in a substantively different situation."
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "activity_ids": [
+          "GIBB-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "GIBB-CP-CHANGED",
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "GIBB-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the numerical function by writing units beside every term. Convert ΔS into the energy unit used by ΔH, calculate TΔS with its sign, then subtract that signed quantity."
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "activity_ids": [
+          "GIBB-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "GIBB-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "GIBB-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry checks only the failed near-use function with new values and an unexposed semantic family."
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "activity_ids": [
+          "GIBB-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "GIBB-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "GIBB-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the temperature-regime function with a sign table. Identify whether higher temperature strengthens or weakens favorability, then solve ΔG = 0 only after ΔH and ΔS use compatible units."
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "activity_ids": [
+          "GIBB-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "GIBB-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "GIBB-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry checks only the failed changed-task function in a new context and does not reuse the exposed answer."
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "activity_ids": [
+          "GIBB-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "GIBB-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "GIBB-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Match units, evaluate ΔH − TΔS, and interpret the sign for the written direction. Temperature matters most when ΔH and ΔS share a sign."
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GIBB-CP-RECAP",
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "GIBB-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "This branch stops current progression and returns control for the canonical prerequisite lesson on entropy, temperature, and thermodynamic-system reasoning.",
+          "No target exit credit is granted on this handoff, and this STANDARD candidate does not invent a prerequisite-support route."
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GIBB-CP-HANDOFF",
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Low-stakes readiness check: activate prior work on equilibrium constants, energy profiles, and catalyst effects before the first target demand.",
+          "An unresolved readiness check returns control to the canonical prerequisite lesson; it cannot satisfy an exit or select another authored route."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [
+          "EQDG-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "EQDG-CP-ENTRY",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Objective: Use ΔG° = −RT ln K to relate equilibrium position to standard free energy while keeping equilibrium position distinct from reaction rate.",
+          "Use the prerequisite sequence’s equilibrium constants, reaction-energy profiles, and catalyst effects. Here those ideas are coordinated with standard free energy rather than rederived."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EQDG-CP-ORIENTATION",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "At a fixed positive temperature, ΔG° = −RT ln K. If K > 1, ln K is positive and ΔG° is negative; if K < 1, ln K is negative and ΔG° is positive.",
+          "K describes the equilibrium composition for the written reaction under stated conditions. It does not report how rapidly equilibrium is reached.",
+          "A catalyst lowers activation barriers for forward and reverse pathways. It can change both rate constants while leaving their ratio—and therefore K at that temperature—unchanged."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EQDG-CP-EXPLANATION",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Use a two-axis model: the vertical reactant-to-product free-energy difference sets equilibrium position, while the pathway barrier sets rate. A catalyst changes the barrier axis, not the endpoint difference."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EQDG-CP-MODEL",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "I ask whether the prompt changes endpoint thermodynamics or pathway kinetics. A changed K or ΔG° concerns equilibrium position; a changed activation barrier or paired rate constants concerns approach speed."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EQDG-CP-THINK",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "At a fixed temperature, K = 25 gives ln K > 0, so −RT ln K is negative. Products are favored at equilibrium for the reaction as written.",
+          "Adding a catalyst may make the equilibrium mixture appear sooner, but the same temperature and endpoint states mean the equilibrium constant is unchanged."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EQDG-CP-WORKED",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided attempt: use the sign of ln K before considering any numerical logarithm."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [
+          "EQDG-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "EQDG-CP-GUIDED",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less support: translate between K relative to one and the sign of ΔG°."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [
+          "EQDG-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "EQDG-CP-LIGHT",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Independent practice: separate a kinetic intervention from an equilibrium-position claim."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [
+          "EQDG-ACT-SOLO"
+        ],
+        "checkpoint_ref": "EQDG-CP-SOLO",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: a larger forward rate constant alone does not prove a larger equilibrium constant unless the reverse rate constant and mechanism context are also accounted for."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EQDG-CP-CONTRAST",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near-use exit: apply the practiced function to new values without answer-bearing support."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [
+          "EQDG-ACT-NEAR"
+        ],
+        "checkpoint_ref": "EQDG-CP-NEAR",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: preserve the knowledge component while selecting the operation in a substantively different situation."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [
+          "EQDG-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "EQDG-CP-CHANGED",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the K–ΔG° sign function by writing the sign of ln K first. Because R and T are positive and the equation has a leading minus sign, ΔG° has the opposite sign."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [
+          "EQDG-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "EQDG-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry checks only the failed near-use function with new values and an unexposed semantic family."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [
+          "EQDG-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "EQDG-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the position-versus-rate function by drawing fixed reactant and product endpoints, then lower only the pathway barrier. If endpoints and temperature are fixed, K and ΔG° stay fixed."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [
+          "EQDG-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "EQDG-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry checks only the failed changed-task function in a new context and does not reuse the exposed answer."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [
+          "EQDG-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "EQDG-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "K and ΔG° encode equilibrium position with opposite sign logic; activation barriers and rate constants encode speed. Catalysts change speed, not the equilibrium endpoint."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EQDG-CP-RECAP",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "This branch stops current progression and returns control for the canonical prerequisite lesson on equilibrium constants, energy profiles, and catalyst effects.",
+          "No target exit credit is granted on this handoff, and this STANDARD candidate does not invent a prerequisite-support route."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EQDG-CP-HANDOFF",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      },
+      {
+        "node_id": "EQDG-NODE-CAPSTONE-EXIT",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "The three knowledge-component recaps are complete. Return control for the required capstone attachment without granting capstone credit inside this lesson."
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EQDG-CP-CAPSTONE-EXIT",
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "ENTH-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-304296",
+        "item_binding_id": "ENTH-ITEM-ENTRY",
+        "learner_operation": "ACTIVATE_DECLARED_PREREQUISITE",
+        "authorized_next_node_ids": [
+          "ENTH-NODE-ORIENTATION",
+          "ENTH-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "ENTH-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-304296",
+        "item_binding_id": "ENTH-ITEM-GUIDED",
+        "learner_operation": "APPLY_WITH_EXPLICIT_PROCESS_CUE",
+        "authorized_next_node_ids": [
+          "ENTH-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "ENTH-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-304296",
+        "item_binding_id": "ENTH-ITEM-LIGHT",
+        "learner_operation": "APPLY_WITH_BRIEF_METHOD_REMINDER",
+        "authorized_next_node_ids": [
+          "ENTH-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "ENTH-ACT-SOLO",
+        "primary_kc_id": "V3-KC-304296",
+        "item_binding_id": "ENTH-ITEM-SOLO",
+        "learner_operation": "SELECT_AND_APPLY_WITHOUT_ANSWER_SUPPORT",
+        "authorized_next_node_ids": [
+          "ENTH-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "ENTH-ACT-NEAR",
+        "primary_kc_id": "V3-KC-304296",
+        "item_binding_id": "ENTH-ITEM-NEAR",
+        "learner_operation": "DEMONSTRATE_NEAR_USE",
+        "authorized_next_node_ids": [
+          "ENTH-NODE-CHANGED",
+          "ENTH-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "ENTH-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-304296",
+        "item_binding_id": "ENTH-ITEM-CHANGED",
+        "learner_operation": "DEMONSTRATE_CHANGED_TASK",
+        "authorized_next_node_ids": [
+          "ENTH-NODE-RECAP",
+          "ENTH-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "ENTH-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-304296",
+        "item_binding_id": "ENTH-ITEM-REPAIR-NEAR",
+        "learner_operation": "REHEARSE_REPAIRED_NEAR_FUNCTION",
+        "authorized_next_node_ids": [
+          "ENTH-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "ENTH-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-304296",
+        "item_binding_id": "ENTH-ITEM-REENTRY-NEAR",
+        "learner_operation": "RECHECK_EXACT_NEAR_FUNCTION_FRESH",
+        "authorized_next_node_ids": [
+          "ENTH-NODE-CHANGED",
+          "ENTH-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "ENTH-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-304296",
+        "item_binding_id": "ENTH-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REHEARSE_REPAIRED_CHANGED_FUNCTION",
+        "authorized_next_node_ids": [
+          "ENTH-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "ENTH-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-304296",
+        "item_binding_id": "ENTH-ITEM-REENTRY-CHANGED",
+        "learner_operation": "RECHECK_EXACT_CHANGED_FUNCTION_FRESH",
+        "authorized_next_node_ids": [
+          "ENTH-NODE-RECAP",
+          "ENTH-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "GIBB-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-028740",
+        "item_binding_id": "GIBB-ITEM-ENTRY",
+        "learner_operation": "ACTIVATE_DECLARED_PREREQUISITE",
+        "authorized_next_node_ids": [
+          "GIBB-NODE-ORIENTATION",
+          "GIBB-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "GIBB-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-028740",
+        "item_binding_id": "GIBB-ITEM-GUIDED",
+        "learner_operation": "APPLY_WITH_EXPLICIT_PROCESS_CUE",
+        "authorized_next_node_ids": [
+          "GIBB-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "GIBB-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-028740",
+        "item_binding_id": "GIBB-ITEM-LIGHT",
+        "learner_operation": "APPLY_WITH_BRIEF_METHOD_REMINDER",
+        "authorized_next_node_ids": [
+          "GIBB-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "GIBB-ACT-SOLO",
+        "primary_kc_id": "V3-KC-028740",
+        "item_binding_id": "GIBB-ITEM-SOLO",
+        "learner_operation": "SELECT_AND_APPLY_WITHOUT_ANSWER_SUPPORT",
+        "authorized_next_node_ids": [
+          "GIBB-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "GIBB-ACT-NEAR",
+        "primary_kc_id": "V3-KC-028740",
+        "item_binding_id": "GIBB-ITEM-NEAR",
+        "learner_operation": "DEMONSTRATE_NEAR_USE",
+        "authorized_next_node_ids": [
+          "GIBB-NODE-CHANGED",
+          "GIBB-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "GIBB-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-028740",
+        "item_binding_id": "GIBB-ITEM-CHANGED",
+        "learner_operation": "DEMONSTRATE_CHANGED_TASK",
+        "authorized_next_node_ids": [
+          "GIBB-NODE-RECAP",
+          "GIBB-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "GIBB-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-028740",
+        "item_binding_id": "GIBB-ITEM-REPAIR-NEAR",
+        "learner_operation": "REHEARSE_REPAIRED_NEAR_FUNCTION",
+        "authorized_next_node_ids": [
+          "GIBB-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "GIBB-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-028740",
+        "item_binding_id": "GIBB-ITEM-REENTRY-NEAR",
+        "learner_operation": "RECHECK_EXACT_NEAR_FUNCTION_FRESH",
+        "authorized_next_node_ids": [
+          "GIBB-NODE-CHANGED",
+          "GIBB-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "GIBB-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-028740",
+        "item_binding_id": "GIBB-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REHEARSE_REPAIRED_CHANGED_FUNCTION",
+        "authorized_next_node_ids": [
+          "GIBB-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "GIBB-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-028740",
+        "item_binding_id": "GIBB-ITEM-REENTRY-CHANGED",
+        "learner_operation": "RECHECK_EXACT_CHANGED_FUNCTION_FRESH",
+        "authorized_next_node_ids": [
+          "GIBB-NODE-RECAP",
+          "GIBB-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "EQDG-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-444504",
+        "item_binding_id": "EQDG-ITEM-ENTRY",
+        "learner_operation": "ACTIVATE_DECLARED_PREREQUISITE",
+        "authorized_next_node_ids": [
+          "EQDG-NODE-ORIENTATION",
+          "EQDG-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "EQDG-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-444504",
+        "item_binding_id": "EQDG-ITEM-GUIDED",
+        "learner_operation": "APPLY_WITH_EXPLICIT_PROCESS_CUE",
+        "authorized_next_node_ids": [
+          "EQDG-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "EQDG-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-444504",
+        "item_binding_id": "EQDG-ITEM-LIGHT",
+        "learner_operation": "APPLY_WITH_BRIEF_METHOD_REMINDER",
+        "authorized_next_node_ids": [
+          "EQDG-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "EQDG-ACT-SOLO",
+        "primary_kc_id": "V3-KC-444504",
+        "item_binding_id": "EQDG-ITEM-SOLO",
+        "learner_operation": "SELECT_AND_APPLY_WITHOUT_ANSWER_SUPPORT",
+        "authorized_next_node_ids": [
+          "EQDG-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "EQDG-ACT-NEAR",
+        "primary_kc_id": "V3-KC-444504",
+        "item_binding_id": "EQDG-ITEM-NEAR",
+        "learner_operation": "DEMONSTRATE_NEAR_USE",
+        "authorized_next_node_ids": [
+          "EQDG-NODE-CHANGED",
+          "EQDG-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "EQDG-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-444504",
+        "item_binding_id": "EQDG-ITEM-CHANGED",
+        "learner_operation": "DEMONSTRATE_CHANGED_TASK",
+        "authorized_next_node_ids": [
+          "EQDG-NODE-RECAP",
+          "EQDG-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "EQDG-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-444504",
+        "item_binding_id": "EQDG-ITEM-REPAIR-NEAR",
+        "learner_operation": "REHEARSE_REPAIRED_NEAR_FUNCTION",
+        "authorized_next_node_ids": [
+          "EQDG-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "EQDG-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-444504",
+        "item_binding_id": "EQDG-ITEM-REENTRY-NEAR",
+        "learner_operation": "RECHECK_EXACT_NEAR_FUNCTION_FRESH",
+        "authorized_next_node_ids": [
+          "EQDG-NODE-CHANGED",
+          "EQDG-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "EQDG-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-444504",
+        "item_binding_id": "EQDG-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REHEARSE_REPAIRED_CHANGED_FUNCTION",
+        "authorized_next_node_ids": [
+          "EQDG-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "EQDG-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-444504",
+        "item_binding_id": "EQDG-ITEM-REENTRY-CHANGED",
+        "learner_operation": "RECHECK_EXACT_CHANGED_FUNCTION_FRESH",
+        "authorized_next_node_ids": [
+          "EQDG-NODE-RECAP",
+          "EQDG-NODE-HANDOFF"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-304296",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-304296",
+        "scope_in_refs": [
+          "V3-KC-304296:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-304296:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "ENTH-CLAIM-PRIMARY",
+          "ENTH-CLAIM-BOUNDARY"
+        ],
+        "prerequisite_point_refs": [
+          "V3-EDG-536219"
+        ],
+        "entry_check_boundary_id": "ENTH-NODE-ENTRY",
+        "orientation_node_id": "ENTH-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "ENTH-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "ENTH-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "ENTH-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "ENTH-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "ENTH-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "ENTH-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "ENTH-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "ENTH-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "ENTH-NODE-NEAR",
+          "activity_ids": [
+            "ENTH-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "ENTH-NODE-CHANGED",
+          "activity_ids": [
+            "ENTH-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "ENTH-FEATURE-NEAR-FUNCTION",
+          "ENTH-FEATURE-CHANGED-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "ENTH-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "ENTH-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "ENTH-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "ENTH-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "ENTH-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "ENTH-ACT-REENTRY-NEAR",
+            "success_next_node_id": "ENTH-NODE-CHANGED",
+            "planner_handoff_node_id": "ENTH-NODE-HANDOFF"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "ENTH-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "ENTH-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "ENTH-NODE-RECAP",
+            "planner_handoff_node_id": "ENTH-NODE-HANDOFF"
+          }
+        ],
+        "representation_ids": [
+          "ENTH-REP-CORE"
+        ],
+        "accessibility_equivalent_ids": [
+          "ENTH-REP-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "ENTH-NODE-ENTRY",
+            "ENTH-NODE-RECAP"
+          ],
+          "standard": [
+            "ENTH-NODE-ENTRY",
+            "ENTH-NODE-ORIENTATION",
+            "ENTH-NODE-EXPLANATION",
+            "ENTH-NODE-MODEL",
+            "ENTH-NODE-THINK",
+            "ENTH-NODE-WORKED",
+            "ENTH-NODE-CONTRAST",
+            "ENTH-NODE-RECAP"
+          ],
+          "misconception": [
+            "ENTH-NODE-ENTRY",
+            "ENTH-NODE-CONTRAST",
+            "ENTH-NODE-REPAIR-NEAR",
+            "ENTH-NODE-REPAIR-CHANGED",
+            "ENTH-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "ENTH-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-028740",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-028740",
+        "scope_in_refs": [
+          "V3-KC-028740:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-028740:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "GIBB-CLAIM-PRIMARY",
+          "GIBB-CLAIM-BOUNDARY"
+        ],
+        "prerequisite_point_refs": [
+          "V3-EDG-536219"
+        ],
+        "entry_check_boundary_id": "GIBB-NODE-ENTRY",
+        "orientation_node_id": "GIBB-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "GIBB-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "GIBB-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "GIBB-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "GIBB-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "GIBB-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "GIBB-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "GIBB-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "GIBB-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "GIBB-NODE-NEAR",
+          "activity_ids": [
+            "GIBB-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "GIBB-NODE-CHANGED",
+          "activity_ids": [
+            "GIBB-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "GIBB-FEATURE-NEAR-FUNCTION",
+          "GIBB-FEATURE-CHANGED-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "GIBB-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "GIBB-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "GIBB-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "GIBB-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "GIBB-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "GIBB-ACT-REENTRY-NEAR",
+            "success_next_node_id": "GIBB-NODE-CHANGED",
+            "planner_handoff_node_id": "GIBB-NODE-HANDOFF"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "GIBB-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "GIBB-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "GIBB-NODE-RECAP",
+            "planner_handoff_node_id": "GIBB-NODE-HANDOFF"
+          }
+        ],
+        "representation_ids": [
+          "GIBB-REP-CORE"
+        ],
+        "accessibility_equivalent_ids": [
+          "GIBB-REP-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "GIBB-NODE-ENTRY",
+            "GIBB-NODE-RECAP"
+          ],
+          "standard": [
+            "GIBB-NODE-ENTRY",
+            "GIBB-NODE-ORIENTATION",
+            "GIBB-NODE-EXPLANATION",
+            "GIBB-NODE-MODEL",
+            "GIBB-NODE-THINK",
+            "GIBB-NODE-WORKED",
+            "GIBB-NODE-CONTRAST",
+            "GIBB-NODE-RECAP"
+          ],
+          "misconception": [
+            "GIBB-NODE-ENTRY",
+            "GIBB-NODE-CONTRAST",
+            "GIBB-NODE-REPAIR-NEAR",
+            "GIBB-NODE-REPAIR-CHANGED",
+            "GIBB-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "GIBB-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-444504",
+        "canonical_ordinal": 3,
+        "objective_ref": "objective:V3-KC-444504",
+        "scope_in_refs": [
+          "V3-KC-444504:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-444504:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "EQDG-CLAIM-PRIMARY",
+          "EQDG-CLAIM-BOUNDARY"
+        ],
+        "prerequisite_point_refs": [
+          "V3-EDG-163436",
+          "V3-EDG-472444",
+          "V3-EDG-760962"
+        ],
+        "entry_check_boundary_id": "EQDG-NODE-ENTRY",
+        "orientation_node_id": "EQDG-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "EQDG-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "EQDG-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "EQDG-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "EQDG-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "EQDG-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "EQDG-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "EQDG-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "EQDG-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "EQDG-NODE-NEAR",
+          "activity_ids": [
+            "EQDG-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "EQDG-NODE-CHANGED",
+          "activity_ids": [
+            "EQDG-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "EQDG-FEATURE-NEAR-FUNCTION",
+          "EQDG-FEATURE-CHANGED-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "EQDG-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "EQDG-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "EQDG-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "EQDG-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "EQDG-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "EQDG-ACT-REENTRY-NEAR",
+            "success_next_node_id": "EQDG-NODE-CHANGED",
+            "planner_handoff_node_id": "EQDG-NODE-HANDOFF"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "EQDG-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "EQDG-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "EQDG-NODE-RECAP",
+            "planner_handoff_node_id": "EQDG-NODE-HANDOFF"
+          }
+        ],
+        "representation_ids": [
+          "EQDG-REP-CORE"
+        ],
+        "accessibility_equivalent_ids": [
+          "EQDG-REP-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "EQDG-NODE-ENTRY",
+            "EQDG-NODE-RECAP"
+          ],
+          "standard": [
+            "EQDG-NODE-ENTRY",
+            "EQDG-NODE-ORIENTATION",
+            "EQDG-NODE-EXPLANATION",
+            "EQDG-NODE-MODEL",
+            "EQDG-NODE-THINK",
+            "EQDG-NODE-WORKED",
+            "EQDG-NODE-CONTRAST",
+            "EQDG-NODE-RECAP"
+          ],
+          "misconception": [
+            "EQDG-NODE-ENTRY",
+            "EQDG-NODE-CONTRAST",
+            "EQDG-NODE-REPAIR-NEAR",
+            "EQDG-NODE-REPAIR-CHANGED",
+            "EQDG-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "EQDG-NODE-RECAP"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "ENTH-ITEM-ENTRY",
+        "activity_id": "ENTH-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "ENTH-FAM-ENTRY",
+        "stimulus_lineage_id": "ENTH-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENTH-REP-CORE",
+        "learner_operation": "ENTH_ENTRY",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_LOW_STAKES_AND_HANDOFF_IF_PREREQUISITE_UNREADY",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ENTH_ENTRY",
+        "answer_authority_ref": "protected-items.json#ENTH-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#ENTH-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENTH-SOLUTION-ENTRY",
+        "decisive_cue_id": "ENTH-CUE-ENTRY",
+        "distractor_lineage_id": "ENTH-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "ENTH-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "ENTH-FAM-WORKED",
+        "stimulus_lineage_id": "ENTH-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENTH-REP-CORE",
+        "learner_operation": "ENTH_FOLLOW_WORKED_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:ENTH-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENTH-SOLUTION-WORKED",
+        "decisive_cue_id": "ENTH-CUE-WORKED",
+        "distractor_lineage_id": "ENTH-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "ENTH-ITEM-GUIDED",
+        "activity_id": "ENTH-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "ENTH-FAM-GUIDED",
+        "stimulus_lineage_id": "ENTH-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_PROCESS_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENTH-REP-CORE",
+        "learner_operation": "ENTH_GUIDED",
+        "hint_policy": "PROCESS_CUE_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ENTH_GUIDED",
+        "answer_authority_ref": "protected-items.json#ENTH-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#ENTH-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENTH-SOLUTION-GUIDED",
+        "decisive_cue_id": "ENTH-CUE-GUIDED",
+        "distractor_lineage_id": "ENTH-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "ENTH-ITEM-LIGHT",
+        "activity_id": "ENTH-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "ENTH-FAM-LIGHT",
+        "stimulus_lineage_id": "ENTH-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_METHOD_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENTH-REP-CORE",
+        "learner_operation": "ENTH_LIGHT",
+        "hint_policy": "BRIEF_METHOD_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ENTH_LIGHT",
+        "answer_authority_ref": "protected-items.json#ENTH-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#ENTH-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENTH-SOLUTION-LIGHT",
+        "decisive_cue_id": "ENTH-CUE-LIGHT",
+        "distractor_lineage_id": "ENTH-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "ENTH-ITEM-SOLO",
+        "activity_id": "ENTH-ACT-SOLO",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "ENTH-FAM-SOLO",
+        "stimulus_lineage_id": "ENTH-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENTH-REP-CORE",
+        "learner_operation": "ENTH_SOLO",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "ENTH_SOLO",
+        "answer_authority_ref": "protected-items.json#ENTH-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#ENTH-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENTH-SOLUTION-SOLO",
+        "decisive_cue_id": "ENTH-CUE-SOLO",
+        "distractor_lineage_id": "ENTH-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "ENTH-ITEM-NEAR",
+        "activity_id": "ENTH-ACT-NEAR",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "ENTH-FAM-NEAR",
+        "stimulus_lineage_id": "ENTH-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENTH-REP-CORE",
+        "learner_operation": "ENTH_NEAR",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ENTH_NEAR",
+        "answer_authority_ref": "protected-items.json#ENTH-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#ENTH-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENTH-SOLUTION-NEAR",
+        "decisive_cue_id": "ENTH-CUE-NEAR",
+        "distractor_lineage_id": "ENTH-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "ENTH-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ENTH-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "ENTH-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ENTH-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "ENTH-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ENTH-FEATURE-NEAR-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ENTH-ITEM-CHANGED",
+        "activity_id": "ENTH-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "ENTH-FAM-CHANGED",
+        "stimulus_lineage_id": "ENTH-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENTH-REP-CORE",
+        "learner_operation": "ENTH_CHANGED",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ENTH_CHANGED",
+        "answer_authority_ref": "protected-items.json#ENTH-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#ENTH-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENTH-SOLUTION-CHANGED",
+        "decisive_cue_id": "ENTH-CUE-CHANGED",
+        "distractor_lineage_id": "ENTH-DISTRACTOR-CHANGED",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "ENTH-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ENTH-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "ENTH-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ENTH-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "ENTH-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ENTH-FEATURE-CHANGED-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ENTH-ITEM-REPAIR-NEAR",
+        "activity_id": "ENTH-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ENTH-FAM-REPAIR-NEAR",
+        "stimulus_lineage_id": "ENTH-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_REPAIR_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENTH-REP-CORE",
+        "learner_operation": "ENTH_REPAIR_NEAR",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ENTH_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#ENTH-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#ENTH-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENTH-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "ENTH-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "ENTH-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "ENTH-ITEM-REENTRY-NEAR",
+        "activity_id": "ENTH-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ENTH-FAM-REENTRY-NEAR",
+        "stimulus_lineage_id": "ENTH-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENTH-REP-CORE",
+        "learner_operation": "ENTH_REENTRY_NEAR",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ENTH_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#ENTH-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#ENTH-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENTH-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "ENTH-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "ENTH-DISTRACTOR-REENTRY-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "ENTH-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ENTH-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "ENTH-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ENTH-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "ENTH-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ENTH-FEATURE-NEAR-FUNCTION"
+          }
+        ],
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "ENTH-ITEM-NEAR",
+          "stimulus_difference": "NEW_VALUES_CONTEXT_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "ENTH-ITEM-REPAIR-CHANGED",
+        "activity_id": "ENTH-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ENTH-FAM-REPAIR-CHANGED",
+        "stimulus_lineage_id": "ENTH-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_REPAIR_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENTH-REP-CORE",
+        "learner_operation": "ENTH_REPAIR_CHANGED",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ENTH_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#ENTH-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#ENTH-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENTH-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "ENTH-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "ENTH-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "ENTH-ITEM-REENTRY-CHANGED",
+        "activity_id": "ENTH-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-304296",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ENTH-FAM-REENTRY-CHANGED",
+        "stimulus_lineage_id": "ENTH-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENTH-REP-CORE",
+        "learner_operation": "ENTH_REENTRY_CHANGED",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ENTH_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#ENTH-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#ENTH-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENTH-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "ENTH-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "ENTH-DISTRACTOR-REENTRY-CHANGED",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "ENTH-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ENTH-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "ENTH-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ENTH-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "ENTH-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ENTH-FEATURE-CHANGED-FUNCTION"
+          }
+        ],
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "ENTH-ITEM-CHANGED",
+          "stimulus_difference": "NEW_VALUES_CONTEXT_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "GIBB-ITEM-ENTRY",
+        "activity_id": "GIBB-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "GIBB-FAM-ENTRY",
+        "stimulus_lineage_id": "GIBB-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GIBB-REP-CORE",
+        "learner_operation": "GIBB_ENTRY",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_LOW_STAKES_AND_HANDOFF_IF_PREREQUISITE_UNREADY",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "GIBB_ENTRY",
+        "answer_authority_ref": "protected-items.json#GIBB-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#GIBB-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GIBB-SOLUTION-ENTRY",
+        "decisive_cue_id": "GIBB-CUE-ENTRY",
+        "distractor_lineage_id": "GIBB-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "GIBB-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "GIBB-FAM-WORKED",
+        "stimulus_lineage_id": "GIBB-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GIBB-REP-CORE",
+        "learner_operation": "GIBB_FOLLOW_WORKED_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:GIBB-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GIBB-SOLUTION-WORKED",
+        "decisive_cue_id": "GIBB-CUE-WORKED",
+        "distractor_lineage_id": "GIBB-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "GIBB-ITEM-GUIDED",
+        "activity_id": "GIBB-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "GIBB-FAM-GUIDED",
+        "stimulus_lineage_id": "GIBB-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_PROCESS_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GIBB-REP-CORE",
+        "learner_operation": "GIBB_GUIDED",
+        "hint_policy": "PROCESS_CUE_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "GIBB_GUIDED",
+        "answer_authority_ref": "protected-items.json#GIBB-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#GIBB-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GIBB-SOLUTION-GUIDED",
+        "decisive_cue_id": "GIBB-CUE-GUIDED",
+        "distractor_lineage_id": "GIBB-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "GIBB-ITEM-LIGHT",
+        "activity_id": "GIBB-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "GIBB-FAM-LIGHT",
+        "stimulus_lineage_id": "GIBB-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_METHOD_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GIBB-REP-CORE",
+        "learner_operation": "GIBB_LIGHT",
+        "hint_policy": "BRIEF_METHOD_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "GIBB_LIGHT",
+        "answer_authority_ref": "protected-items.json#GIBB-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#GIBB-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GIBB-SOLUTION-LIGHT",
+        "decisive_cue_id": "GIBB-CUE-LIGHT",
+        "distractor_lineage_id": "GIBB-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "GIBB-ITEM-SOLO",
+        "activity_id": "GIBB-ACT-SOLO",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "GIBB-FAM-SOLO",
+        "stimulus_lineage_id": "GIBB-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GIBB-REP-CORE",
+        "learner_operation": "GIBB_SOLO",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "GIBB_SOLO",
+        "answer_authority_ref": "protected-items.json#GIBB-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#GIBB-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GIBB-SOLUTION-SOLO",
+        "decisive_cue_id": "GIBB-CUE-SOLO",
+        "distractor_lineage_id": "GIBB-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "GIBB-ITEM-NEAR",
+        "activity_id": "GIBB-ACT-NEAR",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "GIBB-FAM-NEAR",
+        "stimulus_lineage_id": "GIBB-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GIBB-REP-CORE",
+        "learner_operation": "GIBB_NEAR",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GIBB_NEAR",
+        "answer_authority_ref": "protected-items.json#GIBB-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#GIBB-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GIBB-SOLUTION-NEAR",
+        "decisive_cue_id": "GIBB-CUE-NEAR",
+        "distractor_lineage_id": "GIBB-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "GIBB-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GIBB-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "GIBB-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GIBB-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "GIBB-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GIBB-FEATURE-NEAR-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GIBB-ITEM-CHANGED",
+        "activity_id": "GIBB-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "GIBB-FAM-CHANGED",
+        "stimulus_lineage_id": "GIBB-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GIBB-REP-CORE",
+        "learner_operation": "GIBB_CHANGED",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GIBB_CHANGED",
+        "answer_authority_ref": "protected-items.json#GIBB-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#GIBB-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GIBB-SOLUTION-CHANGED",
+        "decisive_cue_id": "GIBB-CUE-CHANGED",
+        "distractor_lineage_id": "GIBB-DISTRACTOR-CHANGED",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "GIBB-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GIBB-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "GIBB-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GIBB-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "GIBB-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GIBB-FEATURE-CHANGED-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GIBB-ITEM-REPAIR-NEAR",
+        "activity_id": "GIBB-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GIBB-FAM-REPAIR-NEAR",
+        "stimulus_lineage_id": "GIBB-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_REPAIR_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GIBB-REP-CORE",
+        "learner_operation": "GIBB_REPAIR_NEAR",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GIBB_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#GIBB-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#GIBB-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GIBB-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "GIBB-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "GIBB-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "GIBB-ITEM-REENTRY-NEAR",
+        "activity_id": "GIBB-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GIBB-FAM-REENTRY-NEAR",
+        "stimulus_lineage_id": "GIBB-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GIBB-REP-CORE",
+        "learner_operation": "GIBB_REENTRY_NEAR",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GIBB_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#GIBB-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#GIBB-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GIBB-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "GIBB-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "GIBB-DISTRACTOR-REENTRY-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "GIBB-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GIBB-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "GIBB-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GIBB-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "GIBB-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GIBB-FEATURE-NEAR-FUNCTION"
+          }
+        ],
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "GIBB-ITEM-NEAR",
+          "stimulus_difference": "NEW_VALUES_CONTEXT_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "GIBB-ITEM-REPAIR-CHANGED",
+        "activity_id": "GIBB-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GIBB-FAM-REPAIR-CHANGED",
+        "stimulus_lineage_id": "GIBB-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_REPAIR_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GIBB-REP-CORE",
+        "learner_operation": "GIBB_REPAIR_CHANGED",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GIBB_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#GIBB-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#GIBB-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GIBB-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "GIBB-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "GIBB-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "GIBB-ITEM-REENTRY-CHANGED",
+        "activity_id": "GIBB-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-028740",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GIBB-FAM-REENTRY-CHANGED",
+        "stimulus_lineage_id": "GIBB-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GIBB-REP-CORE",
+        "learner_operation": "GIBB_REENTRY_CHANGED",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GIBB_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#GIBB-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#GIBB-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GIBB-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "GIBB-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "GIBB-DISTRACTOR-REENTRY-CHANGED",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "GIBB-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GIBB-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "GIBB-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GIBB-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "GIBB-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GIBB-FEATURE-CHANGED-FUNCTION"
+          }
+        ],
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "GIBB-ITEM-CHANGED",
+          "stimulus_difference": "NEW_VALUES_CONTEXT_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "EQDG-ITEM-ENTRY",
+        "activity_id": "EQDG-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "EQDG-FAM-ENTRY",
+        "stimulus_lineage_id": "EQDG-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EQDG-REP-CORE",
+        "learner_operation": "EQDG_ENTRY",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_LOW_STAKES_AND_HANDOFF_IF_PREREQUISITE_UNREADY",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "EQDG_ENTRY",
+        "answer_authority_ref": "protected-items.json#EQDG-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#EQDG-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EQDG-SOLUTION-ENTRY",
+        "decisive_cue_id": "EQDG-CUE-ENTRY",
+        "distractor_lineage_id": "EQDG-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "EQDG-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "EQDG-FAM-WORKED",
+        "stimulus_lineage_id": "EQDG-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EQDG-REP-CORE",
+        "learner_operation": "EQDG_FOLLOW_WORKED_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:EQDG-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EQDG-SOLUTION-WORKED",
+        "decisive_cue_id": "EQDG-CUE-WORKED",
+        "distractor_lineage_id": "EQDG-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "EQDG-ITEM-GUIDED",
+        "activity_id": "EQDG-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "EQDG-FAM-GUIDED",
+        "stimulus_lineage_id": "EQDG-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_PROCESS_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EQDG-REP-CORE",
+        "learner_operation": "EQDG_GUIDED",
+        "hint_policy": "PROCESS_CUE_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "EQDG_GUIDED",
+        "answer_authority_ref": "protected-items.json#EQDG-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#EQDG-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EQDG-SOLUTION-GUIDED",
+        "decisive_cue_id": "EQDG-CUE-GUIDED",
+        "distractor_lineage_id": "EQDG-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "EQDG-ITEM-LIGHT",
+        "activity_id": "EQDG-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "EQDG-FAM-LIGHT",
+        "stimulus_lineage_id": "EQDG-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_METHOD_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EQDG-REP-CORE",
+        "learner_operation": "EQDG_LIGHT",
+        "hint_policy": "BRIEF_METHOD_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "EQDG_LIGHT",
+        "answer_authority_ref": "protected-items.json#EQDG-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#EQDG-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EQDG-SOLUTION-LIGHT",
+        "decisive_cue_id": "EQDG-CUE-LIGHT",
+        "distractor_lineage_id": "EQDG-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "EQDG-ITEM-SOLO",
+        "activity_id": "EQDG-ACT-SOLO",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "EQDG-FAM-SOLO",
+        "stimulus_lineage_id": "EQDG-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EQDG-REP-CORE",
+        "learner_operation": "EQDG_SOLO",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "EQDG_SOLO",
+        "answer_authority_ref": "protected-items.json#EQDG-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#EQDG-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EQDG-SOLUTION-SOLO",
+        "decisive_cue_id": "EQDG-CUE-SOLO",
+        "distractor_lineage_id": "EQDG-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "EQDG-ITEM-NEAR",
+        "activity_id": "EQDG-ACT-NEAR",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "EQDG-FAM-NEAR",
+        "stimulus_lineage_id": "EQDG-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EQDG-REP-CORE",
+        "learner_operation": "EQDG_NEAR",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EQDG_NEAR",
+        "answer_authority_ref": "protected-items.json#EQDG-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#EQDG-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EQDG-SOLUTION-NEAR",
+        "decisive_cue_id": "EQDG-CUE-NEAR",
+        "distractor_lineage_id": "EQDG-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "EQDG-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EQDG-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "EQDG-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EQDG-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "EQDG-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EQDG-FEATURE-NEAR-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "EQDG-ITEM-CHANGED",
+        "activity_id": "EQDG-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "EQDG-FAM-CHANGED",
+        "stimulus_lineage_id": "EQDG-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EQDG-REP-CORE",
+        "learner_operation": "EQDG_CHANGED",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_CONTINUE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EQDG_CHANGED",
+        "answer_authority_ref": "protected-items.json#EQDG-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#EQDG-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EQDG-SOLUTION-CHANGED",
+        "decisive_cue_id": "EQDG-CUE-CHANGED",
+        "distractor_lineage_id": "EQDG-DISTRACTOR-CHANGED",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "EQDG-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EQDG-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "EQDG-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EQDG-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "EQDG-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EQDG-FEATURE-CHANGED-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "EQDG-ITEM-REPAIR-NEAR",
+        "activity_id": "EQDG-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "EQDG-FAM-REPAIR-NEAR",
+        "stimulus_lineage_id": "EQDG-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_REPAIR_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EQDG-REP-CORE",
+        "learner_operation": "EQDG_REPAIR_NEAR",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EQDG_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#EQDG-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#EQDG-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EQDG-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "EQDG-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "EQDG-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "EQDG-ITEM-REENTRY-NEAR",
+        "activity_id": "EQDG-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "EQDG-FAM-REENTRY-NEAR",
+        "stimulus_lineage_id": "EQDG-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EQDG-REP-CORE",
+        "learner_operation": "EQDG_REENTRY_NEAR",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EQDG_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#EQDG-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#EQDG-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EQDG-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "EQDG-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "EQDG-DISTRACTOR-REENTRY-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "EQDG-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EQDG-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "EQDG-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EQDG-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "EQDG-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EQDG-FEATURE-NEAR-FUNCTION"
+          }
+        ],
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "EQDG-ITEM-NEAR",
+          "stimulus_difference": "NEW_VALUES_CONTEXT_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "EQDG-ITEM-REPAIR-CHANGED",
+        "activity_id": "EQDG-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "EQDG-FAM-REPAIR-CHANGED",
+        "stimulus_lineage_id": "EQDG-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_REPAIR_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EQDG-REP-CORE",
+        "learner_operation": "EQDG_REPAIR_CHANGED",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EQDG_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#EQDG-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#EQDG-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EQDG-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "EQDG-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "EQDG-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "EQDG-ITEM-REENTRY-CHANGED",
+        "activity_id": "EQDG-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-444504",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "EQDG-FAM-REENTRY-CHANGED",
+        "stimulus_lineage_id": "EQDG-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EQDG-REP-CORE",
+        "learner_operation": "EQDG_REENTRY_CHANGED",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EQDG_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#EQDG-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#EQDG-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EQDG-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "EQDG-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "EQDG-DISTRACTOR-REENTRY-CHANGED",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "EQDG-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EQDG-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "EQDG-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EQDG-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "EQDG-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EQDG-FEATURE-CHANGED-FUNCTION"
+          }
+        ],
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "EQDG-ITEM-CHANGED",
+          "stimulus_difference": "NEW_VALUES_CONTEXT_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      }
+    ],
+    "transitions": [
+      {
+        "transition_id": "ENTH-TRANSITION-PREREQUISITE-FAIL",
+        "from_node_id": "ENTH-NODE-ENTRY",
+        "to_node_id": "ENTH-NODE-HANDOFF",
+        "predicate": "HARD_PREREQUISITE_CHECK_NOT_PASSED"
+      },
+      {
+        "transition_id": "ENTH-TRANSITION-NEAR-PASS",
+        "from_node_id": "ENTH-NODE-NEAR",
+        "to_node_id": "ENTH-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ENTH-TRANSITION-NEAR-MISS",
+        "from_node_id": "ENTH-NODE-NEAR",
+        "to_node_id": "ENTH-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ENTH-TRANSITION-CHANGED-MISS",
+        "from_node_id": "ENTH-NODE-CHANGED",
+        "to_node_id": "ENTH-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "ENTH-TRANSITION-REENTRY-NEAR-BOUND",
+        "from_node_id": "ENTH-NODE-REENTRY-NEAR",
+        "to_node_id": "ENTH-NODE-HANDOFF",
+        "predicate": "FRESH_NEAR_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "ENTH-TRANSITION-REENTRY-CHANGED-BOUND",
+        "from_node_id": "ENTH-NODE-REENTRY-CHANGED",
+        "to_node_id": "ENTH-NODE-HANDOFF",
+        "predicate": "FRESH_CHANGED_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "ENTH-TRANSITION-RECAP",
+        "from_node_id": "ENTH-NODE-RECAP",
+        "to_node_id": "GIBB-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      },
+      {
+        "transition_id": "GIBB-TRANSITION-PREREQUISITE-FAIL",
+        "from_node_id": "GIBB-NODE-ENTRY",
+        "to_node_id": "GIBB-NODE-HANDOFF",
+        "predicate": "HARD_PREREQUISITE_CHECK_NOT_PASSED"
+      },
+      {
+        "transition_id": "GIBB-TRANSITION-NEAR-PASS",
+        "from_node_id": "GIBB-NODE-NEAR",
+        "to_node_id": "GIBB-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "GIBB-TRANSITION-NEAR-MISS",
+        "from_node_id": "GIBB-NODE-NEAR",
+        "to_node_id": "GIBB-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "GIBB-TRANSITION-CHANGED-MISS",
+        "from_node_id": "GIBB-NODE-CHANGED",
+        "to_node_id": "GIBB-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "GIBB-TRANSITION-REENTRY-NEAR-BOUND",
+        "from_node_id": "GIBB-NODE-REENTRY-NEAR",
+        "to_node_id": "GIBB-NODE-HANDOFF",
+        "predicate": "FRESH_NEAR_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "GIBB-TRANSITION-REENTRY-CHANGED-BOUND",
+        "from_node_id": "GIBB-NODE-REENTRY-CHANGED",
+        "to_node_id": "GIBB-NODE-HANDOFF",
+        "predicate": "FRESH_CHANGED_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "GIBB-TRANSITION-RECAP",
+        "from_node_id": "GIBB-NODE-RECAP",
+        "to_node_id": "EQDG-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      },
+      {
+        "transition_id": "EQDG-TRANSITION-PREREQUISITE-FAIL",
+        "from_node_id": "EQDG-NODE-ENTRY",
+        "to_node_id": "EQDG-NODE-HANDOFF",
+        "predicate": "HARD_PREREQUISITE_CHECK_NOT_PASSED"
+      },
+      {
+        "transition_id": "EQDG-TRANSITION-NEAR-PASS",
+        "from_node_id": "EQDG-NODE-NEAR",
+        "to_node_id": "EQDG-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "EQDG-TRANSITION-NEAR-MISS",
+        "from_node_id": "EQDG-NODE-NEAR",
+        "to_node_id": "EQDG-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "EQDG-TRANSITION-CHANGED-MISS",
+        "from_node_id": "EQDG-NODE-CHANGED",
+        "to_node_id": "EQDG-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "EQDG-TRANSITION-REENTRY-NEAR-BOUND",
+        "from_node_id": "EQDG-NODE-REENTRY-NEAR",
+        "to_node_id": "EQDG-NODE-HANDOFF",
+        "predicate": "FRESH_NEAR_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "EQDG-TRANSITION-REENTRY-CHANGED-BOUND",
+        "from_node_id": "EQDG-NODE-REENTRY-CHANGED",
+        "to_node_id": "EQDG-NODE-HANDOFF",
+        "predicate": "FRESH_CHANGED_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "EQDG-TRANSITION-RECAP",
+        "from_node_id": "EQDG-NODE-RECAP",
+        "to_node_id": "EQDG-NODE-CAPSTONE-EXIT",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      }
+    ],
+    "attachment_bindings": [
+      {
+        "attachment_id": "V3-CAP-162024",
+        "attachment_type": "CAPSTONE",
+        "owner_lesson_id": "V3-LES-191915",
+        "host_scope": {
+          "kind": "MULTI_KC",
+          "kc_ids": [
+            "V3-KC-304296",
+            "V3-KC-028740",
+            "V3-KC-444504"
+          ]
+        },
+        "declared_host_core_ids": [
+          "V3-KC-318276",
+          "V3-KC-891246",
+          "V3-KC-360631",
+          "V3-KC-365979",
+          "V3-KC-304296",
+          "V3-KC-028740",
+          "V3-KC-444504",
+          "V3-KC-115894",
+          "V3-KC-922672",
+          "V3-KC-947249",
+          "V3-KC-980903",
+          "V3-KC-573055",
+          "V3-KC-538252",
+          "V3-KC-714060",
+          "V3-KC-271440"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": true,
+        "relation_ids": [
+          "R14-CAP-162024"
+        ],
+        "relation_class": "CAPSTONE_PLACEMENT",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": true
+      },
+      {
+        "attachment_id": "V3-EXT-647243",
+        "attachment_type": "EXTENSION",
+        "owner_lesson_id": "V3-LES-191915",
+        "host_scope": {
+          "kind": "LESSON"
+        },
+        "declared_host_core_ids": [
+          "V3-KC-115894"
+        ],
+        "host_core_membership_status": "MISMATCH_PROVISIONAL",
+        "credits_kc_evidence": false,
+        "relation_ids": [
+          "R14-FD-191915"
+        ],
+        "relation_class": "FIRST_DELIVERY",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": false,
+        "lineage_nonclaim": "The declared host cores are not knowledge components of this lesson. They are preserved as lineage and credit no knowledge component, no exit condition, and no mastery attribution here."
+      }
+    ]
+  }
+}

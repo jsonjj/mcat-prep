@@ -1,0 +1,1539 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "author_option_presentation_audit": {
+    "review_status": "AUTHOR_CHECK_COMPLETED_INDEPENDENT_REVIEW_PENDING",
+    "correct_position_counts": {
+      "0": 10,
+      "1": 10,
+      "2": 10,
+      "3": 10
+    },
+    "longest_repeated_correct_position_run": 1,
+    "item_count": 40
+  },
+  "records": [
+    {
+      "answer_record_id": "STR-ITEM-ENTRY",
+      "learner_prompt_key": "STR_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "Both classes contain a protein capsid surrounding viral genetic material.",
+      "post_commitment_feedback": "Both classes contain a protein capsid surrounding viral genetic material.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "STR-FEATURE-ENTRY-1",
+          "observation_language": "This response is consistent with selecting “Lipid envelope” for the stated evidence.",
+          "rejection_rationale": "Only enveloped viruses carry the outer lipid membrane.",
+          "repair_feature_id": "STR-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "STR-FEATURE-ENTRY-2",
+          "observation_language": "This response is consistent with selecting “Nucleus” for the stated evidence.",
+          "rejection_rationale": "Viruses do not contain a nucleus.",
+          "repair_feature_id": "STR-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "STR-FEATURE-ENTRY-3",
+          "observation_language": "This response is consistent with selecting “Ribosome” for the stated evidence.",
+          "rejection_rationale": "Viruses do not contain ribosomes.",
+          "repair_feature_id": "STR-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for identify shared viral component.",
+        "Apply the taught model before inspecting option presentation.",
+        "Both classes contain a protein capsid surrounding viral genetic material."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "STR-ITEM-GUIDED",
+      "learner_prompt_key": "STR_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "RNA identifies the genome type and the lipid outer layer identifies an envelope.",
+      "post_commitment_feedback": "RNA identifies the genome type and the lipid outer layer identifies an envelope.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "STR-FEATURE-GUIDED-0",
+          "observation_language": "This response is consistent with selecting “Nonenveloped DNA virus” for the stated evidence.",
+          "rejection_rationale": "Both the genome type and envelope status contradict the evidence.",
+          "repair_feature_id": "STR-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "STR-FEATURE-GUIDED-2",
+          "observation_language": "This response is consistent with selecting “Bacterium” for the stated evidence.",
+          "rejection_rationale": "A bacterium is a cell with ribosomes and other cellular machinery.",
+          "repair_feature_id": "STR-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "STR-FEATURE-GUIDED-3",
+          "observation_language": "This response is consistent with selecting “Prion” for the stated evidence.",
+          "rejection_rationale": "A prion is infectious protein without nucleic acid or capsid.",
+          "repair_feature_id": "STR-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for classify virion components.",
+        "Apply the taught model before inspecting option presentation.",
+        "RNA identifies the genome type and the lipid outer layer identifies an envelope."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "STR-ITEM-LIGHT",
+      "learner_prompt_key": "STR_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Tail fibers bind specific structures on the bacterial surface.",
+      "post_commitment_feedback": "Tail fibers bind specific structures on the bacterial surface.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "STR-FEATURE-LIGHT-0",
+          "observation_language": "This response is consistent with selecting “Capsid genome” for the stated evidence.",
+          "rejection_rationale": "The genome-containing head does not perform the initial receptor binding.",
+          "repair_feature_id": "STR-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "STR-FEATURE-LIGHT-1",
+          "observation_language": "This response is consistent with selecting “Lipid envelope” for the stated evidence.",
+          "rejection_rationale": "A classic head-tail phage need not have a lipid envelope.",
+          "repair_feature_id": "STR-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "STR-FEATURE-LIGHT-3",
+          "observation_language": "This response is consistent with selecting “Host ribosome” for the stated evidence.",
+          "rejection_rationale": "Host ribosomes are inside the bacterium and are not phage attachment structures.",
+          "repair_feature_id": "STR-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for identify phage attachment structure.",
+        "Apply the taught model before inspecting option presentation.",
+        "Tail fibers bind specific structures on the bacterial surface."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "STR-ITEM-SOLO",
+      "learner_prompt_key": "STR_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Virions lack organelles that independently produce cellular energy.",
+      "post_commitment_feedback": "Virions lack organelles that independently produce cellular energy.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "STR-FEATURE-SOLO-0",
+          "observation_language": "This response is consistent with selecting “Nucleic acid” for the stated evidence.",
+          "rejection_rationale": "A virus contains a DNA or RNA genome.",
+          "repair_feature_id": "STR-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "STR-FEATURE-SOLO-1",
+          "observation_language": "This response is consistent with selecting “Protein” for the stated evidence.",
+          "rejection_rationale": "Capsid and other viral structures contain protein.",
+          "repair_feature_id": "STR-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "STR-FEATURE-SOLO-2",
+          "observation_language": "This response is consistent with selecting “Surface binding molecules” for the stated evidence.",
+          "rejection_rationale": "Viruses require binding molecules for host attachment.",
+          "repair_feature_id": "STR-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for identify viral cellular absence.",
+        "Apply the taught model before inspecting option presentation.",
+        "Virions lack organelles that independently produce cellular energy."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "STR-ITEM-NEAR",
+      "learner_prompt_key": "STR_NEAR",
+      "correct_option_index": 1,
+      "rationale": "DNA establishes genome type, and absence of a lipid outer layer identifies a nonenveloped virus.",
+      "post_commitment_feedback": "DNA establishes genome type, and absence of a lipid outer layer identifies a nonenveloped virus.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "STR-FEATURE-NEAR-0",
+          "observation_language": "This response is consistent with selecting “Enveloped RNA virus” for the stated evidence.",
+          "rejection_rationale": "Both genome type and envelope status are wrong.",
+          "repair_feature_id": "STR-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "STR-FEATURE-NEAR-2",
+          "observation_language": "This response is consistent with selecting “Prion” for the stated evidence.",
+          "rejection_rationale": "A prion lacks nucleic acid and capsid.",
+          "repair_feature_id": "STR-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "STR-FEATURE-NEAR-3",
+          "observation_language": "This response is consistent with selecting “Viroid” for the stated evidence.",
+          "rejection_rationale": "A viroid is naked RNA without capsid.",
+          "repair_feature_id": "STR-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for classify viral genome and envelope.",
+        "Apply the taught model before inspecting option presentation.",
+        "DNA establishes genome type, and absence of a lipid outer layer identifies a nonenveloped virus."
+      ],
+      "decision_point": "Make two independent classifications: genome type and envelope status.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "STR-ITEM-CHANGED",
+      "learner_prompt_key": "STR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Detergent disrupts lipid membranes, so the entry defect implicates an essential viral envelope.",
+      "post_commitment_feedback": "Detergent disrupts lipid membranes, so the entry defect implicates an essential viral envelope.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "STR-FEATURE-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “Nucleus” for the stated evidence.",
+          "rejection_rationale": "Viruses lack nuclei.",
+          "repair_feature_id": "STR-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "STR-FEATURE-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “Ribosome” for the stated evidence.",
+          "rejection_rationale": "Virions lack ribosomes.",
+          "repair_feature_id": "STR-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "STR-FEATURE-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “Bacterial wall” for the stated evidence.",
+          "rejection_rationale": "A bacterial wall is a host structure, not the removed viral lipid layer.",
+          "repair_feature_id": "STR-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for infer envelope from detergent sensitivity.",
+        "Apply the taught model before inspecting option presentation.",
+        "Detergent disrupts lipid membranes, so the entry defect implicates an essential viral envelope."
+      ],
+      "decision_point": "Map the physical action of detergent to the disrupted viral component.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "STR-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "STR_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Every virion has genetic material packaged by protein capsid.",
+      "post_commitment_feedback": "Every virion has genetic material packaged by protein capsid.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "STR-FEATURE-REPAIR-NEAR-1",
+          "observation_language": "This response is consistent with selecting “Envelope + nucleus” for the stated evidence.",
+          "rejection_rationale": "Envelope is optional and nucleus is absent.",
+          "repair_feature_id": "STR-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "STR-FEATURE-REPAIR-NEAR-2",
+          "observation_language": "This response is consistent with selecting “Ribosome + organelle” for the stated evidence.",
+          "rejection_rationale": "Virions lack ribosomes and organelles.",
+          "repair_feature_id": "STR-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "STR-FEATURE-REPAIR-NEAR-3",
+          "observation_language": "This response is consistent with selecting “Cell wall + cytosol” for the stated evidence.",
+          "rejection_rationale": "Viruses are not cells with wall and cytosol.",
+          "repair_feature_id": "STR-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild virion component model.",
+        "Apply the taught model before inspecting option presentation.",
+        "Every virion has genetic material packaged by protein capsid."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "STR-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "STR_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The genome is RNA and the particle lacks an envelope.",
+      "post_commitment_feedback": "The genome is RNA and the particle lacks an envelope.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "STR-FEATURE-REENTRY-NEAR-0",
+          "observation_language": "This response is consistent with selecting “Enveloped DNA virus” for the stated evidence.",
+          "rejection_rationale": "Both genome and envelope classifications are wrong.",
+          "repair_feature_id": "STR-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "STR-FEATURE-REENTRY-NEAR-1",
+          "observation_language": "This response is consistent with selecting “Enveloped RNA virus” for the stated evidence.",
+          "rejection_rationale": "The genome is correct but the envelope classification is wrong.",
+          "repair_feature_id": "STR-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "STR-FEATURE-REENTRY-NEAR-2",
+          "observation_language": "This response is consistent with selecting “Nonenveloped DNA virus” for the stated evidence.",
+          "rejection_rationale": "The envelope status is correct but the genome type is wrong.",
+          "repair_feature_id": "STR-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter virion classification.",
+        "Apply the taught model before inspecting option presentation.",
+        "The genome is RNA and the particle lacks an envelope."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "STR-ITEM-NEAR"
+    },
+    {
+      "answer_record_id": "STR-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "STR_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Detergents disrupt lipid membranes, including viral envelopes.",
+      "post_commitment_feedback": "Detergents disrupt lipid membranes, including viral envelopes.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "STR-FEATURE-REPAIR-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “DNase only” for the stated evidence.",
+          "rejection_rationale": "DNase targets exposed DNA rather than lipid.",
+          "repair_feature_id": "STR-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "STR-FEATURE-REPAIR-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “Ribosome inhibitor” for the stated evidence.",
+          "rejection_rationale": "Virions do not contain ribosomes to inhibit.",
+          "repair_feature_id": "STR-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "STR-FEATURE-REPAIR-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “Cell-wall enzyme” for the stated evidence.",
+          "rejection_rationale": "Cell-wall enzymes target bacterial walls rather than viral envelopes.",
+          "repair_feature_id": "STR-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild envelope perturbation.",
+        "Apply the taught model before inspecting option presentation.",
+        "Detergents disrupt lipid membranes, including viral envelopes."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "STR-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "STR_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Differential sensitivity to membrane disruption points to reliance on a lipid envelope.",
+      "post_commitment_feedback": "Differential sensitivity to membrane disruption points to reliance on a lipid envelope.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "STR-FEATURE-REENTRY-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “Genome size only” for the stated evidence.",
+          "rejection_rationale": "Genome size does not directly explain membrane-solvent sensitivity.",
+          "repair_feature_id": "STR-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "STR-FEATURE-REENTRY-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “Capsid presence” for the stated evidence.",
+          "rejection_rationale": "Both viruses require capsids.",
+          "repair_feature_id": "STR-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "STR-FEATURE-REENTRY-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “Nuclear content” for the stated evidence.",
+          "rejection_rationale": "Neither virion contains a nucleus.",
+          "repair_feature_id": "STR-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter structural perturbation inference.",
+        "Apply the taught model before inspecting option presentation.",
+        "Differential sensitivity to membrane disruption points to reliance on a lipid envelope."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "STR-ITEM-CHANGED"
+    },
+    {
+      "answer_record_id": "LIF-ITEM-ENTRY",
+      "learner_prompt_key": "LIF_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "Virions lack ribosomes and therefore depend on host translation machinery.",
+      "post_commitment_feedback": "Virions lack ribosomes and therefore depend on host translation machinery.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "LIF-FEATURE-ENTRY-0",
+          "observation_language": "This response is consistent with selecting “Surface proteins” for the stated evidence.",
+          "rejection_rationale": "Many viruses contain attachment proteins.",
+          "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "LIF-FEATURE-ENTRY-2",
+          "observation_language": "This response is consistent with selecting “Capsid proteins” for the stated evidence.",
+          "rejection_rationale": "Virions contain capsid proteins but cannot synthesize new ones independently.",
+          "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "LIF-FEATURE-ENTRY-3",
+          "observation_language": "This response is consistent with selecting “Nucleic acid” for the stated evidence.",
+          "rejection_rationale": "Viruses contain a DNA or RNA genome.",
+          "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for identify host synthesis dependence.",
+        "Apply the taught model before inspecting option presentation.",
+        "Virions lack ribosomes and therefore depend on host translation machinery."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "LIF-ITEM-GUIDED",
+      "learner_prompt_key": "LIF_GUIDED",
+      "correct_option_index": 2,
+      "rationale": "After attachment, the viral genome or particle must enter the host.",
+      "post_commitment_feedback": "After attachment, the viral genome or particle must enter the host.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "LIF-FEATURE-GUIDED-0",
+          "observation_language": "This response is consistent with selecting “Genome packaging only” for the stated evidence.",
+          "rejection_rationale": "Packaging is a part of assembly, not the immediate next stage.",
+          "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "LIF-FEATURE-GUIDED-1",
+          "observation_language": "This response is consistent with selecting “Assembly” for the stated evidence.",
+          "rejection_rationale": "Assembly occurs after component synthesis.",
+          "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "LIF-FEATURE-GUIDED-3",
+          "observation_language": "This response is consistent with selecting “Release” for the stated evidence.",
+          "rejection_rationale": "Release occurs after assembly.",
+          "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for order attachment and entry.",
+        "Apply the taught model before inspecting option presentation.",
+        "After attachment, the viral genome or particle must enter the host."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "LIF-ITEM-LIGHT",
+      "learner_prompt_key": "LIF_LIGHT",
+      "correct_option_index": 3,
+      "rationale": "Assembly packages genomes with structural proteins into particles.",
+      "post_commitment_feedback": "Assembly packages genomes with structural proteins into particles.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "LIF-FEATURE-LIGHT-0",
+          "observation_language": "This response is consistent with selecting “Release” for the stated evidence.",
+          "rejection_rationale": "Release exports already assembled particles.",
+          "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "LIF-FEATURE-LIGHT-1",
+          "observation_language": "This response is consistent with selecting “Attachment” for the stated evidence.",
+          "rejection_rationale": "Attachment is host recognition before entry.",
+          "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "LIF-FEATURE-LIGHT-2",
+          "observation_language": "This response is consistent with selecting “Entry” for the stated evidence.",
+          "rejection_rationale": "Entry delivers viral material before synthesis.",
+          "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for identify assembly stage.",
+        "Apply the taught model before inspecting option presentation.",
+        "Assembly packages genomes with structural proteins into particles."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "LIF-ITEM-SOLO",
+      "learner_prompt_key": "LIF_SOLO",
+      "correct_option_index": 0,
+      "rationale": "Attachment precedes entry, which precedes viral genome and protein synthesis.",
+      "post_commitment_feedback": "Attachment precedes entry, which precedes viral genome and protein synthesis.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "LIF-FEATURE-SOLO-1",
+          "observation_language": "This response is consistent with selecting “release→entry→synthesis” for the stated evidence.",
+          "rejection_rationale": "Release is a late stage.",
+          "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "LIF-FEATURE-SOLO-2",
+          "observation_language": "This response is consistent with selecting “assembly→attachment→entry” for the stated evidence.",
+          "rejection_rationale": "Assembly cannot precede attachment and synthesis.",
+          "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "LIF-FEATURE-SOLO-3",
+          "observation_language": "This response is consistent with selecting “synthesis→entry→attachment” for the stated evidence.",
+          "rejection_rationale": "Synthesis requires prior entry.",
+          "repair_feature_id": "LIF-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for order early viral life cycle.",
+        "Apply the taught model before inspecting option presentation.",
+        "Attachment precedes entry, which precedes viral genome and protein synthesis."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "LIF-ITEM-NEAR",
+      "learner_prompt_key": "LIF_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The generalized sequence is attachment, entry, synthesis, assembly, then release.",
+      "post_commitment_feedback": "The generalized sequence is attachment, entry, synthesis, assembly, then release.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "LIF-FEATURE-NEAR-0",
+          "observation_language": "This response is consistent with selecting “A→B→E→R” for the stated evidence.",
+          "rejection_rationale": "Assembly cannot precede entry and synthesis.",
+          "repair_feature_id": "LIF-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "LIF-FEATURE-NEAR-1",
+          "observation_language": "This response is consistent with selecting “E→A→R→B” for the stated evidence.",
+          "rejection_rationale": "Attachment must precede entry, and assembly precedes release.",
+          "repair_feature_id": "LIF-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "LIF-FEATURE-NEAR-3",
+          "observation_language": "This response is consistent with selecting “S→A→B→E” for the stated evidence.",
+          "rejection_rationale": "Synthesis requires prior attachment and entry.",
+          "repair_feature_id": "LIF-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for sequence generalized viral life cycle.",
+        "Apply the taught model before inspecting option presentation.",
+        "The generalized sequence is attachment, entry, synthesis, assembly, then release."
+      ],
+      "decision_point": "Use causal dependencies between host contact, component production, construction, and departure.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "LIF-ITEM-CHANGED",
+      "learner_prompt_key": "LIF_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Genome and protein synthesis succeeded, but failure to form complete particles localizes the block to assembly.",
+      "post_commitment_feedback": "Genome and protein synthesis succeeded, but failure to form complete particles localizes the block to assembly.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "LIF-FEATURE-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “Host recognition” for the stated evidence.",
+          "rejection_rationale": "Host recognition is part of attachment and is already successful.",
+          "repair_feature_id": "LIF-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "LIF-FEATURE-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “Attachment” for the stated evidence.",
+          "rejection_rationale": "Attachment occurred if viral material entered and accumulated.",
+          "repair_feature_id": "LIF-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "LIF-FEATURE-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “Entry” for the stated evidence.",
+          "rejection_rationale": "Entry occurred if viral genomes and proteins are being made in the host.",
+          "repair_feature_id": "LIF-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for localize life cycle block from components.",
+        "Apply the taught model before inspecting option presentation.",
+        "Genome and protein synthesis succeeded, but failure to form complete particles localizes the block to assembly."
+      ],
+      "decision_point": "Use the last successful molecular outputs to locate the next failed stage.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "LIF-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "LIF_REPAIR_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Assembly combines replicated genomes with structural proteins.",
+      "post_commitment_feedback": "Assembly combines replicated genomes with structural proteins.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "LIF-FEATURE-REPAIR-NEAR-0",
+          "observation_language": "This response is consistent with selecting “Release” for the stated evidence.",
+          "rejection_rationale": "Release moves completed particles out.",
+          "repair_feature_id": "LIF-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "LIF-FEATURE-REPAIR-NEAR-2",
+          "observation_language": "This response is consistent with selecting “Attachment” for the stated evidence.",
+          "rejection_rationale": "Attachment binds the host surface.",
+          "repair_feature_id": "LIF-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "LIF-FEATURE-REPAIR-NEAR-3",
+          "observation_language": "This response is consistent with selecting “Entry” for the stated evidence.",
+          "rejection_rationale": "Entry delivers viral material.",
+          "repair_feature_id": "LIF-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild life cycle stage functions.",
+        "Apply the taught model before inspecting option presentation.",
+        "Assembly combines replicated genomes with structural proteins."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "LIF-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "LIF_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Components are synthesized, then assembled, then released.",
+      "post_commitment_feedback": "Components are synthesized, then assembled, then released.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "LIF-FEATURE-REENTRY-NEAR-1",
+          "observation_language": "This response is consistent with selecting “R→S→A” for the stated evidence.",
+          "rejection_rationale": "Release cannot precede component production.",
+          "repair_feature_id": "LIF-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "LIF-FEATURE-REENTRY-NEAR-2",
+          "observation_language": "This response is consistent with selecting “A→S→R” for the stated evidence.",
+          "rejection_rationale": "Assembly uses components that must be synthesized first.",
+          "repair_feature_id": "LIF-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "LIF-FEATURE-REENTRY-NEAR-3",
+          "observation_language": "This response is consistent with selecting “R→A→S” for the stated evidence.",
+          "rejection_rationale": "Both late stages are reversed.",
+          "repair_feature_id": "LIF-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter life cycle sequence.",
+        "Apply the taught model before inspecting option presentation.",
+        "Components are synthesized, then assembled, then released."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "LIF-ITEM-NEAR"
+    },
+    {
+      "answer_record_id": "LIF-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "LIF_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The available components have not been combined into virions, so assembly failed.",
+      "post_commitment_feedback": "The available components have not been combined into virions, so assembly failed.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "LIF-FEATURE-REPAIR-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “Genome synthesis” for the stated evidence.",
+          "rejection_rationale": "Complete genomes show genome synthesis occurred.",
+          "repair_feature_id": "LIF-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "LIF-FEATURE-REPAIR-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “Entry” for the stated evidence.",
+          "rejection_rationale": "Entry must have occurred for viral products to accumulate.",
+          "repair_feature_id": "LIF-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "LIF-FEATURE-REPAIR-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “Attachment” for the stated evidence.",
+          "rejection_rationale": "Attachment precedes the successful entry.",
+          "repair_feature_id": "LIF-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild stage localization.",
+        "Apply the taught model before inspecting option presentation.",
+        "The available components have not been combined into virions, so assembly failed."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "LIF-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "LIF_REENTRY_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Completed intracellular virions with none outside localize the block to release.",
+      "post_commitment_feedback": "Completed intracellular virions with none outside localize the block to release.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "LIF-FEATURE-REENTRY-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “Attachment” for the stated evidence.",
+          "rejection_rationale": "Attachment occurred earlier in the cycle.",
+          "repair_feature_id": "LIF-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "LIF-FEATURE-REENTRY-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “Genome replication” for the stated evidence.",
+          "rejection_rationale": "Genome replication succeeded because virions assembled.",
+          "repair_feature_id": "LIF-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "LIF-FEATURE-REENTRY-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “Protein synthesis” for the stated evidence.",
+          "rejection_rationale": "Protein synthesis succeeded because structural particles assembled.",
+          "repair_feature_id": "LIF-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter life cycle block localization.",
+        "Apply the taught model before inspecting option presentation.",
+        "Completed intracellular virions with none outside localize the block to release."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "LIF-ITEM-CHANGED"
+    },
+    {
+      "answer_record_id": "GEN-ITEM-ENTRY",
+      "learner_prompt_key": "GEN_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "Reverse transcriptase makes a DNA copy from RNA.",
+      "post_commitment_feedback": "Reverse transcriptase makes a DNA copy from RNA.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "GEN-FEATURE-ENTRY-0",
+          "observation_language": "This response is consistent with selecting “Lipid” for the stated evidence.",
+          "rejection_rationale": "Lipid synthesis is not the enzyme’s information-flow function.",
+          "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "GEN-FEATURE-ENTRY-1",
+          "observation_language": "This response is consistent with selecting “Polysaccharide” for the stated evidence.",
+          "rejection_rationale": "Polysaccharide synthesis is unrelated to reverse transcription.",
+          "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "GEN-FEATURE-ENTRY-3",
+          "observation_language": "This response is consistent with selecting “Protein” for the stated evidence.",
+          "rejection_rationale": "Protein synthesis from RNA is translation.",
+          "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for identify reverse transcriptase product.",
+        "Apply the taught model before inspecting option presentation.",
+        "Reverse transcriptase makes a DNA copy from RNA."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "GEN-ITEM-GUIDED",
+      "learner_prompt_key": "GEN_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "Phage-mediated bacterial DNA transfer is transduction.",
+      "post_commitment_feedback": "Phage-mediated bacterial DNA transfer is transduction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "GEN-FEATURE-GUIDED-0",
+          "observation_language": "This response is consistent with selecting “Translation” for the stated evidence.",
+          "rejection_rationale": "Translation makes protein from RNA.",
+          "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "GEN-FEATURE-GUIDED-1",
+          "observation_language": "This response is consistent with selecting “Conjugation” for the stated evidence.",
+          "rejection_rationale": "Conjugation involves direct cell-to-cell DNA transfer.",
+          "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "GEN-FEATURE-GUIDED-2",
+          "observation_language": "This response is consistent with selecting “Transformation” for the stated evidence.",
+          "rejection_rationale": "Transformation is uptake of free DNA rather than phage carriage.",
+          "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for identify transduction.",
+        "Apply the taught model before inspecting option presentation.",
+        "Phage-mediated bacterial DNA transfer is transduction."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "GEN-ITEM-LIGHT",
+      "learner_prompt_key": "GEN_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Retroviral RNA is reverse-transcribed into DNA that can integrate into a host chromosome.",
+      "post_commitment_feedback": "Retroviral RNA is reverse-transcribed into DNA that can integrate into a host chromosome.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "GEN-FEATURE-LIGHT-1",
+          "observation_language": "This response is consistent with selecting “RNA → protein → RNA only” for the stated evidence.",
+          "rejection_rationale": "Translation alone does not create the integrated DNA intermediate.",
+          "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "GEN-FEATURE-LIGHT-2",
+          "observation_language": "This response is consistent with selecting “DNA → RNA only” for the stated evidence.",
+          "rejection_rationale": "This is ordinary transcription direction and omits reverse transcription.",
+          "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "GEN-FEATURE-LIGHT-3",
+          "observation_language": "This response is consistent with selecting “Protein → DNA” for the stated evidence.",
+          "rejection_rationale": "Protein is not copied into DNA in the retroviral pathway.",
+          "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for trace retroviral information flow.",
+        "Apply the taught model before inspecting option presentation.",
+        "Retroviral RNA is reverse-transcribed into DNA that can integrate into a host chromosome."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "GEN-ITEM-SOLO",
+      "learner_prompt_key": "GEN_SOLO",
+      "correct_option_index": 1,
+      "rationale": "A prion is infectious protein without nucleic acid.",
+      "post_commitment_feedback": "A prion is infectious protein without nucleic acid.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "GEN-FEATURE-SOLO-0",
+          "observation_language": "This response is consistent with selecting “Viroid” for the stated evidence.",
+          "rejection_rationale": "A viroid is RNA, although it lacks capsid.",
+          "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "GEN-FEATURE-SOLO-2",
+          "observation_language": "This response is consistent with selecting “Retrovirus” for the stated evidence.",
+          "rejection_rationale": "A retrovirus carries RNA and forms a DNA intermediate.",
+          "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "GEN-FEATURE-SOLO-3",
+          "observation_language": "This response is consistent with selecting “Bacteriophage” for the stated evidence.",
+          "rejection_rationale": "A bacteriophage carries nucleic acid.",
+          "repair_feature_id": "GEN-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for contrast prion with integrating agent.",
+        "Apply the taught model before inspecting option presentation.",
+        "A prion is infectious protein without nucleic acid."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "GEN-ITEM-NEAR",
+      "learner_prompt_key": "GEN_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Phage carriage of bacterial DNA into a recipient is transduction.",
+      "post_commitment_feedback": "Phage carriage of bacterial DNA into a recipient is transduction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "GEN-FEATURE-NEAR-0",
+          "observation_language": "This response is consistent with selecting “Prion propagation” for the stated evidence.",
+          "rejection_rationale": "Prions propagate protein conformation and do not carry bacterial DNA.",
+          "repair_feature_id": "GEN-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "GEN-FEATURE-NEAR-1",
+          "observation_language": "This response is consistent with selecting “Viroid replication” for the stated evidence.",
+          "rejection_rationale": "Viroids are naked RNA and do not use phage particles.",
+          "repair_feature_id": "GEN-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "GEN-FEATURE-NEAR-2",
+          "observation_language": "This response is consistent with selecting “Retroviral integration” for the stated evidence.",
+          "rejection_rationale": "Retroviral integration concerns viral RNA copied into DNA.",
+          "repair_feature_id": "GEN-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for classify phage mediated transfer.",
+        "Apply the taught model before inspecting option presentation.",
+        "Phage carriage of bacterial DNA into a recipient is transduction."
+      ],
+      "decision_point": "Identify both bacterial DNA cargo and a phage carrier.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "GEN-ITEM-CHANGED",
+      "learner_prompt_key": "GEN_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Failure to make DNA from released retroviral RNA points to missing reverse-transcriptase activity.",
+      "post_commitment_feedback": "Failure to make DNA from released retroviral RNA points to missing reverse-transcriptase activity.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "GEN-FEATURE-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “Bacterial transduction” for the stated evidence.",
+          "rejection_rationale": "Transduction is phage-mediated bacterial DNA transfer.",
+          "repair_feature_id": "GEN-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "GEN-FEATURE-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “Capsid assembly” for the stated evidence.",
+          "rejection_rationale": "Capsid assembly occurs later and does not create the DNA intermediate.",
+          "repair_feature_id": "GEN-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "GEN-FEATURE-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “Host translation” for the stated evidence.",
+          "rejection_rationale": "Host translation can make proteins but cannot substitute for RNA-to-DNA copying.",
+          "repair_feature_id": "GEN-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for infer missing retroviral enzyme.",
+        "Apply the taught model before inspecting option presentation.",
+        "Failure to make DNA from released retroviral RNA points to missing reverse-transcriptase activity."
+      ],
+      "decision_point": "Use the last detected molecular form to localize the failed information-flow step.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "GEN-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "GEN_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Transduction uses a bacteriophage to carry bacterial DNA.",
+      "post_commitment_feedback": "Transduction uses a bacteriophage to carry bacterial DNA.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "GEN-FEATURE-REPAIR-NEAR-0",
+          "observation_language": "This response is consistent with selecting “Protein; viroid” for the stated evidence.",
+          "rejection_rationale": "Viroids are RNA, not protein carriers.",
+          "repair_feature_id": "GEN-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "GEN-FEATURE-REPAIR-NEAR-1",
+          "observation_language": "This response is consistent with selecting “Host DNA; prion” for the stated evidence.",
+          "rejection_rationale": "Prions do not carry host DNA.",
+          "repair_feature_id": "GEN-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "GEN-FEATURE-REPAIR-NEAR-3",
+          "observation_language": "This response is consistent with selecting “Viral RNA; ribosome” for the stated evidence.",
+          "rejection_rationale": "Ribosomes translate RNA and are not transduction carriers.",
+          "repair_feature_id": "GEN-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild transduction model.",
+        "Apply the taught model before inspecting option presentation.",
+        "Transduction uses a bacteriophage to carry bacterial DNA."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "GEN-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "GEN_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "RNA-to-DNA synthesis followed by chromosomal insertion is retroviral integration.",
+      "post_commitment_feedback": "RNA-to-DNA synthesis followed by chromosomal insertion is retroviral integration.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "GEN-FEATURE-REENTRY-NEAR-0",
+          "observation_language": "This response is consistent with selecting “Prion conversion” for the stated evidence.",
+          "rejection_rationale": "Prion conversion involves protein conformation.",
+          "repair_feature_id": "GEN-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "GEN-FEATURE-REENTRY-NEAR-2",
+          "observation_language": "This response is consistent with selecting “Transduction” for the stated evidence.",
+          "rejection_rationale": "Transduction transfers bacterial DNA by phage.",
+          "repair_feature_id": "GEN-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "GEN-FEATURE-REENTRY-NEAR-3",
+          "observation_language": "This response is consistent with selecting “Translation” for the stated evidence.",
+          "rejection_rationale": "Translation produces protein, not integrated DNA.",
+          "repair_feature_id": "GEN-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter information transfer classification.",
+        "Apply the taught model before inspecting option presentation.",
+        "RNA-to-DNA synthesis followed by chromosomal insertion is retroviral integration."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "GEN-ITEM-NEAR"
+    },
+    {
+      "answer_record_id": "GEN-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "GEN_REPAIR_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Integration into a host chromosome requires a viral DNA intermediate.",
+      "post_commitment_feedback": "Integration into a host chromosome requires a viral DNA intermediate.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "GEN-FEATURE-REPAIR-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “A bacterial plasmid only” for the stated evidence.",
+          "rejection_rationale": "A bacterial plasmid is not the required retroviral intermediate.",
+          "repair_feature_id": "GEN-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "GEN-FEATURE-REPAIR-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “A viroid capsid” for the stated evidence.",
+          "rejection_rationale": "Viroids lack capsids and are not retroviral intermediates.",
+          "repair_feature_id": "GEN-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "GEN-FEATURE-REPAIR-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “A protein-only seed” for the stated evidence.",
+          "rejection_rationale": "A protein-only seed describes prion propagation.",
+          "repair_feature_id": "GEN-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild retroviral dna intermediate.",
+        "Apply the taught model before inspecting option presentation.",
+        "Integration into a host chromosome requires a viral DNA intermediate."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "GEN-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "GEN_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The DNA intermediate exists, so the remaining failed step is chromosomal integration.",
+      "post_commitment_feedback": "The DNA intermediate exists, so the remaining failed step is chromosomal integration.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "GEN-FEATURE-REENTRY-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “DNA synthesis” for the stated evidence.",
+          "rejection_rationale": "Detected viral DNA proves DNA synthesis occurred.",
+          "repair_feature_id": "GEN-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "GEN-FEATURE-REENTRY-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “Attachment” for the stated evidence.",
+          "rejection_rationale": "Attachment and entry already occurred.",
+          "repair_feature_id": "GEN-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "GEN-FEATURE-REENTRY-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “RNA release” for the stated evidence.",
+          "rejection_rationale": "RNA release occurred before DNA formation.",
+          "repair_feature_id": "GEN-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter retroviral block localization.",
+        "Apply the taught model before inspecting option presentation.",
+        "The DNA intermediate exists, so the remaining failed step is chromosomal integration."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "GEN-ITEM-CHANGED"
+    },
+    {
+      "answer_record_id": "SUB-ITEM-ENTRY",
+      "learner_prompt_key": "SUB_ENTRY",
+      "correct_option_index": 3,
+      "rationale": "A prion is an infectious protein conformer without nucleic acid.",
+      "post_commitment_feedback": "A prion is an infectious protein conformer without nucleic acid.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "SUB-FEATURE-ENTRY-0",
+          "observation_language": "This response is consistent with selecting “Virus” for the stated evidence.",
+          "rejection_rationale": "A virus contains DNA or RNA.",
+          "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "SUB-FEATURE-ENTRY-1",
+          "observation_language": "This response is consistent with selecting “Viroid” for the stated evidence.",
+          "rejection_rationale": "A viroid is RNA.",
+          "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "SUB-FEATURE-ENTRY-2",
+          "observation_language": "This response is consistent with selecting “Bacteriophage genome” for the stated evidence.",
+          "rejection_rationale": "A phage genome is nucleic acid.",
+          "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for identify prion composition.",
+        "Apply the taught model before inspecting option presentation.",
+        "A prion is an infectious protein conformer without nucleic acid."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "SUB-ITEM-GUIDED",
+      "learner_prompt_key": "SUB_GUIDED",
+      "correct_option_index": 0,
+      "rationale": "A viroid is small naked RNA without capsid.",
+      "post_commitment_feedback": "A viroid is small naked RNA without capsid.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "SUB-FEATURE-GUIDED-1",
+          "observation_language": "This response is consistent with selecting “Enveloped virus” for the stated evidence.",
+          "rejection_rationale": "An enveloped virus has capsid and an outer membrane.",
+          "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "SUB-FEATURE-GUIDED-2",
+          "observation_language": "This response is consistent with selecting “Bacterium” for the stated evidence.",
+          "rejection_rationale": "A bacterium is a cell with ribosomes and membrane.",
+          "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "SUB-FEATURE-GUIDED-3",
+          "observation_language": "This response is consistent with selecting “Prion” for the stated evidence.",
+          "rejection_rationale": "A prion is protein without nucleic acid.",
+          "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for identify viroid composition.",
+        "Apply the taught model before inspecting option presentation.",
+        "A viroid is small naked RNA without capsid."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "SUB-ITEM-LIGHT",
+      "learner_prompt_key": "SUB_LIGHT",
+      "correct_option_index": 1,
+      "rationale": "A virus contains a DNA or RNA genome packaged in capsid.",
+      "post_commitment_feedback": "A virus contains a DNA or RNA genome packaged in capsid.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "SUB-FEATURE-LIGHT-0",
+          "observation_language": "This response is consistent with selecting “Viroid” for the stated evidence.",
+          "rejection_rationale": "A viroid has RNA but no capsid.",
+          "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "SUB-FEATURE-LIGHT-2",
+          "observation_language": "This response is consistent with selecting “Protein aggregate only” for the stated evidence.",
+          "rejection_rationale": "A protein aggregate alone does not supply a viral genome.",
+          "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "SUB-FEATURE-LIGHT-3",
+          "observation_language": "This response is consistent with selecting “Prion” for the stated evidence.",
+          "rejection_rationale": "A prion contains no nucleic acid.",
+          "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for identify virus composition.",
+        "Apply the taught model before inspecting option presentation.",
+        "A virus contains a DNA or RNA genome packaged in capsid."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "SUB-ITEM-SOLO",
+      "learner_prompt_key": "SUB_SOLO",
+      "correct_option_index": 2,
+      "rationale": "A prion promotes conversion of host protein into the misfolded conformation.",
+      "post_commitment_feedback": "A prion promotes conversion of host protein into the misfolded conformation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "SUB-FEATURE-SOLO-0",
+          "observation_language": "This response is consistent with selecting “By DNA integration” for the stated evidence.",
+          "rejection_rationale": "Prions contain no DNA genome to integrate.",
+          "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "SUB-FEATURE-SOLO-1",
+          "observation_language": "This response is consistent with selecting “By RNA replication” for the stated evidence.",
+          "rejection_rationale": "Prions contain no RNA genome.",
+          "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "SUB-FEATURE-SOLO-3",
+          "observation_language": "This response is consistent with selecting “By reverse transcription” for the stated evidence.",
+          "rejection_rationale": "Prions contain no RNA template for reverse transcription.",
+          "repair_feature_id": "SUB-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for explain prion propagation.",
+        "Apply the taught model before inspecting option presentation.",
+        "A prion promotes conversion of host protein into the misfolded conformation."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "SUB-ITEM-NEAR",
+      "learner_prompt_key": "SUB_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Naked host-dependent RNA without capsid identifies a viroid.",
+      "post_commitment_feedback": "Naked host-dependent RNA without capsid identifies a viroid.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "SUB-FEATURE-NEAR-1",
+          "observation_language": "This response is consistent with selecting “Virus” for the stated evidence.",
+          "rejection_rationale": "A virus packages its genome in capsid.",
+          "repair_feature_id": "SUB-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "SUB-FEATURE-NEAR-2",
+          "observation_language": "This response is consistent with selecting “Bacterium” for the stated evidence.",
+          "rejection_rationale": "A bacterium is a cell with ribosomes and other machinery.",
+          "repair_feature_id": "SUB-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "SUB-FEATURE-NEAR-3",
+          "observation_language": "This response is consistent with selecting “Prion” for the stated evidence.",
+          "rejection_rationale": "A prion is protein without RNA.",
+          "repair_feature_id": "SUB-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for classify viroid from features.",
+        "Apply the taught model before inspecting option presentation.",
+        "Naked host-dependent RNA without capsid identifies a viroid."
+      ],
+      "decision_point": "Use both RNA presence and capsid absence rather than host dependence alone.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "SUB-ITEM-CHANGED",
+      "learner_prompt_key": "SUB_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Protein-only composition, protease sensitivity, and conformational propagation identify a prion.",
+      "post_commitment_feedback": "Protein-only composition, protease sensitivity, and conformational propagation identify a prion.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "SUB-FEATURE-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “Nonenveloped virus” for the stated evidence.",
+          "rejection_rationale": "A nonenveloped virus still contains nucleic acid and capsid.",
+          "repair_feature_id": "SUB-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "SUB-FEATURE-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “Retrovirus” for the stated evidence.",
+          "rejection_rationale": "A retrovirus contains RNA and forms a DNA intermediate.",
+          "repair_feature_id": "SUB-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "SUB-FEATURE-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “Viroid” for the stated evidence.",
+          "rejection_rationale": "A viroid contains RNA and would be targeted by an RNA-degrading nuclease.",
+          "repair_feature_id": "SUB-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for infer prion from biochemical evidence.",
+        "Apply the taught model before inspecting option presentation.",
+        "Protein-only composition, protease sensitivity, and conformational propagation identify a prion."
+      ],
+      "decision_point": "Combine absence of nucleic acid with protein sensitivity and propagation mechanism.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "SUB-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "SUB_REPAIR_NEAR",
+      "correct_option_index": 3,
+      "rationale": "A virus has a nucleic-acid genome packaged by capsid.",
+      "post_commitment_feedback": "A virus has a nucleic-acid genome packaged by capsid.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "SUB-FEATURE-REPAIR-NEAR-0",
+          "observation_language": "This response is consistent with selecting “Prion: naked RNA” for the stated evidence.",
+          "rejection_rationale": "A prion is protein only, not naked RNA.",
+          "repair_feature_id": "SUB-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "SUB-FEATURE-REPAIR-NEAR-1",
+          "observation_language": "This response is consistent with selecting “Viroid: protein only” for the stated evidence.",
+          "rejection_rationale": "A viroid is naked RNA, not protein only.",
+          "repair_feature_id": "SUB-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "SUB-FEATURE-REPAIR-NEAR-2",
+          "observation_language": "This response is consistent with selecting “Virus: no nucleic acid” for the stated evidence.",
+          "rejection_rationale": "A virus necessarily has nucleic acid.",
+          "repair_feature_id": "SUB-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild subviral comparison.",
+        "Apply the taught model before inspecting option presentation.",
+        "A virus has a nucleic-acid genome packaged by capsid."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "SUB-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "SUB_REENTRY_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Naked infectious RNA without capsid identifies a viroid.",
+      "post_commitment_feedback": "Naked infectious RNA without capsid identifies a viroid.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "SUB-FEATURE-REENTRY-NEAR-0",
+          "observation_language": "This response is consistent with selecting “Prion” for the stated evidence.",
+          "rejection_rationale": "A prion is protein without nucleic acid.",
+          "repair_feature_id": "SUB-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "SUB-FEATURE-REENTRY-NEAR-1",
+          "observation_language": "This response is consistent with selecting “Bacterium” for the stated evidence.",
+          "rejection_rationale": "A bacterium is a cell rather than naked RNA.",
+          "repair_feature_id": "SUB-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "SUB-FEATURE-REENTRY-NEAR-3",
+          "observation_language": "This response is consistent with selecting “Virus” for the stated evidence.",
+          "rejection_rationale": "A virus packages its genome in capsid.",
+          "repair_feature_id": "SUB-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter entity classification.",
+        "Apply the taught model before inspecting option presentation.",
+        "Naked infectious RNA without capsid identifies a viroid."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "SUB-ITEM-NEAR"
+    },
+    {
+      "answer_record_id": "SUB-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "SUB_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Protease degrades the protein material essential to a prion.",
+      "post_commitment_feedback": "Protease degrades the protein material essential to a prion.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "SUB-FEATURE-REPAIR-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “DNase” for the stated evidence.",
+          "rejection_rationale": "DNase targets DNA, which a prion lacks.",
+          "repair_feature_id": "SUB-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "SUB-FEATURE-REPAIR-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “Reverse transcriptase” for the stated evidence.",
+          "rejection_rationale": "Reverse transcriptase is an enzyme target or activity, not a protein-degrading treatment.",
+          "repair_feature_id": "SUB-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "SUB-FEATURE-REPAIR-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “RNase” for the stated evidence.",
+          "rejection_rationale": "RNase targets RNA, which a prion lacks.",
+          "repair_feature_id": "SUB-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild composition sensitivity map.",
+        "Apply the taught model before inspecting option presentation.",
+        "Protease degrades the protein material essential to a prion."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "SUB-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "SUB_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "RNase-sensitive naked RNA without capsid identifies a viroid.",
+      "post_commitment_feedback": "RNase-sensitive naked RNA without capsid identifies a viroid.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "SUB-FEATURE-REENTRY-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “DNA virus” for the stated evidence.",
+          "rejection_rationale": "A DNA virus is not defined by RNase sensitivity and has capsid.",
+          "repair_feature_id": "SUB-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "SUB-FEATURE-REENTRY-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “Enveloped virus” for the stated evidence.",
+          "rejection_rationale": "An enveloped virus has capsid and a lipid envelope.",
+          "repair_feature_id": "SUB-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "SUB-FEATURE-REENTRY-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “Prion” for the stated evidence.",
+          "rejection_rationale": "A prion is protein and should be protease-sensitive.",
+          "repair_feature_id": "SUB-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter biochemical entity classification.",
+        "Apply the taught model before inspecting option presentation.",
+        "RNase-sensitive naked RNA without capsid identifies a viroid."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "SUB-ITEM-CHANGED"
+    }
+  ]
+}

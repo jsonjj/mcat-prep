@@ -1,0 +1,1411 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcat-mastery.internal/lesson-factory/schemas/v1/intake-validation.schema.json",
+  "x_contract_id": "lesson-factory.intake-validation",
+  "x_contract_version": "3.0.0",
+  "title": "Intake validation record",
+  "description": "The record a consumer must produce before it may say a lesson-factory document is valid, and the document that record is about. Schema validation answers whether a document has the shape a contract describes; it cannot answer whether the references inside it point at bytes that exist and hash to what they claim, because JSON Schema cannot read a second file. Both halves are required. And both halves are about one document: a record names the offered bytes by canonical reference and by digest, names the contract and the exact contract version those bytes were validated against, and carries a proof over the whole derivation — so an admission cannot be written about a kind of document, cannot survive an edit to the document, and cannot be authored by anyone who did not do the work. A third half was added once the packet contract began pinning ten authoritative inputs by path and by two digests each: a reference and an input are checked differently, and treating an input row as a reference meant not checking it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "contract_version",
+    "document",
+    "schema_validation",
+    "resolver_validation",
+    "input_validation",
+    "semantic_validation",
+    "admission",
+    "admission_proof",
+    "validated_at"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "lesson-factory.intake-validation"
+    },
+    "contract_version": {
+      "const": "3.0.0",
+      "description": "The one contract version this schema describes. An instance that claims another version was validated against a contract that is not this one."
+    },
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The exact document that was offered. Every field here is derived by the intake API from the offered bytes and the trusted contract registry; none of them is a caller input. The four identity fields are pinned together by the oneOf below, so a profile cannot be filed as a handoff even when every digest in the record is real.",
+      "required": [
+        "kind",
+        "ref",
+        "sha256",
+        "contract_id",
+        "contract_version",
+        "schema_file",
+        "schema_locator",
+        "schema_sha256"
+      ],
+      "properties": {
+        "kind": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/ReferenceKindCode",
+          "description": "What was offered, named by the reference kind that points at documents of its contract."
+        },
+        "ref": {
+          "type": "string",
+          "pattern": "^(?:profile|policy|lifecycle|receipt|source-use-receipt|assignment|packet|quarantine-packet|handoff|team-handoff|ledger|kit|import-index|readiness):[A-Za-z0-9._/@-]+#sha256:[0-9a-f]{64}$",
+          "description": "The canonical pinned reference to the offered bytes: kind, canonical locator, and digest. The oneOf narrows this to the locator grammar of the declared kind, so the locator cannot belong to a different sort of thing."
+        },
+        "sha256": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Sha256",
+          "description": "The digest of the offered bytes, exactly as read. It is the same digest the reference carries; carrying it twice is what lets a consumer check the reference against the content without parsing the reference."
+        },
+        "contract_id": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/AdmissibleContractId"
+        },
+        "contract_version": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/SemanticVersion",
+          "description": "The exact contract version the document was validated against, pinned per kind below. A record that does not say which version it applied is a record of an unrepeatable check."
+        },
+        "schema_file": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/ContractSchemaFile"
+        },
+        "schema_locator": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/ContractSchemaLocator"
+        },
+        "schema_sha256": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Sha256",
+          "description": "The digest of the contract bytes that were applied. A contract is an authority like any other in this freeze, so it is pinned like one."
+        }
+      }
+    },
+    "schema_validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "error_count"
+      ],
+      "description": "The half a validator can do alone.",
+      "properties": {
+        "status": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/GateStatus"
+        },
+        "error_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "resolver_validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "checked_count",
+        "unresolved_count",
+        "references"
+      ],
+      "description": "The half that requires reading the referenced bytes: kind, canonical locator, target existence, and digest. The rows are discovered from the offered document using the contract and the reference model, never supplied: a caller that hands intake an empty list has told it there was nothing to check.",
+      "properties": {
+        "status": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/GateStatus"
+        },
+        "checked_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unresolved_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "references": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "field",
+              "kind",
+              "digest",
+              "status"
+            ],
+            "properties": {
+              "field": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/JsonPointer",
+                "description": "Where in the offered document the reference was found."
+              },
+              "kind": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/ReferenceKindCode"
+              },
+              "digest": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/ObservedDigest",
+                "description": "The digest that reference claimed, as read from the document."
+              },
+              "status": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/ResolutionStatus"
+              }
+            }
+          }
+        }
+      }
+    },
+    "admission": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/IntakeAdmission",
+      "description": "Derived, never asserted: ADMITTED requires schema, reference, input, and applicable packet-semantic validation to have passed over these bytes, and the proof below to have been computed over the derivation that produced it."
+    },
+    "refusal_code": {
+      "oneOf": [
+        {
+          "$ref": "shared-vocabulary.schema.json#/$defs/IntakeRefusalCode"
+        },
+        {
+          "const": "PACKET_SEMANTICS_INVALID"
+        }
+      ],
+      "description": "Why the document was refused. Present exactly when the admission is REJECTED."
+    },
+    "admission_proof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "derivation",
+        "derivation_sha256"
+      ],
+      "description": "A digest over the whole derivation: the offered digest, the derived identity, both validation results, and every reference row. It is not a secret and is not meant to be one — it is a binding. To write a record that survives recomputation you have to have the bytes it names, apply the contract it names, and get the results it reports, which is the same as having done the work.",
+      "properties": {
+        "derivation": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/IntakeDerivation"
+        },
+        "derivation_sha256": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+        }
+      }
+    },
+    "validated_at": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/IsoTimestamp"
+    },
+    "input_validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "checked_count",
+        "unresolved_count",
+        "inputs"
+      ],
+      "description": "The third half: every input the document pins by path, read from disk and hashed twice. The file digest catches an edited file; the canonical-content digest catches a file reserialised to look unedited. Documents that pin no inputs produce an empty list, which is a different answer from a passing one and is recorded as such.",
+      "properties": {
+        "status": {
+          "$ref": "shared-vocabulary.schema.json#/$defs/GateStatus"
+        },
+        "checked_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unresolved_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "inputs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "field",
+              "input",
+              "path",
+              "fileStatus",
+              "contentStatus"
+            ],
+            "properties": {
+              "field": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/JsonPointer"
+              },
+              "input": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/PacketInputKey"
+              },
+              "path": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/PacketInputPath"
+              },
+              "fileStatus": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/InputResolutionStatus"
+              },
+              "contentStatus": {
+                "$ref": "shared-vocabulary.schema.json#/$defs/InputResolutionStatus"
+              }
+            }
+          }
+        }
+      }
+    },
+    "semantic_validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "validator",
+        "status",
+        "error_count"
+      ],
+      "description": "The cross-field packet check, run only after schema, reference, and input validation pass. Packet semantics read the fixed curriculum manifest, source crosswalk, owner source-use receipt, allocation proof, deadline profile, and release policy from their canonical repository paths; no caller supplies an authority or a claimed semantic result.",
+      "properties": {
+        "validator": {
+          "const": "PACKET_SEMANTICS_V1"
+        },
+        "status": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "NOT_RUN",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "error_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  "PASS",
+                  "NOT_RUN",
+                  "NOT_APPLICABLE"
+                ]
+              }
+            }
+          },
+          "then": {
+            "type": "object",
+            "properties": {
+              "error_count": {
+                "const": 0
+              }
+            }
+          },
+          "else": {
+            "type": "object",
+            "properties": {
+              "error_count": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "$comment": "profile documents are lesson-factory.deadline-profile at 7.0.0, validated against deadline-profile.schema.json, and named by a canonical profile reference.",
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "profile"
+            },
+            "ref": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/ProfileRef"
+            },
+            "contract_id": {
+              "const": "lesson-factory.deadline-profile"
+            },
+            "contract_version": {
+              "const": "7.0.0"
+            },
+            "schema_file": {
+              "const": "deadline-profile.schema.json"
+            },
+            "schema_locator": {
+              "const": "content/lesson-factory/schemas/deadline-profile.schema.json"
+            }
+          },
+          "required": [
+            "kind",
+            "ref",
+            "contract_id",
+            "contract_version",
+            "schema_file",
+            "schema_locator"
+          ]
+        }
+      },
+      "required": [
+        "document"
+      ]
+    },
+    {
+      "$comment": "policy documents are lesson-factory.release-policy at 3.0.0, validated against release-policy.schema.json, and named by a canonical policy reference.",
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "policy"
+            },
+            "ref": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/PolicyRef"
+            },
+            "contract_id": {
+              "const": "lesson-factory.release-policy"
+            },
+            "contract_version": {
+              "const": "3.0.0"
+            },
+            "schema_file": {
+              "const": "release-policy.schema.json"
+            },
+            "schema_locator": {
+              "const": "content/lesson-factory/schemas/release-policy.schema.json"
+            }
+          },
+          "required": [
+            "kind",
+            "ref",
+            "contract_id",
+            "contract_version",
+            "schema_file",
+            "schema_locator"
+          ]
+        }
+      },
+      "required": [
+        "document"
+      ]
+    },
+    {
+      "$comment": "lifecycle documents are lesson-factory.lifecycle-nonclaims at 2.0.0, validated against lifecycle-nonclaims.schema.json, and named by a canonical lifecycle reference.",
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "lifecycle"
+            },
+            "ref": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/LifecycleRef"
+            },
+            "contract_id": {
+              "const": "lesson-factory.lifecycle-nonclaims"
+            },
+            "contract_version": {
+              "const": "2.0.0"
+            },
+            "schema_file": {
+              "const": "lifecycle-nonclaims.schema.json"
+            },
+            "schema_locator": {
+              "const": "content/lesson-factory/schemas/lifecycle-nonclaims.schema.json"
+            }
+          },
+          "required": [
+            "kind",
+            "ref",
+            "contract_id",
+            "contract_version",
+            "schema_file",
+            "schema_locator"
+          ]
+        }
+      },
+      "required": [
+        "document"
+      ]
+    },
+    {
+      "$comment": "receipt documents are lesson-factory.owner-route-policy-receipt at 4.0.0, validated against owner-route-policy-receipt.schema.json, and named by a canonical receipt reference.",
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "receipt"
+            },
+            "ref": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/ReceiptRef"
+            },
+            "contract_id": {
+              "const": "lesson-factory.owner-route-policy-receipt"
+            },
+            "contract_version": {
+              "const": "4.0.0"
+            },
+            "schema_file": {
+              "const": "owner-route-policy-receipt.schema.json"
+            },
+            "schema_locator": {
+              "const": "content/lesson-factory/schemas/owner-route-policy-receipt.schema.json"
+            }
+          },
+          "required": [
+            "kind",
+            "ref",
+            "contract_id",
+            "contract_version",
+            "schema_file",
+            "schema_locator"
+          ]
+        }
+      },
+      "required": [
+        "document"
+      ]
+    },
+    {
+      "$comment": "source-use-receipt documents are lesson-factory.owner-source-use-receipt at 2.0.0, validated against owner-source-use-receipt.schema.json, and named by a canonical source-use-receipt reference.",
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "source-use-receipt"
+            },
+            "ref": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/SourceUseReceiptRef"
+            },
+            "contract_id": {
+              "const": "lesson-factory.owner-source-use-receipt"
+            },
+            "contract_version": {
+              "const": "2.0.0"
+            },
+            "schema_file": {
+              "const": "owner-source-use-receipt.schema.json"
+            },
+            "schema_locator": {
+              "const": "content/lesson-factory/schemas/owner-source-use-receipt.schema.json"
+            }
+          },
+          "required": [
+            "kind",
+            "ref",
+            "contract_id",
+            "contract_version",
+            "schema_file",
+            "schema_locator"
+          ]
+        }
+      },
+      "required": [
+        "document"
+      ]
+    },
+    {
+      "$comment": "assignment documents are lesson-factory.assignment-manifest at 3.0.0, validated against assignment-manifest.schema.json, and named by a canonical assignment reference.",
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "assignment"
+            },
+            "ref": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/AssignmentRef"
+            },
+            "contract_id": {
+              "const": "lesson-factory.assignment-manifest"
+            },
+            "contract_version": {
+              "const": "3.0.0"
+            },
+            "schema_file": {
+              "const": "assignment-manifest.schema.json"
+            },
+            "schema_locator": {
+              "const": "content/lesson-factory/schemas/assignment-manifest.schema.json"
+            }
+          },
+          "required": [
+            "kind",
+            "ref",
+            "contract_id",
+            "contract_version",
+            "schema_file",
+            "schema_locator"
+          ]
+        }
+      },
+      "required": [
+        "document"
+      ]
+    },
+    {
+      "$comment": "packet documents are lesson-factory.task-source-packet at 5.0.0, validated against task-source-packet.schema.json, and named by a canonical packet reference.",
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "packet"
+            },
+            "ref": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/PacketRef"
+            },
+            "contract_id": {
+              "const": "lesson-factory.task-source-packet"
+            },
+            "contract_version": {
+              "const": "5.0.0"
+            },
+            "schema_file": {
+              "const": "task-source-packet.schema.json"
+            },
+            "schema_locator": {
+              "const": "content/lesson-factory/schemas/task-source-packet.schema.json"
+            }
+          },
+          "required": [
+            "kind",
+            "ref",
+            "contract_id",
+            "contract_version",
+            "schema_file",
+            "schema_locator"
+          ]
+        }
+      },
+      "required": [
+        "document"
+      ]
+    },
+    {
+      "$comment": "quarantine-packet documents are lesson-factory.task-source-packet at 5.0.0, validated against task-source-packet.schema.json, and named by a canonical quarantine-packet reference.",
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "quarantine-packet"
+            },
+            "ref": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/QuarantinePacketRef"
+            },
+            "contract_id": {
+              "const": "lesson-factory.task-source-packet"
+            },
+            "contract_version": {
+              "const": "5.0.0"
+            },
+            "schema_file": {
+              "const": "task-source-packet.schema.json"
+            },
+            "schema_locator": {
+              "const": "content/lesson-factory/schemas/task-source-packet.schema.json"
+            }
+          },
+          "required": [
+            "kind",
+            "ref",
+            "contract_id",
+            "contract_version",
+            "schema_file",
+            "schema_locator"
+          ]
+        }
+      },
+      "required": [
+        "document"
+      ]
+    },
+    {
+      "$comment": "handoff documents are lesson-factory.lesson-handoff at 4.0.0, validated against lesson-handoff.schema.json, and named by a canonical handoff reference.",
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "handoff"
+            },
+            "ref": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/HandoffRef"
+            },
+            "contract_id": {
+              "const": "lesson-factory.lesson-handoff"
+            },
+            "contract_version": {
+              "const": "4.0.0"
+            },
+            "schema_file": {
+              "const": "lesson-handoff.schema.json"
+            },
+            "schema_locator": {
+              "const": "content/lesson-factory/schemas/lesson-handoff.schema.json"
+            }
+          },
+          "required": [
+            "kind",
+            "ref",
+            "contract_id",
+            "contract_version",
+            "schema_file",
+            "schema_locator"
+          ]
+        }
+      },
+      "required": [
+        "document"
+      ]
+    },
+    {
+      "$comment": "team-handoff documents are lesson-factory.team-handoff at 3.0.0, validated against team-handoff.schema.json, and named by a canonical team-handoff reference.",
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "team-handoff"
+            },
+            "ref": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/TeamHandoffRef"
+            },
+            "contract_id": {
+              "const": "lesson-factory.team-handoff"
+            },
+            "contract_version": {
+              "const": "3.0.0"
+            },
+            "schema_file": {
+              "const": "team-handoff.schema.json"
+            },
+            "schema_locator": {
+              "const": "content/lesson-factory/schemas/team-handoff.schema.json"
+            }
+          },
+          "required": [
+            "kind",
+            "ref",
+            "contract_id",
+            "contract_version",
+            "schema_file",
+            "schema_locator"
+          ]
+        }
+      },
+      "required": [
+        "document"
+      ]
+    },
+    {
+      "$comment": "ledger documents are lesson-factory.candidate-quality-ledger at 4.0.0, validated against candidate-quality-ledger.schema.json, and named by a canonical ledger reference.",
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "ledger"
+            },
+            "ref": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/LedgerRef"
+            },
+            "contract_id": {
+              "const": "lesson-factory.candidate-quality-ledger"
+            },
+            "contract_version": {
+              "const": "4.0.0"
+            },
+            "schema_file": {
+              "const": "candidate-quality-ledger.schema.json"
+            },
+            "schema_locator": {
+              "const": "content/lesson-factory/schemas/candidate-quality-ledger.schema.json"
+            }
+          },
+          "required": [
+            "kind",
+            "ref",
+            "contract_id",
+            "contract_version",
+            "schema_file",
+            "schema_locator"
+          ]
+        }
+      },
+      "required": [
+        "document"
+      ]
+    },
+    {
+      "$comment": "kit documents are lesson-factory.kit-manifest at 3.0.0, validated against kit-manifest.schema.json, and named by a canonical kit reference.",
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "kit"
+            },
+            "ref": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/KitRef"
+            },
+            "contract_id": {
+              "const": "lesson-factory.kit-manifest"
+            },
+            "contract_version": {
+              "const": "3.0.0"
+            },
+            "schema_file": {
+              "const": "kit-manifest.schema.json"
+            },
+            "schema_locator": {
+              "const": "content/lesson-factory/schemas/kit-manifest.schema.json"
+            }
+          },
+          "required": [
+            "kind",
+            "ref",
+            "contract_id",
+            "contract_version",
+            "schema_file",
+            "schema_locator"
+          ]
+        }
+      },
+      "required": [
+        "document"
+      ]
+    },
+    {
+      "$comment": "import-index documents are lesson-factory.import-index at 3.0.0, validated against import-index.schema.json, and named by a canonical import-index reference.",
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "import-index"
+            },
+            "ref": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/ImportIndexRef"
+            },
+            "contract_id": {
+              "const": "lesson-factory.import-index"
+            },
+            "contract_version": {
+              "const": "3.0.0"
+            },
+            "schema_file": {
+              "const": "import-index.schema.json"
+            },
+            "schema_locator": {
+              "const": "content/lesson-factory/schemas/import-index.schema.json"
+            }
+          },
+          "required": [
+            "kind",
+            "ref",
+            "contract_id",
+            "contract_version",
+            "schema_file",
+            "schema_locator"
+          ]
+        }
+      },
+      "required": [
+        "document"
+      ]
+    },
+    {
+      "$comment": "readiness documents are lesson-factory.bundle-readiness at 4.0.0, validated against bundle-readiness.schema.json, and named by a canonical readiness reference.",
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "readiness"
+            },
+            "ref": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/ReadinessRef"
+            },
+            "contract_id": {
+              "const": "lesson-factory.bundle-readiness"
+            },
+            "contract_version": {
+              "const": "4.0.0"
+            },
+            "schema_file": {
+              "const": "bundle-readiness.schema.json"
+            },
+            "schema_locator": {
+              "const": "content/lesson-factory/schemas/bundle-readiness.schema.json"
+            }
+          },
+          "required": [
+            "kind",
+            "ref",
+            "contract_id",
+            "contract_version",
+            "schema_file",
+            "schema_locator"
+          ]
+        }
+      },
+      "required": [
+        "document"
+      ]
+    }
+  ],
+  "allOf": [
+    {
+      "$comment": "A record cannot be admitted unless all three halves passed. This is the rule that makes an Ajv-only consumer unable to produce an ADMITTED record: it has nothing to put in resolver_validation and nothing to put in input_validation.",
+      "if": {
+        "type": "object",
+        "properties": {
+          "admission": {
+            "const": "ADMITTED"
+          }
+        },
+        "required": [
+          "admission"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "schema_validation": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "const": "PASS"
+              },
+              "error_count": {
+                "const": 0
+              }
+            }
+          },
+          "resolver_validation": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "const": "PASS"
+              },
+              "unresolved_count": {
+                "const": 0
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "enum": [
+                        "RESOLVED",
+                        "IDENTITY_ONLY"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "input_validation": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "const": "PASS"
+              },
+              "unresolved_count": {
+                "const": 0
+              },
+              "inputs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "fileStatus": {
+                      "const": "RESOLVED"
+                    },
+                    "contentStatus": {
+                      "const": "RESOLVED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "semantic_validation": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "enum": [
+                  "PASS",
+                  "NOT_APPLICABLE"
+                ]
+              },
+              "error_count": {
+                "const": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "$comment": "And the converse, so a record cannot pass every applicable validation and then withhold admission for a reason it does not state.",
+      "if": {
+        "type": "object",
+        "properties": {
+          "schema_validation": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "const": "PASS"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "resolver_validation": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "const": "PASS"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "input_validation": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "const": "PASS"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "semantic_validation": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "enum": [
+                  "PASS",
+                  "NOT_APPLICABLE"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          }
+        },
+        "required": [
+          "schema_validation",
+          "resolver_validation",
+          "input_validation"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "admission": {
+            "const": "ADMITTED"
+          }
+        }
+      }
+    },
+    {
+      "$comment": "Packet and quarantine-packet documents run the packet semantic validator; every other admitted contract records that the packet-only validator is not applicable.",
+      "if": {
+        "type": "object",
+        "required": [
+          "document"
+        ],
+        "properties": {
+          "document": {
+            "type": "object",
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "packet",
+                  "quarantine-packet"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "required": [
+          "semantic_validation"
+        ],
+        "properties": {
+          "semantic_validation": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  "PASS",
+                  "FAIL",
+                  "NOT_RUN"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "type": "object",
+        "required": [
+          "semantic_validation"
+        ],
+        "properties": {
+          "semantic_validation": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": "NOT_APPLICABLE"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "$comment": "A packet-semantic contradiction has one stable refusal code and can never be admitted.",
+      "if": {
+        "type": "object",
+        "required": [
+          "semantic_validation"
+        ],
+        "properties": {
+          "semantic_validation": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": "FAIL"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "required": [
+          "admission",
+          "refusal_code"
+        ],
+        "properties": {
+          "admission": {
+            "const": "REJECTED"
+          },
+          "refusal_code": {
+            "const": "PACKET_SEMANTICS_INVALID"
+          }
+        }
+      }
+    },
+    {
+      "$comment": "NOT_RUN is an ordering fact: an earlier validation failed, so packet semantics did not run and the document cannot be admitted.",
+      "if": {
+        "type": "object",
+        "required": [
+          "semantic_validation"
+        ],
+        "properties": {
+          "semantic_validation": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": "NOT_RUN"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "required": [
+          "admission"
+        ],
+        "properties": {
+          "admission": {
+            "const": "REJECTED"
+          }
+        }
+      }
+    },
+    {
+      "$comment": "A refusal says why, and an admission does not carry a reason for a refusal that did not happen.",
+      "if": {
+        "type": "object",
+        "properties": {
+          "admission": {
+            "const": "REJECTED"
+          }
+        },
+        "required": [
+          "admission"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "refusal_code": {
+            "oneOf": [
+              {
+                "$ref": "shared-vocabulary.schema.json#/$defs/IntakeRefusalCode"
+              },
+              {
+                "const": "PACKET_SEMANTICS_INVALID"
+              }
+            ]
+          }
+        },
+        "required": [
+          "refusal_code"
+        ]
+      },
+      "else": {
+        "type": "object",
+        "properties": {
+          "refusal_code": false
+        }
+      }
+    },
+    {
+      "$comment": "A count of zero over a non-empty list of references is the shape of a caller reporting that it checked nothing. The exact count is bound by the admission proof; this is the part a validator can see on its own.",
+      "if": {
+        "type": "object",
+        "properties": {
+          "resolver_validation": {
+            "type": "object",
+            "properties": {
+              "references": {
+                "type": "array",
+                "contains": {}
+              }
+            },
+            "required": [
+              "references"
+            ]
+          }
+        },
+        "required": [
+          "resolver_validation"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "resolver_validation": {
+            "type": "object",
+            "properties": {
+              "checked_count": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "$comment": "And the converse: a document with references checked cannot report no rows.",
+      "if": {
+        "type": "object",
+        "properties": {
+          "resolver_validation": {
+            "type": "object",
+            "properties": {
+              "checked_count": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "checked_count"
+            ]
+          }
+        },
+        "required": [
+          "resolver_validation"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "resolver_validation": {
+            "type": "object",
+            "properties": {
+              "references": {
+                "type": "array",
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "$comment": "A reference that did not resolve is an unadmitted document, however the counts were written.",
+      "if": {
+        "type": "object",
+        "properties": {
+          "resolver_validation": {
+            "type": "object",
+            "properties": {
+              "references": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "enum": [
+                        "NOT_YET_PRODUCED",
+                        "MISMATCHED",
+                        "MALFORMED"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "references"
+            ]
+          }
+        },
+        "required": [
+          "resolver_validation"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "admission": {
+            "const": "REJECTED"
+          },
+          "resolver_validation": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "const": "FAIL"
+              },
+              "unresolved_count": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "$comment": "And an input row that did not resolve is an input row the record has to count. A list with a failure in it and an unresolved count of zero is the shape of a caller reporting a check it did not act on.",
+      "if": {
+        "type": "object",
+        "properties": {
+          "input_validation": {
+            "type": "object",
+            "properties": {
+              "inputs": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "fileStatus": {
+                          "enum": [
+                            "MISMATCHED",
+                            "MISSING"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "fileStatus"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "contentStatus": {
+                          "enum": [
+                            "MISMATCHED",
+                            "MISSING"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "contentStatus"
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            "required": [
+              "inputs"
+            ]
+          }
+        },
+        "required": [
+          "input_validation"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "input_validation": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "const": "FAIL"
+              },
+              "unresolved_count": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          },
+          "admission": {
+            "const": "REJECTED"
+          }
+        }
+      }
+    }
+  ]
+}

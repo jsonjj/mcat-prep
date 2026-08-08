@@ -1,0 +1,658 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears.",
+  "items": [
+    {
+      "prompt_key": "REF_ITEM_ENTRY",
+      "title": "Plane reflection: Starting check",
+      "prompt": "A ray strikes a plane mirror at 32° from the normal. Which construction gives its reflected path?",
+      "response_type": "single_select",
+      "options": [
+        "Equal normal angles; reflected ray crosses to normal’s other side",
+        "Complementary normal angles; reflected ray crosses normal’s other side",
+        "Equal normal angles; reflected ray stays on incident-ray side",
+        "Unequal normal angles; refractive indices set outgoing path"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "REF_ITEM_GUIDED",
+      "title": "Plane reflection: Choose with support",
+      "prompt": "Which reference line must be drawn at the incidence point before applying the law of reflection?",
+      "response_type": "single_select",
+      "options": [
+        "Complementary normal angles; reflected ray crosses normal’s other side",
+        "Equal normal angles; reflected ray crosses to normal’s other side",
+        "Equal normal angles; reflected ray stays on incident-ray side",
+        "Unequal normal angles; refractive indices set outgoing path"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "REF_ITEM_LIGHT",
+      "title": "Plane reflection: Choose with less support",
+      "prompt": "A ray arrives 20° from the mirror surface. Which rule correctly converts and reflects it?",
+      "response_type": "single_select",
+      "options": [
+        "Complementary normal angles; reflected ray crosses normal’s other side",
+        "Equal normal angles; reflected ray stays on incident-ray side",
+        "Equal normal angles; reflected ray crosses to normal’s other side",
+        "Unequal normal angles; refractive indices set outgoing path"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "REF_ITEM_SOLO",
+      "title": "Plane reflection: Choose independently",
+      "prompt": "A ray travels along the normal into a plane mirror. What path follows?",
+      "response_type": "single_select",
+      "options": [
+        "Equal normal angles; reflected ray crosses to normal’s other side",
+        "Complementary normal angles; reflected ray crosses normal’s other side",
+        "Unequal normal angles; refractive indices set outgoing path",
+        "Normal incidence; reflected ray returns along incoming path"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "REF_ITEM_NEAR",
+      "title": "Plane reflection: Near-use check",
+      "prompt": "A fresh ray strikes at 41° from the normal. Which rule fixes the outgoing direction?",
+      "response_type": "single_select",
+      "options": [
+        "Equal normal angles; reflected ray crosses to normal’s other side",
+        "Equal normal angles; reflected ray stays on incident-ray side",
+        "Complementary normal angles; reflected ray crosses normal’s other side",
+        "Unequal normal angles; refractive indices set outgoing path"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "REF_ITEM_CHANGED",
+      "title": "Plane reflection: Changed-task check",
+      "prompt": "The incident ray stays fixed while a plane mirror rotates 8°. How far does the reflected direction rotate?",
+      "response_type": "single_select",
+      "options": [
+        "Mirror turns 8 degrees; reflected direction turns 8 degrees",
+        "Mirror turns 8 degrees; reflected direction turns 16 degrees",
+        "Mirror turns 8 degrees; reflected direction turns 4 degrees",
+        "Mirror turns 8 degrees; reflected direction remains unchanged"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "REF_ITEM_REPAIR_NEAR",
+      "title": "Plane reflection: Repair the near-use function",
+      "prompt": "Which rule repairs a ray drawn with complementary incidence and reflection angles measured from the normal?",
+      "response_type": "single_select",
+      "options": [
+        "Complementary normal angles; reflected ray crosses normal’s other side",
+        "Equal normal angles; reflected ray stays on incident-ray side",
+        "Equal normal angles; reflected ray crosses to normal’s other side",
+        "Unequal normal angles; refractive indices set outgoing path"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "REF_ITEM_REENTRY_NEAR",
+      "title": "Plane reflection: Fresh near-use re-entry",
+      "prompt": "A new ray strikes at 27° from the normal. Which construction is valid?",
+      "response_type": "single_select",
+      "options": [
+        "Complementary normal angles; reflected ray crosses normal’s other side",
+        "Equal normal angles; reflected ray stays on incident-ray side",
+        "Unequal normal angles; refractive indices set outgoing path",
+        "Equal normal angles; reflected ray crosses to normal’s other side"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "REF_ITEM_REPAIR_CHANGED",
+      "title": "Plane reflection: Repair the changed-task function",
+      "prompt": "Which result repairs the mirror-rotation function for an 8° turn?",
+      "response_type": "single_select",
+      "options": [
+        "Mirror turns 8 degrees; reflected direction turns 16 degrees",
+        "Mirror turns 8 degrees; reflected direction turns 8 degrees",
+        "Mirror turns 8 degrees; reflected direction turns 4 degrees",
+        "Mirror turns 8 degrees; reflected direction remains unchanged"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "REF_ITEM_REENTRY_CHANGED",
+      "title": "Plane reflection: Fresh changed-task re-entry",
+      "prompt": "A fresh plane mirror rotates 5° while the incoming ray stays fixed. Which result follows?",
+      "response_type": "single_select",
+      "options": [
+        "Mirror turns 5 degrees; reflected direction turns 5 degrees",
+        "Mirror turns 5 degrees; reflected direction turns 10 degrees",
+        "Mirror turns 5 degrees; reflected direction turns 15 degrees",
+        "Mirror turns 8 degrees; reflected direction remains unchanged"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "SNL_ITEM_ENTRY",
+      "title": "Refraction: Starting check",
+      "prompt": "A ray enters a higher-index transparent medium at a nonzero angle. Which path change follows?",
+      "response_type": "single_select",
+      "options": [
+        "Enters lower index; ray bends away from interface normal",
+        "Crosses interface with unchanged direction and unchanged speed",
+        "Enters higher index; ray bends toward the interface normal",
+        "Stays in first medium by total internal reflection"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "SNL_ITEM_GUIDED",
+      "title": "Refraction: Choose with support",
+      "prompt": "A ray exits glass into lower-index air below the critical angle. Which path change follows?",
+      "response_type": "single_select",
+      "options": [
+        "Enters higher index; ray bends toward the interface normal",
+        "Crosses interface with unchanged direction and unchanged speed",
+        "Stays in first medium by total internal reflection",
+        "Enters lower index; ray bends away from interface normal"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "SNL_ITEM_LIGHT",
+      "title": "Refraction: Choose with less support",
+      "prompt": "Light crosses into a medium with a different refractive index. Which quantity relation is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Frequency stays fixed; speed and wavelength change in medium",
+        "Crosses interface with unchanged direction and unchanged speed",
+        "Enters higher index; ray bends toward the interface normal",
+        "Enters lower index; ray bends away from interface normal"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "SNL_ITEM_SOLO",
+      "title": "Refraction: Choose independently",
+      "prompt": "A ray travels from n=1.20 to n=1.60 at a nonzero incident angle. Which qualitative result follows?",
+      "response_type": "single_select",
+      "options": [
+        "Enters lower index; ray bends away from interface normal",
+        "Enters higher index; ray bends toward the interface normal",
+        "Crosses interface with unchanged direction and unchanged speed",
+        "Stays in first medium by total internal reflection"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "SNL_ITEM_NEAR",
+      "title": "Refraction: Near-use check",
+      "prompt": "A ray in n=1.50 approaches an n=1.00 boundary above the critical angle. Which result follows?",
+      "response_type": "single_select",
+      "options": [
+        "Enters lower index; ray bends away from interface normal",
+        "Enters higher index; ray bends toward the interface normal",
+        "Stays in first medium by total internal reflection",
+        "Crosses interface with unchanged direction and unchanged speed"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "SNL_ITEM_CHANGED",
+      "title": "Refraction: Changed-task check",
+      "prompt": "A material has a larger refractive index for violet than red light. At equal incidence from air, which dispersion result follows?",
+      "response_type": "single_select",
+      "options": [
+        "Given greater violet index, red bends more toward normal",
+        "Both wavelengths bend equally despite different indices",
+        "Crosses interface with unchanged direction and unchanged speed",
+        "Given greater violet index, violet bends more toward normal"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "SNL_ITEM_REPAIR_NEAR",
+      "title": "Refraction: Repair the near-use function",
+      "prompt": "Which condition set repairs a total-internal-reflection decision?",
+      "response_type": "single_select",
+      "options": [
+        "Stays in first medium by total internal reflection",
+        "Enters higher index; ray bends toward the interface normal",
+        "Enters lower index; ray bends away from interface normal",
+        "Crosses interface with unchanged direction and unchanged speed"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "SNL_ITEM_REENTRY_NEAR",
+      "title": "Refraction: Fresh near-use re-entry",
+      "prompt": "A fresh ray in water reaches an air boundary above its critical angle. Which result follows?",
+      "response_type": "single_select",
+      "options": [
+        "Enters lower index; ray bends away from interface normal",
+        "Stays in first medium by total internal reflection",
+        "Enters higher index; ray bends toward the interface normal",
+        "Crosses interface with unchanged direction and unchanged speed"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "SNL_ITEM_REPAIR_CHANGED",
+      "title": "Refraction: Repair the changed-task function",
+      "prompt": "Which comparison repairs a dispersion prediction when n_violet is supplied greater than n_red?",
+      "response_type": "single_select",
+      "options": [
+        "Given greater violet index, red bends more toward normal",
+        "Both wavelengths bend equally despite different indices",
+        "Given greater violet index, violet bends more toward normal",
+        "Crosses interface with unchanged direction and unchanged speed"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "SNL_ITEM_REENTRY_CHANGED",
+      "title": "Refraction: Fresh changed-task re-entry",
+      "prompt": "A new material has a larger refractive index for blue than red light. At equal incidence from air, which dispersion result follows?",
+      "response_type": "single_select",
+      "options": [
+        "Given greater blue index, red bends more toward normal",
+        "Both wavelengths bend equally despite different indices",
+        "Crosses interface with unchanged direction and unchanged speed",
+        "Given greater blue index, blue bends more toward normal"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MIR_ITEM_ENTRY",
+      "title": "Spherical mirrors: Starting check",
+      "prompt": "A concave mirror has f=+10 cm and p=+30 cm. Which image result follows from 1/p+1/q=1/f?",
+      "response_type": "single_select",
+      "options": [
+        "q = +15 cm; image is real and inverted",
+        "q = −7.5 cm; image is virtual and upright",
+        "q = −15 cm; image is virtual and upright",
+        "No image classification follows from the supplied mirror data"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MIR_ITEM_GUIDED",
+      "title": "Spherical mirrors: Choose with support",
+      "prompt": "A convex mirror has f=−10 cm and p=+30 cm. Which result follows?",
+      "response_type": "single_select",
+      "options": [
+        "q = +15 cm; image is real and inverted",
+        "q = −7.5 cm; image is virtual and upright",
+        "q = −15 cm; image is virtual and upright",
+        "No image classification follows from the supplied mirror data"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MIR_ITEM_LIGHT",
+      "title": "Spherical mirrors: Choose with less support",
+      "prompt": "A concave spherical mirror has radius of curvature 40 cm. Which focal length fits the stated convention?",
+      "response_type": "single_select",
+      "options": [
+        "f = +40 cm for a concave mirror with R = 40 cm",
+        "f = −20 cm for a concave mirror with R = 40 cm",
+        "f = +20 cm for a concave mirror with R = 40 cm",
+        "No image classification follows from the supplied mirror data"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MIR_ITEM_SOLO",
+      "title": "Spherical mirrors: Choose independently",
+      "prompt": "Which principal-ray pair correctly constructs a concave-mirror image?",
+      "response_type": "single_select",
+      "options": [
+        "Parallel ray reflects parallel; focal ray reflects through focus",
+        "No image classification follows from the supplied mirror data",
+        "f = +40 cm for a concave mirror with R = 40 cm",
+        "Parallel ray reflects through focus; focal ray reflects parallel"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MIR_ITEM_NEAR",
+      "title": "Spherical mirrors: Near-use check",
+      "prompt": "A concave mirror has f=+10 cm and an object at p=+6 cm. Which result follows?",
+      "response_type": "single_select",
+      "options": [
+        "q = −15 cm; image is virtual and upright",
+        "q = +15 cm; image is real and inverted",
+        "q = −7.5 cm; image is virtual and upright",
+        "No image classification follows from the supplied mirror data"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MIR_ITEM_CHANGED",
+      "title": "Spherical mirrors: Changed-task check",
+      "prompt": "Which ray construction remains valid when the object location changes but the same concave mirror is used?",
+      "response_type": "single_select",
+      "options": [
+        "Parallel ray reflects parallel; focal ray reflects through focus",
+        "Parallel ray reflects through focus; focal ray reflects parallel",
+        "f = +40 cm for a concave mirror with R = 40 cm",
+        "No image classification follows from the supplied mirror data"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MIR_ITEM_REPAIR_NEAR",
+      "title": "Spherical mirrors: Repair the near-use function",
+      "prompt": "Which relation repairs a spherical-mirror solution that used f=R?",
+      "response_type": "single_select",
+      "options": [
+        "f = +40 cm for a concave mirror with R = 40 cm",
+        "f = −20 cm for a concave mirror with R = 40 cm",
+        "f = +20 cm for a concave mirror with R = 40 cm",
+        "No image classification follows from the supplied mirror data"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MIR_ITEM_REENTRY_NEAR",
+      "title": "Spherical mirrors: Fresh near-use re-entry",
+      "prompt": "A fresh concave mirror has f=+12 cm and p=+24 cm. Which image result is consistent?",
+      "response_type": "single_select",
+      "options": [
+        "q = −15 cm; image is virtual and upright",
+        "q = −7.5 cm; image is virtual and upright",
+        "No image classification follows from the supplied mirror data",
+        "q = +24 cm; image is real and inverted"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MIR_ITEM_REPAIR_CHANGED",
+      "title": "Spherical mirrors: Repair the changed-task function",
+      "prompt": "Which pair repairs a ray diagram that sent a parallel ray back parallel?",
+      "response_type": "single_select",
+      "options": [
+        "Parallel ray reflects through focus; focal ray reflects parallel",
+        "Parallel ray reflects parallel; focal ray reflects through focus",
+        "f = +40 cm for a concave mirror with R = 40 cm",
+        "No image classification follows from the supplied mirror data"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MIR_ITEM_REENTRY_CHANGED",
+      "title": "Spherical mirrors: Fresh changed-task re-entry",
+      "prompt": "A new concave mirror receives a ray parallel to its principal axis. Which continuation belongs to a valid principal-ray construction?",
+      "response_type": "single_select",
+      "options": [
+        "Parallel ray reflects parallel; focal ray reflects through focus",
+        "Parallel ray reflects through focus; focal ray reflects parallel",
+        "Ray through center of curvature reflects through the focus",
+        "Parallel ray continues undeviated through the mirror surface"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "LEN_ITEM_ENTRY",
+      "title": "Thin lenses: Starting check",
+      "prompt": "A converging lens has f=+10 cm and p=+30 cm. Which result follows?",
+      "response_type": "single_select",
+      "options": [
+        "q = −7.5 cm; diverging lens makes virtual upright image",
+        "q = −15 cm; converging lens makes virtual upright image",
+        "q = +15 cm; converging lens makes real inverted image",
+        "No signed image or power result follows from supplied data"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "LEN_ITEM_GUIDED",
+      "title": "Thin lenses: Choose with support",
+      "prompt": "A diverging lens has f=−10 cm and p=+30 cm. Which result follows?",
+      "response_type": "single_select",
+      "options": [
+        "q = +15 cm; converging lens makes real inverted image",
+        "q = −15 cm; converging lens makes virtual upright image",
+        "No signed image or power result follows from supplied data",
+        "q = −7.5 cm; diverging lens makes virtual upright image"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "LEN_ITEM_LIGHT",
+      "title": "Thin lenses: Choose with less support",
+      "prompt": "A lens has focal length +0.50 m. Which optical power follows?",
+      "response_type": "single_select",
+      "options": [
+        "P = +2 diopters; focal length is +0.50 meter",
+        "P = −4 diopters; focal length is −0.25 meter",
+        "P = +5 diopters; focal length is +0.20 meter",
+        "No signed image or power result follows from supplied data"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "LEN_ITEM_SOLO",
+      "title": "Thin lenses: Choose independently",
+      "prompt": "A lens has power −4 diopters. Which focal-length result follows?",
+      "response_type": "single_select",
+      "options": [
+        "P = +2 diopters; focal length is +0.50 meter",
+        "P = −4 diopters; focal length is −0.25 meter",
+        "P = +5 diopters; focal length is +0.20 meter",
+        "No signed image or power result follows from supplied data"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "LEN_ITEM_NEAR",
+      "title": "Thin lenses: Near-use check",
+      "prompt": "A converging lens has f=+10 cm and an object at p=+6 cm. Which result follows?",
+      "response_type": "single_select",
+      "options": [
+        "q = +15 cm; converging lens makes real inverted image",
+        "q = −7.5 cm; diverging lens makes virtual upright image",
+        "q = −15 cm; converging lens makes virtual upright image",
+        "No signed image or power result follows from supplied data"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "LEN_ITEM_CHANGED",
+      "title": "Thin lenses: Changed-task check",
+      "prompt": "An object is placed beyond 2f of a converging lens. Which ray-diagram result follows?",
+      "response_type": "single_select",
+      "options": [
+        "Image lies beyond 2f; real, inverted, and magnified",
+        "q = −15 cm; converging lens makes virtual upright image",
+        "No signed image or power result follows from supplied data",
+        "Image lies between f and 2f; real, inverted, and reduced"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "LEN_ITEM_REPAIR_NEAR",
+      "title": "Thin lenses: Repair the near-use function",
+      "prompt": "A converging lens has f=+10 cm and an object at p=+6 cm. Which result repairs a solution that reported a real image?",
+      "response_type": "single_select",
+      "options": [
+        "q = −15 cm; converging lens makes virtual upright image",
+        "q = +15 cm; converging lens makes real inverted image",
+        "q = −7.5 cm; diverging lens makes virtual upright image",
+        "No signed image or power result follows from supplied data"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "LEN_ITEM_REENTRY_NEAR",
+      "title": "Thin lenses: Fresh near-use re-entry",
+      "prompt": "A fresh converging lens has f=+12 cm and an object at p=+8 cm. Which signed image result follows?",
+      "response_type": "single_select",
+      "options": [
+        "q = +24 cm; image is real and inverted",
+        "q = −24 cm; image is virtual and upright",
+        "q = −12 cm; image is virtual and upright",
+        "No signed image result follows from the supplied lens data"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "LEN_ITEM_REPAIR_CHANGED",
+      "title": "Thin lenses: Repair the changed-task function",
+      "prompt": "Which location repairs a ray diagram for an object beyond 2f of a converging lens?",
+      "response_type": "single_select",
+      "options": [
+        "Image lies beyond 2f; real, inverted, and magnified",
+        "q = −15 cm; converging lens makes virtual upright image",
+        "Image lies between f and 2f; real, inverted, and reduced",
+        "No signed image or power result follows from supplied data"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "LEN_ITEM_REENTRY_CHANGED",
+      "title": "Thin lenses: Fresh changed-task re-entry",
+      "prompt": "A new object lies between f and 2f of a converging lens. Which ray-diagram result follows?",
+      "response_type": "single_select",
+      "options": [
+        "Image lies between f and 2f; real, inverted, and reduced",
+        "Image lies on object side; virtual, upright, and magnified",
+        "No image location or orientation follows from the stated region",
+        "Image lies beyond 2f; real, inverted, and magnified"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CMP_ITEM_ENTRY",
+      "title": "Compound systems: Starting check",
+      "prompt": "In a two-lens system, what becomes the object for the second lens?",
+      "response_type": "single_select",
+      "options": [
+        "Use first image as second element’s object; propagate in order",
+        "Add focal lengths first; treat all separated elements as one",
+        "Reuse original object for every element; ignore prior images",
+        "Start at final element and trace backward without object data"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CMP_ITEM_GUIDED",
+      "title": "Compound systems: Choose with support",
+      "prompt": "Which workflow correctly analyzes two separated thin lenses?",
+      "response_type": "single_select",
+      "options": [
+        "Add focal lengths first; treat all separated elements as one",
+        "Use first image as second element’s object; propagate in order",
+        "Reuse original object for every element; ignore prior images",
+        "Start at final element and trace backward without object data"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CMP_ITEM_LIGHT",
+      "title": "Compound systems: Choose with less support",
+      "prompt": "Which image description applies to a normally focused human eye?",
+      "response_type": "single_select",
+      "options": [
+        "Virtual-eye model: places an upright image behind the retina",
+        "Add focal lengths first; treat all separated elements as one",
+        "Focused eye: forms a real inverted image on the retinal surface",
+        "Reuse original object for every element; ignore prior images"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CMP_ITEM_SOLO",
+      "title": "Compound systems: Choose independently",
+      "prompt": "A compound optical instrument contains separated elements. Which principle prevents treating it as one unlabeled lens?",
+      "response_type": "single_select",
+      "options": [
+        "Add focal lengths first; treat all separated elements as one",
+        "Reuse original object for every element; ignore prior images",
+        "Start at final element and trace backward without object data",
+        "Use first image as second element’s object; propagate in order"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CMP_ITEM_NEAR",
+      "title": "Compound systems: Near-use check",
+      "prompt": "The first lens forms a real image 4 cm to the left of a second lens. What is the next required step?",
+      "response_type": "single_select",
+      "options": [
+        "Use first image as second element’s object; propagate in order",
+        "Add focal lengths first; treat all separated elements as one",
+        "Reuse original object for every element; ignore prior images",
+        "Start at final element and trace backward without object data"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CMP_ITEM_CHANGED",
+      "title": "Compound systems: Changed-task check",
+      "prompt": "A lens focuses violet and red rays from the same object at different axial positions. Which extension is described?",
+      "response_type": "single_select",
+      "options": [
+        "Spherical aberration: axial and peripheral rays focus differently",
+        "Chromatic aberration: wavelengths focus at different positions",
+        "Focused eye: forms a real inverted image on the retinal surface",
+        "Virtual-eye model: places an upright image behind the retina"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CMP_ITEM_REPAIR_NEAR",
+      "title": "Compound systems: Repair the near-use function",
+      "prompt": "Which rule repairs a compound calculation that reused the original object at lens two?",
+      "response_type": "single_select",
+      "options": [
+        "Reuse original object for every element; ignore prior images",
+        "Add focal lengths first; treat all separated elements as one",
+        "Use first image as second element’s object; propagate in order",
+        "Start at final element and trace backward without object data"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CMP_ITEM_REENTRY_NEAR",
+      "title": "Compound systems: Fresh near-use re-entry",
+      "prompt": "A fresh first element forms a virtual image relative to the next element. Which workflow still applies?",
+      "response_type": "single_select",
+      "options": [
+        "Add focal lengths first; treat all separated elements as one",
+        "Reuse original object for every element; ignore prior images",
+        "Start at final element and trace backward without object data",
+        "Use first image as second element’s object; propagate in order"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CMP_ITEM_REPAIR_CHANGED",
+      "title": "Compound systems: Repair the changed-task function",
+      "prompt": "Which distinction repairs an aberration item where colors focus at different positions?",
+      "response_type": "single_select",
+      "options": [
+        "Chromatic aberration: wavelengths focus at different positions",
+        "Spherical aberration: axial and peripheral rays focus differently",
+        "Focused eye: forms a real inverted image on the retinal surface",
+        "Virtual-eye model: places an upright image behind the retina"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CMP_ITEM_REENTRY_CHANGED",
+      "title": "Compound systems: Fresh changed-task re-entry",
+      "prompt": "A camera lens brings blue and red rays from the same object to different axial image planes. Which aberration is present?",
+      "response_type": "single_select",
+      "options": [
+        "Spherical aberration: axial and peripheral rays focus differently",
+        "Chromatic aberration: wavelengths focus at different positions",
+        "Focused-eye model: forms a real inverted image on the sensor",
+        "Virtual-image model: places an upright image behind the lens"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    }
+  ]
+}

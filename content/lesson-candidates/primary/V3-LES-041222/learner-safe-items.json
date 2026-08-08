@@ -1,0 +1,658 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Starting checks may be left blank and are recorded as nonconsequential abstentions.",
+  "items": [
+    {
+      "prompt_key": "ALC_ENTRY",
+      "title": "Starting check",
+      "prompt": "Which atom in a neutral alcohol most directly accepts a hydrogen bond?",
+      "response_type": "single_select",
+      "options": [
+        "Oxygen",
+        "The OH hydrogen",
+        "An alkyl carbon",
+        "Any C–H hydrogen"
+      ],
+      "directions": "Choose one answer, or leave the item blank to record an abstention. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ALC_GUIDED",
+      "title": "Guided practice",
+      "prompt": "Oxidation of a secondary alcohol most directly gives which product class?",
+      "response_type": "single_select",
+      "options": [
+        "Aldehyde",
+        "Ketone",
+        "Ester",
+        "Amide"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ALC_LIGHT",
+      "title": "Practice with less support",
+      "prompt": "Controlled oxidation of a primary alcohol first gives which product class?",
+      "response_type": "single_select",
+      "options": [
+        "Ketone",
+        "Amide",
+        "Aldehyde",
+        "Anhydride"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ALC_SOLO",
+      "title": "Practice independently",
+      "prompt": "Why does a tertiary alcohol resist ordinary oxidation to a carbonyl?",
+      "response_type": "single_select",
+      "options": [
+        "Oxygen has no lone pairs",
+        "It cannot hydrogen bond",
+        "Its carbon is electrophilic",
+        "No carbinol C–H"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ALC_NEAR",
+      "title": "Near-use exit",
+      "prompt": "An activated primary alcohol reacts with a strong nucleophile. Which pathway is favored?",
+      "response_type": "single_select",
+      "options": [
+        "SN1",
+        "SN2",
+        "E1 only",
+        "No reaction"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ALC_CHANGED",
+      "title": "Changed-task exit",
+      "prompt": "A molecule contains one primary alcohol and one tertiary alcohol. A selective oxidant reacts at only one site. Which site forms a carbonyl?",
+      "response_type": "single_select",
+      "options": [
+        "Neither site",
+        "Both sites",
+        "Primary site",
+        "Tertiary site"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ALC_REPAIR_NEAR",
+      "title": "Repair the near-use function",
+      "prompt": "Which feature most directly distinguishes primary from tertiary alcohol substitution?",
+      "response_type": "single_select",
+      "options": [
+        "Carbinol crowding",
+        "Oxygen atomic number",
+        "Presence of a C=O bond",
+        "Number of oxygen lone pairs"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ALC_REENTRY_NEAR",
+      "title": "Fresh near-use re-entry",
+      "prompt": "Oxidation of cyclohexanol gives which product class?",
+      "response_type": "single_select",
+      "options": [
+        "Aldehyde",
+        "Carboxylic acid",
+        "Ester",
+        "Ketone"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ALC_REPAIR_CHANGED",
+      "title": "Repair the changed-task function",
+      "prompt": "Which site has the structural requirement for ordinary oxidation?",
+      "response_type": "single_select",
+      "options": [
+        "A carbon with no hydrogens",
+        "OH carbon with H",
+        "A quaternary carbon",
+        "An ether oxygen only"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ALC_REENTRY_CHANGED",
+      "title": "Fresh changed-task re-entry",
+      "prompt": "A diol has secondary and tertiary OH-bearing carbons. Ordinary oxidation forms a carbonyl at which site?",
+      "response_type": "single_select",
+      "options": [
+        "Neither",
+        "Both",
+        "Tertiary",
+        "Secondary"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACT_ENTRY",
+      "title": "Starting check",
+      "prompt": "Which step temporarily suppresses alcohol reactivity?",
+      "response_type": "single_select",
+      "options": [
+        "Hydrolysis of an amide",
+        "Protection",
+        "Tosylate displacement",
+        "Oxidation"
+      ],
+      "directions": "Choose one answer, or leave the item blank to record an abstention. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACT_GUIDED",
+      "title": "Guided practice",
+      "prompt": "What is the main purpose of converting ROH to ROTs?",
+      "response_type": "single_select",
+      "options": [
+        "Protect all carbonyls",
+        "Make OH more acidic only",
+        "Improve leaving group",
+        "Oxidize carbon to C=O"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACT_LIGHT",
+      "title": "Practice with less support",
+      "prompt": "Which step restores an alcohol after a protected reaction sequence?",
+      "response_type": "single_select",
+      "options": [
+        "Decarboxylation",
+        "Activation",
+        "Substitution",
+        "Deprotection"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACT_SOLO",
+      "title": "Practice independently",
+      "prompt": "During tosylation alone, what happens at a chiral carbinol carbon?",
+      "response_type": "single_select",
+      "options": [
+        "Config retained",
+        "It inverts",
+        "It racemizes",
+        "It becomes carbonyl carbon"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACT_NEAR",
+      "title": "Near-use exit",
+      "prompt": "A synthesis must react an aldehyde while leaving an alcohol unchanged for later. What should happen first?",
+      "response_type": "single_select",
+      "options": [
+        "Hydrolyze an ester",
+        "Oxidize the alcohol",
+        "Protect the alcohol",
+        "Convert OH to a leaving group"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACT_CHANGED",
+      "title": "Changed-task exit",
+      "prompt": "A chiral alcohol is converted to a tosylate, then displaced by CN− through SN2. Relative to the starting carbon, what is the final configuration?",
+      "response_type": "single_select",
+      "options": [
+        "Unchanged because attack is at O",
+        "Retained twice",
+        "Racemized",
+        "Inverted"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACT_REPAIR_NEAR",
+      "title": "Repair the near-use function",
+      "prompt": "Which goal calls for protection rather than activation?",
+      "response_type": "single_select",
+      "options": [
+        "Promote SN2 now",
+        "Preserve OH for later",
+        "Replace OH now",
+        "Improve leaving ability"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACT_REENTRY_NEAR",
+      "title": "Fresh near-use re-entry",
+      "prompt": "A synthesis must substitute at an alcohol carbon. Which preparatory step is most useful?",
+      "response_type": "single_select",
+      "options": [
+        "Form a mesylate",
+        "Protect as an inert ether",
+        "Deprotect another alcohol",
+        "Reduce a ketone"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACT_REPAIR_CHANGED",
+      "title": "Repair the changed-task function",
+      "prompt": "Which step inverts a chiral alcohol carbon?",
+      "response_type": "single_select",
+      "options": [
+        "Deprotection at O",
+        "Tosylation at O",
+        "SN2 displacement at C",
+        "Protection at O"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACT_REENTRY_CHANGED",
+      "title": "Fresh changed-task re-entry",
+      "prompt": "A chiral alcohol is mesylated, then displaced by N3− through SN2. What is the net stereochemical result?",
+      "response_type": "single_select",
+      "options": [
+        "Inversion",
+        "Retention",
+        "Racemization",
+        "No defined product"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACD_ENTRY",
+      "title": "Starting check",
+      "prompt": "In a carboxylic acid, which carbon is the 2-position?",
+      "response_type": "single_select",
+      "options": [
+        "The terminal carbon only",
+        "Any carbon bearing oxygen",
+        "Carbon next to COOH",
+        "The carboxyl carbon itself"
+      ],
+      "directions": "Choose one answer, or leave the item blank to record an abstention. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACD_GUIDED",
+      "title": "Guided practice",
+      "prompt": "A carboxylic acid reacts with an alcohol under ester-forming conditions. Which product class forms?",
+      "response_type": "single_select",
+      "options": [
+        "Ketone",
+        "Alkene",
+        "Amide",
+        "Ester"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACD_LIGHT",
+      "title": "Practice with less support",
+      "prompt": "Strong reduction of a carboxylic acid most directly gives which product class?",
+      "response_type": "single_select",
+      "options": [
+        "Primary alcohol",
+        "Ester",
+        "Amide",
+        "Anhydride"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACD_SOLO",
+      "title": "Practice independently",
+      "prompt": "Which transformation removes the carboxyl carbon from the skeleton?",
+      "response_type": "single_select",
+      "options": [
+        "2-position substitution",
+        "Decarboxylation",
+        "Esterification",
+        "Amide formation"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACD_NEAR",
+      "title": "Near-use exit",
+      "prompt": "Replacing the acid OH-derived group with OR gives which derivative?",
+      "response_type": "single_select",
+      "options": [
+        "Anhydride only",
+        "Primary alcohol",
+        "Amide",
+        "Ester"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACD_CHANGED",
+      "title": "Changed-task exit",
+      "prompt": "A four-carbon acid releases CO2 and gives a three-carbon organic product. Which transformation occurred?",
+      "response_type": "single_select",
+      "options": [
+        "Decarboxylation",
+        "2-position substitution",
+        "Reduction",
+        "Esterification"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACD_REPAIR_NEAR",
+      "title": "Repair the near-use function",
+      "prompt": "Which acyl substituent identifies an amide?",
+      "response_type": "single_select",
+      "options": [
+        "Hydrogen only",
+        "Second acyl oxygen only",
+        "Nitrogen group",
+        "Alkoxy group"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACD_REENTRY_NEAR",
+      "title": "Fresh near-use re-entry",
+      "prompt": "A carboxylic acid forms a derivative with NH2 at the acyl carbon. Which class is it?",
+      "response_type": "single_select",
+      "options": [
+        "Alcohol",
+        "Amide",
+        "Ester",
+        "Ketone"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACD_REPAIR_CHANGED",
+      "title": "Repair the changed-task function",
+      "prompt": "What happens to carbon count during decarboxylation?",
+      "response_type": "single_select",
+      "options": [
+        "It stays fixed",
+        "It rises by one",
+        "It doubles",
+        "It falls by one"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "ACD_REENTRY_CHANGED",
+      "title": "Fresh changed-task re-entry",
+      "prompt": "A three-carbon acid gains Br at carbon 2 and retains three carbons. Which transformation fits?",
+      "response_type": "single_select",
+      "options": [
+        "Ester hydrolysis",
+        "Substitution at C2",
+        "Reduction",
+        "Decarboxylation"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "NAS_ENTRY",
+      "title": "Starting check",
+      "prompt": "What forms immediately after nucleophilic attack on an acyl carbonyl?",
+      "response_type": "single_select",
+      "options": [
+        "A free carbocation",
+        "An alkene",
+        "A radical pair",
+        "Tetrahedral adduct"
+      ],
+      "directions": "Choose one answer, or leave the item blank to record an abstention. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "NAS_GUIDED",
+      "title": "Guided practice",
+      "prompt": "Let LG mean leaving group. What happens when the tetrahedral intermediate collapses?",
+      "response_type": "single_select",
+      "options": [
+        "C=O forms; LG leaves",
+        "A radical abstracts H",
+        "All substituents remain",
+        "The carbonyl stays open"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "NAS_LIGHT",
+      "title": "Practice with less support",
+      "prompt": "Transesterification changes which ester feature?",
+      "response_type": "single_select",
+      "options": [
+        "Carbonyl oxygen identity",
+        "The alkoxy group",
+        "All C–C bonds",
+        "Acyl carbon count"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "NAS_SOLO",
+      "title": "Practice independently",
+      "prompt": "Hydrolysis of an amide changes the acyl substituent from nitrogen to what?",
+      "response_type": "single_select",
+      "options": [
+        "A halogen only",
+        "A sulfide only",
+        "OH or O−",
+        "Another carbon group"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "NAS_NEAR",
+      "title": "Near-use exit",
+      "prompt": "Let A = attack, T = tetrahedral intermediate, and E = elimination. Which order gives acyl substitution?",
+      "response_type": "single_select",
+      "options": [
+        "A→T→E",
+        "oxidize→attack",
+        "radical→add",
+        "E→A→reduce"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "NAS_CHANGED",
+      "title": "Changed-task exit",
+      "prompt": "Ethyl acetate reacts with labeled methanol, CH3*OH, during transesterification. Where is the labeled methyl group in the exchanged ester?",
+      "response_type": "single_select",
+      "options": [
+        "Lost as CO2",
+        "New methoxy group",
+        "On the carbonyl oxygen only",
+        "In the acyl methyl"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "NAS_REPAIR_NEAR",
+      "title": "Repair the near-use function",
+      "prompt": "Which event proves substitution rather than addition only?",
+      "response_type": "single_select",
+      "options": [
+        "A nucleophile approaches",
+        "The π bond opens",
+        "Oxygen gains charge",
+        "Leaving group departs"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "NAS_REENTRY_NEAR",
+      "title": "Fresh near-use re-entry",
+      "prompt": "An amine attacks an activated ester and the intermediate collapses. Which derivative is expected?",
+      "response_type": "single_select",
+      "options": [
+        "Alcohol",
+        "Alkene",
+        "Amide",
+        "Anhydride"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "NAS_REPAIR_CHANGED",
+      "title": "Repair the changed-task function",
+      "prompt": "In transesterification, which reagent supplies the new OR group?",
+      "response_type": "single_select",
+      "options": [
+        "The incoming alcohol",
+        "The carbonyl oxygen",
+        "A released CO2 molecule",
+        "The leaving ester group"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "NAS_REENTRY_CHANGED",
+      "title": "Fresh changed-task re-entry",
+      "prompt": "An ester reacts with labeled ethanol, CH3CH2*OH. Which product feature carries the label?",
+      "response_type": "single_select",
+      "options": [
+        "The carbonyl oxygen only",
+        "The departing alcohol only",
+        "The new ethoxy group",
+        "The acyl carbon"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "REA_ENTRY",
+      "title": "Starting check",
+      "prompt": "Which derivative generally has stronger carbonyl resonance donation?",
+      "response_type": "single_select",
+      "options": [
+        "Amide",
+        "Anhydride",
+        "Ester",
+        "Carboxylate leaving group"
+      ],
+      "directions": "Choose one answer, or leave the item blank to record an abstention. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "REA_GUIDED",
+      "title": "Guided practice",
+      "prompt": "Under comparable conditions, which is generally more reactive toward acyl substitution?",
+      "response_type": "single_select",
+      "options": [
+        "Amide",
+        "Ester",
+        "They are always equal",
+        "No derivative reacts"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "REA_LIGHT",
+      "title": "Practice with less support",
+      "prompt": "Which change most directly slows nucleophilic attack at an acyl carbon?",
+      "response_type": "single_select",
+      "options": [
+        "Electron withdrawal",
+        "Ring strain",
+        "More steric crowding",
+        "A better leaving group"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "REA_SOLO",
+      "title": "Practice independently",
+      "prompt": "Which listed derivative is generally most reactive?",
+      "response_type": "single_select",
+      "options": [
+        "Amide",
+        "Ester",
+        "They are identical",
+        "Anhydride"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "REA_NEAR",
+      "title": "Near-use exit",
+      "prompt": "Let An = anhydride, Es = ester, and Am = amide. Which general order is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Am>Es>An",
+        "An>Es>Am",
+        "Es>Am>An",
+        "Am>An>Es"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "REA_CHANGED",
+      "title": "Changed-task exit",
+      "prompt": "Why is a β-lactam often more reactive than an unstrained amide?",
+      "response_type": "single_select",
+      "options": [
+        "It has no carbonyl",
+        "It has no nitrogen",
+        "Less amide resonance",
+        "Its carbonyl is fully reduced"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "REA_REPAIR_NEAR",
+      "title": "Repair the near-use function",
+      "prompt": "Which combination favors faster acyl substitution?",
+      "response_type": "single_select",
+      "options": [
+        "Good LG; low donation",
+        "Poor LG; strong resonance",
+        "More crowding; poor LG",
+        "Strong donation; crowding"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "REA_REENTRY_NEAR",
+      "title": "Fresh near-use re-entry",
+      "prompt": "Which derivative is generally less reactive: an ester or an amide?",
+      "response_type": "single_select",
+      "options": [
+        "Ester",
+        "Always equal",
+        "Neither has a carbonyl",
+        "Amide"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "REA_REPAIR_CHANGED",
+      "title": "Repair the changed-task function",
+      "prompt": "What geometric feature stabilizes an ordinary amide?",
+      "response_type": "single_select",
+      "options": [
+        "Planar n–π overlap",
+        "A tetrahedral carbonyl",
+        "No lone pair on N",
+        "A broken C–N bond"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "REA_REENTRY_CHANGED",
+      "title": "Fresh changed-task re-entry",
+      "prompt": "Two amides differ only in that one is forced out of planarity by a small ring. Which is more susceptible to attack?",
+      "response_type": "single_select",
+      "options": [
+        "The planar amide",
+        "They are always equal",
+        "Neither can react",
+        "The strained amide"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    }
+  ]
+}

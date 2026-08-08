@@ -1,0 +1,216 @@
+{
+  "artifact_type": "SOURCE_CLAIM_LEDGER",
+  "artifact_id": "V3-SCLD-403395",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT_TRACE_ONLY",
+  "canonical_lesson_binding": {
+    "lesson_id": "V3-LES-403395",
+    "grouping_id": "V3-CL-403395",
+    "ordered_kc_ids": [
+      "V3-KC-682857",
+      "V3-KC-174089"
+    ]
+  },
+  "authority_boundary": {
+    "source_ids": [
+      "AAMC-2020",
+      "AAMC-2020-MCAT-CONTENT"
+    ],
+    "source_class": "PUBLIC_PRIMARY_RESEARCH",
+    "source_anchor_ids": [
+      "PS-SA-AAMC-9A"
+    ],
+    "present_day_authority_refreshed": false,
+    "source_use_status": "PERMITTED_FOR_BOUNDED_INTERNAL_AUTHORING",
+    "human_rights_clearance_claimed": false,
+    "learner_validation_claimed": false
+  },
+  "source_trace_governance": {
+    "packet_sha256": "fca8004251a4654b9fb769d3bf91fe3fe45ce60fb33b5cbfcbb15a7fa9d85be7",
+    "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+    "permitted_use": [
+      "DERIVED_SCOPE_METADATA",
+      "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+      "INTERNAL_HUMAN_REVIEW"
+    ],
+    "prohibited_use": [
+      "RAW_SOURCE_TEXT",
+      "QUOTATION",
+      "PASSAGE_REPRODUCTION",
+      "FIGURE_REPRODUCTION",
+      "PROPRIETARY_ITEM_REUSE",
+      "PRIVATE_COMPARISON_CONTENT"
+    ],
+    "expressive_copy_flag": false
+  },
+  "source_records": [
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100158",
+      "source_occurrence_id": "V3-SRC-100158",
+      "source_id": "AAMC-2020",
+      "official_topic": "Theoretical Approaches",
+      "printed_pages": [
+        96
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-9A"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-200095",
+      "source_occurrence_id": "V3-SRC-200095",
+      "source_id": "AAMC-2020-MCAT-CONTENT",
+      "official_topic": null,
+      "printed_pages": [
+        96,
+        97
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-9A"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    }
+  ],
+  "source_claims": [
+    {
+      "claim_id": "MSC-CLAIM-COMPARE",
+      "target_kc_id": "V3-KC-682857",
+      "authorial_claim": "A learner may compare symbolic interactionism with social constructionism by identifying whether a case foregrounds negotiated meaning in encounters or the collective stabilization of a shared category.",
+      "scope_in_refs": [
+        "V3-KC-682857:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-682857:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-9A"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100158",
+        "V3-SRC-200095"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600788",
+        "V3-MAP-601530"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "MSC-CLAIM-PREDICT",
+      "target_kc_id": "V3-KC-682857",
+      "authorial_claim": "A learner may select the listed meaning lens and predict what evidence that lens would emphasize without relying on theorist history.",
+      "scope_in_refs": [
+        "V3-KC-682857:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-682857:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-9A"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100158",
+        "V3-SRC-200095"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600788",
+        "V3-MAP-601530"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "EXR-CLAIM-COMPARE",
+      "target_kc_id": "V3-KC-174089",
+      "authorial_claim": "A learner may distinguish a rational-choice explanation of one actor selecting among alternatives from an exchange explanation of an ongoing relationship organized by reciprocal rewards and costs.",
+      "scope_in_refs": [
+        "V3-KC-174089:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-174089:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-9A"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100158",
+        "V3-SRC-200095"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-601510",
+        "V3-MAP-601531"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "EXR-CLAIM-POWER",
+      "target_kc_id": "V3-KC-174089",
+      "authorial_claim": "A learner may use unequal dependence and available alternatives to predict bargaining power within an exchange relationship without invoking formal game-theory mathematics.",
+      "scope_in_refs": [
+        "V3-KC-174089:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-174089:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-9A"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100158",
+        "V3-SRC-200095"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-601510",
+        "V3-MAP-601531"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    }
+  ],
+  "canonical_context": {
+    "placements": {
+      "phase_ids": [
+        "V3-PHS-462809",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-412958",
+        "V3-MOD-741509"
+      ],
+      "pathway_relation_ids": [
+        "R14-PL-581402-104",
+        "R14-PL-904137-104",
+        "R14-PL-315978-026"
+      ],
+      "first_delivery_relation_id": "R14-FD-403395",
+      "revisit_relation_ids": [
+        "R14-RV-403395"
+      ]
+    },
+    "hard_prerequisite_relation_ids": [],
+    "required_attachment_relation_ids": [
+      "R14-CAP-004008"
+    ],
+    "route_scope_code": "STANDARD_ONLY"
+  },
+  "lineage_and_limits": {
+    "open_hold_ids": [
+      "V3-HOLD-110001",
+      "V3-HOLD-110003",
+      "V3-HOLD-110005",
+      "V3-HOLD-110008",
+      "V3-HOLD-110009"
+    ],
+    "nonclaims": [
+      "NO_PRESENT_DAY_AUTHORITY_REFRESH",
+      "NO_LEARNER_VALIDATION",
+      "NO_EFFICACY",
+      "NO_MASTERY_CALIBRATION",
+      "NO_READINESS_VALIDATION",
+      "NO_PRODUCTION_PUBLICATION"
+    ]
+  }
+}

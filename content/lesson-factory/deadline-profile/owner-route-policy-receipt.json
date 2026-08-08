@@ -1,0 +1,84 @@
+{
+  "contract_id": "lesson-factory.owner-route-policy-receipt",
+  "contract_version": "4.0.0",
+  "receipt_id": "owner-route-policy-2026-08-03",
+  "receipt_version": "2.0.0",
+  "decision_status": "RATIFIED",
+  "decided_by_role": "PRODUCT_PEDAGOGY_OWNER",
+  "decision_authority_scope": "RELEASE_ROUTE_SCOPE_ONLY",
+  "decided_at": "2026-08-03T23:05:00Z",
+  "decision_date": "2026-08-03",
+  "ratified_policy": {
+    "policy_id": "lesson-factory-deadline-release",
+    "policy_version": "2.0.0"
+  },
+  "route_scope_code": "STANDARD_ONLY",
+  "initial_release_routes": ["STANDARD"],
+  "route_decisions": {
+    "STANDARD": {
+      "decision": "APPLICABLE",
+      "policy_clause_id": null
+    },
+    "CONCISE": {
+      "decision": "NOT_APPLICABLE",
+      "policy_clause_id": "ROUTE_ABSENCE_CONCISE"
+    },
+    "MISCONCEPTION": {
+      "decision": "NOT_APPLICABLE",
+      "policy_clause_id": "ROUTE_ABSENCE_MISCONCEPTION"
+    },
+    "PREREQUISITE_SUPPORT": {
+      "decision": "NOT_APPLICABLE",
+      "policy_clause_id": "ROUTE_ABSENCE_PREREQUISITE_SUPPORT"
+    }
+  },
+  "decision_basis_codes": [
+    "INITIAL_RELEASE_SCOPE_LIMITED",
+    "RUBRIC_3_2_ABSENCE_PROOF_AUTHORITY",
+    "RUBRIC_10_OPEN_DECISION_4_SCOPED",
+    "STRUCTURAL_LANE_CHECK_IS_NOT_AN_ABSENCE_PROOF"
+  ],
+  "scope_limit_codes": [
+    "NO_LESSON_APPROVAL",
+    "NO_HARD_GATE_WAIVER",
+    "NO_EVIDENCE_WAIVER",
+    "NO_NONCLAIM_WAIVER",
+    "NO_RELEASE_AUTHORIZATION",
+    "NO_PUBLICATION_AUTHORIZATION",
+    "INITIAL_RELEASE_ONLY",
+    "HUMAN_DECISION_CLASS_UNCHANGED",
+    "PREREQUISITE_SUPPORT_REMAINS_OPEN_FOR_LATER_RELEASE"
+  ],
+  "decision_provenance": {
+    "authority": "NON_AUTHORITATIVE_VERBATIM_RECORD",
+    "statement_path": "content/lesson-factory/deadline-profile/owner-route-policy-statement.md",
+    "statement_sha256": "33f8867082b60edf5dbc9f856bbf0b049d1ffb8ffa6c87a1d990c358e332dfb8",
+    "recorded_at": "2026-08-03T23:05:00Z"
+  },
+  "rubric_identity": {
+    "rubric_path": "key-docs/lesson-quality-rubric.md",
+    "rubric_version": "0.9.1",
+    "rubric_sha256": "21f0cf751b752158b5c8f71fd762fcc956b9ba694c8f5ee8d50158b8972557b0"
+  },
+  "supersedes": null,
+  "receipt_nonclaims": {
+    "waives_any_nonclaim": false,
+    "waives_any_hard_gate": false,
+    "waives_any_evidence_requirement": false,
+    "approves_any_lesson": false,
+    "establishes_rubric_pass": false,
+    "authorizes_release": false,
+    "authorizes_publication": false
+  },
+  "nonclaims": {
+    "official_rubric_pass": false,
+    "human_approved": false,
+    "release_approved": false,
+    "efficacy_established": false,
+    "mastery_calibrated": false,
+    "readiness_validated": false,
+    "learner_validated": false,
+    "publication_safe": false,
+    "production_published": false
+  }
+}

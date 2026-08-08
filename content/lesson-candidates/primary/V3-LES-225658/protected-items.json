@@ -1,0 +1,1488 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "HAB-ITEM-ENTRY",
+      "learner_prompt_key": "HAB_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "Response declines across repetitions of one harmless stimulus without an association.",
+      "post_commitment_feedback": "The pattern is repetition plus reduced response, the core behavioral signature of habituation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HAB-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HAB-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No second stimulus is paired with the tone."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HAB-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No consequence follows the behavior."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HAB-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No changed or novel stimulus has appeared."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HAB-ITEM-GUIDED",
+      "learner_prompt_key": "HAB_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Renewed response to a novel sound shows that the response system remains capable of reacting.",
+      "post_commitment_feedback": "Use a stimulus change as the diagnostic contrast: recovery to novelty supports dishabituation after habituation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HAB-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Constant intensity establishes repetition but does not by itself distinguish learning from receptor adaptation."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HAB-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HAB-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reduced detection can be consistent with sensory adaptation and does not show preserved responding to novelty."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HAB-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both habituation and reduced sensory responsiveness can produce a decline."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HAB-ITEM-LIGHT",
+      "learner_prompt_key": "HAB_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "A measured decline in receptor sensitivity during continuous input directly supports sensory adaptation.",
+      "post_commitment_feedback": "The contrast turns on mechanism: the sensory system itself becomes less responsive during sustained stimulation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HAB-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No paired food stimulus is described, and receptor sensitivity itself declines."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HAB-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The stimulation remains continuous rather than changing."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HAB-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HAB-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No voluntary behavior or reinforcing consequence is described."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HAB-ITEM-SOLO",
+      "learner_prompt_key": "HAB_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Repeated exposure alone with a declining response supports nonassociative habituation.",
+      "post_commitment_feedback": "Do not manufacture an association: one repeated stimulus and response decline are sufficient for the bounded classification.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HAB-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An association cannot be inferred when no pairing is described."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HAB-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt supplies no behavior-contingent consequence."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HAB-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Dishabituation is renewed responding after a change, not continued decline."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HAB-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HAB-ITEM-NEAR",
+      "learner_prompt_key": "HAB_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The response declines across repetitions without an associative contingency.",
+      "post_commitment_feedback": "This is the exact near-use pattern: same stimulus, repeated trials, reduced response.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HAB-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HAB-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Generalization involves responding to similar stimuli after conditioning, not decline to one repeated click."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HAB-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No behavior removes an aversive stimulus."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HAB-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No extinguished conditioned response returns after a delay."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HAB-ITEM-CHANGED",
+      "learner_prompt_key": "HAB_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "A novel visual stimulus restores responding after decline to repetition.",
+      "post_commitment_feedback": "The change tests preserved responsiveness; renewal is dishabituation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HAB-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The strong response to the new stimulus shows preserved visual responsiveness."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HAB-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HAB-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No consequence contingent on orientation is described."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HAB-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No predictive pairing is described."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HAB-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "HAB_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Habituation requires repetition-linked response decline without an associative relation.",
+      "post_commitment_feedback": "Repair by inventorying stimulus count, response trend, and absence of a pairing or consequence.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HAB-REPAIR_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That checklist describes classical acquisition."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HAB-REPAIR_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That checklist describes operant conditioning."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HAB-REPAIR_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HAB-REPAIR_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That observation specifically describes dishabituation after a prior decline."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HAB-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "HAB_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The new sensory modality preserves the same repetition-and-decline relation.",
+      "post_commitment_feedback": "The fresh family still shows nonassociative response reduction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HAB-REENTRY_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No earlier pairing or conditioned response is established."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HAB-REENTRY_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The vibration continues and no preventive behavior is described."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HAB-REENTRY_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The same vibration repeats without a novel stimulus."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HAB-REENTRY_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HAB-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "HAB_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Renewal to novelty demonstrates retained capacity to respond and a stimulus-specific decline.",
+      "post_commitment_feedback": "The changed stimulus is the diagnostic probe; renewed response closes the dishabituation inference.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HAB-REPAIR_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HAB-REPAIR_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Continued low response does not test whether novelty can restore responding."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HAB-REPAIR_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A reward introduces an operant contingency rather than testing dishabituation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HAB-REPAIR_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That introduces classical conditioning rather than a simple novelty test."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "HAB-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "HAB_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "A changed tone restores the response after decline to the repeated low tone.",
+      "post_commitment_feedback": "The fresh case preserves the exact changed-stimulus renewal function.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "HAB-REENTRY_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Renewed response to the high tone contradicts a global inability to respond."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "HAB-REENTRY_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "HAB-REENTRY_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No food or other unconditioned stimulus was paired."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "HAB-REENTRY_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No response-contingent removal is described."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CLS-ITEM-ENTRY",
+      "learner_prompt_key": "CLS_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "The air puff naturally elicits blinking before any pairing.",
+      "post_commitment_feedback": "Natural elicitation identifies the US.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CLS-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A response is behavior, whereas the air puff is an eliciting event."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CLS-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The air puff naturally elicits blinking before training."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CLS-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CLS-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No learning is required for the air puff to elicit the response."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CLS-ITEM-GUIDED",
+      "learner_prompt_key": "CLS_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "The formerly neutral tone gains predictive control through pairing.",
+      "post_commitment_feedback": "Track the cue across time: neutral before pairing, conditioned after acquisition.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CLS-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The tone is a stimulus, not the natural salivation response."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CLS-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Food, not the tone, naturally elicits salivation."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CLS-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Salivation to the tone is the CR; the tone itself is the CS."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CLS-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CLS-ITEM-LIGHT",
+      "learner_prompt_key": "CLS_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Repeated CS-alone trials weaken the conditioned response.",
+      "post_commitment_feedback": "The cue appears without its former US, so the CR declines through extinction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CLS-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CLS-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Recovery is a return after a delay, not decline during cue-alone trials."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CLS-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No similar novel stimulus is tested."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CLS-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Acquisition requires pairings that strengthen the conditioned relation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CLS-ITEM-SOLO",
+      "learner_prompt_key": "CLS_SOLO",
+      "correct_option_index": 1,
+      "rationale": "A conditioned response can briefly reappear after a rest following extinction.",
+      "post_commitment_feedback": "The delay and return are the decisive history for spontaneous recovery.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CLS-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No new CS–US pairing is described."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CLS-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CLS-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The scenario does not compare cues with different outcomes."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CLS-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The response is conditioned and returns after extinction and rest."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CLS-ITEM-NEAR",
+      "learner_prompt_key": "CLS_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The response is learned when the conditioned shape is presented alone.",
+      "post_commitment_feedback": "Keep event and response labels separate: shape is CS, shape-elicited movement is CR.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CLS-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lip movement is a response, not the initially neutral shape."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CLS-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Juice is the event that naturally elicits movement."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CLS-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CLS-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The shape is the CS; movement elicited by it is the CR."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CLS-ITEM-CHANGED",
+      "learner_prompt_key": "CLS_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Return after rest is recovery, response to a similar cue is generalization, and differential responding is discrimination.",
+      "post_commitment_feedback": "Map each visible phase to its own trial history instead of forcing one label onto the entire curve.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CLS-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The scenario concerns an established conditioned response, cue similarity, and differential histories."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CLS-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The return after rest and cue-similarity pattern provide additional processes."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CLS-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No behavior–consequence contingency or receptor adaptation is described."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CLS-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CLS-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "CLS_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The unlearned relation anchors the labels before the cue changes status through acquisition.",
+      "post_commitment_feedback": "Repair from the stable anchor: US naturally elicits UR; the former NS becomes CS.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CLS-REPAIR_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CLS-REPAIR_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Conditioned status depends on learning history and cannot be assigned before the natural relation."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CLS-REPAIR_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This erases the basic event-versus-behavior distinction."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CLS-REPAIR_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The actual pairing history should be mapped before later processes."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CLS-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "CLS_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The formerly neutral click becomes predictive after pairing.",
+      "post_commitment_feedback": "The fresh event map yields the same role change from NS to CS.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CLS-REENTRY_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The grimace, not the click, is a response."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CLS-REENTRY_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CLS-REENTRY_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The sour solution naturally elicits the grimace."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CLS-REENTRY_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The click-elicited grimace is the CR; the click is the CS."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CLS-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "CLS_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Cue-alone decline and post-rest return have distinct observable histories.",
+      "post_commitment_feedback": "Repair by binding each label to what happened immediately before the response change.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CLS-REPAIR_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Responding to a similar cue is generalization, not discrimination."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CLS-REPAIR_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Pairings ordinarily support acquisition rather than cue-alone extinction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CLS-REPAIR_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CLS-REPAIR_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Rest can permit recovery and is not itself acquisition."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CLS-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "CLS_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Each phase maps to a distinct classical-conditioning process.",
+      "post_commitment_feedback": "The fresh curve contains four classifiable transitions, each tied to its own trial history.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CLS-REENTRY_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The response is conditioned and the history includes cue-alone trials and multiple cues."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CLS-REENTRY_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No behavior-contingent consequence is described."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CLS-REENTRY_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The scenario explicitly includes decline, return, and cue-scope changes."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CLS-REENTRY_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPR-ITEM-ENTRY",
+      "learner_prompt_key": "OPR_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "The operant is the action that produces a consequence.",
+      "post_commitment_feedback": "Begin by locating the action before classifying what follows it.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPR-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPR-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Praise is the consequence that follows the behavior."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPR-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The later increase is evidence of the consequence's effect."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPR-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The teacher is an actor in the context, not the target behavior."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPR-ITEM-GUIDED",
+      "learner_prompt_key": "OPR_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "The response removes an ongoing aversive stimulus and becomes more likely.",
+      "post_commitment_feedback": "Removal plus behavior increase is negative reinforcement; stopping an ongoing event is escape.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPR-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Removal is negative, and the behavior increases rather than decreases."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPR-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPR-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Punishment requires a decrease in the behavior."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPR-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The alarm is removed after the response, not added."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPR-ITEM-LIGHT",
+      "learner_prompt_key": "OPR_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "A valued stimulus is removed and the behavior decreases.",
+      "post_commitment_feedback": "Use both axes: removal is negative, and behavior decrease is punishment.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPR-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reinforcement would increase shouting, but the behavior decreases."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPR-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Game time is removed rather than an aversive consequence being added."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPR-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPR-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No desirable consequence is added, and the behavior decreases."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPR-ITEM-SOLO",
+      "learner_prompt_key": "OPR_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Reward depends on an unpredictable response count.",
+      "post_commitment_feedback": "Count versus time identifies ratio; unpredictability identifies variable.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPR-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The required response count is unpredictable rather than fixed."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPR-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The contingency depends on response count, not a set time."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPR-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The requirement varies by responses rather than elapsed time."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPR-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPR-ITEM-NEAR",
+      "learner_prompt_key": "OPR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Removal of an aversive stimulus increases the behavior.",
+      "post_commitment_feedback": "Do not equate negative with punishment: removal plus increase is negative reinforcement.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The noise is removed and behavior increases."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Punishment would decrease key pressing."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No stimulus is added after the key press."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPR-ITEM-CHANGED",
+      "learner_prompt_key": "OPR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The response prevents an aversive event, so it is avoidance maintained by negative reinforcement; unpredictable elapsed-time opportunities identify a variable-interval schedule.",
+      "post_commitment_feedback": "Classify what the response does to the aversive event, then classify whether reinforcement availability depends on response count or elapsed time.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The check prevents rather than terminates the warning, no stimulus is added as punishment, and opportunities vary by time rather than response count."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No successive approximations or fixed response-count requirement is described."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The behavior changes because its consequence prevents a warning; no conditioned-response extinction procedure is described."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPR-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "OPR_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Sign is addition versus removal; function is behavior increase versus decrease.",
+      "post_commitment_feedback": "Repair with the two-axis contingency table instead of good-versus-bad language.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPR-REPAIR_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Pleasantness and approval do not define operant effects."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPR-REPAIR_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Those facts do not determine sign or future behavior effect."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPR-REPAIR_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPR-REPAIR_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That checklist targets nonassociative or classical learning."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPR-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "OPR_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "An aversive consequence is added and the target behavior decreases.",
+      "post_commitment_feedback": "The fresh case uses addition plus decrease, which defines positive punishment.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPR-REENTRY_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Nothing is removed, and the behavior decreases."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPR-REENTRY_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An added consequence accompanies a behavior decrease, not an increase."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPR-REENTRY_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The fine is added rather than a valued stimulus removed."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPR-REENTRY_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPR-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "OPR_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Avoidance prevents an aversive event before it begins, and negative reinforcement increases the response that produces that removal or prevention.",
+      "post_commitment_feedback": "Repair with two observable tests: prevent versus terminate, then later increase versus decrease.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPR-REPAIR_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPR-REPAIR_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Stopping an aversive event already in progress is escape, and a later decrease would not show reinforcement."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPR-REPAIR_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Successive approximations describe shaping, while a decreasing response contradicts reinforcement."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPR-REPAIR_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Stimulus pairing and a reflexive response describe classical conditioning rather than an operant avoidance contingency."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "OPR-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "OPR_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Crossing prevents the aversive event and increases, identifying avoidance through negative reinforcement; unpredictable time points identify variable-interval opportunities.",
+      "post_commitment_feedback": "The fresh case preserves the same two operations: classify prevention and then classify the time-based opportunity schedule.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "OPR-REENTRY_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The response prevents rather than ends the air puff, no punishing consequence follows it, and the opportunities are time based."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "OPR-REENTRY_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "OPR-REENTRY_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No successive approximation is reinforced, no reward is added, and the schedule varies by elapsed time rather than response count."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "OPR-REENTRY_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The response is selected by its consequence; the scenario does not describe stimulus–stimulus pairing."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNS-ITEM-ENTRY",
+      "learner_prompt_key": "CNS_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "New outcome information changes the represented consequence without additional training.",
+      "post_commitment_feedback": "The timing points to cognition: behavior updates when expectancy updates.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNS-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The behavior changed without new reinforcement."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNS-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The scenario changes outcome information, not receptor sensitivity."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNS-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNS-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The task concerns outcome value and goal-directed behavior."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNS-ITEM-GUIDED",
+      "learner_prompt_key": "CNS_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "Efficient performance appearing when motivation changes supports prior acquisition of route information.",
+      "post_commitment_feedback": "Separate learning from its expression: the map can be represented before reward makes performance visible.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNS-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Immediate efficient performance suggests information was acquired during unrewarded exploration."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNS-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Maze turns do not naturally elicit the route response as USs."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNS-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reward was absent during exploration."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNS-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNS-ITEM-LIGHT",
+      "learner_prompt_key": "CNS_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Selective ease of learning can reflect a biologically prepared cue–outcome relation.",
+      "post_commitment_feedback": "The constraint changes which associations are readily acquired, not merely how many trials occurred.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNS-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNS-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The unequal acquisition pattern contradicts identical associability."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNS-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The comparison concerns acquisition speed, not loss after reinforcement withdrawal."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNS-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No repetition-linked response decline and novelty renewal are described."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNS-ITEM-SOLO",
+      "learner_prompt_key": "CNS_SOLO",
+      "correct_option_index": 1,
+      "rationale": "A learned operant shifts toward a species-typical behavior despite the contingency.",
+      "post_commitment_feedback": "Drift is identified by the direction of change: trained action toward natural competing action.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNS-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No extinguished conditioned response returns after a rest."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNS-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNS-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The issue is a competing natural response, not differential cue responding."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNS-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The trained response changes form rather than sensory sensitivity declining."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNS-ITEM-NEAR",
+      "learner_prompt_key": "CNS_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Immediate updating after outcome information implicates a represented expectancy.",
+      "post_commitment_feedback": "No new pairing is needed when the expected value of the outcome changes.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNS-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A behavior change does not establish that earlier learning vanished."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNS-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The decisive event is new outcome-value information."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNS-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNS-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No new trials or punishment occurred."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNS-ITEM-CHANGED",
+      "learner_prompt_key": "CNS_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Selective ease of association reflects predisposition, while reversion toward natural action reflects drift.",
+      "post_commitment_feedback": "Use the distinct decision points: what is easy to learn versus what competes with an already trained response.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNS-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neither case involves cue-alone decline or post-rest return."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNS-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The cases concern selective associability and natural competing behavior."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNS-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No receptor sensitivity change or stimulus–stimulus pairing defines the cases."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNS-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNS-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "CNS_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Immediate information-sensitive change is difficult to attribute to new pairings that did not occur.",
+      "post_commitment_feedback": "Repair by comparing the timing of information with the timing of behavior change.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNS-REPAIR_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNS-REPAIR_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That pattern can be explained by additional associative training."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNS-REPAIR_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That is sensory adaptation rather than expectancy."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNS-REPAIR_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That pattern supports dishabituation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNS-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "CNS_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Stored spatial relations plus new closure information can guide a novel route choice.",
+      "post_commitment_feedback": "The fresh case shows represented relations supporting immediate flexible behavior.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNS-REENTRY_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The choice appears before any new route practice."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNS-REENTRY_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNS-REENTRY_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The change follows information about route availability, not repeated harmless exposure."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNS-REENTRY_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No trained action shifts toward an innate competing behavior."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNS-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "CNS_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "One constraint affects selective acquisition and the other competes with maintained operant performance.",
+      "post_commitment_feedback": "Repair by locating when biology acts: before or during acquisition versus after a trained response is established.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNS-REPAIR_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Those classical-process histories do not define either biological constraint."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNS-REPAIR_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Added or removed consequences do not define the two concepts."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNS-REPAIR_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNS-REPAIR_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This substitutes different mechanisms for both terms."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CNS-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "CNS_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "The first case concerns selective associability, and the second concerns a natural behavior competing with training.",
+      "post_commitment_feedback": "The fresh pair preserves the construct distinction across different surface contexts.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CNS-REENTRY_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neither pattern is defined by reduced receptor sensitivity."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CNS-REENTRY_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The second is an operant response shift and no cue-alone extinction history is given."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CNS-REENTRY_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Selective cue–outcome learning is predisposition, and natural behavior replacing training is drift."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CNS-REENTRY_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    }
+  ]
+}

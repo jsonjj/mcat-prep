@@ -1,0 +1,45 @@
+{
+  "checks": [
+    {
+      "check": "estimatedMinutes-plausibility",
+      "status": "na",
+      "detail": "no calibrated timing to judge (timing_model absent or all-null; 33 items)"
+    },
+    {
+      "check": "difficulty-distribution",
+      "status": "na",
+      "detail": "no per-item difficulty labels in lesson artifacts (difficulty is a question-bank property)"
+    }
+  ],
+  "command": {
+    "argv": [
+      "node",
+      "tools/content-cli/node_modules/tsx/dist/cli.mjs",
+      "tools/content-cli/src/entry.ts",
+      "computed-quality",
+      "content/lesson-candidates/primary/V3-LES-078488",
+      "--json"
+    ],
+    "startedAt": "2026-08-04T13:27:05.786Z",
+    "durationMs": 121,
+    "exitCode": 0,
+    "signal": null,
+    "stdoutSha256": "c2ccc06ce8a2aea2644fd7d62f16c8e3a7ee2a9d44ec71610df441b6eafdd4f1",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "format": "lesson-generation-computed-quality/2",
+  "lessonId": "V3-LES-078488",
+  "officialRubricPassClaimed": false,
+  "sourceArtifactSha256": "d414b402962e463984e7e5d9ba7689d0e80c26a323e1cf3a8e30b2212c9872c3",
+  "status": "N/A",
+  "structuralMetrics": {
+    "failedRuleResultCount": 0,
+    "measurableItemCount": 30,
+    "normalizedItemCount": 33,
+    "passedRuleResultCount": 40,
+    "reentryItemCount": 6,
+    "repairBindingCount": 6,
+    "requiredNodeKindCountPerKc": 15,
+    "totalRuleResultCount": 40
+  }
+}

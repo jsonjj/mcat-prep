@@ -96,8 +96,14 @@ import {
 } from './vector-lesson-runtime';
 import { vectorLessonResponseSubmissions } from './vector-lesson-response-source';
 import {
+  lessonRevisionProvider,
+  type LessonRevisionProvider,
+  type LoadedLessonRevision,
+} from './lesson-content-provider';
+import {
   applyNormalizedLessonAction,
   createNormalizedLessonRun,
+  normalizedRunRevisionAddress,
   renderNormalizedLessonRun,
   restoreNormalizedLessonRun,
   resumeNormalizedLessonRun,
@@ -139,6 +145,8 @@ interface WorkflowDependencies {
    * instructional-only (lesson-evidence-mastery-contract §11).
    */
   readonly lessonResponseSubmissions?: LessonResponseSubmissionSource;
+  /** Exact immutable lesson boundary used by the normalized runtime. */
+  readonly lessonRevisionProvider?: LessonRevisionProvider;
   /** Adaptive-practice bank/exposure seam. Falls back to synthetic when absent. */
   readonly practiceBank?: PracticeBankPort;
   /**
@@ -597,10 +605,34 @@ export class RepositoryLearnerKernel {
   // right family; nothing here decides correctness, evidence kind, or P(L).
   // -------------------------------------------------------------------------
 
+  private normalizedLessonProvider(): LessonRevisionProvider {
+    return this.dependencies.lessonRevisionProvider ?? lessonRevisionProvider;
+  }
+
+  private async exactNormalizedLessonRevision(
+    value: unknown,
+    expectedLessonId: string,
+  ): Promise<LoadedLessonRevision> {
+    const address = normalizedRunRevisionAddress(value);
+    if (address.lessonId !== expectedLessonId) {
+      throw validationError('The persisted run does not match the requested lesson.');
+    }
+    return this.normalizedLessonProvider().loadExactRevision(
+      address.lessonId,
+      address.definitionHash,
+    );
+  }
+
   async normalizedLessonStatus(lessonId: string, principal: Principal) {
     const state = withNormalizedLessons(await this.loadState(principal));
     const persisted = state.normalizedLessonRuns?.[lessonId];
-    const run = persisted === undefined ? undefined : restoreNormalizedLessonRun(persisted);
+    const run =
+      persisted === undefined
+        ? undefined
+        : restoreNormalizedLessonRun(
+            persisted,
+            await this.exactNormalizedLessonRevision(persisted, lessonId),
+          );
     return {
       availability: 'AVAILABLE' as const,
       runState: run?.paused ? 'PAUSED' : (run?.status ?? 'NOT_STARTED'),
@@ -614,7 +646,8 @@ export class RepositoryLearnerKernel {
     if (persisted === undefined) {
       throw validationError('Start this lesson before requesting its current screen.');
     }
-    return renderNormalizedLessonRun(restoreNormalizedLessonRun(persisted));
+    const revision = await this.exactNormalizedLessonRevision(persisted, lessonId);
+    return renderNormalizedLessonRun(restoreNormalizedLessonRun(persisted, revision), revision);
   }
 
   async handleNormalizedLessonStart(
@@ -622,11 +655,16 @@ export class RepositoryLearnerKernel {
     command: { readonly envelope: CommandEnvelope },
     principal: Principal,
   ) {
-    return this.mutate(command.envelope, principal, (_authority, baseState) => {
+    return this.mutate(command.envelope, principal, async (_authority, baseState) => {
       const state = withNormalizedLessons(baseState);
       const runs = (state.normalizedLessonRuns ??= {});
       const persisted = runs[lessonId];
-      const existing = persisted === undefined ? undefined : restoreNormalizedLessonRun(persisted);
+      const revision =
+        persisted === undefined
+          ? await this.normalizedLessonProvider().loadActiveRevision({ lessonId })
+          : await this.exactNormalizedLessonRevision(persisted, lessonId);
+      const existing =
+        persisted === undefined ? undefined : restoreNormalizedLessonRun(persisted, revision);
       const disposition =
         existing === undefined
           ? 'STARTED'
@@ -635,7 +673,10 @@ export class RepositoryLearnerKernel {
             : 'RESUMED';
       runs[lessonId] =
         existing === undefined
-          ? createNormalizedLessonRun({ lessonId, now: command.envelope.occurredAt })
+          ? createNormalizedLessonRun({
+              revision,
+              now: command.envelope.occurredAt,
+            })
           : existing.status === 'DELIVERY_COMPLETE'
             ? existing
             : resumeNormalizedLessonRun(existing, command.envelope.occurredAt);
@@ -661,20 +702,22 @@ export class RepositoryLearnerKernel {
     command: NormalizedLessonCommandInput,
     principal: Principal,
   ) {
-    return this.mutate(command.envelope, principal, (authority, baseState) => {
+    return this.mutate(command.envelope, principal, async (authority, baseState) => {
       const state = withNormalizedLessons(baseState);
       const runs = state.normalizedLessonRuns;
       const persisted = runs?.[lessonId];
       if (runs === undefined || persisted === undefined) {
         throw validationError('Start this lesson before sending a lesson command.');
       }
-      const previousRun = restoreNormalizedLessonRun(persisted);
+      const revision = await this.exactNormalizedLessonRevision(persisted, lessonId);
+      const previousRun = restoreNormalizedLessonRun(persisted, revision);
       let nextRun: NormalizedLessonRun;
       try {
         nextRun = applyNormalizedLessonAction(
           previousRun,
           command.action,
           command.envelope.occurredAt,
+          revision,
         );
       } catch (error) {
         if (error instanceof AuthorityKernelError) throw error;
@@ -689,7 +732,7 @@ export class RepositoryLearnerKernel {
         authority,
         baseState,
         command.envelope,
-        normalizedLessonResponseSubmissions(previousRun, nextRun),
+        normalizedLessonResponseSubmissions(previousRun, nextRun, revision),
       );
       return {
         eventType: 'lesson_command_accepted',
@@ -760,6 +803,9 @@ export class RepositoryLearnerKernel {
       sequence: state.nextSequence + 1,
       contentRelease: this.dependencies.bank.contentRelease,
       policies: state.events.at(-1)?.policies ?? [],
+      ...(submission.lessonAttribution === undefined
+        ? {}
+        : { lessonAttribution: submission.lessonAttribution }),
     });
 
     // BKT FIRST, then evidence. The authority re-parses the observation through
@@ -819,7 +865,10 @@ export class RepositoryLearnerKernel {
       assistance: {
         level: submission.response.assistanceLevel,
         observed: submission.assistanceObserved,
+        requested: submission.runtimeObservation?.assistanceRequested ?? null,
+        taken: submission.runtimeObservation?.assistanceTaken ?? null,
       },
+      firstAttempt: submission.runtimeObservation?.firstAttempt ?? null,
       observationId: adaptation.observation?.observationId ?? null,
       evidenceId: adaptation.evidence === null || refusedByAuthority ? null : evidenceId,
       evidenceKind: refusedByAuthority ? null : (adaptation.evidence?.kind ?? null),

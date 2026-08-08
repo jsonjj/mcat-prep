@@ -1,0 +1,748 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "SRC-ITEM-ENTRY",
+      "learner_prompt_key": "SRC_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "Personal inspection gives the represented engineer direct access to the specific condition being claimed.",
+      "post_commitment_feedback": "For a claim about the joints' condition, the strongest supplied cue is direct inspection of those same joints.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SRC-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Paragraph placement affects presentation, not the source's access or relevant expertise."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SRC-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SRC-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A formal tone does not establish that the source observed the condition claimed."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SRC-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An official seal identifies the publisher but does not by itself establish the quoted source's access."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SRC-ITEM-GUIDED",
+      "learner_prompt_key": "SRC_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "The conservator's relevant responsibility and multi-year records fit a claim about a long-term pattern.",
+      "post_commitment_feedback": "Match the source to the claim: long-term humidity is best supported by the person responsible for the relevant records.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SRC-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Financial support is an interest cue, not relevant access to the humidity pattern."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SRC-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Having fewer institutional duties does not provide longitudinal observation or relevant records."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SRC-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Rank alone is not relevant expertise, and the prompt supplies no director evidence."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SRC-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SRC-ITEM-LIGHT",
+      "learner_prompt_key": "SRC_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "The resident directly observed the event whose timing is being evaluated.",
+      "post_commitment_feedback": "Relevant access depends on the claim: direct observation supports the placement time better than unrelated economic expertise.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SRC-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SRC-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Geographic breadth does not supply access to the specific placement time."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SRC-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Economic expertise is not relevant expertise for observing when workers placed barriers."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SRC-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Quotation alone does not equalize the sources' access to the event."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SRC-ITEM-SOLO",
+      "learner_prompt_key": "SRC_SOLO",
+      "correct_option_index": 2,
+      "rationale": "The payment can weaken perceived objectivity, while independent reproduction is a distinct supporting cue.",
+      "post_commitment_feedback": "Weigh the cues together: disclosed interest lowers confidence, but independent corroboration raises support for the reported result.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SRC-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A financial interest may affect objectivity but does not logically prove a factual result false."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SRC-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Corroboration strengthens support but does not remove the disclosed incentive cue."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SRC-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SRC-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A technical title does not make independent reproduction irrelevant to the claim."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SRC-ITEM-NEAR",
+      "learner_prompt_key": "SRC_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The dietitian has relevant expertise and analyzed the records that directly bear on purchase frequency.",
+      "post_commitment_feedback": "For the purchase-frequency claim, relevant expertise plus the cited records is stronger than rank or assurance.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SRC-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Administrative rank does not establish relevant nutritional analysis or access to the purchase records."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SRC-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SRC-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Confidence of wording is not direct evidence of purchase frequency."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SRC-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Shared employment does not make the sources' access and expertise equivalent."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SRC-ITEM-CHANGED",
+      "learner_prompt_key": "SRC_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "The beekeeper has direct access, but a financial interest and only partial corroboration warrant a qualified judgment.",
+      "post_commitment_feedback": "Mixed cues call for calibration: direct observation strengthens the claim, while stake and a smaller independent count limit confidence.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SRC-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A stake can weaken objectivity but does not make an observation automatically unusable."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SRC-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Direct observation is supportive but does not cancel the disclosed incentive cue."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SRC-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A different magnitude can limit confidence without proving fabrication."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SRC-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SRC-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "SRC_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Relevant access and expertise are tested by the source's relation to the specific event and evidence.",
+      "post_commitment_feedback": "Return to the exact claim and ask what this source directly observed, measured, handled, or is specifically prepared to interpret.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SRC-REPAIR_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SRC-REPAIR_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Sentence length and detail do not establish access or relevant expertise."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SRC-REPAIR_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Order of introduction is a presentation feature, not a credibility warrant."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SRC-REPAIR_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Predicted reader agreement imports an outside reaction rather than passage evidence."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SRC-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "SRC_REENTRY_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The technician directly performed the assays whose results are at issue.",
+      "post_commitment_feedback": "The fresh case again turns on claim-specific access: performing the blinded assays is relevant to the assay-result claim.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SRC-REENTRY_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Political authority does not establish technical access to the assay results."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SRC-REENTRY_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Appearance and a chemical assay are different evidence sources and cannot be equated."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SRC-REENTRY_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SRC-REENTRY_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Quotation format does not erase differences in access and relevant expertise."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SRC-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "SRC_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "A disclosed stake is one cue to weigh alongside access, relevant expertise, and support.",
+      "post_commitment_feedback": "Possible bias changes the confidence calculation; it does not decide truth by itself.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SRC-REPAIR_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Direct experience can support a claim but does not erase an incentive to frame it selectively."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SRC-REPAIR_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SRC-REPAIR_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Rejecting before examining support treats possible bias as automatic falsity."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SRC-REPAIR_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A title does not neutralize a disclosed interest."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SRC-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "SRC_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "The advocacy role is an incentive cue, while dated documents are concrete passage-supplied support.",
+      "post_commitment_feedback": "The bounded judgment weighs both sides: advocacy calls for caution, and the cited records strengthen the historical claim.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SRC-REENTRY_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Advocacy may shape presentation but does not prove invention."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SRC-REENTRY_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Documentary support strengthens the claim without making the source's role irrelevant."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SRC-REENTRY_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An unsupported opposing statement does not become stronger merely because this source advocates."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SRC-REENTRY_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STN-ITEM-ENTRY",
+      "learner_prompt_key": "STN_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "Recklessly condemns the decision rather than merely naming an actor, event, or object.",
+      "post_commitment_feedback": "The stance signal is 'recklessly' because it evaluates the board's conduct before additional reasons are supplied.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STN-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STN-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Board identifies the actor but does not itself express approval or condemnation."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STN-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Delayed names the event and does not by itself evaluate the decision."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STN-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Repair names the object of the delay and carries no necessary stance."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STN-ITEM-GUIDED",
+      "learner_prompt_key": "STN_GUIDED",
+      "correct_option_index": 2,
+      "rationale": "Wisely endorses the decision, while the vote total alone does not establish that the choice was prudent.",
+      "post_commitment_feedback": "Name the evaluative word and compare its force with the evidence: 'wisely' adds approval the vote count cannot establish by itself.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STN-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Council identifies an actor; it does not express the report's evaluation of the decision."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STN-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Rejected reports an action, and a negative outcome verb is not automatically a bias signal."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STN-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STN-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Plan names the object under discussion; missing dimensions are unrelated to the stance analysis."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STN-ITEM-LIGHT",
+      "learner_prompt_key": "STN_LIGHT",
+      "correct_option_index": 1,
+      "rationale": "May contribute can appropriately limit certainty when the supplied evidence is correlational.",
+      "post_commitment_feedback": "A hedge can improve reliability when it matches the limits of the evidence; it does not create causation or replace evidence review.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STN-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A bounded hedge does not imply that every measurement is doubted."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STN-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STN-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Cautious wording cannot convert association into a demonstrated causal mechanism."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STN-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The wording must still be compared with the evidence; it does not replace that step."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STN-ITEM-SOLO",
+      "learner_prompt_key": "STN_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Always generalizes universally from a limited volunteer sample and therefore overstates the supplied support.",
+      "post_commitment_feedback": "Compare wording strength with evidence: 'always' makes a universal claim the limited interviews cannot warrant.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STN-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Confidence of expression does not establish the strength of the evidence."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STN-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Overstatement weakens reliability but does not prove deliberate fabrication or universal falsity."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STN-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The size and selection of the sample matter to the breadth of the generalization."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STN-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STN-ITEM-NEAR",
+      "learner_prompt_key": "STN_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The phrase attacks the observer instead of supplying evidence against the alternative explanation.",
+      "post_commitment_feedback": "The wording narrows consideration through a dismissive label, so reliability is weakened when no evidence does that work.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STN-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STN-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Calling someone careless is not evidence that identifies a demonstrated error in the alternative."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STN-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reliability effects can arise from qualitative framing without a numerical claim."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STN-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Dismissive language does not establish that the rejected alternative is correct or reveal the author's knowledge."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STN-ITEM-CHANGED",
+      "learner_prompt_key": "STN_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Account A uses approving, causal language and omits a relevant inspection, while Account B preserves uncertainty and includes that evidence.",
+      "post_commitment_feedback": "Compare treatment of the same evidence: evaluative certainty plus omission weakens Account A relative to Account B's more bounded framing.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STN-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A clear causal assertion is not reliable merely because it is decisive, especially when relevant evidence is omitted."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STN-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Uncertainty can accurately reflect incomplete evidence and does not automatically signal poor research."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STN-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STN-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Agreement on one event does not erase meaningful differences in causal framing and evidence selection."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STN-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "STN_REPAIR_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Quoting, neutralizing, and comparing the phrase makes the language effect observable and passage-bounded.",
+      "post_commitment_feedback": "Repair by moving from a mood label to evidence: exact phrase, neutral alternative, and the resulting change in framing or certainty.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STN-REPAIR_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Inferring views from identity is outside the KC and risks stereotyping rather than analyzing the passage."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STN-REPAIR_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STN-REPAIR_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Personal agreement does not establish a reliability effect in the text."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STN-REPAIR_NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Adjective counts alone do not identify function, and loaded language is not automatic falsity."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STN-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "STN_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Flashy distraction dismisses the alternative without supplying the cost or effectiveness comparison needed to support that treatment.",
+      "post_commitment_feedback": "The fresh case turns on the same function: a dismissive label substitutes for an evidentiary comparison.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STN-REENTRY_NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Memorability may affect comprehension but does not supply evidence for dismissal."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STN-REENTRY_NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Criticism does not establish that the criticized proposal is effective."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STN-REENTRY_NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The language effect is observable without knowing the proposal author's identity."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STN-REENTRY_NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STN-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "STN_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Framing can affect reliability while the factual support still requires its own passage-bounded evaluation.",
+      "post_commitment_feedback": "Keep two questions visible: what the stance does to presentation, and what the supplied evidence supports about the fact.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STN-REPAIR_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STN-REPAIR_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Commitment can motivate selective framing but does not establish factual falsity by itself."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STN-REPAIR_CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One number does not neutralize omission, exaggeration, or selective framing."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STN-REPAIR_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neutral tone is not evidence and can accompany unsupported claims."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STN-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "STN_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The reported count can remain supported while the absolute praise and omitted denominator distort the broader evaluation.",
+      "post_commitment_feedback": "Separate factual support from framing: 48 may be accurate, yet 'unquestioned triumph' and the missing schedule overstate success.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STN-REENTRY_CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Loaded praise can weaken framing without proving that the stated count was fabricated."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STN-REENTRY_CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An exact numerator does not make the omitted comparison or evaluative language irrelevant."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STN-REENTRY_CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STN-REENTRY_CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A numerical detail does not by itself make an account neutral or complete."
+        }
+      ]
+    }
+  ]
+}

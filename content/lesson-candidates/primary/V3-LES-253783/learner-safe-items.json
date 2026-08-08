@@ -1,0 +1,398 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Exit misses may release one bounded function-specific repair and one fresh re-entry.",
+  "items": [
+    {
+      "prompt_key": "ATT_ENTRY",
+      "title": "Starting check: identify a belief",
+      "prompt": "A person says, “Reusable bottles reduce plastic waste.” Which attitude component is expressed most directly?",
+      "response_type": "single_select",
+      "options": [
+        "Affective component",
+        "Cognitive component",
+        "Behavioral component",
+        "Situational constraint"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ATT_GUIDED",
+      "title": "Guided practice: identify a feeling",
+      "prompt": "A patient says, “I feel anxious whenever I think about dental visits.” Which component is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Cognitive component",
+        "Behavioral component",
+        "External opportunity",
+        "Affective component"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ATT_LIGHT",
+      "title": "Less help: locate an intention",
+      "prompt": "A voter says, “I intend to attend the local forum next week.” Which attitude component is represented?",
+      "response_type": "single_select",
+      "options": [
+        "Behavioral component",
+        "Cognitive component",
+        "Affective component",
+        "Measurement error"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ATT_SOLO",
+      "title": "On your own: find the mismatch",
+      "prompt": "Mara believes cycling is efficient and says she enjoys it, but she intends to drive every day. Which description is best?",
+      "response_type": "single_select",
+      "options": [
+        "All three components are negative",
+        "Only the cognitive component is present",
+        "Positive belief and feeling conflict with the plan",
+        "The behavior is guaranteed to change the belief"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ATT_NEAR",
+      "title": "Near exit: classify and align",
+      "prompt": "Jon says a food is nutritious, feels disgust when smelling it, and plans to avoid it. Which interpretation best preserves all three observations?",
+      "response_type": "single_select",
+      "options": [
+        "The attitude is uniformly favorable across all components",
+        "Positive belief conflicts with negative feeling and avoidance",
+        "The smell reaction is cognitive and the nutrition claim is affective",
+        "The avoidance intention proves the nutrition belief is false"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ATT_CHANGED",
+      "title": "Changed-task exit: alter one component",
+      "prompt": "A learner initially believes a class is useful, enjoys it, and plans to enroll again. After one event, enjoyment becomes dislike while the belief and plan remain favorable. What changes most directly?",
+      "response_type": "single_select",
+      "options": [
+        "The cognitive component becomes unfavorable",
+        "The behavioral component disappears",
+        "All attitude components remain aligned",
+        "The attitude becomes less internally aligned"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ATT_REPAIR_NEAR",
+      "title": "Repair: classify before evaluating",
+      "prompt": "Which statement is behavioral attitude evidence rather than a belief or feeling?",
+      "response_type": "single_select",
+      "options": [
+        "“I will volunteer at the shelter on Saturday.”",
+        "“The shelter improves animal welfare.”",
+        "“I feel hopeful when I visit the shelter.”",
+        "“The shelter is located two blocks away.”"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ATT_REENTRY_NEAR",
+      "title": "Fresh re-entry: inspect a new pattern",
+      "prompt": "Lina believes a museum is valuable, feels excited about visiting, and buys a ticket. How are the components arranged?",
+      "response_type": "single_select",
+      "options": [
+        "Cognitive evidence is absent",
+        "Affect conflicts with the other components",
+        "All three components align favorably",
+        "The ticket purchase proves context never matters"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ATT_REPAIR_CHANGED",
+      "title": "Repair: compare before and after",
+      "prompt": "Two components remain favorable, while the third changes from favorable to unfavorable. What is the most direct structural result?",
+      "response_type": "single_select",
+      "options": [
+        "The three components become more aligned",
+        "Mismatch among the components increases",
+        "The attitude can no longer contain any cognitive evidence",
+        "Behavior becomes certain in one direction"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "ATT_REENTRY_CHANGED",
+      "title": "Fresh re-entry: move the selective change",
+      "prompt": "A person dislikes public speaking and expects it to go poorly, but begins volunteering for presentations. Which update is most precise?",
+      "response_type": "single_select",
+      "options": [
+        "Affect and cognition immediately become favorable",
+        "The behavioral component is absent",
+        "All three components now point negatively",
+        "Behavior conflicts with the negative belief and feeling"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "BAT_ENTRY",
+      "title": "Starting check: locate inconsistency",
+      "prompt": "Which case most directly contains behavior-attitude inconsistency that could produce cognitive dissonance?",
+      "response_type": "single_select",
+      "options": [
+        "A person enjoys running and chooses to run",
+        "A person dislikes taxes and complains about them",
+        "A waste opponent knowingly discards recyclables",
+        "A person has no opinion about a film and has not seen it"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "BAT_GUIDED",
+      "title": "Guided practice: follow the requests",
+      "prompt": "A resident first agrees to place a small recycling sticker in a window and later agrees to organize a neighborhood drive. Which process best fits?",
+      "response_type": "single_select",
+      "options": [
+        "Foot-in-the-door",
+        "Role-playing",
+        "Classical conditioning",
+        "Attitude measurement"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "BAT_LIGHT",
+      "title": "Less help: identify enacted role",
+      "prompt": "Participants repeatedly act as peer counselors in structured sessions and later report more favorable views of counseling. Which process is most directly illustrated?",
+      "response_type": "single_select",
+      "options": [
+        "Foot-in-the-door",
+        "Dissonance from weak payment",
+        "Simple attitude observation",
+        "Role-playing"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "BAT_SOLO",
+      "title": "On your own: reduce dissonance",
+      "prompt": "A student values honesty but submits copied work and cannot undo the submission. Which response would most directly reduce inconsistency by changing attitude?",
+      "response_type": "single_select",
+      "options": [
+        "Increase the importance of honesty even further",
+        "Decide that this copying was not very wrong",
+        "Repeat the copied submission immediately",
+        "Forget that the assignment existed"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "BAT_NEAR",
+      "title": "Near exit: use external justification",
+      "prompt": "A participant freely argues against an initial position and receives only a trivial reward. Which later result best fits dissonance reduction through attitude change?",
+      "response_type": "single_select",
+      "options": [
+        "The initial attitude becomes more extreme with no reconciliation",
+        "The participant concludes that the trivial reward fully forced the behavior",
+        "The participant shifts somewhat toward the argued position",
+        "The participant necessarily forgets the initial position"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "BAT_CHANGED",
+      "title": "Changed-task exit: identify the sequence",
+      "prompt": "A campaign first asks visitors to click a one-question pledge and later asks the same visitors to complete a related hour-long volunteer shift. Which process is targeted?",
+      "response_type": "single_select",
+      "options": [
+        "Foot-in-the-door",
+        "Role-playing",
+        "Cognitive dissonance from low reward",
+        "Deterministic attitude control"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "BAT_REPAIR_NEAR",
+      "title": "Repair: locate the reduction",
+      "prompt": "A person performs a counterattitudinal act with little external pressure. Which change would reduce the resulting inconsistency?",
+      "response_type": "single_select",
+      "options": [
+        "Make the original attitude and behavior even more opposed",
+        "Remove every situational fact from memory",
+        "Add a second unrelated attitude conflict",
+        "Shift the attitude toward the performed behavior"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "BAT_REENTRY_NEAR",
+      "title": "Fresh re-entry: apply weak justification",
+      "prompt": "A volunteer publicly supports a policy they initially oppose and receives no meaningful reward. Which later shift is most consistent with attitude-based dissonance reduction?",
+      "response_type": "single_select",
+      "options": [
+        "A stronger rejection of the policy solely because no reward was offered",
+        "A modestly more favorable private attitude toward the policy",
+        "Complete certainty that context never affects attitudes",
+        "Loss of all memory for the public statement"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "BAT_REPAIR_CHANGED",
+      "title": "Repair: map the process cue",
+      "prompt": "Which sequence is necessary for a foot-in-the-door interpretation?",
+      "response_type": "single_select",
+      "options": [
+        "A strong attitude followed by one matching action",
+        "An assigned role followed by reflection on the role",
+        "A small request, then a larger related request",
+        "Counterattitudinal behavior followed by discomfort"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "BAT_REENTRY_CHANGED",
+      "title": "Fresh re-entry: classify enacted behavior",
+      "prompt": "Students spend a semester enacting legislative roles in simulations and later report changed views of lawmaking. Which process best fits the sequence?",
+      "response_type": "single_select",
+      "options": [
+        "Role-playing",
+        "Foot-in-the-door",
+        "Dissonance from trivial payment",
+        "Attitude-guided behavior only"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AGB_ENTRY",
+      "title": "Starting check: match specificity",
+      "prompt": "Which attitude is most closely matched to predicting whether a student will attend a campus flu clinic tomorrow at noon?",
+      "response_type": "single_select",
+      "options": [
+        "A general attitude toward modern medicine",
+        "A general belief that health matters",
+        "An attitude toward campus buildings",
+        "An attitude toward attending that clinic tomorrow"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AGB_GUIDED",
+      "title": "Guided practice: identify the barrier",
+      "prompt": "Rae strongly favors donating blood and intends to donate today, but the only center closes before Rae leaves work. What most directly disrupts the attitude-behavior link?",
+      "response_type": "single_select",
+      "options": [
+        "The favorable attitude lacks any direction",
+        "A situational opportunity constraint",
+        "A role-playing process",
+        "A cognitive component mismatch"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AGB_LIGHT",
+      "title": "Less help: strengthen accessibility",
+      "prompt": "Which change would most plausibly make an attitude more available when a matching action is chosen?",
+      "response_type": "single_select",
+      "options": [
+        "Make the attitude less specific and harder to recall",
+        "Add an unrelated situational barrier",
+        "Recent direct experience with the attitude object",
+        "Measure a different attitude object entirely"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AGB_SOLO",
+      "title": "On your own: locate another determinant",
+      "prompt": "A worker favors taking public transit but drives because the night shift ends after transit service stops. Which factor best explains the behavior?",
+      "response_type": "single_select",
+      "options": [
+        "Available transportation opportunity",
+        "A necessarily negative transit attitude",
+        "Foot-in-the-door compliance",
+        "Affective-cognitive alignment alone"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AGB_NEAR",
+      "title": "Near exit: compare opportunity",
+      "prompt": "Two people report equally strong favorable attitudes toward composting. Only Person B has access to a collection bin. Which bounded prediction is best?",
+      "response_type": "single_select",
+      "options": [
+        "Both people are certain to compost",
+        "Neither person can compost because attitudes never guide behavior",
+        "Person A is more likely because lacking a bin strengthens intention",
+        "Person B is more likely to compost because the opportunity is available"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AGB_CHANGED",
+      "title": "Changed-task exit: remove a barrier",
+      "prompt": "Employees’ favorable attitudes toward cycling remain stable. A workplace adds secure bicycle storage, removing a major theft concern. What should increase most directly?",
+      "response_type": "single_select",
+      "options": [
+        "The certainty that every employee will cycle",
+        "More attitude-consistent cycling",
+        "The need to infer attitudes solely from behavior",
+        "The cognitive dissonance caused by weak rewards"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AGB_REPAIR_NEAR",
+      "title": "Repair: compare matched cases",
+      "prompt": "Which person is more likely to perform a behavior when all else stated is equal?",
+      "response_type": "single_select",
+      "options": [
+        "A person with a broad unrelated attitude and no opportunity",
+        "A person with a weak inaccessible attitude and a strong barrier",
+        "A person with a strong specific attitude and a clear opportunity",
+        "A person whose behavior is declared certain from attitude alone"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AGB_REENTRY_NEAR",
+      "title": "Fresh re-entry: compare a new behavior",
+      "prompt": "Who is more likely to attend a lecture, based only on the supplied information?",
+      "response_type": "single_select",
+      "options": [
+        "A ticket holder with free time and a favorable lecture attitude",
+        "A person with a broad interest in learning but no ticket",
+        "A person with no stated attitude and a scheduling conflict",
+        "A person said to be certain to attend from attitude alone"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AGB_REPAIR_CHANGED",
+      "title": "Repair: isolate the context change",
+      "prompt": "Attitude strength is held constant while a major barrier is removed. Which conclusion is most defensible?",
+      "response_type": "single_select",
+      "options": [
+        "The attitude itself necessarily becomes stronger",
+        "Behavior becomes unrelated to the attitude",
+        "Every person must perform the behavior",
+        "Attitude-consistent behavior becomes more likely"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "AGB_REENTRY_CHANGED",
+      "title": "Fresh re-entry: change a social norm",
+      "prompt": "A student’s favorable attitude toward asking questions remains unchanged, but a new classroom norm openly rewards questions. What is the best prediction?",
+      "response_type": "single_select",
+      "options": [
+        "The favorable attitude must disappear",
+        "Attitude-consistent question asking becomes more likely",
+        "Question asking becomes impossible despite the supportive norm",
+        "Every student will ask the same number of questions"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    }
+  ]
+}

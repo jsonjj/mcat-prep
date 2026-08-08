@@ -1,0 +1,658 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Exit misses may release one bounded function-specific repair and one fresh re-entry.",
+  "items": [
+    {
+      "prompt_key": "CFG_ENTRY",
+      "title": "Starting check: read notation",
+      "prompt": "In the term 3p⁵, what does the superscript 5 mean?",
+      "response_type": "single_select",
+      "options": [
+        "The atom has charge +5",
+        "Five electrons occupy the 3p subshell",
+        "The principal shell is n = 5",
+        "Five p orbitals exist in shell 3"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "CFG_GUIDED",
+      "title": "Guided practice: count electrons",
+      "prompt": "How many electrons are represented by 1s² 2s² 2p⁶?",
+      "response_type": "single_select",
+      "options": [
+        "Six",
+        "Eight",
+        "Twelve",
+        "Ten"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "CFG_LIGHT",
+      "title": "Less help: enforce capacity",
+      "prompt": "Which configuration term is impossible because it exceeds subshell capacity?",
+      "response_type": "single_select",
+      "options": [
+        "2p⁷",
+        "3s²",
+        "2p⁶",
+        "4s¹"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "CFG_SOLO",
+      "title": "On your own: configure fluorine",
+      "prompt": "Which bounded ground-state configuration represents neutral fluorine with nine electrons?",
+      "response_type": "single_select",
+      "options": [
+        "1s² 2s² 2p⁶",
+        "1s² 2s² 2p³",
+        "1s² 2s² 2p⁵",
+        "1s² 2s³ 2p⁴"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "CFG_NEAR",
+      "title": "Near exit: select a neutral atom",
+      "prompt": "Which bounded configuration is valid for neutral magnesium with twelve electrons?",
+      "response_type": "single_select",
+      "options": [
+        "1s² 2s² 2p⁶ 3s¹",
+        "1s² 2s² 2p⁶ 3s²",
+        "1s² 2s² 2p⁷ 3s¹",
+        "1s² 2s² 2p⁶ 3p²"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "CFG_CHANGED",
+      "title": "Changed-task exit: form an ion",
+      "prompt": "Which configuration represents Mg²⁺ when neutral magnesium is 1s² 2s² 2p⁶ 3s²?",
+      "response_type": "single_select",
+      "options": [
+        "1s² 2s² 2p⁶ 3s² 3p²",
+        "1s² 2s² 2p⁴ 3s²",
+        "1s² 2s² 2p⁶ 3s¹",
+        "1s² 2s² 2p⁶"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "CFG_REPAIR_NEAR",
+      "title": "Repair: verify the total",
+      "prompt": "Which configuration contains exactly eight electrons and respects s and p capacities?",
+      "response_type": "single_select",
+      "options": [
+        "1s² 2s² 2p⁴",
+        "1s² 2s² 2p⁵",
+        "1s² 2s³ 2p³",
+        "1s² 2p⁶ 3s¹"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "CFG_REENTRY_NEAR",
+      "title": "Fresh re-entry: configure chlorine",
+      "prompt": "Which bounded configuration represents neutral chlorine with seventeen electrons?",
+      "response_type": "single_select",
+      "options": [
+        "1s² 2s² 2p⁶ 3s² 3p⁴",
+        "1s² 2s² 2p⁶ 3s³ 3p⁴",
+        "1s² 2s² 2p⁶ 3s² 3p⁵",
+        "1s² 2s² 2p⁶ 3s² 3p⁶"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "CFG_REPAIR_CHANGED",
+      "title": "Repair: count the ion first",
+      "prompt": "Neutral fluorine has nine electrons. How many electrons does F⁻ have?",
+      "response_type": "single_select",
+      "options": [
+        "Eight",
+        "Ten",
+        "Nine",
+        "Eleven"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "CFG_REENTRY_CHANGED",
+      "title": "Fresh re-entry: configure an anion",
+      "prompt": "Which configuration represents O²⁻ when neutral oxygen has eight electrons?",
+      "response_type": "single_select",
+      "options": [
+        "1s² 2s² 2p²",
+        "1s² 2s² 2p⁴",
+        "1s² 2s² 2p⁵",
+        "1s² 2s² 2p⁶"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "SPC_ENTRY",
+      "title": "Starting check: identify ground state",
+      "prompt": "Which description defines the electronic ground state?",
+      "response_type": "single_select",
+      "options": [
+        "The highest allowed electronic energy",
+        "Any state that emits visible light",
+        "The lowest available electronic energy",
+        "A state with no electrons"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "SPC_GUIDED",
+      "title": "Guided practice: compute emission",
+      "prompt": "An electron drops from 7 eV to 3 eV. What photon energy is emitted?",
+      "response_type": "single_select",
+      "options": [
+        "4 eV",
+        "3 eV",
+        "7 eV",
+        "10 eV"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "SPC_LIGHT",
+      "title": "Less help: classify direction",
+      "prompt": "An electron moves from a lower bound level to a higher bound level after interacting with light. What occurred?",
+      "response_type": "single_select",
+      "options": [
+        "Line emission",
+        "Photoelectron escape",
+        "Nuclear decay",
+        "Photon absorption"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "SPC_SOLO",
+      "title": "On your own: compare line frequencies",
+      "prompt": "Transition A releases 2 eV and transition B releases 5 eV. Which emitted line has higher frequency?",
+      "response_type": "single_select",
+      "options": [
+        "Line A",
+        "Line B",
+        "They have the same frequency",
+        "Frequency cannot relate to energy"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "SPC_NEAR",
+      "title": "Near exit: read a level diagram",
+      "prompt": "An electron falls from 9 eV to 4 eV. Which statement is correct?",
+      "response_type": "single_select",
+      "options": [
+        "It absorbs a 5 eV photon",
+        "It emits a 13 eV photon",
+        "It emits a 5 eV photon",
+        "It emits a 4 eV photon"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "SPC_CHANGED",
+      "title": "Changed-task exit: test threshold first",
+      "prompt": "Light is below a material’s photoelectric threshold frequency. Its intensity is increased greatly without changing frequency. What happens ideally?",
+      "response_type": "single_select",
+      "options": [
+        "No photoelectrons are emitted",
+        "Photoelectrons gain higher maximum kinetic energy",
+        "The threshold frequency decreases automatically",
+        "Each photon gains energy from the added intensity"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "SPC_REPAIR_NEAR",
+      "title": "Repair: subtract the levels",
+      "prompt": "A downward transition begins at 8 eV and ends at 6 eV. What is emitted?",
+      "response_type": "single_select",
+      "options": [
+        "An 8 eV photon",
+        "A 6 eV photon",
+        "A 14 eV photon",
+        "A 2 eV photon"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "SPC_REENTRY_NEAR",
+      "title": "Fresh re-entry: compare a new gap",
+      "prompt": "An atom absorbs a photon to move from 1 eV to 6 eV. What photon energy is required?",
+      "response_type": "single_select",
+      "options": [
+        "1 eV",
+        "5 eV",
+        "6 eV",
+        "7 eV"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "SPC_REPAIR_CHANGED",
+      "title": "Repair: separate energy and count",
+      "prompt": "Above threshold, which light change raises maximum photoelectron kinetic energy?",
+      "response_type": "single_select",
+      "options": [
+        "Increase intensity at fixed frequency",
+        "Increase beam area at fixed frequency",
+        "Increase photon frequency",
+        "Add more below-threshold photons"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "SPC_REENTRY_CHANGED",
+      "title": "Fresh re-entry: brighten above threshold",
+      "prompt": "Frequency remains above threshold while light intensity doubles. What changes ideally?",
+      "response_type": "single_select",
+      "options": [
+        "More electrons, but the same maximum kinetic energy",
+        "Maximum kinetic energy doubles for every electron",
+        "Photoemission stops because intensity rose",
+        "The material threshold doubles"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "MAG_ENTRY",
+      "title": "Starting check: read one orbital",
+      "prompt": "An orbital box contains one electron arrow. How is that orbital occupied?",
+      "response_type": "single_select",
+      "options": [
+        "Empty",
+        "Paired",
+        "Overfilled",
+        "Singly occupied"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "MAG_GUIDED",
+      "title": "Guided practice: count singles",
+      "prompt": "Three p orbitals contain ↑↓, ↑, and ↑. How many electrons are unpaired?",
+      "response_type": "single_select",
+      "options": [
+        "Zero",
+        "Two",
+        "Four",
+        "Six"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "MAG_LIGHT",
+      "title": "Less help: classify a filled shell",
+      "prompt": "A species has configuration 1s² 2s² 2p⁶. What is its bounded magnetic classification?",
+      "response_type": "single_select",
+      "options": [
+        "Paramagnetic with one unpaired electron",
+        "Paramagnetic with two unpaired electrons",
+        "Diamagnetic",
+        "Unresolved despite complete occupancy"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "MAG_SOLO",
+      "title": "On your own: classify p³",
+      "prompt": "A bounded 2p³ diagram places one electron in each of the three p orbitals. What is the classification?",
+      "response_type": "single_select",
+      "options": [
+        "Paramagnetic",
+        "Diamagnetic",
+        "Unresolved because p has three orbitals",
+        "Nonmagnetic because the atom is neutral"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "MAG_NEAR",
+      "title": "Near exit: inspect occupancy",
+      "prompt": "A species has p-orbital occupancy ↑↓, ↑↓, ↑. Which classification follows?",
+      "response_type": "single_select",
+      "options": [
+        "Diamagnetic",
+        "Unresolved",
+        "Diamagnetic because two orbitals are paired",
+        "Paramagnetic"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "MAG_CHANGED",
+      "title": "Changed-task exit: form a closed shell",
+      "prompt": "Neutral fluorine has bounded configuration 1s² 2s² 2p⁵. What is the magnetic classification of F⁻?",
+      "response_type": "single_select",
+      "options": [
+        "Paramagnetic because neutral fluorine is paramagnetic",
+        "Diamagnetic",
+        "Paramagnetic with two unpaired electrons",
+        "Unresolved because the ion is charged"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "MAG_REPAIR_NEAR",
+      "title": "Repair: use the one-unpaired rule",
+      "prompt": "Which occupancy is paramagnetic?",
+      "response_type": "single_select",
+      "options": [
+        "s orbital ↑↓",
+        "p orbitals ↑↓, ↑↓, ↑↓",
+        "p orbitals ↑↓, ↑↓, ↑",
+        "No occupied orbitals"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "MAG_REENTRY_NEAR",
+      "title": "Fresh re-entry: classify p²",
+      "prompt": "A supplied p² diagram has two singly occupied orbitals and one empty orbital. What follows?",
+      "response_type": "single_select",
+      "options": [
+        "Paramagnetic",
+        "Diamagnetic",
+        "Unresolved",
+        "Diamagnetic because one orbital is empty"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "MAG_REPAIR_CHANGED",
+      "title": "Repair: update occupancy",
+      "prompt": "A p⁵ species gains one electron. What happens to the p subshell?",
+      "response_type": "single_select",
+      "options": [
+        "It becomes p⁴",
+        "It remains p⁵",
+        "It becomes p⁷",
+        "It becomes filled p⁶"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "MAG_REENTRY_CHANGED",
+      "title": "Fresh re-entry: create an unpaired electron",
+      "prompt": "A diamagnetic p⁶ species loses one electron to become p⁵. What is the new classification?",
+      "response_type": "single_select",
+      "options": [
+        "Diamagnetic",
+        "Paramagnetic",
+        "Unresolved despite the supplied occupancy",
+        "Diamagnetic because the parent was diamagnetic"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "GRP_ENTRY",
+      "title": "Starting check: identify a filled valence shell",
+      "prompt": "Which outer pattern is filled for a period-2 or later noble gas?",
+      "response_type": "single_select",
+      "options": [
+        "ns²np⁶",
+        "ns¹",
+        "ns²np⁵",
+        "ns²np¹"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "GRP_GUIDED",
+      "title": "Guided practice: identify alkali pattern",
+      "prompt": "Which bounded valence pattern identifies an alkali-metal family member?",
+      "response_type": "single_select",
+      "options": [
+        "ns²",
+        "ns²np⁵",
+        "ns¹",
+        "ns²np⁶"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "GRP_LIGHT",
+      "title": "Less help: identify halogen pattern",
+      "prompt": "Which outer configuration is characteristic of a halogen?",
+      "response_type": "single_select",
+      "options": [
+        "ns²np⁶",
+        "ns²np⁵",
+        "ns²",
+        "ns¹"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "GRP_SOLO",
+      "title": "On your own: classify a d-block element",
+      "prompt": "A highlighted element lies in the central d block with a partially filled d subshell. Which class is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Noble gas",
+        "Halogen",
+        "Representative s-block element",
+        "Transition element"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "GRP_NEAR",
+      "title": "Near exit: classify a family",
+      "prompt": "An element has outer configuration 4s²4p⁵. Which family is identified?",
+      "response_type": "single_select",
+      "options": [
+        "Halogen",
+        "Noble gas",
+        "Alkaline-earth metal",
+        "Alkali metal"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "GRP_CHANGED",
+      "title": "Changed-task exit: combine block and region",
+      "prompt": "A provided periodic table highlights a central d-block element. Which combined classification is most appropriate?",
+      "response_type": "single_select",
+      "options": [
+        "Representative nonmetal",
+        "Noble-gas nonmetal",
+        "Transition metal",
+        "Halogen metal"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "GRP_REPAIR_NEAR",
+      "title": "Repair: match outer patterns",
+      "prompt": "Which family matches an outer ns² pattern with no outer p electrons?",
+      "response_type": "single_select",
+      "options": [
+        "Alkali metal",
+        "Alkaline-earth metal",
+        "Halogen",
+        "Noble gas"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "GRP_REENTRY_NEAR",
+      "title": "Fresh re-entry: classify a filled pattern",
+      "prompt": "An element has outer configuration 3s²3p⁶. Which family is identified?",
+      "response_type": "single_select",
+      "options": [
+        "Halogen",
+        "Alkali metal",
+        "Alkaline-earth metal",
+        "Noble gas"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "GRP_REPAIR_CHANGED",
+      "title": "Repair: use the differentiating block",
+      "prompt": "Which statement distinguishes a transition element from a representative element?",
+      "response_type": "single_select",
+      "options": [
+        "Its differentiating electrons occupy a d subshell",
+        "It must have a filled outer p subshell",
+        "It must be an upper-right nonmetal",
+        "It has exactly one outer s electron"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "GRP_REENTRY_CHANGED",
+      "title": "Fresh re-entry: classify a p-block position",
+      "prompt": "A highlighted element lies in the upper-right p block and has ns²np⁵. Which combined label fits?",
+      "response_type": "single_select",
+      "options": [
+        "Transition metal from the central d block",
+        "Representative alkaline-earth metal",
+        "Representative halogen nonmetal",
+        "Representative noble-gas metal"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "TRD_ENTRY",
+      "title": "Starting check: add a shell",
+      "prompt": "Moving down a group adds a principal electron shell. What generally happens to atomic radius?",
+      "response_type": "single_select",
+      "options": [
+        "It increases",
+        "It decreases",
+        "It becomes zero",
+        "It is fixed for every group member"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "TRD_GUIDED",
+      "title": "Guided practice: move across a period",
+      "prompt": "Across a period, effective nuclear charge generally increases while the principal valence shell stays the same. What happens to atomic radius?",
+      "response_type": "single_select",
+      "options": [
+        "It increases",
+        "It decreases",
+        "It remains exactly constant",
+        "It follows atomic mass only"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "TRD_LIGHT",
+      "title": "Less help: predict ionization energy",
+      "prompt": "Which change generally raises first ionization energy?",
+      "response_type": "single_select",
+      "options": [
+        "Add a new occupied shell down a group",
+        "Decrease effective nuclear attraction in the same shell",
+        "Increase effective nuclear attraction",
+        "Convert an atom into a larger anion"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "TRD_SOLO",
+      "title": "On your own: predict electronegativity",
+      "prompt": "Within the same period, which atom generally attracts shared bonding electrons more strongly?",
+      "response_type": "single_select",
+      "options": [
+        "The atom farther left with lower effective nuclear charge",
+        "Both always attract equally",
+        "The atom with more shielding but the same nuclear pull",
+        "The atom farther right with higher effective nuclear charge"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "TRD_NEAR",
+      "title": "Near exit: compare neutral atoms",
+      "prompt": "Atom A and Atom B are in the same group, with B one period below A. Which comparison is generally correct?",
+      "response_type": "single_select",
+      "options": [
+        "B is larger and has lower first ionization energy",
+        "B is smaller and has higher first ionization energy",
+        "B is larger and has higher first ionization energy",
+        "B is smaller and has lower first ionization energy"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "TRD_CHANGED",
+      "title": "Changed-task exit: rank isoelectronic ions",
+      "prompt": "Na⁺, Ne, and F⁻ each have ten electrons. Which order is smallest to largest?",
+      "response_type": "single_select",
+      "options": [
+        "F⁻ < Ne < Na⁺",
+        "Na⁺ < Ne < F⁻",
+        "Ne < Na⁺ < F⁻",
+        "All three have identical radius"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "TRD_REPAIR_NEAR",
+      "title": "Repair: choose shells or pull",
+      "prompt": "Two atoms are in the same period. Atom X has greater effective nuclear charge. Which result is most likely?",
+      "response_type": "single_select",
+      "options": [
+        "X has larger radius and lower ionization energy",
+        "X has larger radius and higher ionization energy",
+        "X has smaller radius and higher ionization energy",
+        "X must have an additional principal shell"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "TRD_REENTRY_NEAR",
+      "title": "Fresh re-entry: move down a group",
+      "prompt": "Element Y is below Element X in the same group. Which property is generally greater for Y?",
+      "response_type": "single_select",
+      "options": [
+        "First ionization energy",
+        "Electronegativity",
+        "Effective attraction on the outermost electron",
+        "Atomic radius"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "TRD_REPAIR_CHANGED",
+      "title": "Repair: compare atom and ion",
+      "prompt": "Compared with its neutral atom, a simple cation is generally what size?",
+      "response_type": "single_select",
+      "options": [
+        "Smaller",
+        "Larger",
+        "Always identical",
+        "Unrelated to electron count"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "TRD_REENTRY_CHANGED",
+      "title": "Fresh re-entry: compare an anion",
+      "prompt": "Compared with neutral chlorine, Cl⁻ is generally how large?",
+      "response_type": "single_select",
+      "options": [
+        "Smaller",
+        "Larger",
+        "Exactly the same size",
+        "Size cannot be compared for a simple ion"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "checks": [
+    {
+      "check": "estimatedMinutes-plausibility",
+      "status": "na",
+      "detail": "no calibrated timing to judge (timing_model absent or all-null; 44 items)"
+    },
+    {
+      "check": "difficulty-distribution",
+      "status": "na",
+      "detail": "no per-item difficulty labels in lesson artifacts (difficulty is a question-bank property)"
+    }
+  ],
+  "command": {
+    "argv": [
+      "node",
+      "tools/content-cli/node_modules/tsx/dist/cli.mjs",
+      "tools/content-cli/src/entry.ts",
+      "computed-quality",
+      "<candidate>",
+      "--json"
+    ],
+    "cliEntrySha256": "069bdf24d431793df13c654dbfe03ef1f00407ad76cbe047f5a81e44570f0374",
+    "cliMainSha256": "723afe84b1539f16ffdb02f720f94934452a4d10538b8bfd2d296af4e1cfcd8f",
+    "durationMs": 160,
+    "executableSha256": "f5f9b9db4d95f5e0340982685f083de654c21eef9d9122cab5321081ccaa2601",
+    "exitCode": 0,
+    "signal": null,
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdoutSha256": "292cc8f668544dae084efa75305ab1b373140c6534775ba57340e6c941426d72",
+    "toolVersion": "content-cli/current",
+    "tsxCliSha256": "56b9b4f04e479fc14cdf74295ea4bd57d73be94d74350a36013741ed651a011d"
+  },
+  "format": "lesson-generation-computed-quality/2",
+  "lessonId": "V3-LES-282413",
+  "officialRubricPassClaimed": false,
+  "sourceArtifactSha256": "097dca08523d6ed7aba9ebcb72282f8cd91278f9fc28f0162951c854c05d54fb",
+  "status": "N/A",
+  "structuralMetrics": {
+    "failedRuleResultCount": 0,
+    "measurableItemCount": 40,
+    "normalizedItemCount": 44,
+    "passedRuleResultCount": 44,
+    "reentryItemCount": 8,
+    "repairBindingCount": 8,
+    "requiredNodeKindCountPerKc": 15,
+    "totalRuleResultCount": 44
+  }
+}

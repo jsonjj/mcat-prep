@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { EventIdSchema, IdempotencyKeySchema, LearnerIdSchema, LessonItemIdSchema } from './ids';
+import { LessonDefinitionHashSchema } from './lesson-catalog';
 import { UtcTimestampSchema } from './time';
 import { PolicyVersionSchema } from './versioning';
 import { AssistanceLevelSchema, ReasoningOperationSchema, type ReasoningOperation } from './vocab';
@@ -285,6 +286,32 @@ export const LessonRuntimeResponseFactsSchema = z
   .strict();
 export type LessonRuntimeResponseFacts = z.infer<typeof LessonRuntimeResponseFactsSchema>;
 
+/**
+ * Immutable provenance carried by normalized-lesson observations and evidence.
+ * It binds one committed runtime response to the exact lesson cut, authored
+ * binding, scored item authority, and pedagogical function without carrying any
+ * answer, rationale, or feedback text.
+ */
+export const LessonObservationAttributionSchema = z
+  .object({
+    lessonId: IdentifierSchema,
+    definitionHash: LessonDefinitionHashSchema,
+    questionId: LessonItemIdSchema,
+    itemBindingId: LessonItemIdSchema,
+    bindingVersion: OpaqueBindingVersionSchema,
+    serverItemVersion: ServerItemVersionSchema,
+    primaryKcId: IdentifierSchema,
+    activityRole: LessonActivityRoleSchema,
+    exitFunction: z.enum(['NEAR_USE', 'CHANGED_TASK', 'NONE']),
+    semanticFamilyId: IdentifierSchema,
+    responseId: IdentifierSchema,
+    responseOccurredAt: UtcTimestampSchema,
+    serverScoringAuthorityRef: IdentifierSchema,
+    isReentry: z.boolean(),
+  })
+  .strict();
+export type LessonObservationAttribution = z.infer<typeof LessonObservationAttributionSchema>;
+
 export const AcceptedLessonObservationSchema = z
   .object({
     observationId: z.string().uuid(),
@@ -302,6 +329,7 @@ export const AcceptedLessonObservationSchema = z
     sequence: z.number().int().nonnegative(),
     contentRelease: z.string().min(1),
     policies: z.array(PolicyVersionSchema),
+    lessonAttribution: LessonObservationAttributionSchema.optional(),
   })
   .strict()
   .superRefine((observation, context) => {
@@ -318,6 +346,43 @@ export const AcceptedLessonObservationSchema = z
         message: 'serverItemVersion must be absent when scoringValid is false.',
         path: ['serverItemVersion'],
       });
+    }
+    const attribution = observation.lessonAttribution;
+    if (attribution !== undefined) {
+      const expected = {
+        lessonId: observation.binding.lessonId,
+        questionId: observation.binding.questionId,
+        itemBindingId: observation.binding.itemBindingId,
+        bindingVersion: observation.bindingVersion,
+        serverItemVersion: observation.serverItemVersion,
+        primaryKcId: observation.binding.primaryKcId,
+        activityRole: observation.binding.activityRole,
+        semanticFamilyId: observation.binding.semanticFamilyId,
+        responseOccurredAt: observation.response.occurredAt,
+        serverScoringAuthorityRef: observation.binding.serverScoringAuthorityRef,
+      } as const;
+      for (const [field, expectedValue] of Object.entries(expected)) {
+        if (attribution[field as keyof typeof attribution] !== expectedValue) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `lesson attribution ${field} does not match the accepted response`,
+            path: ['lessonAttribution', field],
+          });
+        }
+      }
+      for (const [field, responseValue] of [
+        ['questionId', observation.response.questionId],
+        ['itemBindingId', observation.response.itemBindingId],
+        ['bindingVersion', observation.response.bindingVersion],
+      ] as const) {
+        if (attribution[field] !== responseValue) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `lesson attribution ${field} does not match the runtime response`,
+            path: ['lessonAttribution', field],
+          });
+        }
+      }
     }
   });
 export type AcceptedLessonObservation = z.infer<typeof AcceptedLessonObservationSchema>;
@@ -337,8 +402,30 @@ export const QualifiedBktObservationSchema = z
     sequence: z.number().int().nonnegative(),
     contentRelease: z.string().min(1),
     policies: z.array(PolicyVersionSchema),
+    lessonAttribution: LessonObservationAttributionSchema.optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((observation, context) => {
+    const attribution = observation.lessonAttribution;
+    if (attribution === undefined) return;
+    const expected = {
+      questionId: observation.questionId,
+      itemBindingId: observation.itemBindingId,
+      bindingVersion: observation.bindingVersion,
+      serverItemVersion: observation.serverItemVersion,
+      primaryKcId: observation.primaryKcId,
+      responseOccurredAt: observation.occurredAt,
+    } as const;
+    for (const [field, expectedValue] of Object.entries(expected)) {
+      if (attribution[field as keyof typeof attribution] !== expectedValue) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `lesson attribution ${field} does not match the BKT observation`,
+          path: ['lessonAttribution', field],
+        });
+      }
+    }
+  });
 export type QualifiedBktObservation = z.infer<typeof QualifiedBktObservationSchema>;
 
 export const BKT_QUALIFICATION_REJECTION_CODES = [

@@ -1,0 +1,1118 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "SIG-ITEM-ENTRY",
+      "learner_prompt_key": "SIG_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "Ligand binding directly opens the pore, so ion permeability changes without an intervening G protein or receptor-enzyme step.",
+      "post_commitment_feedback": "The decisive event is direct opening of an ion-conducting pore after ligand binding, which identifies a ligand-gated ion channel.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SIG-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Receptor enzymes control phosphorylation rather than opening an ion-conducting pore."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SIG-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SIG-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A G protein–coupled receptor requires a G-protein intermediate and is not itself the opened pore."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SIG-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This response does not classify the stated ligand-triggered pore-opening event."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SIG-ITEM-GUIDED",
+      "learner_prompt_key": "SIG_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "A change in membrane potential is the defining trigger stated for the gated channel.",
+      "post_commitment_feedback": "Depolarization is the trigger, and the direct consequence is opening of a voltage-gated calcium channel.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SIG-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The supplied trigger is depolarization, not extracellular ligand binding."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SIG-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "GTP activates a G-protein subunit; it does not open a pore within a GPCR."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SIG-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Receptor enzymes signal through catalytic activity rather than transporting calcium through a pore."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SIG-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SIG-ITEM-LIGHT",
+      "learner_prompt_key": "SIG_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "The direct event is receptor-associated enzyme activity rather than pore opening or G-protein activation.",
+      "post_commitment_feedback": "Ligand-dependent activation of cytosolic catalytic activity supports a receptor-enzyme mechanism.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SIG-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SIG-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A voltage-gated channel responds to membrane voltage and does not explain ligand-induced receptor association and autophosphorylation."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SIG-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A ligand-gated channel opens an ion pore; the prompt explicitly reports catalytic phosphorylation without ion passage."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SIG-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A GPCR activates a separate G protein rather than autophosphorylating paired receptor cytosolic domains."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SIG-ITEM-SOLO",
+      "learner_prompt_key": "SIG_SOLO",
+      "correct_option_index": 2,
+      "rationale": "Nucleotide exchange activates the heterotrimeric G protein and precedes effector regulation.",
+      "post_commitment_feedback": "The activated receptor promotes GDP-for-GTP exchange on G alpha before the G protein regulates an effector.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SIG-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ligand entry into the nucleus describes an intracellular-receptor route, not the first intracellular GPCR event."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SIG-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A GPCR does not become an ion-conducting pore."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SIG-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SIG-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The GPCR promotes G-protein nucleotide exchange; it does not directly phosphorylate every downstream target."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SIG-ITEM-NEAR",
+      "learner_prompt_key": "SIG_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The mutation disrupts the channel’s direct voltage-to-gate coupling.",
+      "post_commitment_feedback": "If the voltage sensor cannot move, the gate does not open normally, so sodium permeability through that channel does not rise.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SIG-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The mutation is in a voltage-gated channel, so receptor-enzyme phosphorylation is not the disrupted process."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SIG-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SIG-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "GDP–GTP exchange is a GPCR step and does not follow movement of a voltage sensor."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SIG-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Nuclear entry by a steroid receptor is unrelated to gating of the mutated sodium channel."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SIG-ITEM-CHANGED",
+      "learner_prompt_key": "SIG_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "The first broken arrow is receptor-promoted nucleotide exchange on G alpha.",
+      "post_commitment_feedback": "Failure to release GDP prevents GTP loading, so G alpha remains inactive and cannot regulate its effector.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SIG-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The ligand already binds the extracellular receptor; membrane diffusion is not required for GPCR activation."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SIG-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A GPCR does not convert into an ion channel when nucleotide exchange fails."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SIG-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "GPCRs do not directly phosphorylate DNA."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SIG-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SIG-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "SIG_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The pore and ion current identify the direct permeability mechanism.",
+      "post_commitment_feedback": "Direct ion current through an opened membrane-protein pore is the channel-specific observation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SIG-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A delayed transcriptional response does not specifically identify direct ion conduction through a gated pore."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SIG-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Effector-driven second-messenger production supports a GPCR cascade rather than a direct channel mechanism."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SIG-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SIG-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Phosphorylation by a cytosolic receptor domain supports a receptor-enzyme mechanism."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SIG-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "SIG_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The fresh item rechecks the same direct channel-consequence function with a different ion and defect.",
+      "post_commitment_feedback": "Binding can remain intact while the pore defect eliminates the ligand-triggered chloride current.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SIG-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SIG-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "G-alpha nucleotide exchange belongs to GPCR signaling and is not the current lost from the mutated chloride pore."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SIG-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Receptor-enzyme autophosphorylation is catalytic signaling, not ion passage through this channel."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SIG-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Steroid binding to a nuclear receptor is independent of the ligand-gated chloride pore."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SIG-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "SIG_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The sequence preserves the causal order of receptor activation, G-protein activation, and effector regulation.",
+      "post_commitment_feedback": "The receptor changes after ligand binding, promotes nucleotide exchange on G alpha, and only then can the G protein regulate an effector.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SIG-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This sequence places effector activation before ligand binding and receptor activation."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SIG-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SIG-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This sequence mixes channel opening and receptor-enzyme phosphorylation instead of ordering GPCR steps."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SIG-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This sequence substitutes intracellular-receptor and pore events for GPCR activation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SIG-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "SIG_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The fresh item moves the defect one step later while testing the same GPCR causal-sequence function.",
+      "post_commitment_feedback": "The early receptor and nucleotide-exchange steps can occur, while the broken G-alpha–effector interaction prevents the effector response.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SIG-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt states that receptor activation occurred, so extracellular ligand binding is not the first failed step."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SIG-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt states that G alpha bound GTP, so nucleotide exchange already succeeded."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SIG-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SIG-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A GPCR with a failed effector contact does not become a voltage-gated channel."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LIP-ITEM-ENTRY",
+      "learner_prompt_key": "LIP_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "The fused-ring scaffold and low polarity support a steroid-like, membrane-permeant signaling route.",
+      "post_commitment_feedback": "A largely nonpolar four-fused-ring signal is steroid-like and can support membrane passage to an intracellular receptor.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LIP-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A fused-ring steroid scaffold is not inherently ionic, and few polar groups favor rather than prevent bilayer passage."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LIP-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A signaling molecule does not form an ion channel merely because it contains fused rings."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LIP-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LIP-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This response does not infer the membrane behavior supported by the supplied scaffold and polarity."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LIP-ITEM-GUIDED",
+      "learner_prompt_key": "LIP_GUIDED",
+      "correct_option_index": 0,
+      "rationale": "The sequence connects steroid membrane passage to intracellular receptor action.",
+      "post_commitment_feedback": "A membrane-permeant steroid can bind an intracellular receptor, and the complex can regulate transcription.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LIP-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LIP-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A steroid intracellular-receptor mechanism does not require ligand-gated pore opening or sodium influx."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LIP-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A receptor enzyme does not transport a steroid through an ion pore."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LIP-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Steroid hormones bind receptors, not G proteins, and GDP–GTP exchange occurs on G alpha rather than on the hormone."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LIP-ITEM-LIGHT",
+      "learner_prompt_key": "LIP_LIGHT",
+      "correct_option_index": 3,
+      "rationale": "The isoprene-unit construction is the family-defining structural cue used here.",
+      "post_commitment_feedback": "Terpene and terpenoid carbon skeletons are built from five-carbon isoprene units.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LIP-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Repeating amino-acid units indicate a peptide or protein, not a terpene carbon skeleton."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LIP-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A repeating sugar-phosphate backbone identifies nucleic acid structure, not a terpene family cue."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LIP-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Four fused carbon rings identify the steroid scaffold used in this lesson."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LIP-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LIP-ITEM-SOLO",
+      "learner_prompt_key": "LIP_SOLO",
+      "correct_option_index": 1,
+      "rationale": "The molecule keeps the isoprene-derived scaffold while carrying chemical modification characteristic of a terpenoid.",
+      "post_commitment_feedback": "A modified terpene derivative, often with oxygen-bearing groups, is classified as a terpenoid.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LIP-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A steroid is not a protein, and the prompt supplies an isoprene-derived rather than fused-ring scaffold."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LIP-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LIP-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A ligand-gated channel is a membrane protein class, not a classification for an oxygenated isoprene-derived molecule."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LIP-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A phospholipid bilayer is a membrane structure, not the family of the described signaling molecule."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LIP-ITEM-NEAR",
+      "learner_prompt_key": "LIP_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The four-ring hydrophobic signal and nuclear receptor identify the intracellular transcriptional mechanism.",
+      "post_commitment_feedback": "Blocking the nuclear receptor interrupts the steroid-like signal’s direct route to transcriptional regulation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LIP-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LIP-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Depolarization-gated sodium-channel opening is independent of the blocked nuclear steroid receptor."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LIP-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Oxygen diffusion is passive and does not depend on the nuclear receptor."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LIP-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ligand-triggered membrane-pore flow is a channel mechanism, not the supplied intracellular-receptor mechanism."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LIP-ITEM-CHANGED",
+      "learner_prompt_key": "LIP_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The task requires combining family classification with experimentally supplied receptor location rather than applying a steroid-only rule.",
+      "post_commitment_feedback": "An oxygenated isoprene-derived signal can be terpenoid-like, and the supplied lipophilicity plus nuclear receptor supports intracellular signaling.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LIP-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Adding oxygen does not force every signaling molecule to use a membrane pore."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LIP-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Changing transcription does not establish that a signaling molecule is a peptide."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LIP-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LIP-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A nuclear receptor regulates intracellular signaling and is not a voltage-gated ion channel."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LIP-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "LIP_REPAIR_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The signal has already entered and bound its intracellular receptor, so failure to bind target DNA most directly disrupts receptor-dependent transcription rather than membrane passage or unrelated membrane events.",
+      "post_commitment_feedback": "Once steroid entry and intracellular-receptor binding are established, a DNA-binding failure breaks the receptor complex’s route to hormone-dependent transcription.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LIP-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Voltage-gated calcium-channel opening does not follow failure of an intracellular receptor to bind DNA."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LIP-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Release of an unrelated peptide hormone is not the direct output of the disrupted receptor complex."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LIP-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Membrane-receptor autophosphorylation is a different mechanism from the established intracellular steroid receptor."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LIP-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LIP-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "LIP_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The fresh task preserves steroid-receptor consequence prediction but changes the blocked receptor step: a complex that cannot enter the nucleus cannot directly regulate nuclear transcription.",
+      "post_commitment_feedback": "After the hormone has entered and bound its cytosolic receptor, failure of the complex to reach the nucleus most directly reduces receptor-dependent transcription.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LIP-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Membrane-pore ion flow does not require nuclear entry by a steroid–receptor complex."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LIP-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LIP-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Voltage-gated sodium entry is controlled by depolarization, not by nuclear translocation of this receptor complex."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LIP-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A membrane receptor enzyme is distinct from the supplied cytosolic steroid receptor."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LIP-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "LIP_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The distinction uses structural criteria before any signaling-role inference.",
+      "post_commitment_feedback": "The steroid family is identified by its fused-ring core; the terpene family is identified by isoprene-unit construction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LIP-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Receptor location does not define the steroid or terpene structural family."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LIP-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This response reverses the structural cues and incorrectly treats steroids as repeating peptides."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LIP-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LIP-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Terpenoids and steroids are molecule families, not ion-channel and receptor-enzyme protein classes."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LIP-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "LIP_REENTRY_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "The fresh item keeps family classification and receptor-location evidence as separate, coordinated decisions.",
+      "post_commitment_feedback": "The modified isoprene-derived scaffold supports terpenoid classification, while the experiment establishes intracellular receptor action.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LIP-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LIP-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A nuclear receptor does not by itself define a fused-ring steroid scaffold."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LIP-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The messenger binds a receptor; it is not itself a ligand-gated channel or pore."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LIP-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An isoprene-derived scaffold is not a peptide backbone."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "END-ITEM-ENTRY",
+      "learner_prompt_key": "END_ENTRY",
+      "correct_option_index": 3,
+      "rationale": "This low-stakes item checks the canonical nervous-control relation required for the later neuroendocrine bridge.",
+      "post_commitment_feedback": "The prerequisite control loop runs from detection by a sensor through integration to an effector output.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "END-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An effector response cannot precede detection by the sensor."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "END-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Integration cannot precede the sensory input that supplies information."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "END-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This order reverses the sensor-to-integration-to-effector control sequence."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "END-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "END-ITEM-GUIDED",
+      "learner_prompt_key": "END_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "The item separates the hormone’s target named in its label from its endocrine source.",
+      "post_commitment_feedback": "TSH targets the thyroid, but its source is the anterior pituitary.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "END-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The thyroid is the target of TSH, not its source."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "END-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "END-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The posterior pituitary stores and releases hypothalamic ADH and oxytocin; it does not synthesize thyroid hormone."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "END-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The hypothalamus supplies releasing factors to the pituitary and is not the systemic source of TSH."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "END-ITEM-LIGHT",
+      "learner_prompt_key": "END_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "The source–release distinction is the decisive neuroendocrine relation.",
+      "post_commitment_feedback": "ADH is synthesized in hypothalamic neurons and transported to the posterior pituitary for storage and release.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "END-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The thyroid does not synthesize or release ADH."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "END-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "ADH is synthesized in hypothalamic neurons, not in the posterior pituitary, and is released from posterior-pituitary terminals."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "END-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "END-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The adrenal cortex and medulla do not synthesize or release ADH."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "END-ITEM-SOLO",
+      "learner_prompt_key": "END_SOLO",
+      "correct_option_index": 0,
+      "rationale": "The source requires distinguishing adrenal cortex from adrenal medulla and pairing the product with its class.",
+      "post_commitment_feedback": "Cortisol is a steroid hormone produced by the adrenal cortex.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "END-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "END-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The adrenal medulla produces catecholamines, whereas cortisol is a steroid from the adrenal cortex."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "END-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The posterior pituitary releases ADH and oxytocin rather than producing cortisol."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "END-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Pancreatic beta cells produce insulin, not cortisol or thyroid hormone."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "END-ITEM-NEAR",
+      "learner_prompt_key": "END_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Both anatomical location and product identify the thyroid.",
+      "post_commitment_feedback": "The thyroid is located in the anterior neck and produces T3 and T4.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "END-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The anterior pituitary lies at the brain base and does not produce T3 and T4."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "END-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The parathyroid glands produce parathyroid hormone rather than T3 and T4."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "END-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The adrenal cortex lies above the kidney and produces steroid hormones such as cortisol, not T3 and T4."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "END-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "END-ITEM-CHANGED",
+      "learner_prompt_key": "END_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The lesion interrupts transport from the synthesis site to the release site.",
+      "post_commitment_feedback": "ADH and oxytocin are synthesized in hypothalamic neurons and travel along axons to the posterior pituitary for release.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "END-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "TSH and ACTH are anterior-pituitary products, and the prompt states that the anterior pituitary remains intact."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "END-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "END-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Insulin and glucagon are pancreatic hormones and do not travel along hypothalamic axons."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "END-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Cortisol and aldosterone are synthesized in the adrenal cortex, not delivered by posterior-pituitary axons."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "END-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "END_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The repair uses the location-first mapping rule and distinguishes adrenal medulla from other sources.",
+      "post_commitment_feedback": "The adrenal medulla produces catecholamines such as epinephrine.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "END-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "END-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The anterior pituitary does not produce insulin; pancreatic beta cells do."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "END-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Pancreatic beta cells produce insulin rather than cortisol."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "END-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The thyroid produces T3 and T4, whereas ACTH is produced by the anterior pituitary."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "END-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "END_REENTRY_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The fresh setting rechecks the source–product mapping function with pancreatic cell types.",
+      "post_commitment_feedback": "Pancreatic beta cells produce insulin; alpha cells instead produce glucagon.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "END-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Alpha cells produce glucagon, which raises rather than promotes uptake and storage of blood glucose."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "END-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The adrenal cortex does not produce insulin."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "END-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "END-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The posterior pituitary does not produce glucagon."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "END-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "END_REPAIR_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "The repair explicitly separates the two anatomical roles.",
+      "post_commitment_feedback": "Synthesis occurs in hypothalamic neurons, while storage and release occur from their terminals in the posterior pituitary.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "END-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The posterior pituitary does not synthesize hypothalamic releasing hormones."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "END-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "TSH is released by the anterior pituitary and acts on the thyroid; it is not released from the thyroid by the hypothalamus."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "END-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The anterior pituitary does not store every hormone synthesized by the hypothalamus."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "END-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "END-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "END_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The fresh item changes the perturbation from severed transport to reduced synthesis while preserving source-versus-release reasoning.",
+      "post_commitment_feedback": "An intact release site cannot replenish oxytocin when its hypothalamic synthesis source is inhibited.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "END-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The posterior pituitary cannot replace lost hypothalamic synthesis by making oxytocin independently."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "END-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "END-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Anterior-pituitary TSH does not become an oxytocin source."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "END-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The adrenal medulla produces catecholamines and does not convert epinephrine into oxytocin."
+        }
+      ]
+    }
+  ]
+}

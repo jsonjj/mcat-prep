@@ -22,3 +22,4 @@ export * from './auth';
 export * from './http';
 export * from './v3-vector-lesson';
 export * from './lesson-delivery';
+export * from './lesson-catalog';

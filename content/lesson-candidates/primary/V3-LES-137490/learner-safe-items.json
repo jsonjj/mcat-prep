@@ -1,0 +1,488 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears.",
+  "items": [
+    {
+      "prompt_key": "MEI_ENTRY",
+      "title": "Starting check: identify the reducing division",
+      "prompt": "A diploid cell produces cells with one homolog from each chromosome pair. Which outcome distinguishes this step from ordinary mitosis?",
+      "response_type": "single_select",
+      "options": [
+        "Homolog pairs are separated",
+        "Chromosome number is preserved",
+        "DNA is replicated again",
+        "All products remain diploid"
+      ]
+    },
+    {
+      "prompt_key": "MEI_GUIDED",
+      "title": "Guided practice: trace allele segregation",
+      "prompt": "One homolog carries allele A and its partner carries allele a. After normal meiotic homolog separation, what must be true of a gamete?",
+      "response_type": "single_select",
+      "options": [
+        "It receives both A and a homologs",
+        "It receives either A or a",
+        "It receives neither allele",
+        "It becomes tetraploid"
+      ]
+    },
+    {
+      "prompt_key": "MEI_LIGHT",
+      "title": "Less help: connect meiosis and fertilization",
+      "prompt": "Why does meiosis help maintain a stable chromosome number across sexual generations?",
+      "response_type": "single_select",
+      "options": [
+        "It doubles sets before fertilization",
+        "It removes all chromosome variation",
+        "It halves chromosome sets first",
+        "It prevents homolog separation"
+      ]
+    },
+    {
+      "prompt_key": "MEI_SOLO",
+      "title": "Solo practice: compare with mitosis",
+      "prompt": "Which product pattern is expected from one diploid precursor after normal meiosis rather than mitosis?",
+      "response_type": "single_select",
+      "options": [
+        "Diploid clones with preserved sets",
+        "One cell with doubled ploidy",
+        "Products lacking every chromosome",
+        "Varied haploid products"
+      ]
+    },
+    {
+      "prompt_key": "MEI_NEAR",
+      "title": "Near exit: predict segregation",
+      "prompt": "A cell is heterozygous Dd at one locus on a homolog pair. Ignoring mutation and crossover at that locus, which gamete set is expected?",
+      "response_type": "single_select",
+      "options": [
+        "Gametes carry D or d",
+        "Every gamete carries D and d",
+        "No gamete carries either allele",
+        "Every gamete is diploid"
+      ]
+    },
+    {
+      "prompt_key": "MEI_CHANGED",
+      "title": "Changed exit: combine independent orientations",
+      "prompt": "Genes A/a and B/b lie on different chromosome pairs. The A-bearing homolog is fixed toward one pole, while the B pair can orient either way. Which two gametes can arise at that pole?",
+      "response_type": "single_select",
+      "options": [
+        "AB and aB",
+        "AB and Ab",
+        "Aa and Bb",
+        "Only AB"
+      ]
+    },
+    {
+      "prompt_key": "MEI_REPAIR_NEAR",
+      "title": "Repair: inventory one homolog per pair",
+      "prompt": "A normal gamete receives which chromosome inventory from a diploid cell with three homolog pairs?",
+      "response_type": "single_select",
+      "options": [
+        "Both homologs from every pair",
+        "Three copies of each homolog",
+        "One homolog per pair",
+        "No homolog from any pair"
+      ]
+    },
+    {
+      "prompt_key": "MEI_REENTRY_NEAR",
+      "title": "Fresh re-entry: trace a new pair",
+      "prompt": "A new homolog pair carries M on one homolog and m on the other. What does normal segregation predict?",
+      "response_type": "single_select",
+      "options": [
+        "Each gamete receives both alleles",
+        "Each gamete receives no allele",
+        "Each gamete gains four copies",
+        "Each gamete receives M or m"
+      ]
+    },
+    {
+      "prompt_key": "MEI_REPAIR_CHANGED",
+      "title": "Repair: keep chromosome pairs separate",
+      "prompt": "If allele R is on chromosome pair 1 and allele T is on pair 2, why can R combine with T or t?",
+      "response_type": "single_select",
+      "options": [
+        "The pairs orient independently",
+        "R changes into both T and t",
+        "Each gamete receives every homolog",
+        "DNA replicates between divisions"
+      ]
+    },
+    {
+      "prompt_key": "MEI_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry",
+      "prompt": "A new cell is GgHh with loci on different chromosome pairs. Which set reflects independent assortment before crossover?",
+      "response_type": "single_select",
+      "options": [
+        "Only GH and gh",
+        "GH, Gh, gH, and gh",
+        "Gg and Hh",
+        "GG, gg, HH, and hh"
+      ]
+    },
+    {
+      "prompt_key": "REC_ENTRY",
+      "title": "Starting check: identify a tetrad",
+      "prompt": "Two replicated homologous chromosomes align during synapsis. How many chromatids are present in the aligned unit?",
+      "response_type": "single_select",
+      "options": [
+        "Two chromatids",
+        "One chromatid",
+        "Four chromatids",
+        "Eight homologs"
+      ]
+    },
+    {
+      "prompt_key": "REC_GUIDED",
+      "title": "Guided practice: locate recombination",
+      "prompt": "One homolog carries AB and the other carries ab. A crossover occurs between A and B on two non-sister chromatids. Which recombinant products can form?",
+      "response_type": "single_select",
+      "options": [
+        "AB and ab only",
+        "Aa and Bb",
+        "AA and bb",
+        "Ab and aB"
+      ]
+    },
+    {
+      "prompt_key": "REC_LIGHT",
+      "title": "Less help: test crossover position",
+      "prompt": "Genes C and D are linked. A crossover occurs outside the interval containing both loci. What happens to the C-D combination on that chromatid?",
+      "response_type": "single_select",
+      "options": [
+        "It remains parental at C and D",
+        "It must become recombinant",
+        "Both loci are deleted",
+        "The chromosome becomes unlinked"
+      ]
+    },
+    {
+      "prompt_key": "REC_SOLO",
+      "title": "Solo practice: distinguish structures",
+      "prompt": "Which statement best describes the synaptonemal complex at this lesson’s scope?",
+      "response_type": "single_select",
+      "options": [
+        "It replicates all DNA",
+        "It aligns homologs closely",
+        "It separates sister chromatids",
+        "It creates unrelated chromosomes"
+      ]
+    },
+    {
+      "prompt_key": "REC_NEAR",
+      "title": "Near exit: trace a single crossover",
+      "prompt": "Linked alleles are M—N on one homolog and m—n on the other. A single crossover occurs between the loci. Which set includes recombinant chromatids?",
+      "response_type": "single_select",
+      "options": [
+        "M—N and m—n only",
+        "M—m and N—n",
+        "M—n and m—N",
+        "MM and nn"
+      ]
+    },
+    {
+      "prompt_key": "REC_CHANGED",
+      "title": "Changed exit: trace two crossover points",
+      "prompt": "Allele order is A—B—C. Two crossovers occur, one between A/B and one between B/C, on the same two non-sister chromatids. Which locus lies in the exchanged middle segment?",
+      "response_type": "single_select",
+      "options": [
+        "A only",
+        "C only",
+        "No locus",
+        "B"
+      ]
+    },
+    {
+      "prompt_key": "REC_REPAIR_NEAR",
+      "title": "Repair: mark the interval",
+      "prompt": "For linked loci P and Q, which crossover location can recombine their allele combination?",
+      "response_type": "single_select",
+      "options": [
+        "A crossover between P and Q",
+        "A crossover beyond both loci",
+        "No homolog pairing",
+        "A cut on an unrelated chromosome"
+      ]
+    },
+    {
+      "prompt_key": "REC_REENTRY_NEAR",
+      "title": "Fresh re-entry: new linked loci",
+      "prompt": "One homolog carries R—S and the other r—s. A crossover lies between R and S. Which new combinations can appear?",
+      "response_type": "single_select",
+      "options": [
+        "R—S and r—s only",
+        "R—s and r—S",
+        "R—r and S—s",
+        "RR and ss"
+      ]
+    },
+    {
+      "prompt_key": "REC_REPAIR_CHANGED",
+      "title": "Repair: bracket the double crossover",
+      "prompt": "With order L—M—N, crossovers occur on both sides of M. Which segment should be traced as exchanged?",
+      "response_type": "single_select",
+      "options": [
+        "Only the segment before L",
+        "Only the segment after N",
+        "The segment containing M",
+        "The entire chromosome pair"
+      ]
+    },
+    {
+      "prompt_key": "REC_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry",
+      "prompt": "A new map has order X—Y—Z with crossover points flanking Y. Which locus is inside the bounded exchange interval?",
+      "response_type": "single_select",
+      "options": [
+        "X",
+        "Z",
+        "All three necessarily",
+        "Y"
+      ]
+    },
+    {
+      "prompt_key": "INH_ENTRY",
+      "title": "Starting check: follow a Y chromosome",
+      "prompt": "An allele lies on a father’s Y chromosome. Which offspring can receive that chromosome from him?",
+      "response_type": "single_select",
+      "options": [
+        "Sons",
+        "Daughters",
+        "All offspring equally",
+        "No offspring"
+      ]
+    },
+    {
+      "prompt_key": "INH_GUIDED",
+      "title": "Guided practice: follow a paternal X",
+      "prompt": "A father carries an allele on his only X chromosome. Which offspring receive that X from him?",
+      "response_type": "single_select",
+      "options": [
+        "All sons",
+        "All daughters",
+        "No daughters",
+        "Only sons with his Y"
+      ]
+    },
+    {
+      "prompt_key": "INH_LIGHT",
+      "title": "Less help: use chromosome location",
+      "prompt": "Which observation is required before classifying a trait as X-linked in this lesson?",
+      "response_type": "single_select",
+      "options": [
+        "The phenotype differs by sex",
+        "The trait is uncommon",
+        "The allele lies on chromosome X",
+        "The allele is always dominant"
+      ]
+    },
+    {
+      "prompt_key": "INH_SOLO",
+      "title": "Solo practice: use Y constraints",
+      "prompt": "Which transmission pattern is compatible with an allele located only on the Y chromosome?",
+      "response_type": "single_select",
+      "options": [
+        "Affected mother to a daughter",
+        "Affected father to a daughter",
+        "Affected mother to every son",
+        "Affected father to a son"
+      ]
+    },
+    {
+      "prompt_key": "INH_NEAR",
+      "title": "Near exit: route an X-linked allele",
+      "prompt": "A mother is heterozygous for an X-linked allele. Which statement is supported without assuming dominance?",
+      "response_type": "single_select",
+      "options": [
+        "Children get either maternal X",
+        "Every child receives the allele",
+        "Only daughters can receive her X",
+        "Only sons receive a maternal chromosome"
+      ]
+    },
+    {
+      "prompt_key": "INH_CHANGED",
+      "title": "Changed exit: switch to extranuclear inheritance",
+      "prompt": "A heritable variant lies in an organelle genome contributed through the egg cytoplasm. Which parent-of-origin prediction fits?",
+      "response_type": "single_select",
+      "options": [
+        "Transmission follows the paternal Y",
+        "It follows the egg contributor",
+        "Every father passes it to sons",
+        "Nuclear X dominance decides it"
+      ]
+    },
+    {
+      "prompt_key": "INH_REPAIR_NEAR",
+      "title": "Repair: separate paternal X and Y",
+      "prompt": "In the modeled XY system, what does a father contribute to a daughter?",
+      "response_type": "single_select",
+      "options": [
+        "A Y chromosome",
+        "Both X and Y",
+        "An X chromosome",
+        "No sex chromosome"
+      ]
+    },
+    {
+      "prompt_key": "INH_REENTRY_NEAR",
+      "title": "Fresh re-entry: new sex-linked route",
+      "prompt": "A new allele is placed on a father’s X chromosome. Which offspring category necessarily receives that chromosome?",
+      "response_type": "single_select",
+      "options": [
+        "Sons",
+        "Only grandsons",
+        "No offspring",
+        "Daughters"
+      ]
+    },
+    {
+      "prompt_key": "INH_REPAIR_CHANGED",
+      "title": "Repair: follow cytoplasm",
+      "prompt": "Which information is decisive for a modeled extranuclear organelle variant?",
+      "response_type": "single_select",
+      "options": [
+        "Who contributes the cytoplasm",
+        "Which parent contributes the Y only",
+        "Whether the nuclear allele is dominant",
+        "Whether the trait is common"
+      ]
+    },
+    {
+      "prompt_key": "INH_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry",
+      "prompt": "A new variant is explicitly located in maternally contributed organelle DNA. Which route should be used?",
+      "response_type": "single_select",
+      "options": [
+        "Paternal Y transmission",
+        "Maternal cytoplasmic route",
+        "Paternal X transmission only",
+        "Autosomal segregation only"
+      ]
+    },
+    {
+      "prompt_key": "MUT_ENTRY",
+      "title": "Starting check: classify a replacement",
+      "prompt": "A DNA segment changes from AACG to AATG at one position, with no length change. Which type is shown?",
+      "response_type": "single_select",
+      "options": [
+        "Addition",
+        "Deletion",
+        "Substitution",
+        "Translocation"
+      ]
+    },
+    {
+      "prompt_key": "MUT_GUIDED",
+      "title": "Guided practice: separate expression error",
+      "prompt": "One ribosome inserts the wrong amino acid, but cellular DNA remains unchanged. Which description is most precise?",
+      "response_type": "single_select",
+      "options": [
+        "A heritable DNA mutation",
+        "A chromosome inversion",
+        "A germline translocation",
+        "A one-product translation error"
+      ]
+    },
+    {
+      "prompt_key": "MUT_LIGHT",
+      "title": "Less help: identify an insertion",
+      "prompt": "An original sequence is ACTG and the altered sequence is ACATG. Which change occurred?",
+      "response_type": "single_select",
+      "options": [
+        "Addition",
+        "Substitution",
+        "Deletion",
+        "Inversion"
+      ]
+    },
+    {
+      "prompt_key": "MUT_SOLO",
+      "title": "Solo practice: classify a reversed segment",
+      "prompt": "A chromosome segment ordered A-B-C-D becomes A-C-B-D. Which structural change best fits?",
+      "response_type": "single_select",
+      "options": [
+        "Addition of B-C",
+        "Inversion of B-C",
+        "Deletion of B-C",
+        "Whole-chromosome duplication"
+      ]
+    },
+    {
+      "prompt_key": "MUT_NEAR",
+      "title": "Near exit: classify a moved segment",
+      "prompt": "A segment leaves chromosome 2 and becomes attached to chromosome 5. Which type is shown?",
+      "response_type": "single_select",
+      "options": [
+        "Substitution",
+        "Mispairing only",
+        "Translocation",
+        "Translation error"
+      ]
+    },
+    {
+      "prompt_key": "MUT_CHANGED",
+      "title": "Changed exit: use phenotype context",
+      "prompt": "The same DNA substitution reduces activity of an enzyme that directly converts a precursor into a product. In the described environment, excess of that product is harmful. Which consequence is supported?",
+      "response_type": "single_select",
+      "options": [
+        "It is always deleterious",
+        "It cannot affect metabolism",
+        "It must cause cancer",
+        "It may be advantageous there"
+      ]
+    },
+    {
+      "prompt_key": "MUT_REPAIR_NEAR",
+      "title": "Repair: align the sequences",
+      "prompt": "Original DNA is GCTA; altered DNA is GTA. Which change is present?",
+      "response_type": "single_select",
+      "options": [
+        "Deletion of C",
+        "Addition of C",
+        "Substitution of C",
+        "Translocation of G"
+      ]
+    },
+    {
+      "prompt_key": "MUT_REENTRY_NEAR",
+      "title": "Fresh re-entry: classify a new sequence",
+      "prompt": "Original DNA is TTAC; altered DNA is TTTAC. Which change occurred?",
+      "response_type": "single_select",
+      "options": [
+        "Deletion of T",
+        "Addition of T",
+        "Inversion of TA",
+        "Translocation of TAC"
+      ]
+    },
+    {
+      "prompt_key": "MUT_REPAIR_CHANGED",
+      "title": "Repair: distinguish mutagen and carcinogen",
+      "prompt": "Which statement correctly relates the terms without treating them as synonyms?",
+      "response_type": "single_select",
+      "options": [
+        "Every mutagen must cause cancer",
+        "Every carcinogen directly mutates DNA",
+        "A mutagen raises mutation risk",
+        "Neither can affect cellular risk"
+      ]
+    },
+    {
+      "prompt_key": "MUT_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry",
+      "prompt": "A DNA deletion disrupts an enzyme in a required metabolic pathway. Which consequence is most directly supported?",
+      "response_type": "single_select",
+      "options": [
+        "The deletion is always advantageous",
+        "The change is only a translation error",
+        "Cancer is the only possible outcome",
+        "A harmful metabolic effect fits"
+      ]
+    }
+  ]
+}

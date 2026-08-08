@@ -47,7 +47,7 @@ describe('normalized-engine lesson delivery contract', () => {
     ).toMatchObject({ disposition: 'RESUMED' });
   });
 
-  it('keeps ids, tokens, and answer material out of learner run views', () => {
+  it('carries authored question context and a closed learner response control', () => {
     const parsed = NormalizedLessonRunViewSchema.parse({
       runId,
       lessonId: 'V3-LES-844372',
@@ -60,20 +60,56 @@ describe('normalized-engine lesson delivery contract', () => {
         kind: 'QUESTION',
         itemId: 'ALG-GRAPH-CHANGED-01',
         kcId: 'V3-KC-452593',
-        heading: 'Predict the intercept',
-        prompt: 'Which line matches the described change?',
-        responseType: 'single_select',
+        heading: 'Predict from the semilog graph',
+        contentBlocks: ['Decode the labelled scale before extending the pattern.'],
+        prompt: 'What value comes next?',
+        control: {
+          kind: 'SINGLE_SELECT',
+          choices: [
+            { choiceId: 'opt-0', text: '2000' },
+            { choiceId: 'opt-1', text: '202' },
+          ],
+        },
+        // Temporary compatibility view for WP-05E's existing renderer. The
+        // canonical authority is `control`.
         choices: [
-          { choiceId: 'opt-0', text: 'Shift up two units' },
-          { choiceId: 'opt-1', text: 'Reflect across the x-axis' },
+          { choiceId: 'opt-0', text: '2000' },
+          { choiceId: 'opt-1', text: '202' },
         ],
       },
     });
-    // The learner-facing payload carries no answer surface at all.
-    expect(JSON.stringify(parsed)).not.toMatch(/correctChoiceId|correct_option_index|rationale|answerKey/i);
+    expect(parsed.screen).toMatchObject({
+      kind: 'QUESTION',
+      control: { kind: 'SINGLE_SELECT' },
+    });
+    expect(JSON.stringify(parsed)).not.toMatch(
+      /correctChoiceId|correct_option_index|acceptedResponses|rationale|answerKey|sourceRef|nodeIds|definitionHash/i,
+    );
   });
 
-  it('makes a precommit question screen incapable of carrying an answer key', () => {
+  it('supports authored exposition blocks and rejects protected precommit fields', () => {
+    expect(
+      NormalizedLessonRunViewSchema.parse({
+        runId,
+        lessonId: 'V3-LES-789208',
+        status: 'IN_PROGRESS',
+        paused: false,
+        kcId: 'V3-KC-399019',
+        kcOrdinal: 1,
+        totalKcs: 4,
+        screen: {
+          kind: 'EXPOSITION',
+          heading: 'Focus now: Convert units and dimensions',
+          contentBlocks: [
+            'Orient the supplied factor so the unit you are leaving cancels.',
+            'Keep the labels visible until only the requested unit remains.',
+          ],
+          prompt:
+            'Orient the supplied factor so the unit you are leaving cancels.\n\nKeep the labels visible until only the requested unit remains.',
+        },
+      }).screen,
+    ).toMatchObject({ kind: 'EXPOSITION', contentBlocks: expect.any(Array) });
+
     const view = {
       runId,
       lessonId: 'V3-LES-789208',
@@ -87,8 +123,16 @@ describe('normalized-engine lesson delivery contract', () => {
         itemId: 'QMS-UNIT-CHANGED-01',
         kcId: 'V3-KC-399019',
         heading: 'Convert and compare',
+        contentBlocks: ['Commit before feedback appears.'],
         prompt: 'Express 2.5 kg in grams.',
-        responseType: 'SHORT_RESPONSE',
+        control: {
+          kind: 'SHORT_TEXT',
+          inputConvention: {
+            normalization: 'TRIM_AND_COLLAPSE_WHITESPACE',
+            matching: 'AUTHORED_EQUIVALENTS_ONLY',
+            caseSensitive: true,
+          },
+        },
         choices: [],
       },
     } as const;
@@ -96,12 +140,17 @@ describe('normalized-engine lesson delivery contract', () => {
     expect(
       NormalizedLessonRunViewSchema.safeParse({
         ...view,
-        screen: { ...view.screen, correctChoiceId: 'opt-0', rationale: 'Server-only.' },
+        screen: {
+          ...view.screen,
+          acceptedResponses: ['2500 g'],
+          rationale: 'Server-only.',
+          sourceRef: 'protected-items.json#answer',
+        },
       }).success,
     ).toBe(false);
   });
 
-  it('round-trips the terminal and feedback screens without answer bodies', () => {
+  it('round-trips terminal screens and all distinct post-commit feedback outcomes', () => {
     for (const screen of [{ kind: 'BLOCKED' }, { kind: 'COMPLETE' }] as const) {
       expect(
         NormalizedLessonRunViewSchema.parse({
@@ -116,26 +165,39 @@ describe('normalized-engine lesson delivery contract', () => {
         }).screen.kind,
       ).toBe(screen.kind);
     }
-    expect(
-      NormalizedLessonRunViewSchema.parse({
-        runId,
-        lessonId: 'V3-LES-844372',
-        status: 'IN_PROGRESS',
-        paused: false,
-        kcId: 'V3-KC-452593',
-        kcOrdinal: 2,
-        totalKcs: 3,
-        screen: { kind: 'FEEDBACK', itemId: 'ALG-GRAPH-CHANGED-01', outcome: 'INCORRECT' },
-      }).screen,
-    ).toMatchObject({ kind: 'FEEDBACK', outcome: 'INCORRECT' });
+    for (const outcome of ['CORRECT', 'INCORRECT', 'OMITTED', 'INVALID'] as const) {
+      expect(
+        NormalizedLessonRunViewSchema.parse({
+          runId,
+          lessonId: 'V3-LES-844372',
+          status: 'IN_PROGRESS',
+          paused: false,
+          kcId: 'V3-KC-452593',
+          kcOrdinal: 1,
+          totalKcs: 3,
+          screen: {
+            kind: 'FEEDBACK',
+            itemId: 'ALG-GRAPH-CHANGED-01',
+            outcome,
+            message: 'Review the scale rule before continuing.',
+          },
+        }).screen,
+      ).toMatchObject({ kind: 'FEEDBACK', outcome, message: expect.any(String) });
+    }
   });
 
-  it('parses the three committed-response encodings and rejects smuggled outcomes', () => {
+  it('parses closed committed responses and rejects duplicate structured field ids', () => {
     const responses = [
       { kind: 'MULTIPLE_CHOICE', choiceId: 'opt-1' },
       { kind: 'MULTIPLE_CHOICE', choiceId: null },
       { kind: 'SHORT', text: '2500 g' },
-      { kind: 'CONSTRUCTED', fields: { f0: 'x + y = 10', f1: '(4, 6)' } },
+      {
+        kind: 'CONSTRUCTED',
+        fields: [
+          { fieldId: 'equation_1', value: 'x + y = 10' },
+          { fieldId: 'solution_pair', value: '(4, 6)' },
+        ],
+      },
     ] as const;
     for (const response of responses) {
       expect(
@@ -164,6 +226,21 @@ describe('normalized-engine lesson delivery contract', () => {
       NormalizedLessonCommandSchema.safeParse({
         envelope,
         action: { type: 'SUBMIT_RESPONSE', response: { kind: 'ESSAY', text: 'x' } },
+      }).success,
+    ).toBe(false);
+    expect(
+      NormalizedLessonCommandSchema.safeParse({
+        envelope,
+        action: {
+          type: 'SUBMIT_RESPONSE',
+          response: {
+            kind: 'CONSTRUCTED',
+            fields: [
+              { fieldId: 'equation_1', value: 'x + y = 10' },
+              { fieldId: 'equation_1', value: 'x - y = 2' },
+            ],
+          },
+        },
       }).success,
     ).toBe(false);
   });

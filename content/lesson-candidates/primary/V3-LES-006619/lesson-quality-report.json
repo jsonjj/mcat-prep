@@ -1,0 +1,176 @@
+{
+  "artifact_type": "LESSON_QUALITY_REPORT",
+  "artifact_id": "V3-LQRP-006619",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "25ca58a871e6f9e370cfaff9eda71e3a4258ca74a54663026f677d20b50bf4a8",
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-006619",
+    "lesson_script_sha256": "8c421b2c21c5566f394a79b1b7f7b5e31bb18912e664d96d70d0d9c333a7b8df",
+    "kc_coverage_matrix_id": "V3-KCOV-006619",
+    "kc_coverage_matrix_sha256": "0ae8369f72a8bea71905d1ff4d112ef65276decf833e6637a4337f2167b4a46d",
+    "lesson_presentation_plan_id": "V3-LPPL-006619",
+    "lesson_presentation_plan_sha256": "f4a09ed453ecdd33460d8baef8bcac3c949fea86b1802abeba15076d24b12571"
+  },
+  "payload": {
+    "lesson_id": "V3-LES-006619",
+    "review_scope": "STANDARD_ROUTE_PRIMARY_CANDIDATE",
+    "rubric_identity": {
+      "rubric_path": "key-docs/lesson-quality-rubric.md",
+      "rubric_version": "0.9.1",
+      "rubric_sha256": "21f0cf751b752158b5c8f71fd762fcc956b9ba694c8f5ee8d50158b8972557b0"
+    },
+    "check_results": [
+      {
+        "check_id": "CANONICAL-PACKET-IDENTITY",
+        "status": "PASS",
+        "evidence_refs": [
+          "inputs/task-source-packet.json"
+        ]
+      },
+      {
+        "check_id": "STANDARD-ROUTE-SCOPE",
+        "status": "PASS",
+        "evidence_refs": [
+          "content/lesson-factory/deadline-profile/release-policy.json",
+          "inputs/task-source-packet.json#/route_proofs"
+        ]
+      },
+      {
+        "check_id": "THIRTY-MEASURABLE-ACTIVITIES",
+        "status": "PASS",
+        "evidence_refs": [
+          "lesson-script.json#/payload/activities"
+        ]
+      },
+      {
+        "check_id": "SIX-BOUNDED-REPAIR-REENTRY-PATHS",
+        "status": "PASS",
+        "evidence_refs": [
+          "lesson-script.json#/payload/kc_scripts"
+        ]
+      },
+      {
+        "check_id": "LEARNER-SAFE-POST-COMMIT-FEEDBACK-AUTHORED",
+        "status": "PASS",
+        "evidence_refs": [
+          "protected-items.json"
+        ]
+      },
+      {
+        "check_id": "SOURCE-CLAIM-TRACE",
+        "status": "PASS",
+        "evidence_refs": [
+          "source-claim-ledger.json",
+          "inputs/task-source-packet.json"
+        ]
+      },
+      {
+        "check_id": "R1-R15-STRUCTURAL",
+        "status": "PASS",
+        "evidence_refs": [
+          "validation/lesson-validate.json"
+        ]
+      },
+      {
+        "check_id": "CANONICAL-NORMALIZATION",
+        "status": "PASS",
+        "evidence_refs": [
+          "validation/normalization-smoke.json"
+        ]
+      },
+      {
+        "check_id": "PROTECTED-BOUNDARY",
+        "status": "PASS",
+        "evidence_refs": [
+          "validation/protected-scan.json"
+        ]
+      },
+      {
+        "check_id": "TARGETED-LQR-C05-FUNCTION-ALIGNMENT",
+        "status": "PASS",
+        "evidence_refs": [
+          "lesson-script.json#/payload/activities",
+          "lesson-script.json#/payload/question_evidence_plan",
+          "learner-safe-items.json#LIP_NEAR",
+          "learner-safe-items.json#LIP_REPAIR_NEAR",
+          "learner-safe-items.json#LIP_REENTRY_NEAR",
+          "protected-items.json#LIP-ITEM-NEAR",
+          "protected-items.json#LIP-ITEM-REPAIR-NEAR",
+          "protected-items.json#LIP-ITEM-REENTRY-NEAR"
+        ]
+      },
+      {
+        "check_id": "TARGETED-LQR-C03-OPTION-PRESENTATION",
+        "status": "PASS",
+        "evidence_refs": [
+          "learner-safe-items.json",
+          "validation/protected-scan.json#/optionPresentationAudit"
+        ]
+      },
+      {
+        "check_id": "TARGETED-LQR-C03-DISTRACTOR-RATIONALES",
+        "status": "PASS",
+        "evidence_refs": [
+          "protected-items.json#/records/*/option_feedback/*/rejection_rationale"
+        ]
+      },
+      {
+        "check_id": "TARGETED-LQR-C02-PREREQUISITE-HANDOFF",
+        "status": "PASS",
+        "evidence_refs": [
+          "inputs/task-source-packet.json#/prerequisites/hard/0",
+          "lesson-script.json#/payload/curriculum_context/hard_prerequisite",
+          "lesson-script.json#/payload/transitions",
+          "kc-coverage-matrix.json#/payload/rows/2/prerequisite_failure_handoff",
+          "lesson-presentation-plan.json#END-SCREEN-HANDOFF"
+        ]
+      },
+      {
+        "check_id": "INDEPENDENT-JUDGE-PRE-SCREEN",
+        "status": "BLOCKED",
+        "blocker_code": "JUDGE_PRE_SCREEN_INVALID",
+        "reason": "The judge record is bound to superseded primary-artifact hashes after final author revision cycle 2; a fresh independent pre-screen is required."
+      },
+      {
+        "check_id": "RENDERED-ACCESSIBILITY-RELIABILITY-EVIDENCE",
+        "status": "BLOCKED",
+        "blocker_code": "HUMAN_AND_RENDERED_EVIDENCE_REQUIRED",
+        "reason": "No revision-bound browser, assistive-technology, novice, or platform-reliability evidence is claimed."
+      }
+    ],
+    "findings": [
+      {
+        "finding_id": "LQRP-006619-001",
+        "severity": "P2",
+        "status": "BLOCKED",
+        "required_correction": "Obtain a fresh independent judge pre-screen bound to the final revision-cycle-2 primary artifact hashes."
+      },
+      {
+        "finding_id": "LQRP-006619-002",
+        "severity": "P2",
+        "status": "BLOCKED",
+        "required_correction": "Obtain domain, blind-solve, accessibility, novice-walkthrough, reliability, rights, and product-owner evidence or decisions where required."
+      }
+    ],
+    "evidence_refs": [
+      "source-claim-ledger.json",
+      "validation/lesson-validate.json",
+      "validation/computed-quality.json",
+      "validation/normalization-smoke.json",
+      "validation/protected-scan.json",
+      "reviews/author-self-audit.json"
+    ],
+    "claim_limits": {
+      "learner_validated": false,
+      "efficacy_established": false,
+      "mastery_calibrated": false,
+      "readiness_validated": false,
+      "production_published": false,
+      "calibrated_thresholds_available": false
+    },
+    "final_gate_status": "BLOCKED",
+    "release_eligibility": "INTERNAL_DRAFT_ONLY",
+    "production_golden_status": "BLOCKED"
+  }
+}

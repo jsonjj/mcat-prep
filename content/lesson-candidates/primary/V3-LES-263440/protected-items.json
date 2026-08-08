@@ -1,0 +1,1858 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "CFG-ITEM-ENTRY",
+      "learner_prompt_key": "CFG_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "The superscript in configuration notation is the subshell electron count.",
+      "post_commitment_feedback": "The term 3p⁵ means five electrons occupy the p subshell of principal shell 3.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CFG-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A configuration superscript records occupancy rather than ionic charge."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CFG-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CFG-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The principal shell is given by the leading 3, not the superscript."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CFG-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A p subshell has three orbitals; the superscript counts electrons."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CFG-ITEM-GUIDED",
+      "learner_prompt_key": "CFG_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "The superscripts sum to 2 + 2 + 6 = 10.",
+      "post_commitment_feedback": "Add every displayed occupancy: the configuration contains ten electrons.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CFG-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This counts only the final p occupancy and omits the two s subshells."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CFG-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits one filled s subshell from the total."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CFG-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This exceeds the sum of the three displayed superscripts."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CFG-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CFG-ITEM-LIGHT",
+      "learner_prompt_key": "CFG_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "A p subshell has three orbitals and a maximum occupancy of six.",
+      "post_commitment_feedback": "The term 2p⁷ exceeds the six-electron p-subshell capacity.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CFG-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CFG-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An s subshell can contain two electrons, so this occupancy is allowed."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CFG-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A p subshell can contain six electrons, so this is filled but allowed."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CFG-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One electron is within the capacity of an s subshell."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CFG-ITEM-SOLO",
+      "learner_prompt_key": "CFG_SOLO",
+      "correct_option_index": 2,
+      "rationale": "Filling 1s² and 2s² leaves five of nine electrons for 2p.",
+      "post_commitment_feedback": "The valid nine-electron total is 1s² 2s² 2p⁵.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CFG-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This configuration contains ten electrons rather than nine."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CFG-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This configuration contains seven electrons rather than nine."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CFG-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CFG-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The 2s occupancy exceeds the two-electron s-subshell capacity."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CFG-ITEM-NEAR",
+      "learner_prompt_key": "CFG_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The configuration must total twelve while respecting the bounded filling order and capacities.",
+      "post_commitment_feedback": "After the ten-electron core, magnesium places two electrons in 3s.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CFG-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The superscripts total eleven electrons, one short of magnesium."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CFG-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CFG-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The 2p subshell exceeds capacity even though the total is twelve."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CFG-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This skips the bounded 3s occupancy before placing the final electrons in 3p."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CFG-ITEM-CHANGED",
+      "learner_prompt_key": "CFG_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Mg²⁺ has ten electrons after losing the two outer 3s electrons.",
+      "post_commitment_feedback": "Compute the ion count first: twelve minus two gives the ten-electron configuration.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CFG-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A +2 ion loses rather than gains two electrons."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CFG-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Removing inner 2p electrons while retaining outer 3s electrons is not the stated simple-ion operation."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CFG-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This removes only one electron and represents a +1 count."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CFG-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CFG-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "CFG_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The valid choice totals eight and keeps every subshell within capacity.",
+      "post_commitment_feedback": "Count and constrain: 2 + 2 + 4 = 8 with legal occupancies.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CFG-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CFG-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The superscripts total nine rather than eight."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CFG-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The total is eight, but 2s³ exceeds s-subshell capacity."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CFG-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The total is nine and the bounded order omits 2s."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CFG-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "CFG_REENTRY_NEAR",
+      "correct_option_index": 2,
+      "rationale": "A ten-electron core plus 3s² and 3p⁵ totals seventeen.",
+      "post_commitment_feedback": "The fresh neutral configuration ends in 3p⁵ and sums to seventeen.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CFG-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The superscripts total sixteen rather than seventeen."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CFG-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The 3s subshell exceeds its two-electron capacity."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CFG-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CFG-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This contains eighteen electrons rather than seventeen."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CFG-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "CFG_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "A −1 charge means one electron more than the neutral atom.",
+      "post_commitment_feedback": "Count before configuring: F⁻ has ten electrons.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CFG-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A negative charge adds an electron rather than removing one."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CFG-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CFG-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Keeping the neutral count ignores the −1 charge."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CFG-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A −1 ion gains one electron, not two."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CFG-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "CFG_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "O²⁻ has ten electrons, filling the 2p subshell.",
+      "post_commitment_feedback": "Eight plus two gives ten electrons and a filled 2p⁶ subshell.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CFG-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This contains six electrons and corresponds to losing rather than gaining two."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CFG-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is the neutral eight-electron configuration."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CFG-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This contains nine electrons and represents only one added electron."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CFG-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SPC-ITEM-ENTRY",
+      "learner_prompt_key": "SPC_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "Ground state denotes the lowest available electronic energy.",
+      "post_commitment_feedback": "The ground state is the lowest-energy electronic arrangement.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SPC-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The ground state is the lowest rather than highest available energy."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SPC-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Emission ability does not define the lowest electronic state."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SPC-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SPC-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An atom can have a populated ground-state configuration."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SPC-ITEM-GUIDED",
+      "learner_prompt_key": "SPC_GUIDED",
+      "correct_option_index": 0,
+      "rationale": "The emitted photon carries the 7 − 3 = 4 eV energy gap.",
+      "post_commitment_feedback": "A downward transition emits the positive difference between the levels.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SPC-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SPC-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This uses only the final level rather than the energy difference."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SPC-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This uses only the initial level rather than the energy difference."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SPC-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Adding levels does not give the transition energy."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SPC-ITEM-LIGHT",
+      "learner_prompt_key": "SPC_LIGHT",
+      "correct_option_index": 3,
+      "rationale": "An upward bound-state transition requires absorption of the gap energy.",
+      "post_commitment_feedback": "Moving upward between bound levels is an absorption event.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SPC-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Emission accompanies a downward rather than upward electronic transition."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SPC-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The electron remains in a bound higher level rather than leaving the material."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SPC-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The described change is electronic, not nuclear."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SPC-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SPC-ITEM-SOLO",
+      "learner_prompt_key": "SPC_SOLO",
+      "correct_option_index": 1,
+      "rationale": "The 5 eV photon has greater frequency than the 2 eV photon.",
+      "post_commitment_feedback": "The larger transition gap produces the higher-frequency emitted line.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SPC-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lower photon energy corresponds to lower rather than higher frequency."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SPC-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SPC-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Different photon energies imply different frequencies through E = hf."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SPC-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Photon frequency is directly proportional to energy."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SPC-ITEM-NEAR",
+      "learner_prompt_key": "SPC_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The downward gap is 9 − 4 = 5 eV and is emitted.",
+      "post_commitment_feedback": "Identify direction first, then subtract: the atom emits a 5 eV photon.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SPC-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A downward transition emits rather than absorbs the gap energy."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SPC-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Adding level values does not give the transition gap."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SPC-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SPC-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The final level alone is not the energy difference."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SPC-ITEM-CHANGED",
+      "learner_prompt_key": "SPC_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Below-threshold photons lack sufficient individual energy, so more such photons do not eject electrons in the ideal model.",
+      "post_commitment_feedback": "Check photon energy against threshold before considering intensity.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SPC-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SPC-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Below-threshold photons cannot eject electrons regardless of intensity."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SPC-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Beam intensity does not redefine the material threshold."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SPC-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Frequency fixes energy per photon; intensity changes photon number."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SPC-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "SPC_REPAIR_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The emitted gap is 8 − 6 = 2 eV.",
+      "post_commitment_feedback": "A downward transition releases the positive energy difference.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SPC-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The initial level is not itself the transition difference."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SPC-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The final level is not itself the transition difference."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SPC-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Adding levels does not produce the released energy."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SPC-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SPC-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "SPC_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The upward transition requires 6 − 1 = 5 eV.",
+      "post_commitment_feedback": "The fresh upward transition absorbs a photon matching the 5 eV gap.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SPC-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The initial level alone does not equal the required gap."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SPC-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SPC-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The final level alone does not equal the required gap."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SPC-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Adding the levels overstates the energy difference."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SPC-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "SPC_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Higher frequency raises photon energy and therefore the excess above threshold.",
+      "post_commitment_feedback": "Maximum kinetic energy follows energy per photon, not photon count.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SPC-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This increases photon count but not energy per photon."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SPC-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Changing area does not raise photon energy."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SPC-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SPC-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Below-threshold photons still cannot produce the required single-photon energy."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "SPC-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "SPC_REENTRY_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "At fixed above-threshold frequency, more photons can eject more electrons while the per-photon excess energy stays fixed.",
+      "post_commitment_feedback": "Brightness changes count; frequency controls maximum photoelectron kinetic energy.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "SPC-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "SPC-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Frequency and therefore energy per photon remain fixed."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "SPC-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Raising above-threshold intensity does not remove photoemission."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "SPC-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Intensity does not set the material threshold."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MAG-ITEM-ENTRY",
+      "learner_prompt_key": "MAG_ENTRY",
+      "correct_option_index": 3,
+      "rationale": "One electron in an orbital is singly occupied and unpaired.",
+      "post_commitment_feedback": "A one-electron orbital contains an unpaired electron.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MAG-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The displayed electron means the orbital is not empty."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MAG-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Pairing requires two electrons of opposite spin in the orbital."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MAG-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One electron is below the two-electron capacity."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MAG-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MAG-ITEM-GUIDED",
+      "learner_prompt_key": "MAG_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "The second and third p orbitals each contribute one unpaired electron.",
+      "post_commitment_feedback": "Ignore the paired box and count the two singly occupied boxes.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MAG-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The second and third orbitals each contain a single electron."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MAG-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MAG-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The paired electrons in the first orbital are not unpaired."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MAG-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Six is the p-subshell capacity, not the unpaired count shown."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MAG-ITEM-LIGHT",
+      "learner_prompt_key": "MAG_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "All displayed subshells are filled, leaving no unpaired electrons.",
+      "post_commitment_feedback": "With every electron paired, the species is diamagnetic.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MAG-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A filled 2p subshell has all electrons paired."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MAG-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No singly occupied orbital remains in the filled configuration."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MAG-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MAG-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The supplied filled configuration is sufficient to determine pairing."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MAG-ITEM-SOLO",
+      "learner_prompt_key": "MAG_SOLO",
+      "correct_option_index": 0,
+      "rationale": "The diagram contains three unpaired electrons.",
+      "post_commitment_feedback": "At least one unpaired electron is enough for paramagnetism.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MAG-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MAG-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Three singly occupied orbitals contain unpaired electrons."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MAG-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The explicit occupancy supplies enough information."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MAG-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neutral charge does not imply electron pairing."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MAG-ITEM-NEAR",
+      "learner_prompt_key": "MAG_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The third p orbital is singly occupied.",
+      "post_commitment_feedback": "Find any single electron: this species is paramagnetic.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MAG-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The third orbital contains one unpaired electron."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MAG-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The complete p-orbital occupancy is supplied."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MAG-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One unpaired electron overrides the presence of other pairs."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MAG-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MAG-ITEM-CHANGED",
+      "learner_prompt_key": "MAG_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "F⁻ gains one electron to form filled 2p⁶, pairing all electrons.",
+      "post_commitment_feedback": "Update the ion first: filled 2p⁶ is diamagnetic.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MAG-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Adding an electron changes the 2p occupancy and must be evaluated first."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MAG-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MAG-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "F⁻ has filled 2p⁶ rather than two singly occupied orbitals."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MAG-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Charge does not prevent construction of this simple bounded ion configuration."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MAG-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "MAG_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The third choice contains one singly occupied p orbital.",
+      "post_commitment_feedback": "Only one unpaired electron is needed to classify the species as paramagnetic.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MAG-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The two electrons are paired in one orbital."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MAG-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "All three p orbitals are paired."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MAG-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MAG-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No electron is present to be unpaired."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MAG-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "MAG_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Two singly occupied orbitals mean two unpaired electrons.",
+      "post_commitment_feedback": "The fresh diagram is paramagnetic because unpaired electrons are present.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MAG-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MAG-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The two singly occupied orbitals contain unpaired electrons."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MAG-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The explicit occupancy is sufficient for classification."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MAG-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An empty orbital does not pair the two single electrons."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MAG-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "MAG_REPAIR_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Adding one electron to p⁵ produces the filled p⁶ subshell.",
+      "post_commitment_feedback": "Update the count before classifying: p⁵ becomes filled p⁶.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MAG-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Gaining an electron increases rather than decreases occupancy."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MAG-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The added electron changes the subshell count."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MAG-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One added electron gives p⁶, and p⁷ would exceed capacity."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MAG-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MAG-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "MAG_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Removing one electron from filled p⁶ leaves p⁵ with one unpaired electron.",
+      "post_commitment_feedback": "The fresh ion changes from diamagnetic to paramagnetic after the occupancy update.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MAG-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The p⁵ occupancy leaves one electron unpaired."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MAG-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MAG-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The p⁵ count is sufficient in the bounded orbital model."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MAG-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ion formation changes occupancy and can change magnetic behavior."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "GRP-ITEM-ENTRY",
+      "learner_prompt_key": "GRP_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "A filled representative outer shell contains ns²np⁶ beyond helium.",
+      "post_commitment_feedback": "The noble-gas pattern has filled outer s and p subshells.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "GRP-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "GRP-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An ns¹ outer pattern is one s electron, not a filled valence shell."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "GRP-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This pattern is one p electron short of a filled p subshell."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "GRP-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is an early p-block pattern rather than a filled shell."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "GRP-ITEM-GUIDED",
+      "learner_prompt_key": "GRP_GUIDED",
+      "correct_option_index": 2,
+      "rationale": "Alkali metals have one electron in the outer s subshell.",
+      "post_commitment_feedback": "The bounded alkali-family pattern is ns¹.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "GRP-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An ns² pattern identifies the alkaline-earth family in this bounded scheme."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "GRP-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The ns²np⁵ pattern identifies a halogen."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "GRP-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "GRP-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The filled pattern identifies a noble gas."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "GRP-ITEM-LIGHT",
+      "learner_prompt_key": "GRP_LIGHT",
+      "correct_option_index": 1,
+      "rationale": "Halogens have seven representative valence electrons, ns²np⁵.",
+      "post_commitment_feedback": "One electron short of a filled p shell identifies the halogen pattern.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "GRP-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is the filled noble-gas pattern."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "GRP-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "GRP-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is the alkaline-earth pattern."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "GRP-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is the alkali-metal pattern."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "GRP-ITEM-SOLO",
+      "learner_prompt_key": "GRP_SOLO",
+      "correct_option_index": 3,
+      "rationale": "The central d block and partially filled d subshell identify a transition element.",
+      "post_commitment_feedback": "Use the differentiating block: the highlighted species is a transition element.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "GRP-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Noble gases occupy the filled-shell far-right group rather than the central d block."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "GRP-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Halogens are p-block elements with ns²np⁵ valence patterns."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "GRP-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The central differentiating d subshell identifies a transition element."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "GRP-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "GRP-ITEM-NEAR",
+      "learner_prompt_key": "GRP_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The highest-n pattern is ns²np⁵, characteristic of halogens.",
+      "post_commitment_feedback": "Ignore the specific n and match the outer pattern: ns²np⁵ is halogen.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "GRP-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "GRP-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A noble-gas outer p subshell would be p⁶ rather than p⁵."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "GRP-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The additional p⁵ occupancy rules out the ns² alkaline-earth pattern."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "GRP-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An alkali pattern ends in ns¹ rather than ns²np⁵."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "GRP-ITEM-CHANGED",
+      "learner_prompt_key": "GRP_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "A central d-block element is classified as a transition element and broadly as a metal.",
+      "post_commitment_feedback": "Block first, then broad class: central d block gives transition metal.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "GRP-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Representative elements are s or p block, not central d block."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "GRP-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Noble gases lie in the far-right p-block group."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "GRP-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "GRP-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Halogens are upper-right p-block nonmetals in this bounded classification."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "GRP-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "GRP_REPAIR_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The ns² representative pattern identifies alkaline-earth metals.",
+      "post_commitment_feedback": "Two outer s electrons with no outer p occupancy give the alkaline-earth pattern.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "GRP-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Alkali metals have the ns¹ pattern."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "GRP-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "GRP-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Halogens have the ns²np⁵ pattern."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "GRP-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A period-2 or later noble gas has ns²np⁶."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "GRP-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "GRP_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The filled ns²np⁶ outer shell identifies a noble gas.",
+      "post_commitment_feedback": "The fresh outer-shell pattern is filled, so it is noble gas.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "GRP-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A halogen would have p⁵ rather than filled p⁶."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "GRP-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An alkali pattern would have only ns¹."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "GRP-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An alkaline-earth pattern would end at ns² without p⁶."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "GRP-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "GRP-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "GRP_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Transition classification is tied to the d block rather than an s- or p-block outer pattern.",
+      "post_commitment_feedback": "Find the differentiating subshell: d-block occupancy signals a transition element.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "GRP-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "GRP-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A filled p shell identifies a noble gas, a representative element."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "GRP-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Transition elements occupy the central d block and are broadly metallic."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "GRP-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An ns¹ pattern identifies an alkali representative element."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "GRP-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "GRP_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The p-block ns²np⁵ pattern identifies a representative halogen nonmetal.",
+      "post_commitment_feedback": "The fresh case combines p-block representative status with the halogen valence pattern.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "GRP-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The d block, not the p block, identifies transition elements."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "GRP-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The supplied outer pattern is not ns² alone."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "GRP-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "GRP-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The p⁵ pattern is not filled, and noble gases are nonmetals."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TRD-ITEM-ENTRY",
+      "learner_prompt_key": "TRD_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "Added shells and shielding generally increase radius down a group.",
+      "post_commitment_feedback": "More occupied principal shells generally make the atom larger.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TRD-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TRD-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An added occupied shell generally expands the outer electron distribution."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TRD-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Adding a shell cannot collapse atomic radius to zero."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TRD-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Different principal shells produce different characteristic sizes."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TRD-ITEM-GUIDED",
+      "learner_prompt_key": "TRD_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Greater effective nuclear attraction contracts the same-shell valence cloud.",
+      "post_commitment_feedback": "Across the period, stronger effective attraction generally decreases radius.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TRD-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Stronger attraction within the same shell generally contracts the electron cloud."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TRD-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TRD-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The growing effective attraction changes the radius within the period."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TRD-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Mass is not the controlling relation supplied in the prompt."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TRD-ITEM-LIGHT",
+      "learner_prompt_key": "TRD_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Stronger attraction to the valence electron makes removal harder.",
+      "post_commitment_feedback": "Higher effective nuclear attraction generally raises first ionization energy.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TRD-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Greater distance and shielding generally lower removal energy."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TRD-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Weaker attraction makes electron removal easier."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TRD-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TRD-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The added-electron cloud is generally less tightly held at the edge."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TRD-ITEM-SOLO",
+      "learner_prompt_key": "TRD_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Across a period, stronger effective nuclear attraction generally increases electronegativity.",
+      "post_commitment_feedback": "The farther-right atom generally attracts shared electrons more strongly.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TRD-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lower effective attraction generally weakens pull on shared electrons."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TRD-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Electronegativity generally changes across a period."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TRD-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "More shielding would weaken rather than strengthen the attraction."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TRD-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TRD-ITEM-NEAR",
+      "learner_prompt_key": "TRD_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Moving down adds a shell, increasing radius and generally lowering first ionization energy.",
+      "post_commitment_feedback": "The lower atom is generally larger and easier to ionize.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TRD-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TRD-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Adding a shell generally produces the opposite size and removal trends."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TRD-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Greater distance and shielding generally lower first ionization energy."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TRD-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The ionization direction fits, but the size direction does not."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TRD-ITEM-CHANGED",
+      "learner_prompt_key": "TRD_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "For ten electrons, more protons pull more strongly: Na⁺ is smallest and F⁻ largest.",
+      "post_commitment_feedback": "Within an isoelectronic series, increasing proton count decreases radius.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TRD-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the proton-count attraction within the isoelectronic set."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TRD-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TRD-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Na⁺ has more protons than Ne and is smaller for the same electron count."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TRD-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal electron count does not erase differing nuclear charge."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TRD-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "TRD_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Greater effective nuclear charge in the same shell contracts radius and raises removal energy.",
+      "post_commitment_feedback": "Hold shell count fixed: stronger pull means smaller radius and higher ionization energy.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TRD-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Stronger same-shell attraction gives the opposite trends."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TRD-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The ionization direction fits but the radius direction does not."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TRD-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TRD-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Atoms in the same period share the principal valence shell."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TRD-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "TRD_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The added principal shell makes the lower group member larger.",
+      "post_commitment_feedback": "The fresh comparison uses shell count: Y generally has the larger radius.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TRD-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Added distance and shielding generally lower first ionization energy down a group."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TRD-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Electronegativity generally decreases rather than increases down a group."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TRD-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Shielding and distance generally reduce the outer attraction."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TRD-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TRD-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "TRD_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Cation formation generally contracts the electron cloud.",
+      "post_commitment_feedback": "A simple cation is generally smaller than its neutral atom.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TRD-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TRD-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Electron loss reduces electron-electron repulsion and can remove an outer shell."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TRD-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Changing electron count changes the electron cloud."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TRD-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ion size is directly affected by electron loss or gain."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TRD-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "TRD_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Adding an electron generally increases repulsion and expands the anion relative to the atom.",
+      "post_commitment_feedback": "The fresh simple anion is larger than its neutral parent atom.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TRD-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Adding an electron increases repulsion and expands the electron cloud rather than contracting it."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TRD-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TRD-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The added electron changes the electron cloud."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TRD-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The bounded atom-anion rule supports this comparison."
+        }
+      ]
+    }
+  ]
+}

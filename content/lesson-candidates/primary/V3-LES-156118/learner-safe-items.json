@@ -1,0 +1,398 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Omission is available and is not scored as a selected misconception.",
+  "items": [
+    {
+      "prompt_key": "HEI_ENTRY",
+      "title": "Starting check: reject determinism",
+      "prompt": "A temperament tendency is moderately heritable, but supportive routines reduce the associated behavior. Which conclusion is best?",
+      "response_type": "single_select",
+      "options": [
+        "Heredity contributes, while environment can alter expression",
+        "The behavior is genetically fixed and cannot change across environments",
+        "Supportive routines erase every form of inherited behavioral variation",
+        "Temperament has no biological contribution in the studied population"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HEI_GUIDED",
+      "title": "Guided practice: identify interaction",
+      "prompt": "An inherited sensitivity predicts stress behavior in unpredictable settings but not in stable settings. What pattern is shown?",
+      "response_type": "single_select",
+      "options": [
+        "A purely environmental effect identical for everyone",
+        "A heredity–environment interaction in behavioral expression",
+        "A fixed genetic outcome unaffected by setting",
+        "A random outcome unrelated to either measured factor"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HEI_LIGHT",
+      "title": "Less help: separate tendency from outcome",
+      "prompt": "Which statement best describes temperament in a multilevel behavioral explanation?",
+      "response_type": "single_select",
+      "options": [
+        "A complete diagnosis based on one observed response",
+        "A social condition with no biological contribution",
+        "A disposition whose expression can vary with experience",
+        "A fixed behavior that appears identically in all settings"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HEI_SOLO",
+      "title": "On your own: experience matters",
+      "prompt": "Siblings share many inherited factors but develop different practice histories and skill levels. Which explanation is most defensible?",
+      "response_type": "single_select",
+      "options": [
+        "Shared heredity guarantees identical practiced behavior",
+        "Different practice proves heredity contributes nothing",
+        "Skill differences must be measurement error only",
+        "Both shared heredity and different experience may contribute"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HEI_NEAR",
+      "title": "Near exit: interpret heritability carefully",
+      "prompt": "A trait varies partly with inherited differences in one population. Which inference remains valid?",
+      "response_type": "single_select",
+      "options": [
+        "Inherited variation contributes under the studied conditions",
+        "Every individual's trait level is fixed at conception",
+        "A single gene completely determines the observed trait",
+        "Changing the environment cannot change the population pattern"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HEI_CHANGED",
+      "title": "Changed exit: compare environments",
+      "prompt": "The same inherited risk score predicts high impulsive behavior after chronic sleep loss but weakly predicts behavior with regular sleep. What best explains the result?",
+      "response_type": "single_select",
+      "options": [
+        "Sleep alone creates identical behavior in all people",
+        "Inherited susceptibility interacts with sleep environment",
+        "The risk score determines behavior regardless of sleep",
+        "The pattern eliminates any inherited contribution"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HEI_REPAIR_NEAR",
+      "title": "Repair deterministic inference",
+      "prompt": "Which wording correctly bounds a heredity claim about behavior?",
+      "response_type": "single_select",
+      "options": [
+        "Inherited factors guarantee the outcome in every setting",
+        "Environment is irrelevant whenever heritability is nonzero",
+        "Inherited variation may contribute under stated conditions",
+        "One observed behavior reveals the person's complete genotype"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HEI_REENTRY_NEAR",
+      "title": "Fresh re-entry: coaching and disposition",
+      "prompt": "A partly heritable attention disposition predicts errors before coaching, but structured practice reduces errors. Which conclusion fits?",
+      "response_type": "single_select",
+      "options": [
+        "Coaching proves the disposition was never heritable",
+        "The disposition fixes error rate across all experiences",
+        "Structured practice changes the person's inherited sequence",
+        "Heredity contributes while experience modifies performance"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HEI_REPAIR_CHANGED",
+      "title": "Repair interaction recognition",
+      "prompt": "What observation is required to support an interaction rather than two additive main effects?",
+      "response_type": "single_select",
+      "options": [
+        "One factor's effect changes across levels of the other",
+        "Both factors correlate separately with the outcome",
+        "Only one factor is measured in a single setting",
+        "The outcome has the same mean in every condition"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HEI_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: stress exposure",
+      "prompt": "A temperament score predicts withdrawal strongly after repeated social stress but minimally without that stress. Which explanation is best?",
+      "response_type": "single_select",
+      "options": [
+        "Temperament guarantees withdrawal in every environment",
+        "Temperament and stress interact in behavioral expression",
+        "Social stress has an identical effect at every temperament level",
+        "The pattern proves temperament has no inherited component"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AGV_ENTRY",
+      "title": "Starting check: define adaptive value",
+      "prompt": "In a predator-rich habitat, a vigilance behavior is associated with more surviving offspring. What does adaptive value refer to here?",
+      "response_type": "single_select",
+      "options": [
+        "A conscious decision by the organism to alter inherited information",
+        "How pleasant the vigilant behavior feels to the individual organism",
+        "The behavior's contribution to reproductive success in that habitat",
+        "The behavior's universal reproductive benefit in every possible habitat"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AGV_GUIDED",
+      "title": "Guided practice: selection requirements",
+      "prompt": "Which combination permits natural selection to change a behavioral distribution across generations?",
+      "response_type": "single_select",
+      "options": [
+        "Identical behavior and identical reproductive success",
+        "Random practice differences within one individual's life",
+        "Acquired behavior without any population variation",
+        "Heritable variation with differential reproductive success"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AGV_LIGHT",
+      "title": "Less help: regulatory gene role",
+      "prompt": "Which statement best describes how a regulatory gene can influence behavior?",
+      "response_type": "single_select",
+      "options": [
+        "It alters timing or level of expression in developmental pathways",
+        "It encodes every step of one complete social behavior",
+        "It consciously selects the organism's preferred response",
+        "It removes all environmental influence from development"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AGV_SOLO",
+      "title": "On your own: natural-population evidence",
+      "prompt": "Which finding most directly supports genetically based behavioral variation in a natural population?",
+      "response_type": "single_select",
+      "options": [
+        "All individuals display identical behavior after the same single exposure",
+        "Behavioral differences persist partly across related lineages in shared conditions",
+        "Groups occupy different habitats without shared-condition inheritance data",
+        "Behavior changes immediately after a food reward during one session"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AGV_NEAR",
+      "title": "Near exit: context-specific fitness",
+      "prompt": "A bold foraging pattern yields more offspring when food is scarce but fewer offspring when predators are abundant. Which conclusion fits?",
+      "response_type": "single_select",
+      "options": [
+        "Predators cannot influence reproductive success",
+        "Boldness is universally adaptive in all environments",
+        "Its adaptive value depends on the environmental context",
+        "The behavior has no possible inherited component"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AGV_CHANGED",
+      "title": "Changed exit: predict a population shift",
+      "prompt": "During repeated droughts, birds with a heritable water-conserving foraging pattern leave more offspring. What population change is most expected?",
+      "response_type": "single_select",
+      "options": [
+        "Each bird intentionally rewrites inherited information during the drought",
+        "Every individual immediately adopts the pattern despite existing variation",
+        "All environmental influences disappear from the population after one generation",
+        "The associated heritable pattern becomes more common across generations"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AGV_REPAIR_NEAR",
+      "title": "Repair adaptive reasoning",
+      "prompt": "Which outcome is the relevant test of adaptive value in the stated environment?",
+      "response_type": "single_select",
+      "options": [
+        "Whether it improves relative reproductive success",
+        "Whether the organism reports enjoying it",
+        "Whether the behavior appears complicated",
+        "Whether every species displays the behavior"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AGV_REENTRY_NEAR",
+      "title": "Fresh re-entry: seasonal behavior",
+      "prompt": "A seasonal nesting behavior increases surviving offspring only in colder regions. Which statement is best?",
+      "response_type": "single_select",
+      "options": [
+        "The behavior is adaptive in every climate and every nesting environment",
+        "Its adaptive value is conditional on regional climate",
+        "Cold regions remove all environmental influence on reproductive success",
+        "The climate pattern rules out any possible heritable contribution"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AGV_REPAIR_CHANGED",
+      "title": "Repair levels of selection explanation",
+      "prompt": "How does differential reproductive success change a population across generations?",
+      "response_type": "single_select",
+      "options": [
+        "Every behavior becomes genetically identical after one event",
+        "Individuals acquire the needed inherited variant by effort",
+        "Variants linked to more offspring increase in relative frequency",
+        "Regulatory genes stop responding to developmental conditions"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AGV_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: nesting depth",
+      "prompt": "A heritable deep-nesting tendency yields more surviving offspring after many hot seasons. What is the strongest prediction?",
+      "response_type": "single_select",
+      "options": [
+        "Every bird changes nesting depth before reproducing",
+        "The inherited tendency must benefit birds in every climate",
+        "Hot seasons prove the tendency is entirely environmental",
+        "Deep-nesting tendency increases in the population over generations"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HPD_ENTRY",
+      "title": "Starting check: prenatal order",
+      "prompt": "Which sequence correctly orders the broad prenatal periods?",
+      "response_type": "single_select",
+      "options": [
+        "Germinal → embryonic → fetal",
+        "Embryonic → fetal → germinal",
+        "Fetal → germinal → embryonic",
+        "Germinal → fetal → embryonic"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HPD_GUIDED",
+      "title": "Guided practice: foundational formation",
+      "prompt": "Which broad prenatal period is most associated with foundational body-plan and organ formation?",
+      "response_type": "single_select",
+      "options": [
+        "Adolescent period after puberty begins",
+        "Embryonic period of foundational formation",
+        "Germinal period around implantation",
+        "Fetal period of later growth and maturation"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HPD_LIGHT",
+      "title": "Less help: motor development",
+      "prompt": "Which factor combination best explains broad gains in voluntary motor control?",
+      "response_type": "single_select",
+      "options": [
+        "Vocabulary growth without any physiological change",
+        "A fixed timetable unaffected by experience or variation",
+        "Nervous-system maturation, strength, coordination, and practice",
+        "One exact age that applies diagnostically to every child"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HPD_SOLO",
+      "title": "On your own: adolescent physiology",
+      "prompt": "Which change belongs most directly to the physiological context of adolescence?",
+      "response_type": "single_select",
+      "options": [
+        "Implantation into the uterine lining during the germinal period",
+        "Initial prenatal tissue development before the fetal growth period",
+        "Foundational prenatal organ formation during the embryonic period",
+        "Puberty-related endocrine activation and growth changes"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HPD_NEAR",
+      "title": "Near exit: distinguish fetal emphasis",
+      "prompt": "Which description best matches the fetal period at the required psychological-development depth?",
+      "response_type": "single_select",
+      "options": [
+        "Growth and maturation after foundational structures form",
+        "Conception followed immediately by implantation only",
+        "Puberty-related endocrine activation after childhood",
+        "A fixed schedule for diagnosing later motor disorders"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HPD_CHANGED",
+      "title": "Changed exit: integrate sequence and behavior",
+      "prompt": "A vignette describes endocrine activation, a growth spurt, and changing body composition. Which developmental explanation is best?",
+      "response_type": "single_select",
+      "options": [
+        "It describes implantation into the uterine lining during the germinal period",
+        "It reflects adolescent physiological change that can shape behavioral context",
+        "It proves a clinical developmental disorder from the timing evidence alone",
+        "It describes foundational prenatal organ formation during the embryonic period"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HPD_REPAIR_NEAR",
+      "title": "Repair developmental sequencing",
+      "prompt": "Which cue best distinguishes embryonic from fetal development at this scope?",
+      "response_type": "single_select",
+      "options": [
+        "Whether puberty-related endocrine activation has already begun",
+        "Whether a motor milestone occurs at one exact diagnostic age",
+        "Foundational formation versus later growth and maturation",
+        "Whether a formal clinical diagnosis has already been assigned"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HPD_REENTRY_NEAR",
+      "title": "Fresh re-entry: prenatal growth",
+      "prompt": "A prenatal description emphasizes substantial size increase and maturation of already established structures. Which period fits best?",
+      "response_type": "single_select",
+      "options": [
+        "Adolescence",
+        "Germinal",
+        "Embryonic",
+        "Fetal"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HPD_REPAIR_CHANGED",
+      "title": "Repair bounded developmental inference",
+      "prompt": "Which conclusion is appropriate when pubertal timing varies among healthy adolescents?",
+      "response_type": "single_select",
+      "options": [
+        "Broad sequences can coexist with individual timing variation",
+        "Every timing difference establishes a clinical disorder",
+        "Physiological development has no relation to behavior",
+        "One exact age must define normal development for everyone"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HPD_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: motor-control context",
+      "prompt": "A child gains steadier reaching after neural control, strength, and repeated practice improve. Which explanation is best?",
+      "response_type": "single_select",
+      "options": [
+        "Practice alone changes behavior with no physiological contribution",
+        "Motor development reflects interacting maturation and experience",
+        "One reaching observation establishes a clinical diagnosis",
+        "The change belongs specifically to prenatal implantation"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    }
+  ]
+}

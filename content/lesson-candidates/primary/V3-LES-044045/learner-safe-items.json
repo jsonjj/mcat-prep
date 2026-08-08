@@ -1,0 +1,528 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Starting checks may be left blank and are recorded as nonconsequential abstentions.",
+  "items": [
+    {
+      "prompt_key": "STR_ENTRY",
+      "title": "Starting check",
+      "prompt": "Which component is present in both enveloped and nonenveloped viruses?",
+      "response_type": "single_select",
+      "options": [
+        "Protein capsid",
+        "Lipid envelope",
+        "Nucleus",
+        "Ribosome"
+      ],
+      "directions": "Choose one answer, or leave the item blank to record an abstention. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "STR_GUIDED",
+      "title": "Guided practice",
+      "prompt": "A viral particle contains RNA, capsid, and a lipid membrane. How is it classified?",
+      "response_type": "single_select",
+      "options": [
+        "Nonenveloped DNA virus",
+        "Enveloped RNA virus",
+        "Bacterium",
+        "Prion"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "STR_LIGHT",
+      "title": "Practice with less support",
+      "prompt": "Which bacteriophage structure first recognizes a bacterial surface?",
+      "response_type": "single_select",
+      "options": [
+        "Capsid genome",
+        "Lipid envelope",
+        "Tail fibers",
+        "Host ribosome"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "STR_SOLO",
+      "title": "Practice independently",
+      "prompt": "Which feature is absent from an intact virion?",
+      "response_type": "single_select",
+      "options": [
+        "Nucleic acid",
+        "Protein",
+        "Surface binding molecules",
+        "Energy organelles"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "STR_NEAR",
+      "title": "Near-use exit",
+      "prompt": "A particle has double-stranded DNA inside capsid and no lipid layer. Which classification fits?",
+      "response_type": "single_select",
+      "options": [
+        "Enveloped RNA virus",
+        "Nonenveloped DNA",
+        "Prion",
+        "Viroid"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "STR_CHANGED",
+      "title": "Changed-task exit",
+      "prompt": "Detergent removes a particle’s outer lipid layer and abolishes host entry, while its capsid remains intact. What structure was essential?",
+      "response_type": "single_select",
+      "options": [
+        "Nucleus",
+        "Ribosome",
+        "Envelope",
+        "Bacterial wall"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "STR_REPAIR_NEAR",
+      "title": "Repair the near-use function",
+      "prompt": "Which pair forms the universal virion core?",
+      "response_type": "single_select",
+      "options": [
+        "Genome + capsid",
+        "Envelope + nucleus",
+        "Ribosome + organelle",
+        "Cell wall + cytosol"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "STR_REENTRY_NEAR",
+      "title": "Fresh near-use re-entry",
+      "prompt": "A particle has single-stranded RNA in capsid and no membrane. Which classification fits?",
+      "response_type": "single_select",
+      "options": [
+        "Enveloped DNA virus",
+        "Enveloped RNA virus",
+        "Nonenveloped DNA virus",
+        "Nonenveloped RNA"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "STR_REPAIR_CHANGED",
+      "title": "Repair the changed-task function",
+      "prompt": "Which treatment most directly disrupts a viral lipid envelope?",
+      "response_type": "single_select",
+      "options": [
+        "DNase only",
+        "Detergent",
+        "Ribosome inhibitor",
+        "Cell-wall enzyme"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "STR_REENTRY_CHANGED",
+      "title": "Fresh changed-task re-entry",
+      "prompt": "A membrane-disrupting solvent prevents attachment by one virus but not another. What best distinguishes them?",
+      "response_type": "single_select",
+      "options": [
+        "Genome size only",
+        "Capsid presence",
+        "Nuclear content",
+        "Envelope dependence"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "LIF_ENTRY",
+      "title": "Starting check",
+      "prompt": "Which missing component makes a virion unable to synthesize proteins independently?",
+      "response_type": "single_select",
+      "options": [
+        "Surface proteins",
+        "Ribosomes",
+        "Capsid proteins",
+        "Nucleic acid"
+      ],
+      "directions": "Choose one answer, or leave the item blank to record an abstention. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "LIF_GUIDED",
+      "title": "Guided practice",
+      "prompt": "Which stage normally follows successful attachment?",
+      "response_type": "single_select",
+      "options": [
+        "Genome packaging only",
+        "Assembly",
+        "Entry",
+        "Release"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "LIF_LIGHT",
+      "title": "Practice with less support",
+      "prompt": "New viral genomes and capsid proteins are present separately. Which stage must combine them?",
+      "response_type": "single_select",
+      "options": [
+        "Release",
+        "Attachment",
+        "Entry",
+        "Assembly"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "LIF_SOLO",
+      "title": "Practice independently",
+      "prompt": "Let A = attachment, E = entry, and S = synthesis. Which early order is correct?",
+      "response_type": "single_select",
+      "options": [
+        "A→E→S",
+        "release→entry→synthesis",
+        "assembly→attachment→entry",
+        "synthesis→entry→attachment"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "LIF_NEAR",
+      "title": "Near-use exit",
+      "prompt": "Let A = attachment, E = entry, S = synthesis, B = assembly, and R = release. Which order is correct?",
+      "response_type": "single_select",
+      "options": [
+        "A→B→E→R",
+        "E→A→R→B",
+        "A→E→S→B→R",
+        "S→A→B→E"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "LIF_CHANGED",
+      "title": "Changed-task exit",
+      "prompt": "A host cell contains abundant viral genomes and capsid proteins but no complete virions. Which stage is most directly blocked?",
+      "response_type": "single_select",
+      "options": [
+        "Host recognition",
+        "Attachment",
+        "Entry",
+        "Assembly"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "LIF_REPAIR_NEAR",
+      "title": "Repair the near-use function",
+      "prompt": "Which stage packages genomes with capsid proteins?",
+      "response_type": "single_select",
+      "options": [
+        "Release",
+        "Assembly",
+        "Attachment",
+        "Entry"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "LIF_REENTRY_NEAR",
+      "title": "Fresh near-use re-entry",
+      "prompt": "Let S = synthesis, A = assembly, and R = release. Which final-stage order is correct?",
+      "response_type": "single_select",
+      "options": [
+        "S→A→R",
+        "R→S→A",
+        "A→S→R",
+        "R→A→S"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "LIF_REPAIR_CHANGED",
+      "title": "Repair the changed-task function",
+      "prompt": "Complete genomes and proteins are present, but particles are absent. What failed next?",
+      "response_type": "single_select",
+      "options": [
+        "Genome synthesis",
+        "Entry",
+        "Assembly",
+        "Attachment"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "LIF_REENTRY_CHANGED",
+      "title": "Fresh changed-task re-entry",
+      "prompt": "Virions assemble inside a cell but none appear outside it. Which stage is most directly blocked?",
+      "response_type": "single_select",
+      "options": [
+        "Release",
+        "Attachment",
+        "Genome replication",
+        "Protein synthesis"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "GEN_ENTRY",
+      "title": "Starting check",
+      "prompt": "Reverse transcriptase synthesizes which product from an RNA template?",
+      "response_type": "single_select",
+      "options": [
+        "Lipid",
+        "Polysaccharide",
+        "DNA",
+        "Protein"
+      ],
+      "directions": "Choose one answer, or leave the item blank to record an abstention. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "GEN_GUIDED",
+      "title": "Guided practice",
+      "prompt": "A phage carries a bacterial gene from one bacterium to another. What is this called?",
+      "response_type": "single_select",
+      "options": [
+        "Translation",
+        "Conjugation",
+        "Transformation",
+        "Transduction"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "GEN_LIGHT",
+      "title": "Practice with less support",
+      "prompt": "Which sequence describes retroviral information flow?",
+      "response_type": "single_select",
+      "options": [
+        "RNA→DNA→chromosome",
+        "RNA → protein → RNA only",
+        "DNA → RNA only",
+        "Protein → DNA"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "GEN_SOLO",
+      "title": "Practice independently",
+      "prompt": "Which agent lacks nucleic acid and therefore cannot integrate a DNA genome?",
+      "response_type": "single_select",
+      "options": [
+        "Viroid",
+        "Prion",
+        "Retrovirus",
+        "Bacteriophage"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "GEN_NEAR",
+      "title": "Near-use exit",
+      "prompt": "Donor bacterial DNA is found inside a phage-derived particle and later in a recipient bacterium. Which mechanism fits?",
+      "response_type": "single_select",
+      "options": [
+        "Prion propagation",
+        "Viroid replication",
+        "Retroviral integration",
+        "Transduction"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "GEN_CHANGED",
+      "title": "Changed-task exit",
+      "prompt": "A retroviral mutant enters cells and releases RNA, but no viral DNA is detected. Which activity is most directly missing?",
+      "response_type": "single_select",
+      "options": [
+        "RT enzyme",
+        "Bacterial transduction",
+        "Capsid assembly",
+        "Host translation"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "GEN_REPAIR_NEAR",
+      "title": "Repair the near-use function",
+      "prompt": "Which cargo-carrier pair defines transduction?",
+      "response_type": "single_select",
+      "options": [
+        "Protein; viroid",
+        "Host DNA; prion",
+        "DNA cargo; phage",
+        "Viral RNA; ribosome"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "GEN_REENTRY_NEAR",
+      "title": "Fresh near-use re-entry",
+      "prompt": "A virus makes DNA from RNA and inserts it into host chromosomes. Which mechanism is this?",
+      "response_type": "single_select",
+      "options": [
+        "Prion conversion",
+        "Provirus insertion",
+        "Transduction",
+        "Translation"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "GEN_REPAIR_CHANGED",
+      "title": "Repair the changed-task function",
+      "prompt": "Which intermediate must exist before retroviral integration?",
+      "response_type": "single_select",
+      "options": [
+        "A bacterial plasmid only",
+        "A viroid capsid",
+        "A protein-only seed",
+        "Viral DNA"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "GEN_REENTRY_CHANGED",
+      "title": "Fresh changed-task re-entry",
+      "prompt": "A retroviral cell contains viral DNA but none is inserted into host chromosomes. Which stage failed after reverse transcription?",
+      "response_type": "single_select",
+      "options": [
+        "DNA synthesis",
+        "Integration",
+        "Attachment",
+        "RNA release"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "SUB_ENTRY",
+      "title": "Starting check",
+      "prompt": "Which agent consists of infectious protein without nucleic acid?",
+      "response_type": "single_select",
+      "options": [
+        "Virus",
+        "Viroid",
+        "Bacteriophage genome",
+        "Prion"
+      ],
+      "directions": "Choose one answer, or leave the item blank to record an abstention. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "SUB_GUIDED",
+      "title": "Guided practice",
+      "prompt": "Which agent is small naked RNA without a protein capsid?",
+      "response_type": "single_select",
+      "options": [
+        "Viroid",
+        "Enveloped virus",
+        "Bacterium",
+        "Prion"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "SUB_LIGHT",
+      "title": "Practice with less support",
+      "prompt": "Which agent necessarily contains nucleic acid inside protein capsid?",
+      "response_type": "single_select",
+      "options": [
+        "Viroid",
+        "Virus",
+        "Protein aggregate only",
+        "Prion"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "SUB_SOLO",
+      "title": "Practice independently",
+      "prompt": "How does a prion propagate its information?",
+      "response_type": "single_select",
+      "options": [
+        "By DNA integration",
+        "By RNA replication",
+        "Copies protein fold",
+        "By reverse transcription"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "SUB_NEAR",
+      "title": "Near-use exit",
+      "prompt": "An agent contains RNA, lacks capsid, and depends on host enzymes. Which entity fits?",
+      "response_type": "single_select",
+      "options": [
+        "Viroid",
+        "Virus",
+        "Bacterium",
+        "Prion"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "SUB_CHANGED",
+      "title": "Changed-task exit",
+      "prompt": "An unknown agent has no detectable nucleic acid, loses infectivity after protease, and propagates protein misfolding. What is it?",
+      "response_type": "single_select",
+      "options": [
+        "Nonenveloped virus",
+        "Prion",
+        "Retrovirus",
+        "Viroid"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "SUB_REPAIR_NEAR",
+      "title": "Repair the near-use function",
+      "prompt": "Which compact comparison is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Prion: naked RNA",
+        "Viroid: protein only",
+        "Virus: no nucleic acid",
+        "Genome+capsid→virus"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "SUB_REENTRY_NEAR",
+      "title": "Fresh near-use re-entry",
+      "prompt": "An agent has no capsid and consists entirely of infectious RNA. Which entity is it?",
+      "response_type": "single_select",
+      "options": [
+        "Prion",
+        "Bacterium",
+        "Viroid",
+        "Virus"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "SUB_REPAIR_CHANGED",
+      "title": "Repair the changed-task function",
+      "prompt": "Which treatment targets a protein-only infectious agent most directly?",
+      "response_type": "single_select",
+      "options": [
+        "Protease",
+        "DNase",
+        "Reverse transcriptase",
+        "RNase"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "SUB_REENTRY_CHANGED",
+      "title": "Fresh changed-task re-entry",
+      "prompt": "An unknown agent loses infectivity after RNase, has no capsid, and is unaffected by protease. Which entity fits?",
+      "response_type": "single_select",
+      "options": [
+        "DNA virus",
+        "Enveloped virus",
+        "Viroid",
+        "Prion"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    }
+  ]
+}

@@ -1,0 +1,528 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes; an unresolved fresh re-entry returns control without exit credit.",
+  "items": [
+    {
+      "prompt_key": "PER_ENTRY",
+      "title": "Starting check: identify the premise",
+      "prompt": "A researcher predicts that a person who is orderly at work will also tend to be orderly at home because the same stable dimension influences both settings. Which perspective supplies that premise?",
+      "response_type": "single_select",
+      "options": [
+        "Behaviorist perspective",
+        "Trait perspective",
+        "Humanistic perspective",
+        "Social-cognitive perspective"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PER_GUIDED",
+      "title": "Guided practice: use the consequence",
+      "prompt": "After a child cleans a shared table, family members reliably offer praise. Cleaning becomes more frequent. Which explanation most directly uses the stated causal information?",
+      "response_type": "single_select",
+      "options": [
+        "An unconscious conflict is resolved, so the psychoanalytic perspective predicts an increase.",
+        "A stable cleanliness trait appears, so the trait perspective alone predicts an increase.",
+        "A need for personal growth is fulfilled, so the humanistic perspective predicts an increase.",
+        "Behaviorist reinforcement account"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PER_LIGHT",
+      "title": "Less help: reciprocal influences",
+      "prompt": "A learner’s confidence affects whether they join a study group; the group’s feedback then changes confidence and later participation. Which perspective best represents this loop?",
+      "response_type": "single_select",
+      "options": [
+        "Social-cognitive perspective",
+        "Trait perspective",
+        "Biological perspective",
+        "Psychoanalytic perspective"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PER_SOLO",
+      "title": "On your own: distinguish the lens",
+      "prompt": "Two siblings raised together differ consistently in emotional reactivity from infancy, before the measured parenting differences emerge. Which lens is most directly supported by this evidence?",
+      "response_type": "single_select",
+      "options": [
+        "Behaviorist perspective",
+        "Humanistic perspective",
+        "Biological perspective",
+        "Social-cognitive perspective"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PER_NEAR",
+      "title": "Near exit: self-congruence",
+      "prompt": "A musician leaves a prestigious role because performing the assigned material conflicts with a personally chosen artistic identity. Which explanation best uses the decisive cue?",
+      "response_type": "single_select",
+      "options": [
+        "A trait account claiming prestige always lowers conscientiousness",
+        "A behaviorist account claiming all departures follow punishment",
+        "A humanistic account emphasizing choice and congruence with the self",
+        "A biological account claiming the decision follows inherited arousal"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PER_CHANGED",
+      "title": "Changed exit: choose discriminating evidence",
+      "prompt": "A team wants to distinguish a trait explanation of punctuality from a behaviorist explanation. Which new observation would be most discriminating?",
+      "response_type": "single_select",
+      "options": [
+        "Punctuality tracks the onset and removal of an on-time bonus.",
+        "Several punctual employees describe themselves as organized.",
+        "Most employees know that lateness is inconvenient.",
+        "Punctuality and job satisfaction are positively correlated once."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PER_REPAIR_NEAR",
+      "title": "Repair: premise before label",
+      "prompt": "Which cue most specifically supports a psychoanalytic rather than trait explanation?",
+      "response_type": "single_select",
+      "options": [
+        "The behavior is moderately stable across several settings.",
+        "The behavior increases after praise is introduced.",
+        "The person changes expectations after peer feedback.",
+        "Unconscious conflict rooted in early experience"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PER_REENTRY_NEAR",
+      "title": "Fresh re-entry: growth choice",
+      "prompt": "A student rejects a family-selected career and chooses work that better expresses a developing sense of purpose. Which lens most directly explains the decision as described?",
+      "response_type": "single_select",
+      "options": [
+        "Trait perspective",
+        "Humanistic perspective",
+        "Behaviorist perspective",
+        "Biological perspective"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PER_REPAIR_CHANGED",
+      "title": "Repair: make predictions diverge",
+      "prompt": "Which observation best separates a stable-trait explanation from a social-cognitive explanation of participation?",
+      "response_type": "single_select",
+      "options": [
+        "Participation changes with peer expectations and later feedback.",
+        "Participation is measured with a reliable questionnaire.",
+        "Participants report enjoying some meetings.",
+        "Participation is positively related to attendance."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PER_REENTRY_CHANGED",
+      "title": "Fresh re-entry: separate learning from biology",
+      "prompt": "To distinguish a behaviorist explanation of startle reduction from a biological maturation explanation, which study result is most informative?",
+      "response_type": "single_select",
+      "options": [
+        "Older participants show lower startle than younger participants in one survey.",
+        "Participants differ in baseline heart rate before training.",
+        "Only the repeatedly safe signal shows reduced startle.",
+        "Most participants can describe what a startle response is."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIT_ENTRY",
+      "title": "Starting check: evidence limit",
+      "prompt": "A student is quiet during one formal interview. What is the strongest conclusion supported by this single observation?",
+      "response_type": "single_select",
+      "options": [
+        "The student has a stable quiet disposition in all settings.",
+        "The cause is unresolved from one person–setting observation.",
+        "Formal interviews make every person quiet.",
+        "A person-by-situation interaction has been established."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIT_GUIDED",
+      "title": "Guided practice: find the column shift",
+      "prompt": "Four employees speak often in informal meetings and each speaks less during recorded evaluations. Which explanation is best supported by the common change?",
+      "response_type": "single_select",
+      "options": [
+        "A different stable disposition for every employee",
+        "A person-by-situation interaction with crossing responses",
+        "No behavioral pattern can be described",
+        "A situational effect of the recorded evaluation"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIT_LIGHT",
+      "title": "Less help: find consistency",
+      "prompt": "Across classrooms, clubs, and volunteer shifts, one learner consistently initiates more conversations than peers. Which evidence pattern is most prominent?",
+      "response_type": "single_select",
+      "options": [
+        "A situation effect shared equally by all learners",
+        "A crossing person-by-situation interaction",
+        "Evidence limited to one person in one setting",
+        "A dispositional pattern that follows the learner across settings"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIT_SOLO",
+      "title": "On your own: recognize interaction",
+      "prompt": "Learner A talks more in competitive groups than cooperative groups, while Learner B shows the opposite pattern across the same groups. Which explanation is required?",
+      "response_type": "single_select",
+      "options": [
+        "A pure situation effect",
+        "A person-by-situation interaction",
+        "A pure dispositional effect",
+        "No systematic effect"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIT_NEAR",
+      "title": "Near exit: locate the regularity",
+      "prompt": "A nurse is meticulous in medication checks, meal documentation, and shift handoffs, while coworkers vary more across those same tasks. Which explanation is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "A situation effect because all tasks force identical behavior",
+        "A person-by-situation interaction because the pattern reverses by task",
+        "A bounded dispositional contribution",
+        "No conclusion because repeated observations never inform disposition"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIT_CHANGED",
+      "title": "Changed exit: interpret a matrix",
+      "prompt": "A study records helping scores. In a calm room, Group X averages 8 and Group Y averages 4. Under time pressure, Group X averages 3 and Group Y averages 6. Which model is needed?",
+      "response_type": "single_select",
+      "options": [
+        "A person-by-situation interaction",
+        "A person-only model because Group X is always more helpful",
+        "A situation-only model because pressure lowers everyone equally",
+        "A no-effect model because all four means are plausible"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIT_REPAIR_NEAR",
+      "title": "Repair: collect the missing comparison",
+      "prompt": "Which additional evidence is most useful before calling one observed behavior a stable disposition?",
+      "response_type": "single_select",
+      "options": [
+        "Ask the person to choose a preferred personality label once.",
+        "Repeat the observation many times in the same unchanged setting only.",
+        "Compare the person across settings and peers within each setting.",
+        "Assume the setting has no influence unless someone reports it."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIT_REENTRY_NEAR",
+      "title": "Fresh re-entry: shared setting response",
+      "prompt": "Six drivers each leave a larger following distance in heavy rain than on dry roads. What is the best-supported explanation for the common shift?",
+      "response_type": "single_select",
+      "options": [
+        "A situational effect of heavy rain",
+        "A stable cautious disposition unique to one driver",
+        "A crossover interaction among drivers and weather",
+        "A conclusion that weather never affects behavior"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIT_REPAIR_CHANGED",
+      "title": "Repair: read parallel versus crossing lines",
+      "prompt": "In a person-by-situation plot, what pattern most specifically signals an interaction?",
+      "response_type": "single_select",
+      "options": [
+        "All lines shift upward by the same amount.",
+        "One line remains above the others by the same amount everywhere.",
+        "All observations have the same value.",
+        "Different or crossing line slopes"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SIT_REENTRY_CHANGED",
+      "title": "Fresh re-entry: compare context effects",
+      "prompt": "Two trainees complete tasks alone and with an audience. Trainee M improves with an audience, while Trainee N declines by the same amount. Which conclusion fits the pattern?",
+      "response_type": "single_select",
+      "options": [
+        "Audience presence has one identical effect on both trainees.",
+        "Audience condition interacts with trainee identity",
+        "Trainee M has a higher score in every condition.",
+        "Neither person nor situation contributes to performance."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MOT_ENTRY",
+      "title": "Starting check: deficit and action",
+      "prompt": "After several hours without water, increased blood concentration is followed by thirst and drinking. Which factor is most directly represented by thirst in this sequence?",
+      "response_type": "single_select",
+      "options": [
+        "An instinct defined only by a species-typical action",
+        "A drive linked to a physiological deficit",
+        "An incentive located entirely outside the person",
+        "A search for higher sensory arousal"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MOT_GUIDED",
+      "title": "Guided practice: trace negative feedback",
+      "prompt": "Body temperature falls below its regulated range. Shivering raises heat production and then decreases as temperature returns toward range. Which feature shows negative feedback?",
+      "response_type": "single_select",
+      "options": [
+        "Shivering continues at full strength after temperature is restored.",
+        "The response pushes temperature farther below the regulated range.",
+        "The regulated range changes randomly each second.",
+        "The response weakens as the temperature deviation shrinks."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MOT_LIGHT",
+      "title": "Less help: preferred stimulation",
+      "prompt": "After hours of monotonous work, a person chooses a novel game; after an intense concert, the same person chooses a quiet walk. Which factor best explains both choices?",
+      "response_type": "single_select",
+      "options": [
+        "Regulation toward a preferred arousal level",
+        "One fixed instinct that always increases stimulation",
+        "One physiological drive caused by water loss",
+        "A stable need to avoid every new experience"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MOT_SOLO",
+      "title": "On your own: species-typical tendency",
+      "prompt": "Newly hatched animals perform a coordinated response without prior practice, and the response appears broadly across the species. Which factor is most directly supported?",
+      "response_type": "single_select",
+      "options": [
+        "A learned behavior maintained by individual praise",
+        "A cognitive expectancy based on repeated outcomes",
+        "An instinctive, unlearned action tendency",
+        "A negative-feedback response to a measured nutrient deficit"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MOT_NEAR",
+      "title": "Near exit: distinguish the factor",
+      "prompt": "A participant reports tension after missing a meal, seeks food, and stops eating as the physiological discrepancy is reduced. Which explanation best fits the full pattern?",
+      "response_type": "single_select",
+      "options": [
+        "Arousal seeking because stimulation must continually rise",
+        "Instinct because every food choice is entirely unlearned",
+        "Drive reduction operating within a negative-feedback process",
+        "A situation effect with no internal motivational state"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MOT_CHANGED",
+      "title": "Changed exit: interpret a time course",
+      "prompt": "A graph shows a regulated variable below range at minute 0, corrective behavior rising by minute 5, the variable returning to range by minute 20, and behavior declining by minute 25. Which causal interpretation is best?",
+      "response_type": "single_select",
+      "options": [
+        "Negative feedback reduces the motivating discrepancy signal.",
+        "The corrective behavior amplifies the original deviation.",
+        "An instinct requires behavior to remain maximal after correction.",
+        "Arousal must increase without limit as the variable normalizes."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MOT_REPAIR_NEAR",
+      "title": "Repair: identify the initiating condition",
+      "prompt": "Which observation most specifically supports an arousal account rather than a deficit-linked drive account?",
+      "response_type": "single_select",
+      "options": [
+        "The person drinks after measured fluid loss.",
+        "Eating stops when a nutrient-related discrepancy closes.",
+        "A corrective response opposes a fall in body temperature.",
+        "Choice raises low arousal and lowers high arousal."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MOT_REENTRY_NEAR",
+      "title": "Fresh re-entry: stimulation choice",
+      "prompt": "A researcher finds that people choose a more complex task when under-stimulated but a simpler task when already highly stimulated. Which factor best predicts this reversal?",
+      "response_type": "single_select",
+      "options": [
+        "A single fixed drive to maximize task complexity",
+        "Arousal regulation",
+        "A nutrient-deficit feedback loop",
+        "An unchanging species-typical motor pattern"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MOT_REPAIR_CHANGED",
+      "title": "Repair: complete the feedback chain",
+      "prompt": "Which sequence contains all required parts of a negative-feedback explanation?",
+      "response_type": "single_select",
+      "options": [
+        "Deviation → correction → smaller deviation → weaker signal",
+        "Corrective action → larger deviation → stronger action without a bound",
+        "Preferred activity → random target change → unrelated outcome",
+        "Species-typical action → permanent maximum response → no state comparison"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MOT_REENTRY_CHANGED",
+      "title": "Fresh re-entry: predict loop disruption",
+      "prompt": "A sensor persistently reports low energy availability even after the regulated variable has returned to range. What does a negative-feedback model predict most directly?",
+      "response_type": "single_select",
+      "options": [
+        "Corrective behavior must stop because sensors never affect regulation.",
+        "The variable must move farther from range before any behavior begins.",
+        "Corrective behavior persists while the sensor reports a deficit.",
+        "The response becomes an instinct solely because it repeats."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_ENTRY",
+      "title": "Starting check: external value",
+      "prompt": "A person who is not hungry completes extra tasks only after a redeemable prize is offered. Which theory most directly uses the changed variable?",
+      "response_type": "single_select",
+      "options": [
+        "Drive-reduction theory",
+        "Incentive theory",
+        "A need-based account of fluid balance",
+        "A biological account of inherited temperament"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_GUIDED",
+      "title": "Guided practice: expectation and effort",
+      "prompt": "Two students value the same exam result equally. One believes an additional hour of practice will improve performance; the other believes it will not. Which account predicts the effort difference?",
+      "response_type": "single_select",
+      "options": [
+        "Incentive theory based on different outcome values",
+        "Drive reduction based on different physiological deficits",
+        "A sociocultural account based on different group norms",
+        "A cognitive account based on effort–outcome expectation"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_LIGHT",
+      "title": "Less help: internal discrepancy",
+      "prompt": "After substantial water loss, a participant seeks water even when no reward is offered and social conditions are unchanged. Which theory is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Incentive theory",
+        "A cognitive account of prestige goals",
+        "A sociocultural norm account",
+        "Drive-reduction theory"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_SOLO",
+      "title": "On your own: sociocultural regulator",
+      "prompt": "People with similar hunger and income choose different celebratory foods in communities with different customary practices. Which regulator is most directly supported?",
+      "response_type": "single_select",
+      "options": [
+        "Different fluid-deficit drives",
+        "Sociocultural norms and learned practices",
+        "Different external reward amounts",
+        "Different inherited metabolic disorders"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_NEAR",
+      "title": "Near exit: choose the direct model",
+      "prompt": "A worker values a promotion but does not apply because they believe the application process is uncontrollable and effort will not affect the outcome. Which account best predicts the nonapplication?",
+      "response_type": "single_select",
+      "options": [
+        "Drive reduction caused by a nutrient deficit",
+        "Incentive theory alone because the promotion has value",
+        "A cognitive account emphasizing perceived control and expectancy",
+        "A biological regulator because all choices are inherited"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_CHANGED",
+      "title": "Changed exit: predict an experiment",
+      "prompt": "A study holds task value and hunger constant but randomly tells one group that practice strongly improves success and another that practice has little effect. What result best supports a cognitive account?",
+      "response_type": "single_select",
+      "options": [
+        "The high-expectancy group practices more.",
+        "Both groups practice equally because beliefs cannot influence motivation.",
+        "Only the hungrier group practices more even though hunger is held equal.",
+        "Practice changes only after a larger external prize is introduced."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_REPAIR_NEAR",
+      "title": "Repair: locate the decisive variable",
+      "prompt": "Which pairing correctly matches a motivation model to its decisive variable?",
+      "response_type": "single_select",
+      "options": [
+        "Drive reduction → group custom with no internal deficit",
+        "Cognitive theory → hormone concentration with no belief measure",
+        "Incentive theory → value of an external outcome",
+        "Sociocultural regulation → inherited neural sensitivity only"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_REENTRY_NEAR",
+      "title": "Fresh re-entry: need-based prediction",
+      "prompt": "A program first provides reliable food and shelter, after which participants devote more effort to belonging and competence goals. Which account most directly organizes this shift?",
+      "response_type": "single_select",
+      "options": [
+        "A need-based account",
+        "A pure incentive account based only on cash rewards",
+        "A drive account limited to momentary thirst",
+        "A biological account limited to inherited reflexes"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_REPAIR_CHANGED",
+      "title": "Repair: predict from manipulated expectancy",
+      "prompt": "A training study keeps certificate value and fatigue equal but tells one group that each practice round strongly improves its final score. Which result would support an expectancy-based prediction?",
+      "response_type": "single_select",
+      "options": [
+        "Both groups complete equal rounds because beliefs cannot affect effort.",
+        "The high-expectancy group rests longer even though fatigue is held equal.",
+        "Practice changes only after certificate value increases.",
+        "The high-expectancy group completes more rounds."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_REENTRY_CHANGED",
+      "title": "Fresh re-entry: predict expectancy-driven effort",
+      "prompt": "Two onboarding groups receive the same bonus and training time. One group sees reliable evidence that extra drills improve performance; the other is told drills rarely help. What outcome supports a cognitive expectancy account?",
+      "response_type": "single_select",
+      "options": [
+        "The low-expectancy group attempts more drills because success beliefs are irrelevant.",
+        "The high-expectancy group attempts more drills.",
+        "Both groups attempt the same number because bonus size is identical.",
+        "Only hunger differences determine drill effort despite hunger not being varied."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    }
+  ]
+}

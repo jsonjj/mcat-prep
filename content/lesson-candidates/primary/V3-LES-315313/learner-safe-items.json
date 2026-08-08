@@ -1,0 +1,658 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes, and a missed fresh re-entry returns control without exit credit.",
+  "items": [
+    {
+      "prompt_key": "LAW_ENTRY",
+      "title": "Starting check: infer an order from doubling",
+      "prompt": "At constant [B], doubling [A] from 0.10 M to 0.20 M increases the initial rate from 2.0 to 8.0 μM/s. What is the order in A?",
+      "response_type": "single_select",
+      "options": [
+        "Zero order in A",
+        "Second order in A",
+        "First order in A",
+        "Third order in A"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_GUIDED",
+      "title": "Guided practice: identify zero order",
+      "prompt": "At constant [A], [B] triples while the initial rate remains 5.0 mM/min. What is the order in B?",
+      "response_type": "single_select",
+      "options": [
+        "First order in B",
+        "Second order in B",
+        "Zero order in B",
+        "One-third order in B"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_LIGHT",
+      "title": "Less help: assemble a rate law",
+      "prompt": "A reaction is second order in A and first order in B. Which rate law matches?",
+      "response_type": "single_select",
+      "options": [
+        "rate = k[A]^2[B]",
+        "rate = k[A][B]^2",
+        "rate = k[A + B]^3",
+        "rate = k/[A]^2[B]"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_SOLO",
+      "title": "On your own: predict a combined factor",
+      "prompt": "For rate = k[A][B]^2, [A] is tripled and [B] is halved. By what factor does rate change?",
+      "response_type": "single_select",
+      "options": [
+        "It rises by a factor of 6",
+        "It falls by a factor of 6",
+        "It rises by a factor of 12",
+        "It becomes 3/4 of its original value"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_NEAR",
+      "title": "Near exit: infer two exponents",
+      "prompt": "Trials show: (1) [A]=0.10, [B]=0.10, rate=1; (2) [A]=0.20, [B]=0.10, rate=2; (3) [A]=0.20, [B]=0.20, rate=8. Which law fits?",
+      "response_type": "single_select",
+      "options": [
+        "rate = k[A]^2[B]",
+        "rate = k[A][B]^2",
+        "rate = k[A]^0[B]",
+        "rate = k[A]^2[B]^0"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_CHANGED",
+      "title": "Changed exit: derive the unit of k",
+      "prompt": "A rate law is rate = k[A][B], and rate is measured in M/s. What unit must k have?",
+      "response_type": "single_select",
+      "options": [
+        "M/s",
+        "s^-1",
+        "M^-1 s^-1",
+        "M^2 s^-1"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_REPAIR_NEAR",
+      "title": "Repair: use one-variable comparisons",
+      "prompt": "Why should initial-rate trials be compared in pairs where only one reactant concentration changes?",
+      "response_type": "single_select",
+      "options": [
+        "To isolate that reactant’s effect on rate",
+        "To make every reaction zero order",
+        "To replace measured rates with coefficients",
+        "To guarantee the rate constant equals one"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_REENTRY_NEAR",
+      "title": "Fresh re-entry: infer a new rate law",
+      "prompt": "Doubling [C] at constant [D] doubles rate. Doubling [D] at constant [C] leaves rate unchanged. Which law fits?",
+      "response_type": "single_select",
+      "options": [
+        "rate = k[C]^2[D]",
+        "rate = k[D]",
+        "rate = k[C][D]",
+        "rate = k[C]"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_REPAIR_CHANGED",
+      "title": "Repair: balance rate-law units",
+      "prompt": "For an overall order n, which relation gives the concentration exponent in the unit of k when rate has units M/s?",
+      "response_type": "single_select",
+      "options": [
+        "M^(n+1)/s",
+        "M^(1-n)/s",
+        "M^n·s",
+        "M^(n-1)·s"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LAW_REENTRY_CHANGED",
+      "title": "Fresh re-entry: apply the unit rule",
+      "prompt": "A reaction has rate = k[A]^2[B], with rate in M/s. What is the unit of k?",
+      "response_type": "single_select",
+      "options": [
+        "s^-1",
+        "M^-1 s^-1",
+        "M^-2 s^-1",
+        "M^2 s^-1"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "TMP_ENTRY",
+      "title": "Starting check: predict k from temperature",
+      "prompt": "For a reaction with fixed A and Ea, temperature increases from T1 to T2. What happens to k?",
+      "response_type": "single_select",
+      "options": [
+        "k becomes exactly zero",
+        "k decreases because T is larger",
+        "k is unchanged at every temperature",
+        "k increases as the negative exponent shrinks"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "TMP_GUIDED",
+      "title": "Guided practice: interpret the Arrhenius slope",
+      "prompt": "A plot of ln k versus 1/T has slope −7200 K. Which relation identifies Ea?",
+      "response_type": "single_select",
+      "options": [
+        "Ea = slope × R",
+        "Ea = −slope × R",
+        "Ea = intercept/R",
+        "Ea = R/slope"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "TMP_LIGHT",
+      "title": "Less help: compare temperature sensitivity",
+      "prompt": "Two reactions have the same A. Reaction X has greater Ea than Reaction Y. Which is generally more temperature-sensitive?",
+      "response_type": "single_select",
+      "options": [
+        "Neither reaction responds to temperature",
+        "Y because smaller Ea always changes more",
+        "X because larger Ea increases sensitivity",
+        "Both have identical k at every temperature"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "TMP_SOLO",
+      "title": "On your own: separate k from order",
+      "prompt": "Temperature rises while reactant concentrations remain fixed. Which change is expected under Arrhenius behavior?",
+      "response_type": "single_select",
+      "options": [
+        "k rises while reaction orders stay fixed",
+        "Every reaction order increases by one",
+        "Concentrations double automatically",
+        "The pre-exponential factor must become zero"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "TMP_NEAR",
+      "title": "Near exit: predict a controlled temperature change",
+      "prompt": "A reaction is run at two temperatures with identical starting concentrations. The higher-temperature run is faster. Which explanation best fits?",
+      "response_type": "single_select",
+      "options": [
+        "The balanced equation acquired new coefficients",
+        "Every reactant concentration became infinite",
+        "Reaction order changed only because temperature rose",
+        "Higher temperature raises k and barrier-crossing probability"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "TMP_CHANGED",
+      "title": "Changed exit: compare Arrhenius lines",
+      "prompt": "On a plot of ln k versus 1/T, line P has slope −4000 K and line Q has slope −9000 K. Which statement is supported?",
+      "response_type": "single_select",
+      "options": [
+        "P has the larger Ea and steeper magnitude",
+        "Q has larger Ea from its steeper slope magnitude",
+        "Both have Ea = 0",
+        "Slope sign means Q speeds up as 1/T rises"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "TMP_REPAIR_NEAR",
+      "title": "Repair: track the exponent sign",
+      "prompt": "When T increases in exp(−Ea/RT), what happens to the exponent if Ea is fixed?",
+      "response_type": "single_select",
+      "options": [
+        "It becomes less negative",
+        "It becomes more negative",
+        "It becomes Ea×T",
+        "It loses the negative sign by definition"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "TMP_REENTRY_NEAR",
+      "title": "Fresh re-entry: predict another heating effect",
+      "prompt": "A reaction with positive Ea is heated from 290 K to 320 K with A unchanged. Which change is expected?",
+      "response_type": "single_select",
+      "options": [
+        "The rate constant increases",
+        "The exponential factor decreases",
+        "The reaction order becomes negative",
+        "The activation energy becomes zero"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "TMP_REPAIR_CHANGED",
+      "title": "Repair: read the linearized equation",
+      "prompt": "In ln k = ln A − (Ea/R)(1/T), which plotted variables produce a straight line?",
+      "response_type": "single_select",
+      "options": [
+        "k versus T",
+        "Ea versus A",
+        "ln k versus 1/T",
+        "1/k versus ln T"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "TMP_REENTRY_CHANGED",
+      "title": "Fresh re-entry: infer Ea from steepness",
+      "prompt": "Two ln k versus 1/T lines have equal intercepts. Line M is more steeply negative than line N. Which barrier relation follows?",
+      "response_type": "single_select",
+      "options": [
+        "Ea,M < Ea,N",
+        "Ea,M = 0",
+        "Ea,N must be negative",
+        "Ea,M > Ea,N"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRG_ENTRY",
+      "title": "Starting check: identify the transition state",
+      "prompt": "On a one-step reaction-energy profile, what does the highest point along the reaction coordinate represent?",
+      "response_type": "single_select",
+      "options": [
+        "The product mixture",
+        "The equilibrium constant",
+        "The transition state",
+        "The rate law exponent"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRG_GUIDED",
+      "title": "Guided practice: calculate forward Ea",
+      "prompt": "Reactants are at 15 kJ/mol and the transition state is at 65 kJ/mol. What is the forward activation energy?",
+      "response_type": "single_select",
+      "options": [
+        "50 kJ/mol",
+        "80 kJ/mol",
+        "−50 kJ/mol",
+        "15 kJ/mol"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRG_LIGHT",
+      "title": "Less help: calculate ΔH",
+      "prompt": "Reactants lie at 40 kJ/mol and products at 10 kJ/mol. What is ΔH for the forward reaction?",
+      "response_type": "single_select",
+      "options": [
+        "+50 kJ/mol",
+        "−30 kJ/mol",
+        "+30 kJ/mol",
+        "−50 kJ/mol"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRG_SOLO",
+      "title": "On your own: classify an energy profile",
+      "prompt": "Products lie above reactants on the forward reaction-energy profile. Which statement is correct?",
+      "response_type": "single_select",
+      "options": [
+        "The forward reaction must be instantaneous",
+        "The activation energy is zero",
+        "The catalyst has changed the products",
+        "The forward reaction is endothermic"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRG_NEAR",
+      "title": "Near exit: identify the rate-determining step",
+      "prompt": "A two-step profile has E1=10, TS1=55, intermediate=30, TS2=65, products=20 kJ/mol. Which step has the larger local activation barrier?",
+      "response_type": "single_select",
+      "options": [
+        "Step 1 because 55−10 is larger than 65−30",
+        "Step 2 because TS2 is the highest absolute point",
+        "Both steps because the peaks differ by 10",
+        "Neither step because products are above reactants"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRG_CHANGED",
+      "title": "Changed exit: infer reverse activation energy",
+      "prompt": "A one-step profile has reactants at 20, transition state at 80, and products at 50 kJ/mol. What is the reverse activation energy?",
+      "response_type": "single_select",
+      "options": [
+        "30 kJ/mol",
+        "60 kJ/mol",
+        "130 kJ/mol",
+        "−30 kJ/mol"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRG_REPAIR_NEAR",
+      "title": "Repair: measure each local barrier",
+      "prompt": "For a multistep profile, from which level is a step’s activation energy measured?",
+      "response_type": "single_select",
+      "options": [
+        "From the final product to every peak",
+        "From zero energy to the tallest peak",
+        "From the preceding valley to that step’s next peak",
+        "From one peak directly to the next peak"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRG_REENTRY_NEAR",
+      "title": "Fresh re-entry: compare new local barriers",
+      "prompt": "A profile has reactants=5, TS1=45, intermediate=25, TS2=75. Which step is rate-determining by the profile?",
+      "response_type": "single_select",
+      "options": [
+        "Step 1, barrier 40",
+        "Step 2, barrier 50",
+        "Both, barrier 70",
+        "Neither, because there is an intermediate"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRG_REPAIR_CHANGED",
+      "title": "Repair: separate Ea and ΔH",
+      "prompt": "Which pair of subtractions is correct for a one-step forward profile?",
+      "response_type": "single_select",
+      "options": [
+        "Ea=products−reactants; ΔH=peak−reactants",
+        "Ea=peak−reactants; ΔH=products−reactants",
+        "Ea=peak−products; ΔH=peak−reactants",
+        "Ea=reactants−peak; ΔH=reactants−products"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "NRG_REENTRY_CHANGED",
+      "title": "Fresh re-entry: calculate both profile quantities",
+      "prompt": "Reactants are at 30, transition state at 90, and products at 15 kJ/mol. Which pair is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Ea=75 and ΔH=+15",
+        "Ea=−60 and ΔH=+15",
+        "Ea=105 and ΔH=−75",
+        "Ea=60 and ΔH=−15"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAT_ENTRY",
+      "title": "Starting check: identify a catalyst effect",
+      "prompt": "Which quantity is directly lowered by a catalyst for a given reaction pathway?",
+      "response_type": "single_select",
+      "options": [
+        "The equilibrium constant",
+        "The reaction enthalpy",
+        "The product free energy",
+        "The activation energy"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAT_GUIDED",
+      "title": "Guided practice: predict equilibrium outcome",
+      "prompt": "A catalyst is added to a reversible reaction already at equilibrium. What happens to the equilibrium composition?",
+      "response_type": "single_select",
+      "options": [
+        "It shifts completely to products",
+        "Same composition; faster forward and reverse rates",
+        "It shifts completely to reactants",
+        "It changes because K doubles"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAT_LIGHT",
+      "title": "Less help: identify the kinetic product",
+      "prompt": "Two products form from the same reactant. Product A has the lower activation barrier, while Product B has the lower final energy. Which is the kinetic product?",
+      "response_type": "single_select",
+      "options": [
+        "Neither product can form",
+        "Product B because it is more stable",
+        "Product A because its pathway is faster",
+        "Both products because barriers never matter"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAT_SOLO",
+      "title": "On your own: identify the thermodynamic product",
+      "prompt": "Product X forms over a lower barrier, but Product Y lies 25 kJ/mol lower in free energy. Which product is thermodynamically favored?",
+      "response_type": "single_select",
+      "options": [
+        "Product Y because its endpoint is more stable",
+        "Product X because it forms first",
+        "Both because barriers set stability",
+        "Neither because catalysts are absent"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAT_NEAR",
+      "title": "Near exit: evaluate catalyst claims",
+      "prompt": "A catalyst lowers forward Ea from 80 to 45 kJ/mol for R ⇌ P. Which additional change is expected at fixed temperature?",
+      "response_type": "single_select",
+      "options": [
+        "K increases because P becomes more stable",
+        "ΔH becomes more negative",
+        "Only the forward reaction becomes faster",
+        "Both barriers fall while K stays fixed"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAT_CHANGED",
+      "title": "Changed exit: predict product control",
+      "prompt": "Product K has the lower formation barrier; Product T is lower in energy. The reaction is reversible and held long enough to equilibrate. Which product is favored?",
+      "response_type": "single_select",
+      "options": [
+        "K because it always forms first",
+        "T under long reversible conditions",
+        "Both must be equal",
+        "Neither because barriers and stability are unrelated"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAT_REPAIR_NEAR",
+      "title": "Repair: separate path and endpoints",
+      "prompt": "Which statement correctly separates catalyst and thermodynamic effects?",
+      "response_type": "single_select",
+      "options": [
+        "A catalyst lowers barriers, not endpoint energies",
+        "A catalyst lowers product energy but raises reactant energy",
+        "A catalyst changes K without changing rates",
+        "A catalyst removes reversibility"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAT_REENTRY_NEAR",
+      "title": "Fresh re-entry: test a new catalyst claim",
+      "prompt": "An enzyme accelerates U ⇌ V at fixed temperature. Which quantity remains unchanged?",
+      "response_type": "single_select",
+      "options": [
+        "Time needed to approach equilibrium",
+        "The equilibrium constant K",
+        "Forward rate constant",
+        "Reverse rate constant"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAT_REPAIR_CHANGED",
+      "title": "Repair: distinguish the two product labels",
+      "prompt": "Which pairing is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Kinetic product → lowest endpoint energy; thermodynamic product → lowest barrier",
+        "Kinetic product → highest barrier; thermodynamic product → highest endpoint",
+        "Kinetic product → lower barrier; thermodynamic product → lower endpoint energy",
+        "Both labels mean the same property"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAT_REENTRY_CHANGED",
+      "title": "Fresh re-entry: apply short-time control",
+      "prompt": "Product A has a much lower barrier than Product B, but B is more stable. Products are removed before interconversion. Which product forms more initially?",
+      "response_type": "single_select",
+      "options": [
+        "Product B because stability always controls first formation",
+        "Equal amounts because interconversion is absent",
+        "No product because equilibrium is not reached",
+        "Product A forms faster under short-time trapping"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQL_ENTRY",
+      "title": "Starting check: compare Q with K",
+      "prompt": "For A ⇌ B, K = 4. Current concentrations give Q = [B]/[A] = 1. Which net direction is expected?",
+      "response_type": "single_select",
+      "options": [
+        "Forward toward B",
+        "Reverse toward A",
+        "No reaction in either direction",
+        "K must become 1"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQL_GUIDED",
+      "title": "Guided practice: add a reactant",
+      "prompt": "For X + Y ⇌ Z at equilibrium, extra X is added at fixed temperature. What is the immediate net response?",
+      "response_type": "single_select",
+      "options": [
+        "Shift left to make more X",
+        "Shift right to consume added X",
+        "K decreases to zero",
+        "Both directions stop"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQL_LIGHT",
+      "title": "Less help: remove a product",
+      "prompt": "For M ⇌ N at equilibrium, some N is removed while temperature is fixed. What happens?",
+      "response_type": "single_select",
+      "options": [
+        "Net reaction proceeds toward M",
+        "K becomes smaller",
+        "Net reaction proceeds toward N",
+        "The rate constants become zero"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQL_SOLO",
+      "title": "On your own: apply a volume change",
+      "prompt": "For 2G(g) ⇌ H(g), volume is decreased at constant temperature. Which side is favored?",
+      "response_type": "single_select",
+      "options": [
+        "The left side with two gas moles",
+        "Neither side because gases ignore pressure",
+        "K changes to match the volume",
+        "The right side with fewer gas moles"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQL_NEAR",
+      "title": "Near exit: predict an exothermic temperature shift",
+      "prompt": "For R ⇌ P + heat, the system is at equilibrium and temperature is decreased. Which direction is favored?",
+      "response_type": "single_select",
+      "options": [
+        "Toward P and heat",
+        "Toward R only",
+        "Neither because temperature never affects K",
+        "Toward the side with more gas moles regardless of heat"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQL_CHANGED",
+      "title": "Changed exit: write a mass-action expression",
+      "prompt": "For 2A(aq) + B(aq) ⇌ 3C(aq), which equilibrium expression is correct?",
+      "response_type": "single_select",
+      "options": [
+        "K = [A]^2[B]/[C]^3",
+        "K = [C]/([A]+[B])",
+        "K = [C]^3/([A]^2[B])",
+        "K = 3[C]/(2[A]+[B])"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQL_REPAIR_NEAR",
+      "title": "Repair: use the Q–K direction rule",
+      "prompt": "Which direction rule is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Q<K → forward; Q>K → reverse",
+        "Q<K → reverse; Q>K → forward",
+        "Q always equals zero",
+        "K changes until it equals Q"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQL_REENTRY_NEAR",
+      "title": "Fresh re-entry: apply a new Q–K comparison",
+      "prompt": "For U ⇌ V, K = 0.50 and the current Q = 2.0. What is the net direction?",
+      "response_type": "single_select",
+      "options": [
+        "Forward toward V",
+        "Reverse toward U",
+        "No net direction because Q is positive",
+        "K rises to 2.0"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQL_REPAIR_CHANGED",
+      "title": "Repair: distinguish shift from speed",
+      "prompt": "What does adding a catalyst do to a system not yet at equilibrium?",
+      "response_type": "single_select",
+      "options": [
+        "Changes K to favor products",
+        "Changes ΔG° to favor reactants",
+        "Faster approach to the same equilibrium",
+        "Eliminates the reverse reaction"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQL_REENTRY_CHANGED",
+      "title": "Fresh re-entry: test a pressure non-effect",
+      "prompt": "For G(g) ⇌ H(g), both sides contain one gas mole. At fixed temperature, volume is decreased. What shift follows from gas-mole count alone?",
+      "response_type": "single_select",
+      "options": [
+        "A complete shift toward G",
+        "A complete shift toward H",
+        "K becomes zero",
+        "No shift from equal gas-mole counts"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    }
+  ]
+}

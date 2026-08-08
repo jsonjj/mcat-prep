@@ -1,0 +1,251 @@
+{
+  "artifact_type": "SOURCE_CLAIM_LEDGER",
+  "artifact_id": "V3-SCLD-137490",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT_TRACE_ONLY",
+  "canonical_lesson_binding": {
+    "lesson_id": "V3-LES-137490",
+    "grouping_id": "V3-CL-137490",
+    "ordered_kc_ids": [
+      "V3-KC-792562",
+      "V3-KC-022516",
+      "V3-KC-201342",
+      "V3-KC-090946"
+    ]
+  },
+  "authority_boundary": {
+    "source_ids": [
+      "AAMC-2020"
+    ],
+    "source_classes": [
+      "PUBLIC_PRIMARY_RESEARCH"
+    ],
+    "source_anchor_ids": [
+      "BB-SA-0019"
+    ],
+    "present_day_authority_refreshed": false,
+    "source_use_status": "PERMITTED_FOR_BOUNDED_INTERNAL_AUTHORING",
+    "human_rights_clearance_claimed": false,
+    "learner_validation_claimed": false
+  },
+  "source_trace_governance": {
+    "packet_sha256": "a287048cf04b79ff2d5f4fb3480554e536b27f643d5b31a77c2447d3c17f3e0b",
+    "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+    "permitted_use": [
+      "DERIVED_SCOPE_METADATA",
+      "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+      "INTERNAL_HUMAN_REVIEW"
+    ],
+    "prohibited_use": [
+      "RAW_SOURCE_TEXT",
+      "QUOTATION",
+      "PASSAGE_REPRODUCTION",
+      "FIGURE_REPRODUCTION",
+      "PROPRIETARY_ITEM_REUSE",
+      "PRIVATE_COMPARISON_CONTENT"
+    ],
+    "expressive_copy_flag": false
+  },
+  "source_records": [
+    {
+      "source_record_id": "137490-V3-SRC-100023",
+      "source_occurrence_id": "V3-SRC-100023",
+      "occurrence_kind": "AAMC_TEACHABLE_TOPIC",
+      "source_id": "AAMC-2020",
+      "source_class": "PUBLIC_PRIMARY_RESEARCH",
+      "official_topic": "Meiosis and Other Factors Affecting Genetic Variability (BIO)",
+      "printed_pages": [
+        31
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0019"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "137490-V3-SRC-200019",
+      "source_occurrence_id": "V3-SRC-200019",
+      "occurrence_kind": "AAMC_SOURCE_ANCHOR",
+      "source_id": "AAMC-2020",
+      "source_class": "PUBLIC_PRIMARY_RESEARCH",
+      "official_topic": null,
+      "printed_pages": [
+        30,
+        31,
+        32
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0019"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    }
+  ],
+  "source_claims": [
+    {
+      "claim_id": "MEI-CLAIM-SCOPE",
+      "target_kc_id": "V3-KC-792562",
+      "authorial_claim": "The learner can distinguish meiosis from mitosis by chromosome outcome, trace homolog and allele segregation, explain maintenance of chromosome number across sexual generations, and predict independent assortment without relying on phase-label memorization.",
+      "scope_in_refs": [
+        "V3-KC-792562:SCOPE_IN:0",
+        "V3-KC-792562:SCOPE_IN:1",
+        "V3-KC-792562:SCOPE_IN:2",
+        "V3-KC-792562:SCOPE_IN:3"
+      ],
+      "scope_out_refs": [
+        "V3-KC-792562:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0019"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100023",
+        "V3-SRC-200019"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600199",
+        "V3-MAP-600480"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "REC-CLAIM-SCOPE",
+      "target_kc_id": "V3-KC-022516",
+      "authorial_claim": "The learner can explain synapsis, tetrad formation, and the synaptonemal complex at introductory depth; distinguish linkage from independent assortment; and predict parental or recombinant combinations after single or double crossover patterns without advanced molecular detail.",
+      "scope_in_refs": [
+        "V3-KC-022516:SCOPE_IN:0",
+        "V3-KC-022516:SCOPE_IN:1",
+        "V3-KC-022516:SCOPE_IN:2",
+        "V3-KC-022516:SCOPE_IN:3",
+        "V3-KC-022516:SCOPE_IN:4",
+        "V3-KC-022516:SCOPE_IN:5"
+      ],
+      "scope_out_refs": [
+        "V3-KC-022516:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0019"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100023",
+        "V3-SRC-200019"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600200",
+        "V3-MAP-601507"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "INH-CLAIM-SCOPE",
+      "target_kc_id": "V3-KC-201342",
+      "authorial_claim": "The learner can predict introductory inheritance patterns from sex-linked chromosome location, limited Y-chromosome transmission, chromosomal sex determination, and cytoplasmic or extranuclear inheritance without relying on a catalog of clinical pedigrees.",
+      "scope_in_refs": [
+        "V3-KC-201342:SCOPE_IN:0",
+        "V3-KC-201342:SCOPE_IN:1",
+        "V3-KC-201342:SCOPE_IN:2",
+        "V3-KC-201342:SCOPE_IN:3"
+      ],
+      "scope_out_refs": [
+        "V3-KC-201342:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0019"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100023",
+        "V3-SRC-200019"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600201",
+        "V3-MAP-600669"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "MUT-CLAIM-SCOPE",
+      "target_kc_id": "V3-KC-090946",
+      "authorial_claim": "The learner can distinguish DNA mutation from transient transcription or translation error; classify substitution, addition, deletion, inversion, translocation, and mispairing sources; and predict advantageous, deleterious, metabolic, or carcinogenic consequences in context without creating one KC per mutation or a clinical catalog.",
+      "scope_in_refs": [
+        "V3-KC-090946:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-090946:SCOPE_OUT:0",
+        "V3-KC-090946:SCOPE_OUT:1"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0019"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100023",
+        "V3-SRC-200019"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600202",
+        "V3-MAP-600277"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    }
+  ],
+  "canonical_context": {
+    "placements": {
+      "phase_ids": [
+        "V3-PHS-935127",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-374829",
+        "V3-MOD-907235"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 58,
+          "relation_ids": [
+            "R14-PL-581402-058"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 58,
+          "relation_ids": [
+            "R14-PL-904137-058"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-236815",
+          "position": 21,
+          "relation_ids": [
+            "R14-PL-236815-021"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-137490",
+      "revisit_relation_ids": [
+        "R14-RV-137490"
+      ]
+    },
+    "hard_prerequisites": [],
+    "attachment_relation_ids": [],
+    "route_scope_code": "STANDARD_ONLY"
+  },
+  "lineage_and_limits": {
+    "open_hold_ids": [
+      "V3-HOLD-110001",
+      "V3-HOLD-110003",
+      "V3-HOLD-110005",
+      "V3-HOLD-110008",
+      "V3-HOLD-110009"
+    ],
+    "nonclaims": [
+      "No present-day AAMC authority refresh or current endorsement is claimed.",
+      "The lesson boundary, transfer, remediation, and sequence are not learner-validated.",
+      "Hard-edge necessity, representation readiness, and sequence remain provisional.",
+      "Knowledge-type assignments are canonical but not human-ratified or learner-validated.",
+      "No adaptive bypass or numeric threshold is calibrated or authorized."
+    ]
+  }
+}

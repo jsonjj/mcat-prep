@@ -1,0 +1,306 @@
+{
+  "artifact_type": "SOURCE_CLAIM_LEDGER",
+  "artifact_id": "V3-SCLD-338400",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT_TRACE_ONLY",
+  "canonical_lesson_binding": {
+    "lesson_id": "V3-LES-338400",
+    "grouping_id": "V3-CL-338400",
+    "ordered_kc_ids": [
+      "V3-KC-273349",
+      "V3-KC-803469",
+      "V3-KC-554697",
+      "V3-KC-076684"
+    ]
+  },
+  "authority_boundary": {
+    "source_ids": [
+      "AAMC-2020",
+      "AAMC-2020-MCAT-CONTENT"
+    ],
+    "source_classes": [
+      "PUBLIC_PRIMARY_RESEARCH"
+    ],
+    "source_anchor_ids": [
+      "CP-SA-013"
+    ],
+    "present_day_authority_refreshed": false,
+    "source_use_status": "PERMITTED_FOR_BOUNDED_INTERNAL_AUTHORING",
+    "human_rights_clearance_claimed": false,
+    "learner_validation_claimed": false
+  },
+  "source_trace_governance": {
+    "packet_path": "content/lesson-factory/packets/V3-LES-338400/task-source-packet.json",
+    "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+    "permitted_use": [
+      "DERIVED_SCOPE_METADATA",
+      "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+      "INTERNAL_HUMAN_REVIEW"
+    ],
+    "prohibited_use": [
+      "RAW_SOURCE_TEXT",
+      "QUOTATION",
+      "PASSAGE_REPRODUCTION",
+      "FIGURE_REPRODUCTION",
+      "PROPRIETARY_ITEM_REUSE",
+      "PRIVATE_COMPARISON_CONTENT"
+    ],
+    "expressive_copy_flag": false
+  },
+  "source_records": [
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100077",
+      "source_occurrence_id": "V3-SRC-100077",
+      "source_id": "AAMC-2020",
+      "official_topic": "Energy of Point Object Systems",
+      "printed_pages": [
+        59
+      ],
+      "source_anchor_ids": [
+        "CP-SA-013"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-200062",
+      "source_occurrence_id": "V3-SRC-200062",
+      "source_id": "AAMC-2020-MCAT-CONTENT",
+      "official_topic": null,
+      "printed_pages": [
+        58,
+        59
+      ],
+      "source_anchor_ids": [
+        "CP-SA-013"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100076",
+      "source_occurrence_id": "V3-SRC-100076",
+      "source_id": "AAMC-2020",
+      "official_topic": "Work",
+      "printed_pages": [
+        59
+      ],
+      "source_anchor_ids": [
+        "CP-SA-013"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    }
+  ],
+  "source_claims": [
+    {
+      "claim_id": "WORK-CLAIM",
+      "target_kc_id": "V3-KC-273349",
+      "authorial_claim": "A learner may calculate signed constant-force work from the component parallel to displacement using W = Fd cosθ and basic trigonometric values.",
+      "scope_in_refs": [
+        "V3-KC-273349:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-273349:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-013"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100077",
+        "V3-SRC-200062",
+        "V3-SRC-100076"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600233",
+        "V3-MAP-601157",
+        "V3-MAP-601568"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "WKET-CLAIM",
+      "target_kc_id": "V3-KC-803469",
+      "authorial_claim": "A learner may use net work equal to change in kinetic energy and distinguish conservative work from nonconservative changes in mechanical energy.",
+      "scope_in_refs": [
+        "V3-KC-803469:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-803469:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-013"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100076",
+        "V3-SRC-100077",
+        "V3-SRC-200062"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600141",
+        "V3-MAP-600234",
+        "V3-MAP-601569"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "MENG-CLAIM",
+      "target_kc_id": "V3-KC-554697",
+      "authorial_claim": "A learner may use kinetic, local gravitational, and spring potential energy with conservation or stated nonconservative work to relate mechanical states.",
+      "scope_in_refs": [
+        "V3-KC-554697:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-554697:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-013"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100077",
+        "V3-SRC-200062",
+        "V3-SRC-100076"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600235",
+        "V3-MAP-601473",
+        "V3-MAP-601570"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "POWR-CLAIM",
+      "target_kc_id": "V3-KC-076684",
+      "authorial_claim": "A learner may calculate average power and reason about ideal or efficient machines as force-distance and work-time tradeoffs rather than sources of free energy.",
+      "scope_in_refs": [
+        "V3-KC-076684:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-076684:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-013"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100076",
+        "V3-SRC-100077",
+        "V3-SRC-200062"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600024",
+        "V3-MAP-600236",
+        "V3-MAP-601571"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    }
+  ],
+  "canonical_context": {
+    "placements": {
+      "phase_ids": [
+        "V3-PHS-714203",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-451762",
+        "V3-MOD-273816"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 15,
+          "relation_ids": [
+            "R14-PL-581402-015"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 15,
+          "relation_ids": [
+            "R14-PL-904137-015"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-749320",
+          "position": 15,
+          "relation_ids": [
+            "R14-PL-749320-015"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-338400",
+      "revisit_relation_ids": [
+        "R14-RV-338400"
+      ]
+    },
+    "hard_prerequisites": [
+      {
+        "lesson_id": "V3-LES-130923",
+        "relation_ids": [
+          "V3-EDG-139699",
+          "R14-SM-005"
+        ],
+        "source_kc_ids": [
+          "V3-KC-866848",
+          "V3-KC-700208",
+          "V3-KC-159529"
+        ],
+        "taught_at_sequence_position": 1
+      }
+    ],
+    "helpful_context": [],
+    "required_attachments": [
+      {
+        "attachment_id": "V3-CAP-412981",
+        "kind": "CAPSTONE",
+        "owner_lesson_id": "V3-LES-811780",
+        "host_scope": {
+          "kind": "SECONDARY_APPLICATION",
+          "primary_lesson_id": "V3-LES-811780"
+        },
+        "declared_host_core_ids": [
+          "V3-KC-825303",
+          "V3-KC-953167",
+          "V3-KC-495929",
+          "V3-KC-367203",
+          "V3-KC-062182",
+          "V3-KC-667695",
+          "V3-KC-556659",
+          "V3-KC-181279",
+          "V3-KC-273349",
+          "V3-KC-803469",
+          "V3-KC-554697",
+          "V3-KC-076684"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": false,
+        "relation_ids": [
+          "R14-CAP-412981"
+        ],
+        "relation_class": "CAPSTONE_PLACEMENT",
+        "relation_direction": "LESSON_TO_ATTACHMENT",
+        "required_delivery": true
+      }
+    ],
+    "route_scope_code": "STANDARD_ONLY"
+  },
+  "lineage_and_limits": {
+    "open_hold_ids": [
+      "V3-HOLD-110001",
+      "V3-HOLD-110003",
+      "V3-HOLD-110005",
+      "V3-HOLD-110008",
+      "V3-HOLD-110009"
+    ],
+    "nonclaims": [
+      "NO_PRESENT_DAY_AUTHORITY_REFRESH",
+      "NO_LEARNER_VALIDATION",
+      "NO_EFFICACY",
+      "NO_MASTERY_CALIBRATION",
+      "NO_READINESS_VALIDATION",
+      "NO_PRODUCTION_PUBLICATION"
+    ]
+  }
+}

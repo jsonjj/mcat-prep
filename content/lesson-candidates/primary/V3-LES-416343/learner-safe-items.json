@@ -1,0 +1,528 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears.",
+  "items": [
+    {
+      "prompt_key": "FMM_ITEM_ENTRY",
+      "title": "Fluid mosaic: Starting check",
+      "prompt": "Which component most directly creates the self-sealing hydrophobic core between aqueous compartments?",
+      "response_type": "single_select",
+      "options": [
+        "Phospholipid bilayer: amphipathic core provides containment",
+        "Membrane protein: selective route or signaling machinery",
+        "Cholesterol steroid: buffers membrane packing and fluidity",
+        "Wax lipid coating: protects water-exposed external surface"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "FMM_ITEM_GUIDED",
+      "title": "Fluid mosaic: Choose with support",
+      "prompt": "A membrane loses one selective glucose route while its lipid boundary remains intact. Which component is most directly disrupted?",
+      "response_type": "single_select",
+      "options": [
+        "Phospholipid bilayer: amphipathic core provides containment",
+        "Membrane protein: selective route or signaling machinery",
+        "Wax lipid coating: protects water-exposed external surface",
+        "Cholesterol steroid: buffers membrane packing and fluidity"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "FMM_ITEM_LIGHT",
+      "title": "Fluid mosaic: Choose with less support",
+      "prompt": "Which component can move within a mixed membrane assembly and also provide a specialized receptor or channel function?",
+      "response_type": "single_select",
+      "options": [
+        "Wax lipid coating: protects water-exposed external surface",
+        "Phospholipid bilayer: amphipathic core provides containment",
+        "Membrane protein: selective route or signaling machinery",
+        "Cholesterol steroid: buffers membrane packing and fluidity"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "FMM_ITEM_SOLO",
+      "title": "Fluid mosaic: Choose independently",
+      "prompt": "A plant surface needs a water-resistant external coating rather than a route through the plasma membrane. Which role fits?",
+      "response_type": "single_select",
+      "options": [
+        "Cholesterol steroid: buffers membrane packing and fluidity",
+        "Phospholipid bilayer: amphipathic core provides containment",
+        "Membrane protein: selective route or signaling machinery",
+        "Wax lipid coating: protects water-exposed external surface"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "FMM_ITEM_NEAR",
+      "title": "Fluid mosaic: Near-use check",
+      "prompt": "A charged metabolite remains separated unless a carrier is present. Which component explains the baseline barrier?",
+      "response_type": "single_select",
+      "options": [
+        "Phospholipid bilayer: amphipathic core provides containment",
+        "Cholesterol steroid: buffers membrane packing and fluidity",
+        "Wax lipid coating: protects water-exposed external surface",
+        "Membrane protein: selective route or signaling machinery"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "FMM_ITEM_CHANGED",
+      "title": "Fluid mosaic: Changed-task check",
+      "prompt": "At low temperature, a membrane has much less of one steroid component and phospholipids pack more tightly. Which component was reduced?",
+      "response_type": "single_select",
+      "options": [
+        "Wax lipid coating: protects water-exposed external surface",
+        "Cholesterol steroid: buffers membrane packing and fluidity",
+        "Phospholipid bilayer: amphipathic core provides containment",
+        "Membrane protein: selective route or signaling machinery"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "FMM_ITEM_REPAIR_NEAR",
+      "title": "Fluid mosaic: Repair the near-use function",
+      "prompt": "To repair a containment prediction, which component should be traced from water-facing heads through inward tails to a nonpolar core?",
+      "response_type": "single_select",
+      "options": [
+        "Membrane protein: selective route or signaling machinery",
+        "Wax lipid coating: protects water-exposed external surface",
+        "Phospholipid bilayer: amphipathic core provides containment",
+        "Cholesterol steroid: buffers membrane packing and fluidity"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "FMM_ITEM_REENTRY_NEAR",
+      "title": "Fluid mosaic: Fresh near-use re-entry",
+      "prompt": "A new ion remains on one side of an intact membrane until an ionophore is added. Which component explains the original separation?",
+      "response_type": "single_select",
+      "options": [
+        "Membrane protein: selective route or signaling machinery",
+        "Cholesterol steroid: buffers membrane packing and fluidity",
+        "Wax lipid coating: protects water-exposed external surface",
+        "Phospholipid bilayer: amphipathic core provides containment"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "FMM_ITEM_REPAIR_CHANGED",
+      "title": "Fluid mosaic: Repair the changed-task function",
+      "prompt": "To repair a fluidity prediction, which component should be treated as a packing modifier rather than the main boundary?",
+      "response_type": "single_select",
+      "options": [
+        "Cholesterol steroid: buffers membrane packing and fluidity",
+        "Membrane protein: selective route or signaling machinery",
+        "Phospholipid bilayer: amphipathic core provides containment",
+        "Wax lipid coating: protects water-exposed external surface"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "FMM_ITEM_REENTRY_CHANGED",
+      "title": "Fluid mosaic: Fresh changed-task re-entry",
+      "prompt": "At a moderately higher temperature, which component can constrain phospholipid motion and buffer excessive fluidity?",
+      "response_type": "single_select",
+      "options": [
+        "Phospholipid bilayer: amphipathic core provides containment",
+        "Cholesterol steroid: buffers membrane packing and fluidity",
+        "Membrane protein: selective route or signaling machinery",
+        "Wax lipid coating: protects water-exposed external surface"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "OSM_ITEM_ENTRY",
+      "title": "Passive transport: Starting check",
+      "prompt": "A small nonpolar solute crosses directly from high concentration to low concentration. Which process fits?",
+      "response_type": "single_select",
+      "options": [
+        "Facilitated diffusion: protein carries solute down gradient",
+        "Osmosis: water moves toward nonpenetrating solute particles",
+        "Simple diffusion: permeant solute moves down its gradient",
+        "Active transport: energy moves solute against its gradient"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "OSM_ITEM_GUIDED",
+      "title": "Passive transport: Choose with support",
+      "prompt": "A polar solute moves from high to low concentration only when a carrier is present, with no direct energy input. Which process fits?",
+      "response_type": "single_select",
+      "options": [
+        "Active transport: energy moves solute against its gradient",
+        "Simple diffusion: permeant solute moves down its gradient",
+        "Osmosis: water moves toward nonpenetrating solute particles",
+        "Facilitated diffusion: protein carries solute down gradient"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "OSM_ITEM_LIGHT",
+      "title": "Passive transport: Choose with less support",
+      "prompt": "Two chambers contain equal volumes, but only the right side has more nonpenetrating solute. Which process predicts net water movement rightward?",
+      "response_type": "single_select",
+      "options": [
+        "Osmosis: water moves toward nonpenetrating solute particles",
+        "Simple diffusion: permeant solute moves down its gradient",
+        "Facilitated diffusion: protein carries solute down gradient",
+        "Active transport: energy moves solute against its gradient"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "OSM_ITEM_SOLO",
+      "title": "Passive transport: Choose independently",
+      "prompt": "A solute moves through a channel from high electrochemical potential to low electrochemical potential. Which process class fits?",
+      "response_type": "single_select",
+      "options": [
+        "Osmosis: water moves toward nonpenetrating solute particles",
+        "Facilitated diffusion: protein carries solute down gradient",
+        "Active transport: energy moves solute against its gradient",
+        "Simple diffusion: permeant solute moves down its gradient"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "OSM_ITEM_NEAR",
+      "title": "Passive transport: Near-use check",
+      "prompt": "A membrane is permeable to water but not sucrose; the left side has more sucrose particles. What process drives water leftward?",
+      "response_type": "single_select",
+      "options": [
+        "Facilitated diffusion: protein carries solute down gradient",
+        "Active transport: energy moves solute against its gradient",
+        "Osmosis: water moves toward nonpenetrating solute particles",
+        "Simple diffusion: permeant solute moves down its gradient"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "OSM_ITEM_CHANGED",
+      "title": "Passive transport: Changed-task check",
+      "prompt": "At the same temperature, solution B has twice as many nonpenetrating solute particles per liter as solution A. Which process underlies B’s greater osmotic pressure?",
+      "response_type": "single_select",
+      "options": [
+        "Active transport: energy moves solute against its gradient",
+        "Simple diffusion: permeant solute moves down its gradient",
+        "Facilitated diffusion: protein carries solute down gradient",
+        "Osmosis: water moves toward nonpenetrating solute particles"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "OSM_ITEM_REPAIR_NEAR",
+      "title": "Passive transport: Repair the near-use function",
+      "prompt": "To repair an osmosis prediction, which process requires identifying water permeability and nonpenetrating solute on each side?",
+      "response_type": "single_select",
+      "options": [
+        "Osmosis: water moves toward nonpenetrating solute particles",
+        "Simple diffusion: permeant solute moves down its gradient",
+        "Facilitated diffusion: protein carries solute down gradient",
+        "Active transport: energy moves solute against its gradient"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "OSM_ITEM_REENTRY_NEAR",
+      "title": "Passive transport: Fresh near-use re-entry",
+      "prompt": "A membrane passes water but not a dissolved polymer; the polymer is more concentrated outside. Which process drives water outward?",
+      "response_type": "single_select",
+      "options": [
+        "Facilitated diffusion: protein carries solute down gradient",
+        "Osmosis: water moves toward nonpenetrating solute particles",
+        "Simple diffusion: permeant solute moves down its gradient",
+        "Active transport: energy moves solute against its gradient"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "OSM_ITEM_REPAIR_CHANGED",
+      "title": "Passive transport: Repair the changed-task function",
+      "prompt": "To repair an osmotic-pressure comparison, which process should be linked to the number of effective solute particles rather than their chemical identity?",
+      "response_type": "single_select",
+      "options": [
+        "Active transport: energy moves solute against its gradient",
+        "Facilitated diffusion: protein carries solute down gradient",
+        "Osmosis: water moves toward nonpenetrating solute particles",
+        "Simple diffusion: permeant solute moves down its gradient"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "OSM_ITEM_REENTRY_CHANGED",
+      "title": "Passive transport: Fresh changed-task re-entry",
+      "prompt": "Equal-temperature solutions contain different nonpenetrating solutes but the same particle concentration. Which process predicts equal ideal osmotic pressure?",
+      "response_type": "single_select",
+      "options": [
+        "Simple diffusion: permeant solute moves down its gradient",
+        "Active transport: energy moves solute against its gradient",
+        "Facilitated diffusion: protein carries solute down gradient",
+        "Osmosis: water moves toward nonpenetrating solute particles"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "ACT_ITEM_ENTRY",
+      "title": "Active transport: Starting check",
+      "prompt": "Which mechanism can move an ion against its electrochemical gradient by coupling movement to energy use?",
+      "response_type": "single_select",
+      "options": [
+        "Energy-driven pump: maintains an ion gradient across membrane",
+        "Selective ion channel: permits downhill electrochemical flow",
+        "Depolarization: membrane interior shifts toward less negative",
+        "Hyperpolarization: membrane interior shifts more negative"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "ACT_ITEM_GUIDED",
+      "title": "Active transport: Choose with support",
+      "prompt": "A potassium-selective channel opens while potassium’s net electrochemical drive is outward. Which mechanism occurs first?",
+      "response_type": "single_select",
+      "options": [
+        "Energy-driven pump: maintains an ion gradient across membrane",
+        "Selective ion channel: permits downhill electrochemical flow",
+        "Depolarization: membrane interior shifts toward less negative",
+        "Hyperpolarization: membrane interior shifts more negative"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "ACT_ITEM_LIGHT",
+      "title": "Active transport: Choose with less support",
+      "prompt": "Positive sodium enters through an opened channel, making the interior less negative. Which voltage change is described?",
+      "response_type": "single_select",
+      "options": [
+        "Energy-driven pump: maintains an ion gradient across membrane",
+        "Selective ion channel: permits downhill electrochemical flow",
+        "Depolarization: membrane interior shifts toward less negative",
+        "Hyperpolarization: membrane interior shifts more negative"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "ACT_ITEM_SOLO",
+      "title": "Active transport: Choose independently",
+      "prompt": "Positive potassium leaves a cell and the interior becomes more negative. Which voltage change is described?",
+      "response_type": "single_select",
+      "options": [
+        "Energy-driven pump: maintains an ion gradient across membrane",
+        "Depolarization: membrane interior shifts toward less negative",
+        "Selective ion channel: permits downhill electrochemical flow",
+        "Hyperpolarization: membrane interior shifts more negative"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "ACT_ITEM_NEAR",
+      "title": "Active transport: Near-use check",
+      "prompt": "A transporter hydrolyzes ATP to export sodium where sodium is already more concentrated. Which mechanism fits?",
+      "response_type": "single_select",
+      "options": [
+        "Energy-driven pump: maintains an ion gradient across membrane",
+        "Selective ion channel: permits downhill electrochemical flow",
+        "Depolarization: membrane interior shifts toward less negative",
+        "Hyperpolarization: membrane interior shifts more negative"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "ACT_ITEM_CHANGED",
+      "title": "Active transport: Changed-task check",
+      "prompt": "Opening a sodium-selective channel produces net sodium entry and shifts the interior from −70 mV toward −55 mV. Which voltage change follows?",
+      "response_type": "single_select",
+      "options": [
+        "Energy-driven pump: maintains an ion gradient across membrane",
+        "Depolarization: membrane interior shifts toward less negative",
+        "Selective ion channel: permits downhill electrochemical flow",
+        "Hyperpolarization: membrane interior shifts more negative"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "ACT_ITEM_REPAIR_NEAR",
+      "title": "Active transport: Repair the near-use function",
+      "prompt": "To repair active-versus-passive classification, which mechanism is identified by direct energy use and uphill movement?",
+      "response_type": "single_select",
+      "options": [
+        "Hyperpolarization: membrane interior shifts more negative",
+        "Selective ion channel: permits downhill electrochemical flow",
+        "Energy-driven pump: maintains an ion gradient across membrane",
+        "Depolarization: membrane interior shifts toward less negative"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "ACT_ITEM_REENTRY_NEAR",
+      "title": "Active transport: Fresh near-use re-entry",
+      "prompt": "A fresh transporter uses ATP to import calcium despite a net outward electrochemical drive. Which mechanism fits?",
+      "response_type": "single_select",
+      "options": [
+        "Selective ion channel: permits downhill electrochemical flow",
+        "Hyperpolarization: membrane interior shifts more negative",
+        "Depolarization: membrane interior shifts toward less negative",
+        "Energy-driven pump: maintains an ion gradient across membrane"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "ACT_ITEM_REPAIR_CHANGED",
+      "title": "Active transport: Repair the changed-task function",
+      "prompt": "To repair a voltage prediction, which result follows when net positive charge enters the cell?",
+      "response_type": "single_select",
+      "options": [
+        "Depolarization: membrane interior shifts toward less negative",
+        "Energy-driven pump: maintains an ion gradient across membrane",
+        "Selective ion channel: permits downhill electrochemical flow",
+        "Hyperpolarization: membrane interior shifts more negative"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "ACT_ITEM_REENTRY_CHANGED",
+      "title": "Active transport: Fresh changed-task re-entry",
+      "prompt": "A chloride-selective channel opens and net negative charge enters, making the interior more negative. Which result follows?",
+      "response_type": "single_select",
+      "options": [
+        "Selective ion channel: permits downhill electrochemical flow",
+        "Hyperpolarization: membrane interior shifts more negative",
+        "Depolarization: membrane interior shifts toward less negative",
+        "Energy-driven pump: maintains an ion gradient across membrane"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "COM_ITEM_ENTRY",
+      "title": "Cell coordination: Starting check",
+      "prompt": "Adjacent cells need direct passage of small ions for rapid coordination. Which structure best fits?",
+      "response_type": "single_select",
+      "options": [
+        "Tight junction: limits solute passage between nearby cells",
+        "Desmosome: resists mechanical separation of adjacent cells",
+        "Gap junction: passes small ions or molecules between cells",
+        "Membrane receptor: detects signal and initiates a response"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "COM_ITEM_GUIDED",
+      "title": "Cell coordination: Choose with support",
+      "prompt": "An epithelial sheet must reduce movement of solutes through the space between neighboring cells. Which structure fits?",
+      "response_type": "single_select",
+      "options": [
+        "Gap junction: passes small ions or molecules between cells",
+        "Desmosome: resists mechanical separation of adjacent cells",
+        "Vesicle traffic: moves cargo inward or releases it outward",
+        "Tight junction: limits solute passage between nearby cells"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "COM_ITEM_LIGHT",
+      "title": "Cell coordination: Choose with less support",
+      "prompt": "Cells in a stretched tissue need strong spot-like attachments that resist mechanical separation. Which structure fits?",
+      "response_type": "single_select",
+      "options": [
+        "Desmosome: resists mechanical separation of adjacent cells",
+        "Membrane receptor: detects signal and initiates a response",
+        "Tight junction: limits solute passage between nearby cells",
+        "Gap junction: passes small ions or molecules between cells"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "COM_ITEM_SOLO",
+      "title": "Cell coordination: Choose independently",
+      "prompt": "A secretory cell releases a packaged protein when an internal vesicle fuses with the plasma membrane. Which process fits?",
+      "response_type": "single_select",
+      "options": [
+        "Membrane receptor: detects signal and initiates a response",
+        "Vesicle traffic: moves cargo inward or releases it outward",
+        "Gap junction: passes small ions or molecules between cells",
+        "Tight junction: limits solute passage between nearby cells"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "COM_ITEM_NEAR",
+      "title": "Cell coordination: Near-use check",
+      "prompt": "An extracellular ligand binds a surface protein and triggers an intracellular response without entering the cell. Which structure fits?",
+      "response_type": "single_select",
+      "options": [
+        "Vesicle traffic: moves cargo inward or releases it outward",
+        "Gap junction: passes small ions or molecules between cells",
+        "Membrane receptor: detects signal and initiates a response",
+        "Desmosome: resists mechanical separation of adjacent cells"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "COM_ITEM_CHANGED",
+      "title": "Cell coordination: Changed-task check",
+      "prompt": "A polarized epithelium loses its seal, allowing solute to leak between cells while cell membranes remain intact. Which structure failed?",
+      "response_type": "single_select",
+      "options": [
+        "Gap junction: passes small ions or molecules between cells",
+        "Vesicle traffic: moves cargo inward or releases it outward",
+        "Desmosome: resists mechanical separation of adjacent cells",
+        "Tight junction: limits solute passage between nearby cells"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "COM_ITEM_REPAIR_NEAR",
+      "title": "Cell coordination: Repair the near-use function",
+      "prompt": "To repair a signal-detection item, which structure should be traced from extracellular ligand binding to intracellular response?",
+      "response_type": "single_select",
+      "options": [
+        "Membrane receptor: detects signal and initiates a response",
+        "Gap junction: passes small ions or molecules between cells",
+        "Tight junction: limits solute passage between nearby cells",
+        "Vesicle traffic: moves cargo inward or releases it outward"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "COM_ITEM_REENTRY_NEAR",
+      "title": "Cell coordination: Fresh near-use re-entry",
+      "prompt": "A fresh peptide signal cannot cross the bilayer but changes cell activity after binding a surface protein. Which structure fits?",
+      "response_type": "single_select",
+      "options": [
+        "Vesicle traffic: moves cargo inward or releases it outward",
+        "Membrane receptor: detects signal and initiates a response",
+        "Desmosome: resists mechanical separation of adjacent cells",
+        "Gap junction: passes small ions or molecules between cells"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "COM_ITEM_REPAIR_CHANGED",
+      "title": "Cell coordination: Repair the changed-task function",
+      "prompt": "To repair a junction item, which structure should be selected when the failed function is sealing the route between cells?",
+      "response_type": "single_select",
+      "options": [
+        "Desmosome: resists mechanical separation of adjacent cells",
+        "Gap junction: passes small ions or molecules between cells",
+        "Tight junction: limits solute passage between nearby cells",
+        "Vesicle traffic: moves cargo inward or releases it outward"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "COM_ITEM_REENTRY_CHANGED",
+      "title": "Cell coordination: Fresh changed-task re-entry",
+      "prompt": "A tissue retains its paracellular seal but neighboring cells detach under repeated pulling. Which structure most directly failed?",
+      "response_type": "single_select",
+      "options": [
+        "Membrane receptor: detects signal and initiates a response",
+        "Tight junction: limits solute passage between nearby cells",
+        "Gap junction: passes small ions or molecules between cells",
+        "Desmosome: resists mechanical separation of adjacent cells"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    }
+  ]
+}

@@ -1,0 +1,398 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Omission is available and is not scored as a selected misconception.",
+  "items": [
+    {
+      "prompt_key": "LDT_ENTRY",
+      "title": "Starting check: reinforcement evidence",
+      "prompt": "A toddler begins using a requested word more often after caregivers consistently praise that word use. Which account is most directly supported?",
+      "response_type": "single_select",
+      "options": [
+        "Learning account emphasizing reinforcement",
+        "Nativist account emphasizing innate syntax",
+        "Interactionist account requiring reciprocal scaffolding",
+        "Brain-localization account emphasizing speech cortex"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LDT_GUIDED",
+      "title": "Guided practice: novel rule use",
+      "prompt": "Children reliably apply a grammatical pattern to unfamiliar words despite receiving little direct correction. Which account is most directly supported?",
+      "response_type": "single_select",
+      "options": [
+        "Learning account based only on rewarded repetitions",
+        "Nativist account emphasizing prepared rule learning",
+        "Interactionist account based only on caregiver turn-taking",
+        "Motor account based on strengthened speech muscles"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LDT_LIGHT",
+      "title": "Less help: readiness plus scaffolding",
+      "prompt": "Language gains are largest when adults adjust prompts to each child's current ability and children actively respond. Which account best fits?",
+      "response_type": "single_select",
+      "options": [
+        "Learning account emphasizing a fixed consequence schedule alone",
+        "Nativist account treating responsive social input as irrelevant",
+        "Interactionist account combining readiness and responsive input",
+        "Localization account attributing gains to one maturing cortical area"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LDT_SOLO",
+      "title": "On your own: identify imitation",
+      "prompt": "A child reproduces new labels heard from a model, and correct reproductions receive tokens. Which mechanism is most explicit?",
+      "response_type": "single_select",
+      "options": [
+        "Biological maturation without environmental input",
+        "Rule creation from forms never previously heard",
+        "Reciprocal scaffolding adjusted to developmental level",
+        "Imitation followed by reinforcement of responses"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LDT_NEAR",
+      "title": "Near exit: distinguish reciprocal input",
+      "prompt": "Caregivers expand a child's short utterances differently as the child's vocabulary grows, and the child increasingly initiates exchanges. Which account is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "Interactionist account with reciprocal developmental adjustment",
+        "Learning account based solely on an unchanged external reward schedule",
+        "Nativist account claiming responsive language input has no developmental role",
+        "Motor account focused only on articulation speed during exchanges"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LDT_CHANGED",
+      "title": "Changed exit: explain an unmodeled error",
+      "prompt": "After learning several regular past-tense verbs, a child says “goed,” a form no adult modeled. Which evidence-based interpretation is strongest?",
+      "response_type": "single_select",
+      "options": [
+        "The child copied the exact unmodeled form and then received reinforcement",
+        "The child generalized a rule, supporting prepared rule learning",
+        "The child cannot represent past time unless that exact word is supplied",
+        "The single error identifies a specific clinical language disorder"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LDT_REPAIR_NEAR",
+      "title": "Repair theory selection",
+      "prompt": "What should be identified first when matching a developmental vignette to a language theory?",
+      "response_type": "single_select",
+      "options": [
+        "Only the child's chronological age without any observed behavior",
+        "The longest technical theory term printed in the vignette",
+        "The causal mechanism demonstrated by the evidence",
+        "The familiar theory name the learner remembers most quickly"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LDT_REENTRY_NEAR",
+      "title": "Fresh re-entry: modeled signing",
+      "prompt": "A child copies a newly demonstrated sign, and use of that sign increases when it produces a desired toy. Which account is most directly supported?",
+      "response_type": "single_select",
+      "options": [
+        "Nativist account because the sign was never observed",
+        "Interactionist account because no consequence occurred",
+        "Localization account because hand movement uses cortex",
+        "Learning account through modeling and reinforcement"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LDT_REPAIR_CHANGED",
+      "title": "Repair novel-output reasoning",
+      "prompt": "Which observation most clearly goes beyond simple imitation of an exact adult utterance?",
+      "response_type": "single_select",
+      "options": [
+        "A child repeats a word immediately after hearing it",
+        "A child produces a new rule-based form never modeled",
+        "A child speaks louder after being asked to repeat",
+        "A child pauses before selecting a familiar label"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LDT_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: plural overgeneralization",
+      "prompt": "A child who has heard “mice” nevertheless says “mouses” when describing several toy mice. Which interpretation is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "The child applies a productive plural rule to an exception",
+        "The child exactly imitates the irregular adult plural form",
+        "The child lacks any concept of more than one physical object",
+        "The one response proves social interaction has no developmental role"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LCG_ENTRY",
+      "title": "Starting check: bounded influence",
+      "prompt": "Speakers with separate labels for two color ranges sort boundary colors faster, but all speakers can discriminate the colors. Which conclusion fits?",
+      "response_type": "single_select",
+      "options": [
+        "Language makes unlabelled colors visually invisible",
+        "Language labels can influence categorization speed",
+        "Color vision is produced entirely by vocabulary size",
+        "The result proves labels have no cognitive effect"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LCG_GUIDED",
+      "title": "Guided practice: label training",
+      "prompt": "Participants randomly learn either two labels or one label for the same shapes. The two-label group later forms two categories more often. What is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "Shape differences caused the group assignment",
+        "The categories existed only after the shapes changed",
+        "Label training influenced later categorization",
+        "The one-label group became unable to see shapes"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LCG_LIGHT",
+      "title": "Less help: reject determinism",
+      "prompt": "Which claim is too strong for evidence that labels change average memory accuracy?",
+      "response_type": "single_select",
+      "options": [
+        "Labels may guide what features receive attention",
+        "Labels may alter how events are encoded",
+        "Language differences can shift recall performance",
+        "A person cannot think any concept lacking a word"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LCG_SOLO",
+      "title": "On your own: choose a causal test",
+      "prompt": "Which study most directly tests whether new spatial labels influence spatial attention?",
+      "response_type": "single_select",
+      "options": [
+        "Randomly train labels, then compare attention on identical displays",
+        "Survey vocabulary and attention once across several unmatched age groups",
+        "Ask participants whether they believe language affects spatial attention",
+        "Compare two cultures using different tasks and uncontrolled settings"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LCG_NEAR",
+      "title": "Near exit: interpret memory framing",
+      "prompt": "Two groups view the same collision. Different verbs in a later question shift average speed estimates. Which interpretation is most warranted?",
+      "response_type": "single_select",
+      "options": [
+        "The later verb permanently changes the viewers' basic visual acuity",
+        "Question language can influence reconstruction of event memory",
+        "The two randomized groups must have viewed physically different collisions",
+        "The wording demonstrates that event memory contains no visual information"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LCG_CHANGED",
+      "title": "Changed exit: preserve capacity",
+      "prompt": "Speakers lacking separate words for two shades still distinguish them above chance, but more slowly than speakers with separate labels. What follows?",
+      "response_type": "single_select",
+      "options": [
+        "Separate words are required for any successful visual discrimination",
+        "The slower group has no functional perception of the color ranges",
+        "Labels may facilitate attention or retrieval without determining capacity",
+        "The measured speed difference shows language and cognition are unrelated"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LCG_REPAIR_NEAR",
+      "title": "Repair claim calibration",
+      "prompt": "What should a conclusion about language and cognition name first?",
+      "response_type": "single_select",
+      "options": [
+        "A universal claim about all possible thought",
+        "The researcher's preferred philosophical theory",
+        "A brain disorder inferred from one response",
+        "The specific cognitive outcome that changed"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LCG_REENTRY_NEAR",
+      "title": "Fresh re-entry: spatial language",
+      "prompt": "After learning consistent left–right labels, participants orient to matching locations faster on the same display. Which conclusion is best?",
+      "response_type": "single_select",
+      "options": [
+        "Label training may guide spatial attention speed",
+        "Labels create the physical locations on the display",
+        "Participants without training cannot perceive location",
+        "Spatial attention cannot be influenced by language"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LCG_REPAIR_CHANGED",
+      "title": "Repair influence versus determination",
+      "prompt": "Which finding would directly contradict the claim that a missing label makes a distinction impossible?",
+      "response_type": "single_select",
+      "options": [
+        "Labelled participants respond more quickly on every trial",
+        "Unlabelled participants distinguish the cases above chance",
+        "Different groups prefer using different category names",
+        "Training changes average response time but capacity is never measured"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "LCG_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: concept without a word",
+      "prompt": "Participants can solve a novel relation without a dedicated word, but a newly taught label speeds later solutions. Which interpretation fits?",
+      "response_type": "single_select",
+      "options": [
+        "The relation was completely impossible before any label training occurred",
+        "The new label replaced all nonlanguage reasoning used in the task",
+        "Language facilitated performance without creating the underlying capacity",
+        "The speed gain demonstrates that the represented relation is purely verbal"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BLS_ENTRY",
+      "title": "Starting check: comprehension demand",
+      "prompt": "A participant listens to sentences and chooses the matching picture without speaking. Which system has the most direct language-specific demand?",
+      "response_type": "single_select",
+      "options": [
+        "Primary motor control of the lips during a spoken response",
+        "Dominant frontal planning of an overt spoken response",
+        "Posterior temporal language comprehension",
+        "White-matter transfer from comprehension into a repetition plan"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BLS_GUIDED",
+      "title": "Guided practice: speech planning",
+      "prompt": "A participant understands a pictured event and prepares a spoken description. Which region is most directly associated with organizing speech production?",
+      "response_type": "single_select",
+      "options": [
+        "Posterior temporal comprehension region",
+        "Primary visual cortex alone",
+        "Auditory cortex processing incoming tones",
+        "Dominant frontal language-production region"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BLS_LIGHT",
+      "title": "Less help: connect comprehension and production",
+      "prompt": "Which structure most directly carries information between major temporal comprehension and frontal production regions?",
+      "response_type": "single_select",
+      "options": [
+        "A connecting white-matter language pathway",
+        "Primary motor cortex controlling the hand",
+        "Visual cortex representing line orientation",
+        "Cerebellar control of standing balance"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BLS_SOLO",
+      "title": "On your own: articulate a response",
+      "prompt": "After a spoken response has been planned, which system most directly executes movements of the lips and tongue?",
+      "response_type": "single_select",
+      "options": [
+        "Posterior temporal comprehension region",
+        "Motor cortex controlling speech musculature",
+        "Auditory cortex analyzing incoming sound",
+        "Connecting pathway carrying language information"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BLS_NEAR",
+      "title": "Near exit: picture naming",
+      "prompt": "A participant recognizes a pictured object and must say its name aloud. Which language-specific step follows recognition most directly?",
+      "response_type": "single_select",
+      "options": [
+        "Auditory analysis of a sound that was never presented",
+        "Posterior temporal processing as the only required output system",
+        "Frontal organization of the spoken name",
+        "Elimination of all motor-system involvement"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BLS_CHANGED",
+      "title": "Changed exit: trace repetition",
+      "prompt": "A participant hears and understands a novel phrase but has difficulty passing its representation into a spoken repetition plan. Which network component is most directly implicated functionally?",
+      "response_type": "single_select",
+      "options": [
+        "Visual cortex analysis even though the phrase entered through hearing",
+        "Motor cortex execution even though the difficulty occurs before movement",
+        "Posterior temporal comprehension even though meaning was extracted",
+        "The connecting pathway between comprehension and production regions"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BLS_REPAIR_NEAR",
+      "title": "Repair functional mapping",
+      "prompt": "What should be identified before assigning a language task to a brain system?",
+      "response_type": "single_select",
+      "options": [
+        "The task's required processing stage",
+        "A clinical diagnosis from one behavior",
+        "Every brain region associated with language",
+        "The participant's preferred speaking style"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BLS_REENTRY_NEAR",
+      "title": "Fresh re-entry: plan an oral answer",
+      "prompt": "A participant silently reads a question, understands it, and prepares an oral answer. Which system is most directly tied to preparing that answer?",
+      "response_type": "single_select",
+      "options": [
+        "Auditory cortex because all language begins as sound",
+        "Dominant frontal language-production region",
+        "Posterior temporal comprehension as the final motor command",
+        "Connecting pathway as the muscle controller"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BLS_REPAIR_CHANGED",
+      "title": "Repair network tracing",
+      "prompt": "Which ordered trace best represents repeating a newly heard sentence aloud?",
+      "response_type": "single_select",
+      "options": [
+        "Motor execution → visual analysis → comprehension → auditory input",
+        "Language comprehension → balance control → vision → motor execution",
+        "Auditory processing → comprehension → production planning → motor execution",
+        "Speech-production planning → taste → comprehension → auditory processing"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BLS_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: repeat a heard word",
+      "prompt": "A participant hears an unfamiliar word, understands the instruction to repeat it, and then speaks it. Which sequence best fits the stated demands?",
+      "response_type": "single_select",
+      "options": [
+        "Visual analysis → language comprehension → a manual hand movement response",
+        "Motor speech execution → auditory input → later visual word recognition",
+        "Language comprehension alone, without production planning or motor movement",
+        "Auditory processing → language processing → production planning → articulation"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    }
+  ]
+}

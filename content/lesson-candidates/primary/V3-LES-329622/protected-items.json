@@ -1,0 +1,378 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "QUIN-ITEM-ENTRY",
+      "learner_prompt_key": "QUIN_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "Two ring carbonyls are the defining structural cue for the oxidized quinone form.",
+      "post_commitment_feedback": "Read the oxygen bonding: two C=O groups identify quinone.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "QUIN-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The fully reduced hydroquinone has two ring hydroxyls instead."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "QUIN-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "QUIN-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A hydrocarbon tail lacks the oxygenated conjugated ring described."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "QUIN-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No phosphorus or phosphate group is present."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "QUIN-ITEM-GUIDED",
+      "learner_prompt_key": "QUIN_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Reduction of Q requires net uptake of two electrons and two protons.",
+      "post_commitment_feedback": "Place electron and proton equivalents on the reactant side for reduction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "QUIN-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is the oxidation direction from QH2 to Q, written with the wrong starting form."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "QUIN-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "QUIN-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Molecular oxygen is not the balancing species in the bounded Q/QH2 half-reaction."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "QUIN-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This places electrons on the wrong side and mixes the direction."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "QUIN-ITEM-LIGHT",
+      "learner_prompt_key": "QUIN_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Hydroquinone-to-quinone conversion is net loss of two electrons and two protons.",
+      "post_commitment_feedback": "Two hydroxyls becoming two carbonyls is the oxidation direction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "QUIN-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reduction runs from carbonyls to hydroxyls, the reverse structural change."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "QUIN-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The stated change is on the ring head group, not tail cleavage."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "QUIN-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "QUIN-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No phosphate transfer is described or required by the redox pair."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "QUIN-ITEM-SOLO",
+      "learner_prompt_key": "QUIN_SOLO",
+      "correct_option_index": 0,
+      "rationale": "The quinone head-group carbonyls become hydroxyls; the tail is retained as a hydrophobic localization feature.",
+      "post_commitment_feedback": "Separate head-group redox chemistry from tail localization.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "QUIN-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "QUIN-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The tail remains the hydrophobic anchor rather than undergoing the defining redox conversion."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "QUIN-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ubiquinone is not defined by a peptide backbone."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "QUIN-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The bounded carrier structure does not require a terminal phosphate."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "QUIN-ITEM-NEAR",
+      "learner_prompt_key": "QUIN_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Two ring hydroxyls mark the fully reduced QH2 form formed by net uptake of two electrons and two protons.",
+      "post_commitment_feedback": "Use the ring oxygen pattern and unchanged tail as separate cues.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "QUIN-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The oxidized quinone has two carbonyl groups."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "QUIN-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "QUIN-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt states the tail is unchanged; reduction occurs at the head."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "QUIN-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Hydroxyl-bearing QH2 is the reduced member of this specific redox pair."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "QUIN-ITEM-CHANGED",
+      "learner_prompt_key": "QUIN_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "The carbonyl-bearing head mediates the Q/QH2 conversion, while the hydrophobic tail supports membrane residence.",
+      "post_commitment_feedback": "Assign the consequence from the altered structural region.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "QUIN-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "QUIN-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the established head-versus-tail functions."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "QUIN-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Replacing a carbonyl weakens the head's defined redox chemistry, and shortening the hydrophobic tail can weaken membrane retention."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "QUIN-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neither loss of a redox-active carbonyl nor shortening of a hydrophobic tail supports a functional strengthening."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "QUIN-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "QUIN_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Net reduction converts the two quinone carbonyl oxygens to hydroquinone hydroxyls.",
+      "post_commitment_feedback": "Focus on the two ring oxygen bonds.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "QUIN-REPAIRNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is the oxidation direction."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "QUIN-REPAIRNEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Tail saturation is not the defining Q/QH2 head-group conversion."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "QUIN-REPAIRNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "QUIN-REPAIRNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ring cleavage is not part of the reversible carrier redox pair."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "QUIN-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "QUIN_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The net reduction converts both carbonyls to hydroxyls.",
+      "post_commitment_feedback": "The fresh label preserves the same head-group reduction function.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "QUIN-REENTRYNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "QUIN-REENTRYNEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reduction decreases carbonyl character rather than creating more carbonyls."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "QUIN-REENTRYNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Electron/proton uptake occurs at the head and does not imply tail phosphorylation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "QUIN-REENTRYNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The oxygens remain and change bonding state."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "QUIN-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "QUIN_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The oxygenated quinone head is redox active, while the isoprenoid tail is hydrophobic.",
+      "post_commitment_feedback": "Rebuild the head-and-tail functional map.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "QUIN-REPAIRCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the two established functions."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "QUIN-REPAIRCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "QUIN-REPAIRCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neither function describes the bounded carrier chemistry."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "QUIN-REPAIRCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neither phosphate transfer nor DNA binding defines ubiquinone here."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "QUIN-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "QUIN_REENTRY_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Preserved hydrophobicity can retain localization, but loss of redox-active oxygen groups disrupts the defined head chemistry.",
+      "post_commitment_feedback": "The fresh variant separates localization from chemical competence.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "QUIN-REENTRYCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "QUIN-REENTRYCHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A retained hydrophobic tail does not imply water solubility."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "QUIN-REENTRYCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Localization cannot substitute for the missing redox-active head groups."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "QUIN-REENTRYCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Removing carbonyl chemistry does not create a four-electron carrier."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,448 @@
+{
+  "artifact_type": "SOURCE_CLAIM_LEDGER",
+  "artifact_id": "V3-SCLD-222431",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT_TRACE_ONLY",
+  "canonical_lesson_binding": {
+    "lesson_id": "V3-LES-222431",
+    "grouping_id": "V3-CL-222431",
+    "ordered_kc_ids": [
+      "V3-KC-002792",
+      "V3-KC-672057",
+      "V3-KC-030306",
+      "V3-KC-966600",
+      "V3-KC-335743"
+    ]
+  },
+  "authority_boundary": {
+    "source_ids": [
+      "AAMC-2020"
+    ],
+    "source_classes": [
+      "PUBLIC_PRIMARY_RESEARCH"
+    ],
+    "source_anchor_ids": [
+      "BB-SA-0018"
+    ],
+    "present_day_authority_refreshed": false,
+    "source_use_status": "PERMITTED_FOR_BOUNDED_INTERNAL_AUTHORING",
+    "human_rights_clearance_claimed": false,
+    "learner_validation_claimed": false
+  },
+  "source_trace_governance": {
+    "packet_sha256": "5d7b7d6738e9b3bd50085b7bc9f5c193f489666045481ff18b415be9bbf093cd",
+    "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+    "permitted_use": [
+      "DERIVED_SCOPE_METADATA",
+      "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+      "INTERNAL_HUMAN_REVIEW"
+    ],
+    "prohibited_use": [
+      "RAW_SOURCE_TEXT",
+      "QUOTATION",
+      "PASSAGE_REPRODUCTION",
+      "FIGURE_REPRODUCTION",
+      "PROPRIETARY_ITEM_REUSE",
+      "PRIVATE_COMPARISON_CONTENT"
+    ],
+    "expressive_copy_flag": false
+  },
+  "source_records": [
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100011",
+      "source_occurrence_id": "V3-SRC-100011",
+      "source_id": "AAMC-2020",
+      "official_topic": "Nucleic Acid Structure and Function (BIO, BC)",
+      "printed_pages": [
+        28
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0018"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-200018",
+      "source_occurrence_id": "V3-SRC-200018",
+      "source_id": "AAMC-2020",
+      "official_topic": null,
+      "printed_pages": [
+        28,
+        29,
+        30
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0018"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100012",
+      "source_occurrence_id": "V3-SRC-100012",
+      "source_id": "AAMC-2020",
+      "official_topic": "DNA Replication (BIO)",
+      "printed_pages": [
+        28
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0018"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100013",
+      "source_occurrence_id": "V3-SRC-100013",
+      "source_id": "AAMC-2020",
+      "official_topic": "Repair of DNA (BIO)",
+      "printed_pages": [
+        28
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0018"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    }
+  ],
+  "source_claims": [
+    {
+      "claim_id": "NUC-CLAIM-COMPOSITION",
+      "target_kc_id": "V3-KC-002792",
+      "authorial_claim": "A nucleoside contains a sugar and nitrogenous base, whereas a nucleotide additionally contains phosphate that can participate in a nucleic-acid backbone.",
+      "scope_in_refs": [
+        "V3-KC-002792:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-002792:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0018"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100011",
+        "V3-SRC-200018"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600092",
+        "V3-MAP-601515"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "NUC-CLAIM-POLYMER",
+      "target_kc_id": "V3-KC-002792",
+      "authorial_claim": "DNA and RNA organize repeating sugar-phosphate backbone units with purine or pyrimidine base residues projecting from the backbone.",
+      "scope_in_refs": [
+        "V3-KC-002792:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-002792:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0018"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100011",
+        "V3-SRC-200018"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600092",
+        "V3-MAP-601515"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "CMP-CLAIM-SPECIFICITY",
+      "target_kc_id": "V3-KC-672057",
+      "authorial_claim": "Watson–Crick complementarity pairs adenine with thymine in DNA and guanine with cytosine, with paired strands read in opposite orientations.",
+      "scope_in_refs": [
+        "V3-KC-672057:SCOPE_IN:0",
+        "V3-KC-672057:SCOPE_IN:1"
+      ],
+      "scope_out_refs": [
+        "V3-KC-672057:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0018"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100011",
+        "V3-SRC-200018"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600093",
+        "V3-MAP-600845"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "CMP-CLAIM-TRANSITIONS",
+      "target_kc_id": "V3-KC-672057",
+      "authorial_claim": "Denaturation separates paired strands without breaking their backbones, whereas reannealing or hybridization depends on sufficient complementary base matching.",
+      "scope_in_refs": [
+        "V3-KC-672057:SCOPE_IN:0",
+        "V3-KC-672057:SCOPE_IN:1",
+        "V3-KC-672057:SCOPE_IN:2"
+      ],
+      "scope_out_refs": [
+        "V3-KC-672057:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0018"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100011",
+        "V3-SRC-200018"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600093",
+        "V3-MAP-600845"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "REP-CLAIM-SEMICONSERVATIVE",
+      "target_kc_id": "V3-KC-030306",
+      "authorial_claim": "Semiconservative replication separates parental strands and uses each as a template, producing daughter duplexes with one parental and one newly synthesized strand.",
+      "scope_in_refs": [
+        "V3-KC-030306:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-030306:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0018"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100012",
+        "V3-SRC-200018"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600021",
+        "V3-MAP-601557"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "REP-CLAIM-COORDINATION",
+      "target_kc_id": "V3-KC-030306",
+      "authorial_claim": "Helicase, primase, DNA polymerase, and ligase coordinate synthesis from origins, and multiple origins permit eukaryotic chromosomes to copy many regions concurrently.",
+      "scope_in_refs": [
+        "V3-KC-030306:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-030306:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0018"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100012",
+        "V3-SRC-200018"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600021",
+        "V3-MAP-601557"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "END-CLAIM-PROBLEM",
+      "target_kc_id": "V3-KC-966600",
+      "authorial_claim": "After a terminal primer is removed from a linear chromosome, conventional polymerase cannot fill the extreme end because no upstream 3′ end remains for extension.",
+      "scope_in_refs": [
+        "V3-KC-966600:SCOPE_IN:0",
+        "V3-KC-966600:SCOPE_IN:1"
+      ],
+      "scope_out_refs": [
+        "V3-KC-966600:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0018"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100012",
+        "V3-SRC-100013",
+        "V3-SRC-200018"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600685",
+        "V3-MAP-601180",
+        "V3-MAP-601558"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "END-CLAIM-MAINTENANCE",
+      "target_kc_id": "V3-KC-966600",
+      "authorial_claim": "Specialized telomere maintenance extends chromosome-end sequence so conventional synthesis can complete more of the complementary strand, distinct from general correction of internal mutations.",
+      "scope_in_refs": [
+        "V3-KC-966600:SCOPE_IN:0",
+        "V3-KC-966600:SCOPE_IN:1",
+        "V3-KC-966600:SCOPE_IN:2"
+      ],
+      "scope_out_refs": [
+        "V3-KC-966600:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0018"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100012",
+        "V3-SRC-100013",
+        "V3-SRC-200018"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600685",
+        "V3-MAP-601180",
+        "V3-MAP-601558"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "FIX-CLAIM-REPAIR-LOGIC",
+      "target_kc_id": "V3-KC-335743",
+      "authorial_claim": "DNA repair preserves sequence by detecting an error or damaged region, removing or reversing the defect, using intact information where available, replacing DNA, and restoring backbone continuity.",
+      "scope_in_refs": [
+        "V3-KC-335743:SCOPE_IN:1",
+        "V3-KC-335743:SCOPE_IN:2"
+      ],
+      "scope_out_refs": [
+        "V3-KC-335743:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0018"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100012",
+        "V3-SRC-100013",
+        "V3-SRC-200018"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600424",
+        "V3-MAP-601181",
+        "V3-MAP-601559"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "FIX-CLAIM-TIMING",
+      "target_kc_id": "V3-KC-335743",
+      "authorial_claim": "A copying error caught during replication and an altered base repaired later differ in timing and available template information, while chromosome-end maintenance remains a separate replication problem.",
+      "scope_in_refs": [
+        "V3-KC-335743:SCOPE_IN:0",
+        "V3-KC-335743:SCOPE_IN:1",
+        "V3-KC-335743:SCOPE_IN:2"
+      ],
+      "scope_out_refs": [
+        "V3-KC-335743:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "BB-SA-0018"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100012",
+        "V3-SRC-100013",
+        "V3-SRC-200018"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600424",
+        "V3-MAP-601181",
+        "V3-MAP-601559"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    }
+  ],
+  "canonical_context": {
+    "placements": {
+      "phase_ids": [
+        "V3-PHS-280641",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-893506",
+        "V3-MOD-907235"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 31,
+          "relation_ids": [
+            "R14-PL-581402-031"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 31,
+          "relation_ids": [
+            "R14-PL-904137-031"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-236815",
+          "position": 13,
+          "relation_ids": [
+            "R14-PL-236815-013"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-222431",
+      "revisit_relation_ids": [
+        "R14-RV-222431"
+      ]
+    },
+    "hard_prerequisites": [],
+    "helpful_prerequisites": [],
+    "attachment_bindings": [
+      {
+        "attachment_id": "V3-EXT-406816",
+        "kind": "EXTENSION",
+        "owner_lesson_id": "V3-LES-222431",
+        "host_scope": {
+          "kind": "MULTI_KC",
+          "kc_ids": [
+            "V3-KC-002792",
+            "V3-KC-672057"
+          ]
+        },
+        "declared_host_core_ids": [
+          "V3-KC-002792",
+          "V3-KC-672057"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": true,
+        "relation_ids": [
+          "R14-FD-222431"
+        ],
+        "relation_class": "FIRST_DELIVERY",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": false
+      }
+    ],
+    "route_scope_code": "STANDARD_ONLY"
+  },
+  "lineage_and_limits": {
+    "open_hold_ids": [
+      "V3-HOLD-110001",
+      "V3-HOLD-110003",
+      "V3-HOLD-110005",
+      "V3-HOLD-110008",
+      "V3-HOLD-110009"
+    ],
+    "nonclaims": [
+      "NO_PRESENT_DAY_AUTHORITY_REFRESH",
+      "NO_LEARNER_VALIDATION",
+      "NO_EFFICACY",
+      "NO_MASTERY_CALIBRATION",
+      "NO_READINESS_VALIDATION",
+      "NO_PRODUCTION_PUBLICATION"
+    ]
+  }
+}

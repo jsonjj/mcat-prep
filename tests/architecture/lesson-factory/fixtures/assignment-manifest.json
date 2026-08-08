@@ -1,0 +1,50 @@
+{
+  "$test_fixture": {
+    "synthetic": true,
+    "not_for_production": true,
+    "fixture_of": "lesson-factory.assignment-manifest",
+    "why": "A positive control for the architecture tests. Every hash below is invented; nothing here describes a real lesson, a real screen run, or a real decision. The marker key makes this envelope fail validation against the closed production contract it is a control for, so it cannot be mistaken for a production record or loaded as one."
+  },
+  "instance": {
+    "contract_id": "lesson-factory.assignment-manifest",
+    "contract_version": "3.0.0",
+    "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+    "created_at": "2026-08-03T22:30:00Z",
+    "deadline_profile_ref": "profile:content/lesson-factory/deadline-profile/deadline-profile.json#sha256:b7abd8f38aafa39dd7aee4fbcc59a03759b7b00d90cc5a4cb067961ffb75c525",
+    "release_policy_ref": "policy:content/lesson-factory/deadline-profile/release-policy.json#sha256:0258c6c382ce2faf62c1a8da4bda35295c27c64e2be9c5510c2f923560ffba9e",
+    "rubric_identity": {
+      "rubric_path": "key-docs/lesson-quality-rubric.md",
+      "rubric_version": "0.9.1",
+      "rubric_sha256": "21f0cf751b752158b5c8f71fd762fcc956b9ba694c8f5ee8d50158b8972557b0"
+    },
+    "assignments": [
+      {
+        "lane_id": "lane-01",
+        "lesson_id": "V3-LES-000101",
+        "task_packet_ref": "packet:lane-01/v3-les-000101#sha256:f57f04ac739203b25e94b2e7b9ce52453d01c7077e2a92f8f189383679fd0f3a",
+        "output_directory": ".tmp/lesson-factory/lane-01/v3-les-000101",
+        "max_revision_cycles": 3,
+        "required_human_review_roles": [
+          "PRODUCT_PEDAGOGY_OWNER",
+          "DOMAIN_CONSTRUCT_SME",
+          "ACCESSIBILITY_REVIEWER",
+          "NOVICE_WALKTHROUGH_REVIEWER",
+          "PLATFORM_RELIABILITY_REVIEWER",
+          "INDEPENDENT_BLIND_SOLVER",
+          "RIGHTS_REVIEWER"
+        ]
+      }
+    ],
+    "nonclaims": {
+      "official_rubric_pass": false,
+      "human_approved": false,
+      "release_approved": false,
+      "efficacy_established": false,
+      "mastery_calibrated": false,
+      "readiness_validated": false,
+      "learner_validated": false,
+      "publication_safe": false,
+      "production_published": false
+    }
+  }
+}

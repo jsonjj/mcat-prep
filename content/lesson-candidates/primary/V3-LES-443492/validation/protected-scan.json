@@ -1,0 +1,53 @@
+{
+  "format": "lesson-generation-protected-scan/2",
+  "lessonId": "V3-LES-443492",
+  "scannedPaths": [
+    "learner-safe-items.json",
+    "source-claim-ledger.json",
+    "candidate-quality-ledger.json",
+    "validation/lesson-validate.json",
+    "validation/computed-quality.json",
+    "validation/normalization-smoke.json"
+  ],
+  "scannedPathCount": 6,
+  "protectedArtifact": {
+    "path": "protected-items.json",
+    "sha256": "cfd33864a37be58a3286831ffd0348b1dc6de98bc8819b91e2862d031712c913",
+    "size": 137718
+  },
+  "logHashes": {
+    "candidateStdoutSha256": "85f68b0865665f3486a3dd442959a93f77dd4f3cb964d1037f92e6a3d25dfb24",
+    "candidateStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "answerPositionPatternCheck": {
+    "itemCount": 50,
+    "maximumPositionCountSpread": 1,
+    "maximumRepeatedPositionRun": 1,
+    "status": "PASS"
+  },
+  "distractorRationaleAudit": {
+    "incorrectOptionCount": 150,
+    "explicitRejectionRationaleCount": 150,
+    "missingRationaleCount": 0,
+    "status": "PASS"
+  },
+  "optionPresentationAudit": {
+    "auditedMeasurableItemCount": 50,
+    "grammaticalParallelismReviewedCount": 50,
+    "incorrectOptionLengthStandardDeviation": 7.059206754303205,
+    "residualLengthClueCount": 0,
+    "residualLengthClueItemIds": [],
+    "status": "PASS"
+  },
+  "postCommitmentFeedbackCheck": {
+    "requiredCount": 50,
+    "authoredCount": 50,
+    "status": "PASS"
+  },
+  "itemDokClaimCheck": {
+    "itemLevelDokClaimsPresent": false,
+    "status": "PASS"
+  },
+  "findings": [],
+  "status": "PASS"
+}

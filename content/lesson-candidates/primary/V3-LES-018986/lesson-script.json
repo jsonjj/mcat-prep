@@ -1,0 +1,4770 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-018986",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "637ff1535f443cf1c1e8565cae8edeb75c7f457e9e147179a6d84f9744dab07d",
+  "payload": {
+    "lesson_id": "V3-LES-018986",
+    "grouping_id": "V3-CL-018986",
+    "ordered_kc_ids": [
+      "V3-KC-750511",
+      "V3-KC-909119",
+      "V3-KC-286877",
+      "V3-KC-200041"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-750511",
+      "V3-KC-909119",
+      "V3-KC-286877",
+      "V3-KC-200041"
+    ],
+    "throughline": "Trace the progression from gamete formation to early embryonic organization by pairing every stage or lineage with its decisive biological transition.",
+    "nodes": [
+      {
+        "node_id": "GAM-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: compare the products of two meiosis-based pathways. You may leave the item blank to record an abstention; this check does not select a route or award exit credit."
+        ],
+        "representation_ids": [
+          "GAM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GAM-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "GAM-CP-ENTRY",
+        "source_claim_refs": [
+          "GAM-CLAIM-1",
+          "GAM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAM-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: explain both the shared purpose and the different resource allocation of spermatogenesis and oogenesis, then connect gamete form to what each gamete supplies at fertilization. No hard prerequisite handoff is declared in the packet, so every needed comparison is introduced here."
+        ],
+        "representation_ids": [
+          "GAM-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GAM-CP-ORIENTATION",
+        "source_claim_refs": [
+          "GAM-CLAIM-1",
+          "GAM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAM-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Both pathways begin with diploid germ cells and use meiosis to produce haploid nuclei.",
+          "Spermatogenesis uses relatively even cytokinesis to yield four small functional sperm; oogenesis uses unequal cytokinesis to concentrate most cytoplasm in one functional ovum while the other meiotic products become polar bodies.",
+          "A sperm is streamlined and motile. An ovum is large and supplies cytoplasm, organelles, and molecular machinery in addition to a haploid maternal genome."
+        ],
+        "representation_ids": [
+          "GAM-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GAM-CP-EXPLANATION",
+        "source_claim_refs": [
+          "GAM-CLAIM-1",
+          "GAM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAM-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — same chromosome goal, different allocation strategy: sperm production distributes nuclei across several mobile cells, whereas ovum production concentrates cellular resources in one cell."
+        ],
+        "representation_ids": [
+          "GAM-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GAM-CP-MODEL",
+        "source_claim_refs": [
+          "GAM-CLAIM-1",
+          "GAM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAM-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: I first compare ploidy, which is shared. Then I compare cytokinesis and cell form. Four similarly small motile products points to spermatogenesis; one large resource-rich product plus polar bodies points to oogenesis. I do not infer contribution from chromosome number alone."
+        ],
+        "representation_ids": [
+          "GAM-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GAM-CP-THINK",
+        "source_claim_refs": [
+          "GAM-CLAIM-1",
+          "GAM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAM-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a primary germ cell completes meiosis and produces one large haploid cell plus small polar bodies. The large product is the ovum because unequal cytokinesis preserved cytoplasm in one functional gamete.",
+          "At fertilization, the other gamete contributes a haploid paternal nucleus through a small motile cell. The ovum supplies the cellular environment in which the first embryonic divisions begin."
+        ],
+        "representation_ids": [
+          "GAM-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GAM-CP-WORKED",
+        "source_claim_refs": [
+          "GAM-CLAIM-1",
+          "GAM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAM-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: use the visible comparison headings—functional products, relative size, motility, and retained cytoplasm—to identify the pathway."
+        ],
+        "representation_ids": [
+          "GAM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GAM-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "GAM-CP-GUIDED",
+        "source_claim_refs": [
+          "GAM-CLAIM-1",
+          "GAM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAM-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less support: decide which gamete supplied the described cellular material. Use only the cue “nuclear cargo versus cytoplasmic cargo.”"
+        ],
+        "representation_ids": [
+          "GAM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GAM-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "GAM-CP-LIGHT",
+        "source_claim_refs": [
+          "GAM-CLAIM-1",
+          "GAM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAM-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: compare a fresh pair of gametes without a cue panel."
+        ],
+        "representation_ids": [
+          "GAM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GAM-ACT-SOLO"
+        ],
+        "checkpoint_ref": "GAM-CP-SOLO",
+        "source_claim_refs": [
+          "GAM-CLAIM-1",
+          "GAM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAM-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: meiosis does not guarantee four equally sized functional gametes. Chromosome reduction is shared, but unequal cytokinesis in oogenesis changes the number and size of functional products. Also, neither gamete contributes “only DNA”: the distinction is relative cellular contribution."
+        ],
+        "representation_ids": [
+          "GAM-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GAM-CP-CONTRAST",
+        "source_claim_refs": [
+          "GAM-CLAIM-1",
+          "GAM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAM-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: identify the gametogenic pathway from its meiotic products and morphology."
+        ],
+        "representation_ids": [
+          "GAM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GAM-ACT-NEAR"
+        ],
+        "checkpoint_ref": "GAM-CP-NEAR",
+        "source_claim_refs": [
+          "GAM-CLAIM-1",
+          "GAM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAM-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: infer which gamete supplied an embryonic cellular component rather than identifying a production pathway."
+        ],
+        "representation_ids": [
+          "GAM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GAM-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "GAM-CP-CHANGED",
+        "source_claim_refs": [
+          "GAM-CLAIM-1",
+          "GAM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAM-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the near-use function: separate chromosome reduction from cytoplasmic allocation. Ask whether cytokinesis produced four similar functional cells or one large functional cell plus polar bodies."
+        ],
+        "representation_ids": [
+          "GAM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GAM-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "GAM-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "GAM-CLAIM-1",
+          "GAM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAM-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near re-entry: classify a new pathway description with different cell counts and wording. No prior option or answer is reused."
+        ],
+        "representation_ids": [
+          "GAM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GAM-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "GAM-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "GAM-CLAIM-1",
+          "GAM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAM-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the changed-task function: sort contributions into haploid nuclear material, motility machinery, and resource-rich cytoplasm with organelles. Then use the component named in the evidence."
+        ],
+        "representation_ids": [
+          "GAM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GAM-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "GAM-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "GAM-CLAIM-1",
+          "GAM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAM-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: infer gamete contribution from a different organelle observation. The earlier answer is neither repeated nor exposed."
+        ],
+        "representation_ids": [
+          "GAM-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GAM-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "GAM-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "GAM-CLAIM-1",
+          "GAM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAM-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: both pathways use meiosis to make haploid gametes. Even versus uneven cytokinesis explains the product pattern, and gamete morphology helps predict relative contribution at fertilization."
+        ],
+        "representation_ids": [
+          "GAM-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GAM-CP-RECAP",
+        "source_claim_refs": [
+          "GAM-CLAIM-1",
+          "GAM-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "RPR-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: order two broad reproductive events. Leaving the item blank records an abstention and does not satisfy an exit."
+        ],
+        "representation_ids": [
+          "RPR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "RPR-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "RPR-CP-ENTRY",
+        "source_claim_refs": [
+          "RPR-CLAIM-1",
+          "RPR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "RPR-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: trace the organismal reproductive progression from fertilization to birth and use event evidence to locate a disruption. The packet declares no hard prerequisite, so the broad timeline is taught before it is assessed."
+        ],
+        "representation_ids": [
+          "RPR-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "RPR-CP-ORIENTATION",
+        "source_claim_refs": [
+          "RPR-CLAIM-1",
+          "RPR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "RPR-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fertilization joins haploid gametes to form a diploid zygote, usually in the uterine tube.",
+          "Cleavage then increases cell number without a matching increase in overall conceptus size; a blastocyst reaches the uterus and attaches to the endometrium during implantation.",
+          "After implantation, embryonic and fetal development continue during gestation. Labor and delivery culminate in birth. This lesson traces the sequence and does not address obstetric management."
+        ],
+        "representation_ids": [
+          "RPR-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "RPR-CP-EXPLANATION",
+        "source_claim_refs": [
+          "RPR-CLAIM-1",
+          "RPR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "RPR-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — join, divide, attach, develop, deliver. Each verb identifies a different stage and prevents location evidence from being confused with an earlier event."
+        ],
+        "representation_ids": [
+          "RPR-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "RPR-CP-MODEL",
+        "source_claim_refs": [
+          "RPR-CLAIM-1",
+          "RPR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "RPR-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: if gamete nuclei have already fused, fertilization has occurred. If attachment to the uterine lining fails later, the disrupted step is implantation. I use the observed event, not merely elapsed time."
+        ],
+        "representation_ids": [
+          "RPR-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "RPR-CP-THINK",
+        "source_claim_refs": [
+          "RPR-CLAIM-1",
+          "RPR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "RPR-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a zygote undergoes repeated mitoses while moving toward the uterus. Cell number rises, but the cluster remains within its original outer boundary. This is cleavage before implantation.",
+          "When the blastocyst attaches to and begins interacting with the endometrium, the sequence has advanced to implantation."
+        ],
+        "representation_ids": [
+          "RPR-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "RPR-CP-WORKED",
+        "source_claim_refs": [
+          "RPR-CLAIM-1",
+          "RPR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "RPR-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: place the event cards using the visible verb cues join, divide, attach, develop, and deliver."
+        ],
+        "representation_ids": [
+          "RPR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "RPR-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "RPR-CP-GUIDED",
+        "source_claim_refs": [
+          "RPR-CLAIM-1",
+          "RPR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "RPR-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less support: use one location cue to identify a stage on a fresh timeline."
+        ],
+        "representation_ids": [
+          "RPR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "RPR-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "RPR-CP-LIGHT",
+        "source_claim_refs": [
+          "RPR-CLAIM-1",
+          "RPR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "RPR-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: identify the next broad event with no displayed sequence."
+        ],
+        "representation_ids": [
+          "RPR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "RPR-ACT-SOLO"
+        ],
+        "checkpoint_ref": "RPR-CP-SOLO",
+        "source_claim_refs": [
+          "RPR-CLAIM-1",
+          "RPR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "RPR-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: fertilization and implantation are not the same event. Fertilization creates the zygote; implantation occurs after cleavage and blastocyst formation when the conceptus attaches to the uterine lining."
+        ],
+        "representation_ids": [
+          "RPR-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "RPR-CP-CONTRAST",
+        "source_claim_refs": [
+          "RPR-CLAIM-1",
+          "RPR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "RPR-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: order a fresh set of broad reproductive events."
+        ],
+        "representation_ids": [
+          "RPR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "RPR-ACT-NEAR"
+        ],
+        "checkpoint_ref": "RPR-CP-NEAR",
+        "source_claim_refs": [
+          "RPR-CLAIM-1",
+          "RPR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "RPR-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: use attachment evidence to diagnose which step failed rather than merely reciting the order."
+        ],
+        "representation_ids": [
+          "RPR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "RPR-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "RPR-CP-CHANGED",
+        "source_claim_refs": [
+          "RPR-CLAIM-1",
+          "RPR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "RPR-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the sequencing function: attach one verb to each stage—join, divide, attach, develop, deliver—and rebuild the order from causal dependencies."
+        ],
+        "representation_ids": [
+          "RPR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "RPR-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "RPR-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "RPR-CLAIM-1",
+          "RPR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "RPR-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near re-entry: order a different subset with no repeated option arrangement."
+        ],
+        "representation_ids": [
+          "RPR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "RPR-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "RPR-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "RPR-CLAIM-1",
+          "RPR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "RPR-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the evidence-to-stage function: ask what has already happened and what observable transition is missing. A formed blastocyst with failed uterine attachment points after fertilization but at implantation."
+        ],
+        "representation_ids": [
+          "RPR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "RPR-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "RPR-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "RPR-CLAIM-1",
+          "RPR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "RPR-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: identify a stage from a new transport-and-location observation."
+        ],
+        "representation_ids": [
+          "RPR-REP-MAIN"
+        ],
+        "activity_ids": [
+          "RPR-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "RPR-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "RPR-CLAIM-1",
+          "RPR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "RPR-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: fertilization forms the zygote; cleavage builds cell number; the blastocyst implants; development continues; birth completes the broad progression."
+        ],
+        "representation_ids": [
+          "RPR-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "RPR-CP-RECAP",
+        "source_claim_refs": [
+          "RPR-CLAIM-1",
+          "RPR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "EMB-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: locate one stage in an early-development sequence. A blank response is an abstention and carries no exit credit."
+        ],
+        "representation_ids": [
+          "EMB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "EMB-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "EMB-CP-ENTRY",
+        "source_claim_refs": [
+          "EMB-CLAIM-1",
+          "EMB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "EMB-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: order the early embryonic stages and state the general transition at each one. Detailed embryologic timing is outside scope; the lesson focuses on sequence, cell-number change, first large cell movements, and early tissue organization."
+        ],
+        "representation_ids": [
+          "EMB-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EMB-CP-ORIENTATION",
+        "source_claim_refs": [
+          "EMB-CLAIM-1",
+          "EMB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "EMB-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fertilization produces the zygote. Cleavage is a series of rapid mitotic divisions that raises cell number without comparable growth of the whole embryo.",
+          "The resulting blastula-stage structure establishes an organized cell layer around an internal space; in mammals, the blastocyst is the corresponding preimplantation form.",
+          "Gastrulation introduces coordinated cell movements and establishes primary germ layers. Neurulation follows as ectoderm forms the neural plate and neural tube."
+        ],
+        "representation_ids": [
+          "EMB-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EMB-CP-EXPLANATION",
+        "source_claim_refs": [
+          "EMB-CLAIM-1",
+          "EMB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "EMB-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — make, partition, organize, move, fold: make the zygote; partition it by cleavage; organize a blastula; move cells during gastrulation; fold neural ectoderm during neurulation."
+        ],
+        "representation_ids": [
+          "EMB-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EMB-CP-MODEL",
+        "source_claim_refs": [
+          "EMB-CLAIM-1",
+          "EMB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "EMB-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: a rise in cell number with little overall growth is cleavage. When the decisive evidence becomes inward cell movement and layer formation, I switch to gastrulation. When a neural plate folds into a tube, I select neurulation."
+        ],
+        "representation_ids": [
+          "EMB-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EMB-CP-THINK",
+        "source_claim_refs": [
+          "EMB-CLAIM-1",
+          "EMB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "EMB-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a one-cell zygote becomes two, four, and eight smaller blastomeres while remaining inside the same outer boundary. That pattern is cleavage.",
+          "Later, cells move inward and the embryo acquires organized layers. The new decision cue—cell movement and layer formation—identifies gastrulation rather than another cleavage division."
+        ],
+        "representation_ids": [
+          "EMB-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EMB-CP-WORKED",
+        "source_claim_refs": [
+          "EMB-CLAIM-1",
+          "EMB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "EMB-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: use the visible transition verbs to place each stage: form, divide, hollow-organize, move-layer, and neural-fold."
+        ],
+        "representation_ids": [
+          "EMB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "EMB-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "EMB-CP-GUIDED",
+        "source_claim_refs": [
+          "EMB-CLAIM-1",
+          "EMB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "EMB-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less support: identify a stage from one general transition without the full sequence displayed."
+        ],
+        "representation_ids": [
+          "EMB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "EMB-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "EMB-CP-LIGHT",
+        "source_claim_refs": [
+          "EMB-CLAIM-1",
+          "EMB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "EMB-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: choose the next stage from a fresh developmental description."
+        ],
+        "representation_ids": [
+          "EMB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "EMB-ACT-SOLO"
+        ],
+        "checkpoint_ref": "EMB-CP-SOLO",
+        "source_claim_refs": [
+          "EMB-CLAIM-1",
+          "EMB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "EMB-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: more cells alone does not establish gastrulation. Cleavage increases cell number; gastrulation requires coordinated movement that establishes germ layers. Neurulation is not a synonym for gastrulation; it is the later formation of neural structures from ectoderm."
+        ],
+        "representation_ids": [
+          "EMB-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EMB-CP-CONTRAST",
+        "source_claim_refs": [
+          "EMB-CLAIM-1",
+          "EMB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "EMB-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: order all five governed stages in a fresh option set."
+        ],
+        "representation_ids": [
+          "EMB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "EMB-ACT-NEAR"
+        ],
+        "checkpoint_ref": "EMB-CP-NEAR",
+        "source_claim_refs": [
+          "EMB-CLAIM-1",
+          "EMB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "EMB-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: identify a stage from lineage-tracing evidence about cell movement rather than from stage names."
+        ],
+        "representation_ids": [
+          "EMB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "EMB-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "EMB-CP-CHANGED",
+        "source_claim_refs": [
+          "EMB-CLAIM-1",
+          "EMB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "EMB-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the sequence function: attach one transition to each stage and use dependencies—there must be a zygote before cleavage and established layers before neurulation."
+        ],
+        "representation_ids": [
+          "EMB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "EMB-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "EMB-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "EMB-CLAIM-1",
+          "EMB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "EMB-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near re-entry: order a new subset with different distractor sequences."
+        ],
+        "representation_ids": [
+          "EMB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "EMB-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "EMB-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "EMB-CLAIM-1",
+          "EMB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "EMB-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the evidence-classification function: distinguish numerical subdivision from spatial rearrangement. Inward migration and layer establishment indicate gastrulation."
+        ],
+        "representation_ids": [
+          "EMB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "EMB-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "EMB-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "EMB-CLAIM-1",
+          "EMB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "EMB-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: infer gastrulation from a new observation of cell ingression and primary-layer formation without reusing the earlier stimulus."
+        ],
+        "representation_ids": [
+          "EMB-REP-MAIN"
+        ],
+        "activity_ids": [
+          "EMB-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "EMB-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "EMB-CLAIM-1",
+          "EMB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "EMB-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: fertilization forms the zygote; cleavage partitions it; a blastula-stage structure organizes; gastrulation moves cells into layers; neurulation forms the neural tube."
+        ],
+        "representation_ids": [
+          "EMB-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EMB-CP-RECAP",
+        "source_claim_refs": [
+          "EMB-CLAIM-1",
+          "EMB-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LAY-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: match one broad derivative to a primary germ layer. A blank response is recorded as an abstention and does not grant exit credit."
+        ],
+        "representation_ids": [
+          "LAY-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LAY-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "LAY-CP-ENTRY",
+        "source_claim_refs": [
+          "LAY-CLAIM-1",
+          "LAY-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LAY-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: use early cell movements, primary germ layers, neurulation, and neural crest to predict major structural origins. The target is a compact fate map, not a comprehensive derivative catalog."
+        ],
+        "representation_ids": [
+          "LAY-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LAY-CP-ORIENTATION",
+        "source_claim_refs": [
+          "LAY-CLAIM-1",
+          "LAY-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LAY-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Gastrulation establishes ectoderm, mesoderm, and endoderm. Ectoderm broadly contributes epidermis and nervous-system structures; mesoderm contributes muscle, bone, connective tissues, blood, and cardiovascular structures; endoderm contributes many internal epithelial linings and associated organs.",
+          "During neurulation, neural ectoderm forms the neural tube, which gives rise to the central nervous system.",
+          "Neural crest cells arise near the neural folds, detach, and migrate. Their broad derivatives include much of the peripheral nervous system, melanocytes, and adrenal medulla."
+        ],
+        "representation_ids": [
+          "LAY-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LAY-CP-EXPLANATION",
+        "source_claim_refs": [
+          "LAY-CLAIM-1",
+          "LAY-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LAY-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — outside and signaling from ectoderm, support and transport from mesoderm, internal linings from endoderm; central tube stays central, crest cells migrate outward."
+        ],
+        "representation_ids": [
+          "LAY-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LAY-CP-MODEL",
+        "source_claim_refs": [
+          "LAY-CLAIM-1",
+          "LAY-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LAY-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: I classify the tissue feature first. Contractile muscle and blood point to mesoderm; a digestive epithelial lining points to endoderm; epidermis or nervous tissue points to ectoderm. For ectodermal neural derivatives, I next ask whether the cells remained in the tube or migrated from the crest."
+        ],
+        "representation_ids": [
+          "LAY-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LAY-CP-THINK",
+        "source_claim_refs": [
+          "LAY-CLAIM-1",
+          "LAY-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LAY-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a lineage contributes to skeletal muscle and blood vessels. Both fit the broad mesoderm pattern of movement, support, and transport tissues, so mesoderm is the best origin.",
+          "A second lineage leaves the edge of the closing neural tube and later forms peripheral ganglia. Migration from the neural folds identifies neural crest rather than neural tube."
+        ],
+        "representation_ids": [
+          "LAY-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LAY-CP-WORKED",
+        "source_claim_refs": [
+          "LAY-CLAIM-1",
+          "LAY-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LAY-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: sort structures using the visible broad-category cues before choosing a layer."
+        ],
+        "representation_ids": [
+          "LAY-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LAY-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "LAY-CP-GUIDED",
+        "source_claim_refs": [
+          "LAY-CLAIM-1",
+          "LAY-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LAY-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less support: decide between neural tube and neural crest using only “stays central” versus “detaches and migrates.”"
+        ],
+        "representation_ids": [
+          "LAY-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LAY-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "LAY-CP-LIGHT",
+        "source_claim_refs": [
+          "LAY-CLAIM-1",
+          "LAY-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LAY-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: infer a major structural origin from a fresh lineage description."
+        ],
+        "representation_ids": [
+          "LAY-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LAY-ACT-SOLO"
+        ],
+        "checkpoint_ref": "LAY-CP-SOLO",
+        "source_claim_refs": [
+          "LAY-CLAIM-1",
+          "LAY-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LAY-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: the germ-layer map predicts broad origins, not every named organ. Neural crest is ectoderm-derived but is not interchangeable with the neural tube; migration history separates their derivative patterns."
+        ],
+        "representation_ids": [
+          "LAY-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LAY-CP-CONTRAST",
+        "source_claim_refs": [
+          "LAY-CLAIM-1",
+          "LAY-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LAY-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: map a familiar major derivative to its broad embryonic origin."
+        ],
+        "representation_ids": [
+          "LAY-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LAY-ACT-NEAR"
+        ],
+        "checkpoint_ref": "LAY-CP-NEAR",
+        "source_claim_refs": [
+          "LAY-CLAIM-1",
+          "LAY-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LAY-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: interpret a migration experiment to distinguish neural crest from neural tube origin."
+        ],
+        "representation_ids": [
+          "LAY-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LAY-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "LAY-CP-CHANGED",
+        "source_claim_refs": [
+          "LAY-CLAIM-1",
+          "LAY-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LAY-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the broad fate-map function: classify the structure as surface/neural, support/transport, or internal epithelial lining before selecting ectoderm, mesoderm, or endoderm."
+        ],
+        "representation_ids": [
+          "LAY-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LAY-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "LAY-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "LAY-CLAIM-1",
+          "LAY-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LAY-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near re-entry: map a different major derivative with no reused structure or option position."
+        ],
+        "representation_ids": [
+          "LAY-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LAY-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "LAY-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "LAY-CLAIM-1",
+          "LAY-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LAY-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the neural-origin function: neural tube cells remain in a central tube; neural crest cells detach from the border and migrate to peripheral sites."
+        ],
+        "representation_ids": [
+          "LAY-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LAY-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "LAY-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "LAY-CLAIM-1",
+          "LAY-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LAY-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: use a new lineage-tracing observation to infer neural crest or neural tube origin."
+        ],
+        "representation_ids": [
+          "LAY-REP-MAIN"
+        ],
+        "activity_ids": [
+          "LAY-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "LAY-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "LAY-CLAIM-1",
+          "LAY-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "LAY-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: ectoderm supplies epidermal and neural structures, mesoderm supplies support and transport tissues, endoderm supplies many internal linings, and migration distinguishes neural crest from neural tube."
+        ],
+        "representation_ids": [
+          "LAY-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LAY-CP-RECAP",
+        "source_claim_refs": [
+          "LAY-CLAIM-1",
+          "LAY-CLAIM-2"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "GAM-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-750511",
+        "item_binding_id": "GAM-ITEM-ENTRY",
+        "learner_operation": "COMPARE_SHARED_GAMETOGENESIS_OUTCOME",
+        "authorized_next_node_ids": [
+          "GAM-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "GAM-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-750511",
+        "item_binding_id": "GAM-ITEM-GUIDED",
+        "learner_operation": "IDENTIFY_OOGENESIS_FROM_PRODUCTS",
+        "authorized_next_node_ids": [
+          "GAM-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "GAM-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-750511",
+        "item_binding_id": "GAM-ITEM-LIGHT",
+        "learner_operation": "IDENTIFY_OVUM_MORPHOLOGY",
+        "authorized_next_node_ids": [
+          "GAM-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "GAM-ACT-SOLO",
+        "primary_kc_id": "V3-KC-750511",
+        "item_binding_id": "GAM-ITEM-SOLO",
+        "learner_operation": "COMPARE_GAMETE_MORPHOLOGY",
+        "authorized_next_node_ids": [
+          "GAM-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "GAM-ACT-NEAR",
+        "primary_kc_id": "V3-KC-750511",
+        "item_binding_id": "GAM-ITEM-NEAR",
+        "learner_operation": "CLASSIFY_GAMETOGENESIS_FROM_PRODUCT_PATTERN",
+        "authorized_next_node_ids": [
+          "GAM-NODE-CHANGED",
+          "GAM-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "GAM-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-750511",
+        "item_binding_id": "GAM-ITEM-CHANGED",
+        "learner_operation": "INFER_GAMETE_CONTRIBUTION_FROM_ORGANELLE_EVIDENCE",
+        "authorized_next_node_ids": [
+          "GAM-NODE-RECAP",
+          "GAM-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "GAM-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-750511",
+        "item_binding_id": "GAM-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_PATHWAY_DISTINCTION",
+        "authorized_next_node_ids": [
+          "GAM-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "GAM-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-750511",
+        "item_binding_id": "GAM-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_PATHWAY_CLASSIFICATION",
+        "authorized_next_node_ids": [
+          "GAM-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "GAM-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-750511",
+        "item_binding_id": "GAM-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_GAMETE_CONTRIBUTION_MAP",
+        "authorized_next_node_ids": [
+          "GAM-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "GAM-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-750511",
+        "item_binding_id": "GAM-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_CONTRIBUTION_INFERENCE",
+        "authorized_next_node_ids": [
+          "GAM-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "RPR-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-909119",
+        "item_binding_id": "RPR-ITEM-ENTRY",
+        "learner_operation": "LOCATE_EVENT_BEFORE_IMPLANTATION",
+        "authorized_next_node_ids": [
+          "RPR-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "RPR-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-909119",
+        "item_binding_id": "RPR-ITEM-GUIDED",
+        "learner_operation": "ORDER_BROAD_REPRODUCTIVE_EVENTS",
+        "authorized_next_node_ids": [
+          "RPR-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "RPR-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-909119",
+        "item_binding_id": "RPR-ITEM-LIGHT",
+        "learner_operation": "PREDICT_EVENT_AFTER_UTERINE_ARRIVAL",
+        "authorized_next_node_ids": [
+          "RPR-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "RPR-ACT-SOLO",
+        "primary_kc_id": "V3-KC-909119",
+        "item_binding_id": "RPR-ITEM-SOLO",
+        "learner_operation": "DISTINGUISH_CLEAVAGE_AND_IMPLANTATION",
+        "authorized_next_node_ids": [
+          "RPR-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "RPR-ACT-NEAR",
+        "primary_kc_id": "V3-KC-909119",
+        "item_binding_id": "RPR-ITEM-NEAR",
+        "learner_operation": "SEQUENCE_FERTILIZATION_TO_BIRTH",
+        "authorized_next_node_ids": [
+          "RPR-NODE-CHANGED",
+          "RPR-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "RPR-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-909119",
+        "item_binding_id": "RPR-ITEM-CHANGED",
+        "learner_operation": "INFER_DISRUPTED_STAGE_FROM_ATTACHMENT_EVIDENCE",
+        "authorized_next_node_ids": [
+          "RPR-NODE-RECAP",
+          "RPR-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "RPR-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-909119",
+        "item_binding_id": "RPR-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_STAGE_VERB_MAP",
+        "authorized_next_node_ids": [
+          "RPR-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "RPR-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-909119",
+        "item_binding_id": "RPR-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_REPRODUCTIVE_SEQUENCE",
+        "authorized_next_node_ids": [
+          "RPR-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "RPR-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-909119",
+        "item_binding_id": "RPR-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_EVIDENCE_TO_STAGE_MAP",
+        "authorized_next_node_ids": [
+          "RPR-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "RPR-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-909119",
+        "item_binding_id": "RPR-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_STAGE_INFERENCE_FROM_LOCATION",
+        "authorized_next_node_ids": [
+          "RPR-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "EMB-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-286877",
+        "item_binding_id": "EMB-ITEM-ENTRY",
+        "learner_operation": "LOCATE_CLEAVAGE_AFTER_FERTILIZATION",
+        "authorized_next_node_ids": [
+          "EMB-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "EMB-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-286877",
+        "item_binding_id": "EMB-ITEM-GUIDED",
+        "learner_operation": "IDENTIFY_CLEAVAGE_FROM_SIZE_AND_CELL_NUMBER",
+        "authorized_next_node_ids": [
+          "EMB-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "EMB-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-286877",
+        "item_binding_id": "EMB-ITEM-LIGHT",
+        "learner_operation": "IDENTIFY_GASTRULATION_TRANSITION",
+        "authorized_next_node_ids": [
+          "EMB-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "EMB-ACT-SOLO",
+        "primary_kc_id": "V3-KC-286877",
+        "item_binding_id": "EMB-ITEM-SOLO",
+        "learner_operation": "PREDICT_STAGE_AFTER_GASTRULATION",
+        "authorized_next_node_ids": [
+          "EMB-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "EMB-ACT-NEAR",
+        "primary_kc_id": "V3-KC-286877",
+        "item_binding_id": "EMB-ITEM-NEAR",
+        "learner_operation": "SEQUENCE_EARLY_EMBRYOGENESIS",
+        "authorized_next_node_ids": [
+          "EMB-NODE-CHANGED",
+          "EMB-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "EMB-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-286877",
+        "item_binding_id": "EMB-ITEM-CHANGED",
+        "learner_operation": "INFER_STAGE_FROM_CELL_MOVEMENT",
+        "authorized_next_node_ids": [
+          "EMB-NODE-RECAP",
+          "EMB-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "EMB-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-286877",
+        "item_binding_id": "EMB-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_STAGE_TRANSITION_MAP",
+        "authorized_next_node_ids": [
+          "EMB-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "EMB-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-286877",
+        "item_binding_id": "EMB-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_EARLY_STAGE_SEQUENCE",
+        "authorized_next_node_ids": [
+          "EMB-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "EMB-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-286877",
+        "item_binding_id": "EMB-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_MOVEMENT_VERSUS_SUBDIVISION",
+        "authorized_next_node_ids": [
+          "EMB-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "EMB-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-286877",
+        "item_binding_id": "EMB-ITEM-REENTRY-CHANGED",
+        "learner_operation": "INFER_STAGE_FROM_CELL_MOVEMENT",
+        "authorized_next_node_ids": [
+          "EMB-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "LAY-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-200041",
+        "item_binding_id": "LAY-ITEM-ENTRY",
+        "learner_operation": "MAP_SKELETAL_MUSCLE_ORIGIN",
+        "authorized_next_node_ids": [
+          "LAY-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "LAY-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-200041",
+        "item_binding_id": "LAY-ITEM-GUIDED",
+        "learner_operation": "MAP_DIGESTIVE_EPITHELIUM_ORIGIN",
+        "authorized_next_node_ids": [
+          "LAY-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "LAY-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-200041",
+        "item_binding_id": "LAY-ITEM-LIGHT",
+        "learner_operation": "DISTINGUISH_NEURAL_TUBE_DERIVATIVE",
+        "authorized_next_node_ids": [
+          "LAY-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "LAY-ACT-SOLO",
+        "primary_kc_id": "V3-KC-200041",
+        "item_binding_id": "LAY-ITEM-SOLO",
+        "learner_operation": "MAP_MAJOR_GERM_LAYER_DERIVATIVES",
+        "authorized_next_node_ids": [
+          "LAY-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "LAY-ACT-NEAR",
+        "primary_kc_id": "V3-KC-200041",
+        "item_binding_id": "LAY-ITEM-NEAR",
+        "learner_operation": "MAP_SUPPORT_AND_TRANSPORT_DERIVATIVES",
+        "authorized_next_node_ids": [
+          "LAY-NODE-CHANGED",
+          "LAY-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "LAY-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-200041",
+        "item_binding_id": "LAY-ITEM-CHANGED",
+        "learner_operation": "INFER_NEURAL_CREST_FROM_MIGRATION",
+        "authorized_next_node_ids": [
+          "LAY-NODE-RECAP",
+          "LAY-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "LAY-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-200041",
+        "item_binding_id": "LAY-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_BROAD_GERM_LAYER_CUES",
+        "authorized_next_node_ids": [
+          "LAY-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "LAY-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-200041",
+        "item_binding_id": "LAY-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_GERM_LAYER_MAPPING",
+        "authorized_next_node_ids": [
+          "LAY-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "LAY-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-200041",
+        "item_binding_id": "LAY-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_TUBE_VERSUS_CREST_DISTINCTION",
+        "authorized_next_node_ids": [
+          "LAY-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "LAY-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-200041",
+        "item_binding_id": "LAY-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_NEURAL_LINEAGE_INFERENCE",
+        "authorized_next_node_ids": [
+          "LAY-NODE-RECAP"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-750511",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-750511",
+        "scope_in_refs": [
+          "V3-KC-750511:SCOPE_IN:0",
+          "V3-KC-750511:SCOPE_IN:1"
+        ],
+        "scope_out_refs": [
+          "V3-KC-750511:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "GAM-CLAIM-1",
+          "GAM-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "GAM-NODE-ENTRY",
+        "orientation_node_id": "GAM-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "GAM-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "GAM-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "GAM-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "GAM-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "GAM-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "GAM-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "GAM-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "GAM-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "GAM-NODE-NEAR",
+          "activity_ids": [
+            "GAM-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "GAM-NODE-CHANGED",
+          "activity_ids": [
+            "GAM-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "GAM-FEATURE-NEAR",
+          "GAM-FEATURE-CHANGED"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "GAM-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "GAM-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "GAM-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "GAM-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "GAM-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "GAM-ACT-REENTRY-NEAR",
+            "success_next_node_id": "GAM-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "GAM-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "GAM-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "GAM-NODE-RECAP",
+            "planner_handoff_node_id": "RPR-NODE-ENTRY"
+          }
+        ],
+        "representation_ids": [
+          "GAM-REP-MAIN"
+        ],
+        "accessibility_equivalent_ids": [
+          "GAM-REP-MAIN-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "GAM-NODE-ENTRY",
+            "GAM-NODE-RECAP"
+          ],
+          "standard": [
+            "GAM-NODE-ENTRY",
+            "GAM-NODE-ORIENTATION",
+            "GAM-NODE-EXPLANATION",
+            "GAM-NODE-MODEL",
+            "GAM-NODE-THINK",
+            "GAM-NODE-WORKED",
+            "GAM-NODE-GUIDED",
+            "GAM-NODE-LIGHT",
+            "GAM-NODE-SOLO",
+            "GAM-NODE-CONTRAST",
+            "GAM-NODE-NEAR",
+            "GAM-NODE-CHANGED",
+            "GAM-NODE-REPAIR-NEAR",
+            "GAM-NODE-REENTRY-NEAR",
+            "GAM-NODE-REPAIR-CHANGED",
+            "GAM-NODE-REENTRY-CHANGED",
+            "GAM-NODE-RECAP"
+          ],
+          "misconception": [
+            "GAM-NODE-ENTRY",
+            "GAM-NODE-CONTRAST",
+            "GAM-NODE-REPAIR-NEAR",
+            "GAM-NODE-REPAIR-CHANGED",
+            "GAM-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "GAM-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-909119",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-909119",
+        "scope_in_refs": [
+          "V3-KC-909119:SCOPE_IN:0",
+          "V3-KC-909119:SCOPE_IN:1",
+          "V3-KC-909119:SCOPE_IN:2",
+          "V3-KC-909119:SCOPE_IN:3"
+        ],
+        "scope_out_refs": [
+          "V3-KC-909119:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "RPR-CLAIM-1",
+          "RPR-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "RPR-NODE-ENTRY",
+        "orientation_node_id": "RPR-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "RPR-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "RPR-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "RPR-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "RPR-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "RPR-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "RPR-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "RPR-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "RPR-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "RPR-NODE-NEAR",
+          "activity_ids": [
+            "RPR-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "RPR-NODE-CHANGED",
+          "activity_ids": [
+            "RPR-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "RPR-FEATURE-NEAR",
+          "RPR-FEATURE-CHANGED"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "RPR-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "RPR-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "RPR-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "RPR-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "RPR-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "RPR-ACT-REENTRY-NEAR",
+            "success_next_node_id": "RPR-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "RPR-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "RPR-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "RPR-NODE-RECAP",
+            "planner_handoff_node_id": "EMB-NODE-ENTRY"
+          }
+        ],
+        "representation_ids": [
+          "RPR-REP-MAIN"
+        ],
+        "accessibility_equivalent_ids": [
+          "RPR-REP-MAIN-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "RPR-NODE-ENTRY",
+            "RPR-NODE-RECAP"
+          ],
+          "standard": [
+            "RPR-NODE-ENTRY",
+            "RPR-NODE-ORIENTATION",
+            "RPR-NODE-EXPLANATION",
+            "RPR-NODE-MODEL",
+            "RPR-NODE-THINK",
+            "RPR-NODE-WORKED",
+            "RPR-NODE-GUIDED",
+            "RPR-NODE-LIGHT",
+            "RPR-NODE-SOLO",
+            "RPR-NODE-CONTRAST",
+            "RPR-NODE-NEAR",
+            "RPR-NODE-CHANGED",
+            "RPR-NODE-REPAIR-NEAR",
+            "RPR-NODE-REENTRY-NEAR",
+            "RPR-NODE-REPAIR-CHANGED",
+            "RPR-NODE-REENTRY-CHANGED",
+            "RPR-NODE-RECAP"
+          ],
+          "misconception": [
+            "RPR-NODE-ENTRY",
+            "RPR-NODE-CONTRAST",
+            "RPR-NODE-REPAIR-NEAR",
+            "RPR-NODE-REPAIR-CHANGED",
+            "RPR-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "RPR-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-286877",
+        "canonical_ordinal": 3,
+        "objective_ref": "objective:V3-KC-286877",
+        "scope_in_refs": [
+          "V3-KC-286877:SCOPE_IN:0",
+          "V3-KC-286877:SCOPE_IN:1"
+        ],
+        "scope_out_refs": [
+          "V3-KC-286877:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "EMB-CLAIM-1",
+          "EMB-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "EMB-NODE-ENTRY",
+        "orientation_node_id": "EMB-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "EMB-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "EMB-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "EMB-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "EMB-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "EMB-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "EMB-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "EMB-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "EMB-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "EMB-NODE-NEAR",
+          "activity_ids": [
+            "EMB-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "EMB-NODE-CHANGED",
+          "activity_ids": [
+            "EMB-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "EMB-FEATURE-NEAR",
+          "EMB-FEATURE-CHANGED"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "EMB-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "EMB-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "EMB-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "EMB-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "EMB-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "EMB-ACT-REENTRY-NEAR",
+            "success_next_node_id": "EMB-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "EMB-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "EMB-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "EMB-NODE-RECAP",
+            "planner_handoff_node_id": "LAY-NODE-ENTRY"
+          }
+        ],
+        "representation_ids": [
+          "EMB-REP-MAIN"
+        ],
+        "accessibility_equivalent_ids": [
+          "EMB-REP-MAIN-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "EMB-NODE-ENTRY",
+            "EMB-NODE-RECAP"
+          ],
+          "standard": [
+            "EMB-NODE-ENTRY",
+            "EMB-NODE-ORIENTATION",
+            "EMB-NODE-EXPLANATION",
+            "EMB-NODE-MODEL",
+            "EMB-NODE-THINK",
+            "EMB-NODE-WORKED",
+            "EMB-NODE-GUIDED",
+            "EMB-NODE-LIGHT",
+            "EMB-NODE-SOLO",
+            "EMB-NODE-CONTRAST",
+            "EMB-NODE-NEAR",
+            "EMB-NODE-CHANGED",
+            "EMB-NODE-REPAIR-NEAR",
+            "EMB-NODE-REENTRY-NEAR",
+            "EMB-NODE-REPAIR-CHANGED",
+            "EMB-NODE-REENTRY-CHANGED",
+            "EMB-NODE-RECAP"
+          ],
+          "misconception": [
+            "EMB-NODE-ENTRY",
+            "EMB-NODE-CONTRAST",
+            "EMB-NODE-REPAIR-NEAR",
+            "EMB-NODE-REPAIR-CHANGED",
+            "EMB-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "EMB-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-200041",
+        "canonical_ordinal": 4,
+        "objective_ref": "objective:V3-KC-200041",
+        "scope_in_refs": [
+          "V3-KC-200041:SCOPE_IN:0",
+          "V3-KC-200041:SCOPE_IN:1",
+          "V3-KC-200041:SCOPE_IN:2",
+          "V3-KC-200041:SCOPE_IN:3"
+        ],
+        "scope_out_refs": [
+          "V3-KC-200041:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "LAY-CLAIM-1",
+          "LAY-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "LAY-NODE-ENTRY",
+        "orientation_node_id": "LAY-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "LAY-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "LAY-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "LAY-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "LAY-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "LAY-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "LAY-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "LAY-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "LAY-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "LAY-NODE-NEAR",
+          "activity_ids": [
+            "LAY-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "LAY-NODE-CHANGED",
+          "activity_ids": [
+            "LAY-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "LAY-FEATURE-NEAR",
+          "LAY-FEATURE-CHANGED"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "LAY-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "LAY-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "LAY-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "LAY-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "LAY-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "LAY-ACT-REENTRY-NEAR",
+            "success_next_node_id": "LAY-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "LAY-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "LAY-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "LAY-NODE-RECAP",
+            "planner_handoff_node_id": null
+          }
+        ],
+        "representation_ids": [
+          "LAY-REP-MAIN"
+        ],
+        "accessibility_equivalent_ids": [
+          "LAY-REP-MAIN-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "LAY-NODE-ENTRY",
+            "LAY-NODE-RECAP"
+          ],
+          "standard": [
+            "LAY-NODE-ENTRY",
+            "LAY-NODE-ORIENTATION",
+            "LAY-NODE-EXPLANATION",
+            "LAY-NODE-MODEL",
+            "LAY-NODE-THINK",
+            "LAY-NODE-WORKED",
+            "LAY-NODE-GUIDED",
+            "LAY-NODE-LIGHT",
+            "LAY-NODE-SOLO",
+            "LAY-NODE-CONTRAST",
+            "LAY-NODE-NEAR",
+            "LAY-NODE-CHANGED",
+            "LAY-NODE-REPAIR-NEAR",
+            "LAY-NODE-REENTRY-NEAR",
+            "LAY-NODE-REPAIR-CHANGED",
+            "LAY-NODE-REENTRY-CHANGED",
+            "LAY-NODE-RECAP"
+          ],
+          "misconception": [
+            "LAY-NODE-ENTRY",
+            "LAY-NODE-CONTRAST",
+            "LAY-NODE-REPAIR-NEAR",
+            "LAY-NODE-REPAIR-CHANGED",
+            "LAY-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "LAY-NODE-RECAP"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "GAM-ITEM-ENTRY",
+        "activity_id": "GAM-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "GAM-FAM-ENTRY",
+        "stimulus_lineage_id": "GAM-STIM-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAM-REP-MAIN",
+        "learner_operation": "COMPARE_SHARED_GAMETOGENESIS_OUTCOME",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAM_ENTRY",
+        "answer_authority_ref": "protected-items.json#GAM-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#GAM-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GAM-PATH-ENTRY",
+        "decisive_cue_id": "GAM-CUE-ENTRY",
+        "distractor_lineage_id": "GAM-DISTRACTOR-ENTRY",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GAM-FEATURE-ENTRY-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GAM-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-ENTRY-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GAM-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-ENTRY-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GAM-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GAM-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "GAM-FAM-WORKED",
+        "stimulus_lineage_id": "GAM-STIM-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAM-REP-MAIN",
+        "learner_operation": "FOLLOW_GAM_WORKED_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:GAM-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GAM-PATH-WORKED",
+        "decisive_cue_id": "GAM-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "GAM-ITEM-GUIDED",
+        "activity_id": "GAM-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "GAM-FAM-GUIDED",
+        "stimulus_lineage_id": "GAM-STIM-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_COMPARISON_CUES",
+          "VISIBLE_PROCESS_STEPS"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAM-REP-MAIN",
+        "learner_operation": "IDENTIFY_OOGENESIS_FROM_PRODUCTS",
+        "hint_policy": "VISIBLE_NON_ANSWER_BEARING_STRUCTURE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAM_GUIDED",
+        "answer_authority_ref": "protected-items.json#GAM-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#GAM-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GAM-PATH-GUIDED",
+        "decisive_cue_id": "GAM-CUE-GUIDED",
+        "distractor_lineage_id": "GAM-DISTRACTOR-GUIDED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GAM-FEATURE-GUIDED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GAM-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-GUIDED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GAM-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-GUIDED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GAM-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GAM-ITEM-LIGHT",
+        "activity_id": "GAM-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "GAM-FAM-LIGHT",
+        "stimulus_lineage_id": "GAM-STIM-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "ONE_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAM-REP-MAIN",
+        "learner_operation": "IDENTIFY_OVUM_MORPHOLOGY",
+        "hint_policy": "ONE_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAM_LIGHT",
+        "answer_authority_ref": "protected-items.json#GAM-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#GAM-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GAM-PATH-LIGHT",
+        "decisive_cue_id": "GAM-CUE-LIGHT",
+        "distractor_lineage_id": "GAM-DISTRACTOR-LIGHT",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GAM-FEATURE-LIGHT-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GAM-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-LIGHT-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GAM-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-LIGHT-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GAM-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GAM-ITEM-SOLO",
+        "activity_id": "GAM-ACT-SOLO",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "GAM-FAM-SOLO",
+        "stimulus_lineage_id": "GAM-STIM-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAM-REP-MAIN",
+        "learner_operation": "COMPARE_GAMETE_MORPHOLOGY",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAM_SOLO",
+        "answer_authority_ref": "protected-items.json#GAM-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#GAM-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GAM-PATH-SOLO",
+        "decisive_cue_id": "GAM-CUE-SOLO",
+        "distractor_lineage_id": "GAM-DISTRACTOR-SOLO",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GAM-FEATURE-SOLO-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GAM-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-SOLO-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GAM-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-SOLO-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GAM-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GAM-ITEM-NEAR",
+        "activity_id": "GAM-ACT-NEAR",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "GAM-FAM-NEAR",
+        "stimulus_lineage_id": "GAM-STIM-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAM-REP-MAIN",
+        "learner_operation": "CLASSIFY_GAMETOGENESIS_FROM_PRODUCT_PATTERN",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAM_NEAR",
+        "answer_authority_ref": "protected-items.json#GAM-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#GAM-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GAM-PATH-NEAR",
+        "decisive_cue_id": "GAM-CUE-NEAR",
+        "distractor_lineage_id": "GAM-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GAM-FEATURE-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GAM-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GAM-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GAM-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GAM-ITEM-CHANGED",
+        "activity_id": "GAM-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "GAM-FAM-CHANGED",
+        "stimulus_lineage_id": "GAM-STIM-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAM-REP-MAIN",
+        "learner_operation": "INFER_GAMETE_CONTRIBUTION_FROM_ORGANELLE_EVIDENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAM_CHANGED",
+        "answer_authority_ref": "protected-items.json#GAM-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#GAM-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GAM-PATH-CHANGED",
+        "decisive_cue_id": "GAM-CUE-CHANGED",
+        "distractor_lineage_id": "GAM-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GAM-FEATURE-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GAM-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GAM-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GAM-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "required_operation"
+        ],
+        "changed_dimension_detail": "The near task classifies a gametogenic pathway; the changed task uses cellular-component evidence to infer gamete contribution."
+      },
+      {
+        "item_binding_id": "GAM-ITEM-REPAIR-NEAR",
+        "activity_id": "GAM-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GAM-FAM-REPAIR-NEAR",
+        "stimulus_lineage_id": "GAM-STIM-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAM-REP-MAIN",
+        "learner_operation": "REBUILD_PATHWAY_DISTINCTION",
+        "hint_policy": "TARGETED_NEAR_USE_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAM_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#GAM-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#GAM-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GAM-PATH-REPAIR-NEAR",
+        "decisive_cue_id": "GAM-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "GAM-DISTRACTOR-REPAIR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GAM-FEATURE-REPAIR-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GAM-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-REPAIR-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GAM-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-REPAIR-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GAM-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GAM-ITEM-REENTRY-NEAR",
+        "activity_id": "GAM-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GAM-FAM-REENTRY-NEAR",
+        "stimulus_lineage_id": "GAM-STIM-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAM-REP-MAIN",
+        "learner_operation": "REENTER_PATHWAY_CLASSIFICATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAM_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#GAM-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#GAM-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GAM-PATH-REENTRY-NEAR",
+        "decisive_cue_id": "GAM-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "GAM-DISTRACTOR-REENTRY-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GAM-FEATURE-REENTRY-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "GAM-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-REENTRY-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "GAM-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-REENTRY-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "GAM-FEATURE-NEAR_USE"
+          }
+        ],
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "GAM-ITEM-NEAR",
+          "stimulus_difference": "Fresh compare gametogenesis and gamete contributions context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "GAM-ITEM-REPAIR-CHANGED",
+        "activity_id": "GAM-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GAM-FAM-REPAIR-CHANGED",
+        "stimulus_lineage_id": "GAM-STIM-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAM-REP-MAIN",
+        "learner_operation": "REBUILD_GAMETE_CONTRIBUTION_MAP",
+        "hint_policy": "TARGETED_CHANGED_TASK_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAM_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#GAM-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#GAM-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GAM-PATH-REPAIR-CHANGED",
+        "decisive_cue_id": "GAM-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "GAM-DISTRACTOR-REPAIR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GAM-FEATURE-REPAIR-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GAM-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-REPAIR-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GAM-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-REPAIR-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GAM-FEATURE-CHANGED_TASK"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GAM-ITEM-REENTRY-CHANGED",
+        "activity_id": "GAM-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-750511",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GAM-FAM-REENTRY-CHANGED",
+        "stimulus_lineage_id": "GAM-STIM-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAM-REP-MAIN",
+        "learner_operation": "REENTER_CONTRIBUTION_INFERENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAM_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#GAM-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#GAM-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GAM-PATH-REENTRY-CHANGED",
+        "decisive_cue_id": "GAM-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "GAM-DISTRACTOR-REENTRY-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GAM-FEATURE-REENTRY-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "GAM-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-REENTRY-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "GAM-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "GAM-FEATURE-REENTRY-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "GAM-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "required_operation"
+        ],
+        "changed_dimension_detail": "The near task classifies a gametogenic pathway; the changed task uses cellular-component evidence to infer gamete contribution.",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "GAM-ITEM-CHANGED",
+          "stimulus_difference": "Fresh compare gametogenesis and gamete contributions context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "RPR-ITEM-ENTRY",
+        "activity_id": "RPR-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "RPR-FAM-ENTRY",
+        "stimulus_lineage_id": "RPR-STIM-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "RPR-REP-MAIN",
+        "learner_operation": "LOCATE_EVENT_BEFORE_IMPLANTATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "RPR_ENTRY",
+        "answer_authority_ref": "protected-items.json#RPR-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#RPR-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "RPR-PATH-ENTRY",
+        "decisive_cue_id": "RPR-CUE-ENTRY",
+        "distractor_lineage_id": "RPR-DISTRACTOR-ENTRY",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "RPR-FEATURE-ENTRY-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "RPR-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-ENTRY-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "RPR-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-ENTRY-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "RPR-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "RPR-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "RPR-FAM-WORKED",
+        "stimulus_lineage_id": "RPR-STIM-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "RPR-REP-MAIN",
+        "learner_operation": "FOLLOW_RPR_WORKED_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:RPR-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "RPR-PATH-WORKED",
+        "decisive_cue_id": "RPR-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "RPR-ITEM-GUIDED",
+        "activity_id": "RPR-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "RPR-FAM-GUIDED",
+        "stimulus_lineage_id": "RPR-STIM-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_COMPARISON_CUES",
+          "VISIBLE_PROCESS_STEPS"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "RPR-REP-MAIN",
+        "learner_operation": "ORDER_BROAD_REPRODUCTIVE_EVENTS",
+        "hint_policy": "VISIBLE_NON_ANSWER_BEARING_STRUCTURE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "RPR_GUIDED",
+        "answer_authority_ref": "protected-items.json#RPR-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#RPR-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "RPR-PATH-GUIDED",
+        "decisive_cue_id": "RPR-CUE-GUIDED",
+        "distractor_lineage_id": "RPR-DISTRACTOR-GUIDED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "RPR-FEATURE-GUIDED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "RPR-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-GUIDED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "RPR-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-GUIDED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "RPR-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "RPR-ITEM-LIGHT",
+        "activity_id": "RPR-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "RPR-FAM-LIGHT",
+        "stimulus_lineage_id": "RPR-STIM-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "ONE_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "RPR-REP-MAIN",
+        "learner_operation": "PREDICT_EVENT_AFTER_UTERINE_ARRIVAL",
+        "hint_policy": "ONE_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "RPR_LIGHT",
+        "answer_authority_ref": "protected-items.json#RPR-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#RPR-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "RPR-PATH-LIGHT",
+        "decisive_cue_id": "RPR-CUE-LIGHT",
+        "distractor_lineage_id": "RPR-DISTRACTOR-LIGHT",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "RPR-FEATURE-LIGHT-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "RPR-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-LIGHT-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "RPR-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-LIGHT-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "RPR-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "RPR-ITEM-SOLO",
+        "activity_id": "RPR-ACT-SOLO",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "RPR-FAM-SOLO",
+        "stimulus_lineage_id": "RPR-STIM-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "RPR-REP-MAIN",
+        "learner_operation": "DISTINGUISH_CLEAVAGE_AND_IMPLANTATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "RPR_SOLO",
+        "answer_authority_ref": "protected-items.json#RPR-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#RPR-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "RPR-PATH-SOLO",
+        "decisive_cue_id": "RPR-CUE-SOLO",
+        "distractor_lineage_id": "RPR-DISTRACTOR-SOLO",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "RPR-FEATURE-SOLO-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "RPR-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-SOLO-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "RPR-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-SOLO-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "RPR-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "RPR-ITEM-NEAR",
+        "activity_id": "RPR-ACT-NEAR",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "RPR-FAM-NEAR",
+        "stimulus_lineage_id": "RPR-STIM-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "RPR-REP-MAIN",
+        "learner_operation": "SEQUENCE_FERTILIZATION_TO_BIRTH",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "RPR_NEAR",
+        "answer_authority_ref": "protected-items.json#RPR-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#RPR-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "RPR-PATH-NEAR",
+        "decisive_cue_id": "RPR-CUE-NEAR",
+        "distractor_lineage_id": "RPR-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "RPR-FEATURE-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "RPR-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "RPR-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "RPR-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "RPR-ITEM-CHANGED",
+        "activity_id": "RPR-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "RPR-FAM-CHANGED",
+        "stimulus_lineage_id": "RPR-STIM-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "RPR-REP-MAIN",
+        "learner_operation": "INFER_DISRUPTED_STAGE_FROM_ATTACHMENT_EVIDENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "RPR_CHANGED",
+        "answer_authority_ref": "protected-items.json#RPR-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#RPR-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "RPR-PATH-CHANGED",
+        "decisive_cue_id": "RPR-CUE-CHANGED",
+        "distractor_lineage_id": "RPR-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "RPR-FEATURE-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "RPR-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "RPR-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "RPR-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "passage_or_data"
+        ],
+        "changed_dimension_detail": "The near task orders named events; the changed task interprets a brief biological observation to locate a failed event."
+      },
+      {
+        "item_binding_id": "RPR-ITEM-REPAIR-NEAR",
+        "activity_id": "RPR-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "RPR-FAM-REPAIR-NEAR",
+        "stimulus_lineage_id": "RPR-STIM-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "RPR-REP-MAIN",
+        "learner_operation": "REBUILD_STAGE_VERB_MAP",
+        "hint_policy": "TARGETED_NEAR_USE_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "RPR_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#RPR-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#RPR-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "RPR-PATH-REPAIR-NEAR",
+        "decisive_cue_id": "RPR-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "RPR-DISTRACTOR-REPAIR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "RPR-FEATURE-REPAIR-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "RPR-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-REPAIR-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "RPR-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-REPAIR-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "RPR-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "RPR-ITEM-REENTRY-NEAR",
+        "activity_id": "RPR-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "RPR-FAM-REENTRY-NEAR",
+        "stimulus_lineage_id": "RPR-STIM-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "RPR-REP-MAIN",
+        "learner_operation": "REENTER_REPRODUCTIVE_SEQUENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "RPR_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#RPR-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#RPR-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "RPR-PATH-REENTRY-NEAR",
+        "decisive_cue_id": "RPR-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "RPR-DISTRACTOR-REENTRY-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "RPR-FEATURE-REENTRY-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "RPR-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-REENTRY-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "RPR-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-REENTRY-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "RPR-FEATURE-NEAR_USE"
+          }
+        ],
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "RPR-ITEM-NEAR",
+          "stimulus_difference": "Fresh trace fertilization through birth context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "RPR-ITEM-REPAIR-CHANGED",
+        "activity_id": "RPR-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "RPR-FAM-REPAIR-CHANGED",
+        "stimulus_lineage_id": "RPR-STIM-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "RPR-REP-MAIN",
+        "learner_operation": "REBUILD_EVIDENCE_TO_STAGE_MAP",
+        "hint_policy": "TARGETED_CHANGED_TASK_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "RPR_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#RPR-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#RPR-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "RPR-PATH-REPAIR-CHANGED",
+        "decisive_cue_id": "RPR-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "RPR-DISTRACTOR-REPAIR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "RPR-FEATURE-REPAIR-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "RPR-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-REPAIR-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "RPR-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-REPAIR-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "RPR-FEATURE-CHANGED_TASK"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "RPR-ITEM-REENTRY-CHANGED",
+        "activity_id": "RPR-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-909119",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "RPR-FAM-REENTRY-CHANGED",
+        "stimulus_lineage_id": "RPR-STIM-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "RPR-REP-MAIN",
+        "learner_operation": "REENTER_STAGE_INFERENCE_FROM_LOCATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "RPR_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#RPR-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#RPR-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "RPR-PATH-REENTRY-CHANGED",
+        "decisive_cue_id": "RPR-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "RPR-DISTRACTOR-REENTRY-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "RPR-FEATURE-REENTRY-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "RPR-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-REENTRY-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "RPR-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "RPR-FEATURE-REENTRY-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "RPR-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "passage_or_data"
+        ],
+        "changed_dimension_detail": "The near task orders named events; the changed task interprets a brief biological observation to locate a failed event.",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "RPR-ITEM-CHANGED",
+          "stimulus_difference": "Fresh trace fertilization through birth context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "EMB-ITEM-ENTRY",
+        "activity_id": "EMB-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "EMB-FAM-ENTRY",
+        "stimulus_lineage_id": "EMB-STIM-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EMB-REP-MAIN",
+        "learner_operation": "LOCATE_CLEAVAGE_AFTER_FERTILIZATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EMB_ENTRY",
+        "answer_authority_ref": "protected-items.json#EMB-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#EMB-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EMB-PATH-ENTRY",
+        "decisive_cue_id": "EMB-CUE-ENTRY",
+        "distractor_lineage_id": "EMB-DISTRACTOR-ENTRY",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "EMB-FEATURE-ENTRY-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "EMB-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-ENTRY-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "EMB-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-ENTRY-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "EMB-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "EMB-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "EMB-FAM-WORKED",
+        "stimulus_lineage_id": "EMB-STIM-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EMB-REP-MAIN",
+        "learner_operation": "FOLLOW_EMB_WORKED_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:EMB-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EMB-PATH-WORKED",
+        "decisive_cue_id": "EMB-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "EMB-ITEM-GUIDED",
+        "activity_id": "EMB-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "EMB-FAM-GUIDED",
+        "stimulus_lineage_id": "EMB-STIM-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_COMPARISON_CUES",
+          "VISIBLE_PROCESS_STEPS"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EMB-REP-MAIN",
+        "learner_operation": "IDENTIFY_CLEAVAGE_FROM_SIZE_AND_CELL_NUMBER",
+        "hint_policy": "VISIBLE_NON_ANSWER_BEARING_STRUCTURE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EMB_GUIDED",
+        "answer_authority_ref": "protected-items.json#EMB-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#EMB-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EMB-PATH-GUIDED",
+        "decisive_cue_id": "EMB-CUE-GUIDED",
+        "distractor_lineage_id": "EMB-DISTRACTOR-GUIDED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "EMB-FEATURE-GUIDED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "EMB-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-GUIDED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "EMB-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-GUIDED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "EMB-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "EMB-ITEM-LIGHT",
+        "activity_id": "EMB-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "EMB-FAM-LIGHT",
+        "stimulus_lineage_id": "EMB-STIM-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "ONE_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EMB-REP-MAIN",
+        "learner_operation": "IDENTIFY_GASTRULATION_TRANSITION",
+        "hint_policy": "ONE_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EMB_LIGHT",
+        "answer_authority_ref": "protected-items.json#EMB-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#EMB-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EMB-PATH-LIGHT",
+        "decisive_cue_id": "EMB-CUE-LIGHT",
+        "distractor_lineage_id": "EMB-DISTRACTOR-LIGHT",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "EMB-FEATURE-LIGHT-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "EMB-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-LIGHT-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "EMB-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-LIGHT-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "EMB-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "EMB-ITEM-SOLO",
+        "activity_id": "EMB-ACT-SOLO",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "EMB-FAM-SOLO",
+        "stimulus_lineage_id": "EMB-STIM-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EMB-REP-MAIN",
+        "learner_operation": "PREDICT_STAGE_AFTER_GASTRULATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EMB_SOLO",
+        "answer_authority_ref": "protected-items.json#EMB-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#EMB-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EMB-PATH-SOLO",
+        "decisive_cue_id": "EMB-CUE-SOLO",
+        "distractor_lineage_id": "EMB-DISTRACTOR-SOLO",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "EMB-FEATURE-SOLO-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "EMB-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-SOLO-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "EMB-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-SOLO-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "EMB-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "EMB-ITEM-NEAR",
+        "activity_id": "EMB-ACT-NEAR",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "EMB-FAM-NEAR",
+        "stimulus_lineage_id": "EMB-STIM-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EMB-REP-MAIN",
+        "learner_operation": "SEQUENCE_EARLY_EMBRYOGENESIS",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EMB_NEAR",
+        "answer_authority_ref": "protected-items.json#EMB-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#EMB-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EMB-PATH-NEAR",
+        "decisive_cue_id": "EMB-CUE-NEAR",
+        "distractor_lineage_id": "EMB-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "EMB-FEATURE-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EMB-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EMB-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EMB-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "EMB-ITEM-CHANGED",
+        "activity_id": "EMB-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "EMB-FAM-CHANGED",
+        "stimulus_lineage_id": "EMB-STIM-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EMB-REP-MAIN",
+        "learner_operation": "INFER_STAGE_FROM_CELL_MOVEMENT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EMB_CHANGED",
+        "answer_authority_ref": "protected-items.json#EMB-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#EMB-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EMB-PATH-CHANGED",
+        "decisive_cue_id": "EMB-CUE-CHANGED",
+        "distractor_lineage_id": "EMB-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "EMB-FEATURE-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EMB-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EMB-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EMB-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "representation"
+        ],
+        "changed_dimension_detail": "The near task orders named stages; the changed task interprets a lineage-tracing description of cell movement."
+      },
+      {
+        "item_binding_id": "EMB-ITEM-REPAIR-NEAR",
+        "activity_id": "EMB-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "EMB-FAM-REPAIR-NEAR",
+        "stimulus_lineage_id": "EMB-STIM-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EMB-REP-MAIN",
+        "learner_operation": "REBUILD_STAGE_TRANSITION_MAP",
+        "hint_policy": "TARGETED_NEAR_USE_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EMB_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#EMB-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#EMB-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EMB-PATH-REPAIR-NEAR",
+        "decisive_cue_id": "EMB-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "EMB-DISTRACTOR-REPAIR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "EMB-FEATURE-REPAIR-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "EMB-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-REPAIR-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "EMB-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-REPAIR-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "EMB-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "EMB-ITEM-REENTRY-NEAR",
+        "activity_id": "EMB-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "EMB-FAM-REENTRY-NEAR",
+        "stimulus_lineage_id": "EMB-STIM-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EMB-REP-MAIN",
+        "learner_operation": "REENTER_EARLY_STAGE_SEQUENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EMB_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#EMB-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#EMB-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EMB-PATH-REENTRY-NEAR",
+        "decisive_cue_id": "EMB-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "EMB-DISTRACTOR-REENTRY-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "EMB-FEATURE-REENTRY-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "EMB-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-REENTRY-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "EMB-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-REENTRY-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "EMB-FEATURE-NEAR_USE"
+          }
+        ],
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "EMB-ITEM-NEAR",
+          "stimulus_difference": "Fresh sequence early embryogenesis context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "EMB-ITEM-REPAIR-CHANGED",
+        "activity_id": "EMB-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "EMB-FAM-REPAIR-CHANGED",
+        "stimulus_lineage_id": "EMB-STIM-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EMB-REP-MAIN",
+        "learner_operation": "REBUILD_MOVEMENT_VERSUS_SUBDIVISION",
+        "hint_policy": "TARGETED_CHANGED_TASK_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EMB_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#EMB-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#EMB-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EMB-PATH-REPAIR-CHANGED",
+        "decisive_cue_id": "EMB-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "EMB-DISTRACTOR-REPAIR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "EMB-FEATURE-REPAIR-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "EMB-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-REPAIR-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "EMB-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-REPAIR-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "EMB-FEATURE-CHANGED_TASK"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "EMB-ITEM-REENTRY-CHANGED",
+        "activity_id": "EMB-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-286877",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "EMB-FAM-REENTRY-CHANGED",
+        "stimulus_lineage_id": "EMB-STIM-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EMB-REP-MAIN",
+        "learner_operation": "INFER_STAGE_FROM_CELL_MOVEMENT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EMB_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#EMB-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#EMB-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EMB-PATH-REENTRY-CHANGED",
+        "decisive_cue_id": "EMB-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "EMB-DISTRACTOR-REENTRY-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "EMB-FEATURE-REENTRY-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "EMB-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-REENTRY-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "EMB-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "EMB-FEATURE-REENTRY-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "EMB-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "representation"
+        ],
+        "changed_dimension_detail": "The near task orders named stages; the changed task interprets a lineage-tracing description of cell movement.",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "EMB-ITEM-CHANGED",
+          "stimulus_difference": "A new primitive-streak ingression observation replaces the earlier lineage-marker surface-to-interior observation.",
+          "solution_path_difference": "Both items require inferring gastrulation from layer-forming cell movement, using different evidence surfaces.",
+          "distractor_difference": "All substantive distractors are fresh for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "LAY-ITEM-ENTRY",
+        "activity_id": "LAY-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "LAY-FAM-ENTRY",
+        "stimulus_lineage_id": "LAY-STIM-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LAY-REP-MAIN",
+        "learner_operation": "MAP_SKELETAL_MUSCLE_ORIGIN",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LAY_ENTRY",
+        "answer_authority_ref": "protected-items.json#LAY-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#LAY-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LAY-PATH-ENTRY",
+        "decisive_cue_id": "LAY-CUE-ENTRY",
+        "distractor_lineage_id": "LAY-DISTRACTOR-ENTRY",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LAY-FEATURE-ENTRY-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LAY-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-ENTRY-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LAY-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-ENTRY-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LAY-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "LAY-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "LAY-FAM-WORKED",
+        "stimulus_lineage_id": "LAY-STIM-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LAY-REP-MAIN",
+        "learner_operation": "FOLLOW_LAY_WORKED_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:LAY-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LAY-PATH-WORKED",
+        "decisive_cue_id": "LAY-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "LAY-ITEM-GUIDED",
+        "activity_id": "LAY-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "LAY-FAM-GUIDED",
+        "stimulus_lineage_id": "LAY-STIM-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_COMPARISON_CUES",
+          "VISIBLE_PROCESS_STEPS"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LAY-REP-MAIN",
+        "learner_operation": "MAP_DIGESTIVE_EPITHELIUM_ORIGIN",
+        "hint_policy": "VISIBLE_NON_ANSWER_BEARING_STRUCTURE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LAY_GUIDED",
+        "answer_authority_ref": "protected-items.json#LAY-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#LAY-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LAY-PATH-GUIDED",
+        "decisive_cue_id": "LAY-CUE-GUIDED",
+        "distractor_lineage_id": "LAY-DISTRACTOR-GUIDED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LAY-FEATURE-GUIDED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LAY-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-GUIDED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LAY-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-GUIDED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LAY-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "LAY-ITEM-LIGHT",
+        "activity_id": "LAY-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "LAY-FAM-LIGHT",
+        "stimulus_lineage_id": "LAY-STIM-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "ONE_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LAY-REP-MAIN",
+        "learner_operation": "DISTINGUISH_NEURAL_TUBE_DERIVATIVE",
+        "hint_policy": "ONE_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LAY_LIGHT",
+        "answer_authority_ref": "protected-items.json#LAY-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#LAY-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LAY-PATH-LIGHT",
+        "decisive_cue_id": "LAY-CUE-LIGHT",
+        "distractor_lineage_id": "LAY-DISTRACTOR-LIGHT",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LAY-FEATURE-LIGHT-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LAY-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-LIGHT-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LAY-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-LIGHT-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LAY-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "LAY-ITEM-SOLO",
+        "activity_id": "LAY-ACT-SOLO",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "LAY-FAM-SOLO",
+        "stimulus_lineage_id": "LAY-STIM-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LAY-REP-MAIN",
+        "learner_operation": "MAP_MAJOR_GERM_LAYER_DERIVATIVES",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LAY_SOLO",
+        "answer_authority_ref": "protected-items.json#LAY-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#LAY-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LAY-PATH-SOLO",
+        "decisive_cue_id": "LAY-CUE-SOLO",
+        "distractor_lineage_id": "LAY-DISTRACTOR-SOLO",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LAY-FEATURE-SOLO-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LAY-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-SOLO-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LAY-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-SOLO-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LAY-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "LAY-ITEM-NEAR",
+        "activity_id": "LAY-ACT-NEAR",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "LAY-FAM-NEAR",
+        "stimulus_lineage_id": "LAY-STIM-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LAY-REP-MAIN",
+        "learner_operation": "MAP_SUPPORT_AND_TRANSPORT_DERIVATIVES",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LAY_NEAR",
+        "answer_authority_ref": "protected-items.json#LAY-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#LAY-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LAY-PATH-NEAR",
+        "decisive_cue_id": "LAY-CUE-NEAR",
+        "distractor_lineage_id": "LAY-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LAY-FEATURE-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LAY-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LAY-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LAY-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "LAY-ITEM-CHANGED",
+        "activity_id": "LAY-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "LAY-FAM-CHANGED",
+        "stimulus_lineage_id": "LAY-STIM-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LAY-REP-MAIN",
+        "learner_operation": "INFER_NEURAL_CREST_FROM_MIGRATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LAY_CHANGED",
+        "answer_authority_ref": "protected-items.json#LAY-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#LAY-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LAY-PATH-CHANGED",
+        "decisive_cue_id": "LAY-CUE-CHANGED",
+        "distractor_lineage_id": "LAY-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LAY-FEATURE-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LAY-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LAY-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LAY-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "passage_or_data"
+        ],
+        "changed_dimension_detail": "The near task recalls a broad derivative map; the changed task interprets migration evidence to distinguish two ectodermal lineages."
+      },
+      {
+        "item_binding_id": "LAY-ITEM-REPAIR-NEAR",
+        "activity_id": "LAY-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LAY-FAM-REPAIR-NEAR",
+        "stimulus_lineage_id": "LAY-STIM-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LAY-REP-MAIN",
+        "learner_operation": "REBUILD_BROAD_GERM_LAYER_CUES",
+        "hint_policy": "TARGETED_NEAR_USE_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LAY_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#LAY-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#LAY-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LAY-PATH-REPAIR-NEAR",
+        "decisive_cue_id": "LAY-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "LAY-DISTRACTOR-REPAIR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LAY-FEATURE-REPAIR-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LAY-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-REPAIR-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LAY-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-REPAIR-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LAY-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "LAY-ITEM-REENTRY-NEAR",
+        "activity_id": "LAY-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LAY-FAM-REENTRY-NEAR",
+        "stimulus_lineage_id": "LAY-STIM-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LAY-REP-MAIN",
+        "learner_operation": "REENTER_GERM_LAYER_MAPPING",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LAY_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#LAY-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#LAY-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LAY-PATH-REENTRY-NEAR",
+        "decisive_cue_id": "LAY-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "LAY-DISTRACTOR-REENTRY-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LAY-FEATURE-REENTRY-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "LAY-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-REENTRY-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "LAY-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-REENTRY-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "LAY-FEATURE-NEAR_USE"
+          }
+        ],
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "LAY-ITEM-NEAR",
+          "stimulus_difference": "Fresh map germ layers and neural crest to major structures context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "LAY-ITEM-REPAIR-CHANGED",
+        "activity_id": "LAY-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LAY-FAM-REPAIR-CHANGED",
+        "stimulus_lineage_id": "LAY-STIM-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LAY-REP-MAIN",
+        "learner_operation": "REBUILD_TUBE_VERSUS_CREST_DISTINCTION",
+        "hint_policy": "TARGETED_CHANGED_TASK_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LAY_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#LAY-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#LAY-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LAY-PATH-REPAIR-CHANGED",
+        "decisive_cue_id": "LAY-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "LAY-DISTRACTOR-REPAIR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LAY-FEATURE-REPAIR-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LAY-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-REPAIR-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LAY-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-REPAIR-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "LAY-FEATURE-CHANGED_TASK"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "LAY-ITEM-REENTRY-CHANGED",
+        "activity_id": "LAY-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-200041",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LAY-FAM-REENTRY-CHANGED",
+        "stimulus_lineage_id": "LAY-STIM-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LAY-REP-MAIN",
+        "learner_operation": "REENTER_NEURAL_LINEAGE_INFERENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LAY_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#LAY-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#LAY-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LAY-PATH-REENTRY-CHANGED",
+        "decisive_cue_id": "LAY-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "LAY-DISTRACTOR-REENTRY-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "LAY-FEATURE-REENTRY-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "LAY-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-REENTRY-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "LAY-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "LAY-FEATURE-REENTRY-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "LAY-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "passage_or_data"
+        ],
+        "changed_dimension_detail": "The near task recalls a broad derivative map; the changed task interprets migration evidence to distinguish two ectodermal lineages.",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "LAY-ITEM-CHANGED",
+          "stimulus_difference": "Fresh map germ layers and neural crest to major structures context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      }
+    ],
+    "transitions": [],
+    "attachment_bindings": []
+  }
+}

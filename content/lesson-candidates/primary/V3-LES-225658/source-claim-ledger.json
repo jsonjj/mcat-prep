@@ -1,0 +1,392 @@
+{
+  "artifact_type": "SOURCE_CLAIM_LEDGER",
+  "artifact_id": "V3-SCLD-225658",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT_TRACE_ONLY",
+  "canonical_lesson_binding": {
+    "lesson_id": "V3-LES-225658",
+    "grouping_id": "V3-CL-225658",
+    "ordered_kc_ids": [
+      "V3-KC-337354",
+      "V3-KC-564671",
+      "V3-KC-628404",
+      "V3-KC-730668"
+    ]
+  },
+  "authority_boundary": {
+    "source_ids": [
+      "AAMC-2020",
+      "AAMC-2020-MCAT-CONTENT"
+    ],
+    "source_classes": [
+      "PUBLIC_PRIMARY_RESEARCH"
+    ],
+    "source_anchor_ids": [
+      "PS-SA-AAMC-7C"
+    ],
+    "present_day_authority_refreshed": false,
+    "source_use_status": "PERMITTED_FOR_BOUNDED_INTERNAL_AUTHORING",
+    "human_rights_clearance_claimed": false,
+    "learner_validation_claimed": false
+  },
+  "source_trace_governance": {
+    "packet_sha256": "ac763893f44cbbf8e8f13d4f4ebaf766aa0b1aa1fd5fcc1a78411b9e583a1194",
+    "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+    "permitted_use": [
+      "DERIVED_SCOPE_METADATA",
+      "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+      "INTERNAL_HUMAN_REVIEW"
+    ],
+    "prohibited_use": [
+      "RAW_SOURCE_TEXT",
+      "QUOTATION",
+      "PASSAGE_REPRODUCTION",
+      "FIGURE_REPRODUCTION",
+      "PROPRIETARY_ITEM_REUSE",
+      "PRIVATE_COMPARISON_CONTENT"
+    ],
+    "expressive_copy_flag": false
+  },
+  "source_records": [
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100145",
+      "source_occurrence_id": "V3-SRC-100145",
+      "source_id": "AAMC-2020",
+      "official_topic": "Habituation and Dishabituation",
+      "printed_pages": [
+        90
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-7C"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-200091",
+      "source_occurrence_id": "V3-SRC-200091",
+      "source_id": "AAMC-2020-MCAT-CONTENT",
+      "official_topic": null,
+      "printed_pages": [
+        90,
+        91
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-7C"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100146",
+      "source_occurrence_id": "V3-SRC-100146",
+      "source_id": "AAMC-2020",
+      "official_topic": "Associative Learning",
+      "printed_pages": [
+        90,
+        91
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-7C"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    }
+  ],
+  "source_claims": [
+    {
+      "claim_id": "HAB-CLAIM-DECLINE",
+      "target_kc_id": "V3-KC-337354",
+      "authorial_claim": "Habituation is a reduced response across repeated presentations of a stimulus without requiring an association between two stimuli or between behavior and consequence.",
+      "scope_in_refs": [
+        "V3-KC-337354:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-337354:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-7C"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100145",
+        "V3-SRC-200091"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600853",
+        "V3-MAP-601379"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "HAB-CLAIM-RENEWAL",
+      "target_kc_id": "V3-KC-337354",
+      "authorial_claim": "Dishabituation is renewed responding after a novel or changed stimulus, helping distinguish habituation from sensory adaptation.",
+      "scope_in_refs": [
+        "V3-KC-337354:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-337354:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-7C"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100145",
+        "V3-SRC-200091"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600853",
+        "V3-MAP-601379"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "CLS-CLAIM-MAP",
+      "target_kc_id": "V3-KC-564671",
+      "authorial_claim": "Classical conditioning maps an unconditioned stimulus to an unconditioned response, then turns a previously neutral cue into a conditioned stimulus that elicits a conditioned response.",
+      "scope_in_refs": [
+        "V3-KC-564671:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-564671:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-7C"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100146",
+        "V3-SRC-200091"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600739",
+        "V3-MAP-600764"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "CLS-CLAIM-PROCESSES",
+      "target_kc_id": "V3-KC-564671",
+      "authorial_claim": "Acquisition, extinction, spontaneous recovery, generalization, and discrimination describe changes in the conditioned relation across pairing, nonreinforced cue trials, delay, and stimulus similarity.",
+      "scope_in_refs": [
+        "V3-KC-564671:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-564671:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-7C"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100146",
+        "V3-SRC-200091"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600739",
+        "V3-MAP-600764"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "OPR-CLAIM-CONTINGENCY",
+      "target_kc_id": "V3-KC-628404",
+      "authorial_claim": "Operant classification depends on whether a consequence is added or removed and whether the future behavior increases or decreases.",
+      "scope_in_refs": [
+        "V3-KC-628404:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-628404:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-7C"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100146",
+        "V3-SRC-200091"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600740",
+        "V3-MAP-601242"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "OPR-CLAIM-PROCESSES",
+      "target_kc_id": "V3-KC-628404",
+      "authorial_claim": "Shaping, extinction, reinforcement schedules, punishment, escape, and avoidance predict different behavior patterns from the timing and contingency of consequences.",
+      "scope_in_refs": [
+        "V3-KC-628404:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-628404:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-7C"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100146",
+        "V3-SRC-200091"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600740",
+        "V3-MAP-601242"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "CNS-CLAIM-COGNITION",
+      "target_kc_id": "V3-KC-730668",
+      "authorial_claim": "Expectancies and cognitive representations can alter performance relative to a simple history-of-pairings prediction.",
+      "scope_in_refs": [
+        "V3-KC-730668:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-730668:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-7C"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100146",
+        "V3-SRC-200091"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600741",
+        "V3-MAP-600811"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "CNS-CLAIM-BIOLOGY",
+      "target_kc_id": "V3-KC-730668",
+      "authorial_claim": "Biological predispositions can make some associations easier to learn, and instinctive drift can pull trained behavior toward species-typical patterns.",
+      "scope_in_refs": [
+        "V3-KC-730668:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-730668:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "PS-SA-AAMC-7C"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100146",
+        "V3-SRC-200091"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600741",
+        "V3-MAP-600811"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    }
+  ],
+  "canonical_context": {
+    "placements": {
+      "phase_ids": [
+        "V3-PHS-280641",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-938420",
+        "V3-MOD-741509"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 46,
+          "relation_ids": [
+            "R14-PL-581402-046"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 46,
+          "relation_ids": [
+            "R14-PL-904137-046"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-315978",
+          "position": 9,
+          "relation_ids": [
+            "R14-PL-315978-009"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-225658",
+      "revisit_relation_ids": [
+        "R14-RV-225658"
+      ]
+    },
+    "hard_prerequisites": [],
+    "helpful_prerequisites": [],
+    "attachment_bindings": [
+      {
+        "attachment_id": "V3-EXT-910216",
+        "kind": "EXTENSION",
+        "owner_lesson_id": "V3-LES-225658",
+        "host_scope": {
+          "kind": "MULTI_KC",
+          "kc_ids": [
+            "V3-KC-337354",
+            "V3-KC-564671",
+            "V3-KC-628404",
+            "V3-KC-730668"
+          ]
+        },
+        "declared_host_core_ids": [
+          "V3-KC-337354",
+          "V3-KC-564671",
+          "V3-KC-628404",
+          "V3-KC-730668"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": true,
+        "relation_ids": [
+          "R14-FD-225658"
+        ],
+        "relation_class": "FIRST_DELIVERY",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": false
+      },
+      {
+        "attachment_id": "V3-SUP-941207",
+        "kind": "SUPPORT",
+        "owner_lesson_id": "V3-LES-225658",
+        "host_scope": {
+          "kind": "LESSON"
+        },
+        "declared_host_core_ids": [],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": false,
+        "relation_ids": [
+          "R14-FD-225658"
+        ],
+        "relation_class": "FIRST_DELIVERY",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": false
+      }
+    ],
+    "route_scope_code": "STANDARD_ONLY"
+  },
+  "lineage_and_limits": {
+    "open_hold_ids": [
+      "V3-HOLD-110001",
+      "V3-HOLD-110003",
+      "V3-HOLD-110005",
+      "V3-HOLD-110008",
+      "V3-HOLD-110009",
+      "V3-HOLD-110010"
+    ],
+    "nonclaims": [
+      "NO_PRESENT_DAY_AUTHORITY_REFRESH",
+      "NO_LEARNER_VALIDATION",
+      "NO_EFFICACY",
+      "NO_MASTERY_CALIBRATION",
+      "NO_READINESS_VALIDATION",
+      "NO_PRODUCTION_PUBLICATION"
+    ]
+  }
+}

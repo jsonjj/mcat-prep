@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node --import tsx src/main.ts",
+    "kits": "node --import tsx src/entry.ts lesson-factory kits",
+    "packets": "node --import tsx src/packet-main.ts",
+    "start": "node --import tsx src/entry.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

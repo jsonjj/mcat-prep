@@ -1,0 +1,102 @@
+{
+  "authorVerdictReceived": false,
+  "evidenceRefs": [
+    {
+      "path": "candidate-quality-ledger.json",
+      "sha256": "a47e599c21a5cae592baa9dad0204c3101a22ae7499986126fc636b2a384a886"
+    },
+    {
+      "path": "inputs/task-source-packet.json",
+      "sha256": "4b5268214efe919d292ef84d3df35e314093fe709ad3b3d3d2988ba21cf4fede"
+    },
+    {
+      "path": "kc-coverage-matrix.json",
+      "sha256": "95c5d99bdf1c1a9aa34cf63e0338af239370d46589bd0af922a255353f42e7bc"
+    },
+    {
+      "path": "learner-safe-items.json",
+      "sha256": "7188cc28714eefa9fbc20cf83a7b742e07e5284b5ac3fa6e5ec486eeab5ef985"
+    },
+    {
+      "path": "lesson-presentation-plan.json",
+      "sha256": "3ca27f89c8cfc76e4495cbaaf8606d6e11a3ccec30f240b97b84fc4757e25580"
+    },
+    {
+      "path": "lesson-quality-report.json",
+      "sha256": "7b9827237abff9c0512d5995555c1974c083c6efd6f9a4fc4ad08e05520b358f"
+    },
+    {
+      "path": "lesson-script.json",
+      "sha256": "ecc0ce31665ae989643ad6b2950737619f6a989eb28f03f4d9d840d701e05567"
+    },
+    {
+      "path": "protected-items.json",
+      "sha256": "cfd33864a37be58a3286831ffd0348b1dc6de98bc8819b91e2862d031712c913"
+    },
+    {
+      "path": "reviews/author-self-audit.json",
+      "sha256": "1a4f9b34c35f30dcd298ea1a974edc999c36a4d2a7ea6336c6c144daf0a49d2a"
+    },
+    {
+      "path": "source-claim-ledger.json",
+      "sha256": "745d622f7d885b62ede7db2e2c18455a5268b220693f63c57365f1b45316bba0"
+    },
+    {
+      "path": "validation/computed-quality.json",
+      "sha256": "3fdd1728871df67b8a72a562ba7fae75e9f989dc8cfff7cacbed235314c3d0e3"
+    },
+    {
+      "path": "validation/lesson-validate.json",
+      "sha256": "b78e48e5ed1a54f1d3ddf1b64886d9c31b458006bf8f37b02f50b4d35c8e32ef"
+    },
+    {
+      "path": "validation/normalization-smoke.json",
+      "sha256": "d4984ce343dcaf5b969c9bfd432072f111888c43b49e5fc1289b41871e0399ce"
+    },
+    {
+      "path": "validation/protected-scan.json",
+      "sha256": "f81c863adb25bb90d9f4bbcf0442d20845fee7a2ee2be34b96a6d6c655431032"
+    }
+  ],
+  "findingCodes": [
+    "REF_GUIDED_PROMPT_OPTIONS_DO_NOT_ANSWER_REFERENCE_LINE",
+    "SNL_REENTRY_CHANGED_PRESENTATION_DEMAND_TRACE_MISMATCH",
+    "MIR_REENTRY_CHANGED_PRESENTATION_DEMAND_TRACE_MISMATCH",
+    "LEN_REPAIR_NEAR_PRESENTATION_DEMAND_TRACE_MISMATCH",
+    "LEN_REENTRY_CHANGED_PRESENTATION_DEMAND_TRACE_MISMATCH",
+    "CMP_REENTRY_CHANGED_PRESENTATION_DEMAND_TRACE_MISMATCH"
+  ],
+  "format": "lesson-generation-judge-pre-screen/2",
+  "lessonId": "V3-LES-443492",
+  "nonclaims": {
+    "humanApproved": false,
+    "officialRubricPass": false,
+    "publicationApproved": false
+  },
+  "reviewedPrimaryArtifacts": [
+    {
+      "path": "lesson-script.json",
+      "sha256": "ecc0ce31665ae989643ad6b2950737619f6a989eb28f03f4d9d840d701e05567",
+      "size": 161580
+    },
+    {
+      "path": "kc-coverage-matrix.json",
+      "sha256": "95c5d99bdf1c1a9aa34cf63e0338af239370d46589bd0af922a255353f42e7bc",
+      "size": 20503
+    },
+    {
+      "path": "lesson-presentation-plan.json",
+      "sha256": "3ca27f89c8cfc76e4495cbaaf8606d6e11a3ccec30f240b97b84fc4757e25580",
+      "size": 122376
+    },
+    {
+      "path": "lesson-quality-report.json",
+      "sha256": "7b9827237abff9c0512d5995555c1974c083c6efd6f9a4fc4ad08e05520b358f",
+      "size": 4358
+    }
+  ],
+  "reviewerRole": "INDEPENDENT_JUDGE",
+  "reviewerRunId": "independent-judge-g3-V3-LES-443492-20260804T1321Z-c4434927",
+  "rubricProfileSha256": "681d2864fbf22bfa3f947e4e21f846fe8ee5913ff91e82f56c95708cd344562c",
+  "status": "FAILED"
+}

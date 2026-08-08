@@ -1,0 +1,1271 @@
+{
+  "contract_id": "lesson-factory.assignment-partition-proof",
+  "contract_version": "2.0.0",
+  "run_id": "lesson-factory-deadline-2026-08-03",
+  "created_at": "2026-08-03T23:05:00Z",
+  "deadline_profile_ref": "profile:content/lesson-factory/deadline-profile/deadline-profile.json#sha256:681d2864fbf22bfa3f947e4e21f846fe8ee5913ff91e82f56c95708cd344562c",
+  "release_policy_ref": "policy:content/lesson-factory/deadline-profile/release-policy.json#sha256:0258c6c382ce2faf62c1a8da4bda35295c27c64e2be9c5510c2f923560ffba9e",
+  "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+  "rubric_identity": {
+    "rubric_path": "key-docs/lesson-quality-rubric.md",
+    "rubric_version": "0.9.1",
+    "rubric_sha256": "21f0cf751b752158b5c8f71fd762fcc956b9ba694c8f5ee8d50158b8972557b0"
+  },
+  "source_manifest": {
+    "path": "curriculum/v3/v3-lesson-authoring-manifest.json",
+    "content_sha256": "ab9f508b3522c36a93f5b804f6c0b8b6fe21e6dc9efe692d36c1115d3bf0894f",
+    "file_sha256": "3bbe04ae878fe3936b65bb941ce658f2e48fb104670d7b3c3ad1d243cb99eac9",
+    "canonical_lesson_count": 114,
+    "remaining_lesson_count": 111
+  },
+  "assignment_schema": {
+    "path": "content/lesson-factory/schemas/assignment-manifest.schema.json",
+    "contract_id": "lesson-factory.assignment-manifest",
+    "contract_version": "3.0.0",
+    "content_sha256": "fa13db5acd38f473006eb71335077e78927b38b7db1350487559ef197c0d8c63",
+    "file_sha256": "77491bb712094961dc164cfb04a83ab35cb35e04992c42e23bc3167389eb7993",
+    "shared_vocabulary_file_sha256": "279c33afcae9ef3dd3388169c2424fe3891dee0116ba32823130602bee1a9968"
+  },
+  "proof_schema": {
+    "path": "content/lesson-factory/schemas/assignment-partition-proof.schema.json",
+    "contract_id": "lesson-factory.assignment-partition-proof",
+    "contract_version": "2.0.0",
+    "content_sha256": "af8e65e2b38dd66f9c418442f9ed54c5e7ef0a67720558ba411c7a171586f255",
+    "file_sha256": "4d6d5645c6fc3771aab29795f18a522d01253956b5fa33ee95d3a9422a0e9cac"
+  },
+  "packet_authorities": {
+    "shared_vocabulary_schema": {
+      "path": "content/lesson-factory/schemas/shared-vocabulary.schema.json",
+      "contract_id": "lesson-factory.shared-vocabulary",
+      "contract_version": "5.0.0",
+      "content_sha256": "c2a165fb9e95819a18f989726cf41b91580632c6b89cf1dd54dbf0b2846b11d1",
+      "file_sha256": "279c33afcae9ef3dd3388169c2424fe3891dee0116ba32823130602bee1a9968"
+    },
+    "task_packet_schema": {
+      "path": "content/lesson-factory/schemas/task-source-packet.schema.json",
+      "contract_id": "lesson-factory.task-source-packet",
+      "contract_version": "5.0.0",
+      "content_sha256": "26912ebfab6dab3a14a5a10b01746796e7099cd1b75fc042c823d45897c33177",
+      "file_sha256": "24e31df12e7fc3a35f6a96594b8fe93bf70d88076cec5c4768216c1dc7291a11"
+    },
+    "deadline_profile": {
+      "path": "content/lesson-factory/deadline-profile/deadline-profile.json",
+      "contract_id": "lesson-factory.deadline-profile",
+      "contract_version": "7.0.0",
+      "content_sha256": "f2d4ca76a60afb3965c68b06f17392593e060e40d850307142771cc72e4a42ff",
+      "file_sha256": "681d2864fbf22bfa3f947e4e21f846fe8ee5913ff91e82f56c95708cd344562c",
+      "profile_id": "lesson-factory-deadline-2026-08-03",
+      "profile_version": "2.4.0"
+    },
+    "release_policy": {
+      "path": "content/lesson-factory/deadline-profile/release-policy.json",
+      "contract_id": "lesson-factory.release-policy",
+      "contract_version": "3.0.0",
+      "content_sha256": "e2726fe782683d7bdf7f5f8619c7b4377c1e73965d8f94f6a936f3dac067b0de",
+      "file_sha256": "0258c6c382ce2faf62c1a8da4bda35295c27c64e2be9c5510c2f923560ffba9e",
+      "policy_id": "lesson-factory-deadline-release",
+      "policy_version": "2.0.0"
+    },
+    "owner_source_use_receipt": {
+      "path": "content/lesson-factory/deadline-profile/owner-source-use-receipt.json",
+      "contract_id": "lesson-factory.owner-source-use-receipt",
+      "contract_version": "2.0.0",
+      "content_sha256": "dfdf92d79c59377d038a642cfea966ad7cda98f8384ae9dc65294fd1f8ba8157",
+      "file_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+      "receipt_id": "lesson-factory-deadline-2026-08-03-source-use-01"
+    }
+  },
+  "authoring_scope": {
+    "disposition": "AUTHORING_GENERATION_ONLY",
+    "canonical_lesson_count": 114,
+    "generation_lesson_count": 111,
+    "excluded_existing_lesson_count": 3,
+    "generation_rows_disjoint_from_exclusions": true,
+    "generation_rows_union_exclusions_equals_canonical": true
+  },
+  "excluded_existing_lesson_ids": ["V3-LES-130923", "V3-LES-789208", "V3-LES-844372"],
+  "capacities": {
+    "primary": 51,
+    "team-A": 30,
+    "team-B": 30
+  },
+  "algorithm": {
+    "bucket_key": "sorted source_sections joined with +",
+    "initial_apportionment": "largest remainder",
+    "reconciliation": "minimum proportional distortion",
+    "tie_breakers": ["bucket", "lesson_id", "team order"]
+  },
+  "assignments": [
+    {
+      "team_id": "primary",
+      "lane_id": "lane-01",
+      "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+      "assignment_file": "content/lesson-factory/assignments/primary-51.json",
+      "count": 51,
+      "subject_distribution": {
+        "B/B+C/P+P/S": 2,
+        "Bio/Biochem": 12,
+        "Bio/Biochem+Chem/Phys": 3,
+        "CARS": 4,
+        "Chem/Phys": 16,
+        "Psych/Soc": 14
+      },
+      "rows": [
+        {
+          "lesson_id": "V3-LES-006619",
+          "display_label": "Coordinate endocrine and cellular signaling",
+          "source_section_bucket": "Bio/Biochem+Chem/Phys",
+          "slug": "v3-les-006619",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-006619",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-018986",
+          "display_label": "Trace reproductive and early embryonic progression",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-018986",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-018986",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-020428",
+          "display_label": "Capacitance and dielectric storage",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-020428",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-020428",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-034099",
+          "display_label": "Form urine and regulate internal fluids",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-034099",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-034099",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-041222",
+          "display_label": "Alcohol and acyl transformations",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-041222",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-041222",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-044045",
+          "display_label": "Trace virus structure and replication",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-044045",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-044045",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-053947",
+          "display_label": "Apply personality and motivation models",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-053947",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-053947",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-067950",
+          "display_label": "Thermal energy accounting",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-067950",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-067950",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-078488",
+          "display_label": "Classify psychological disorders without clinical overreach",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-078488",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-078488",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-083939",
+          "display_label": "Explain norms, deviance, collective behavior, and socialization",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-083939",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-083939",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-094421",
+          "display_label": "Conserve and idealize fluid flow",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-094421",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-094421",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-095827",
+          "display_label": "Incorporate New Information and Coordinate CARS Task Modes",
+          "source_section_bucket": "CARS",
+          "slug": "v3-les-095827",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-095827",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-128144",
+          "display_label": "Data, Uncertainty, and Evidence-Bounded Conclusions",
+          "source_section_bucket": "B/B+C/P+P/S",
+          "slug": "v3-les-128144",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-128144",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-134007",
+          "display_label": "Compare macro and power-centered sociological lenses",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-134007",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-134007",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-137490",
+          "display_label": "Generate genetic variation through meiosis and mutation",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-137490",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-137490",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-149941",
+          "display_label": "Model observational learning and planned attitude change",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-149941",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-149941",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-151730",
+          "display_label": "Aqueous acid–base systems",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-151730",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-151730",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-153695",
+          "display_label": "Explain language development, cognition, and brain systems",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-153695",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-153695",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-156118",
+          "display_label": "Construct heredity-environment-development explanations",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-156118",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-156118",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-163162",
+          "display_label": "Regulate reproductive physiology",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-163162",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-163162",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-180117",
+          "display_label": "Explain collective and spatial social change",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-180117",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-180117",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-191915",
+          "display_label": "Chemical free energy and bioenergetics",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-191915",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-191915",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-191933",
+          "display_label": "Apply a Stable Passage Framework",
+          "source_section_bucket": "CARS",
+          "slug": "v3-les-191933",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-191933",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-199474",
+          "display_label": "Stereochemical identity and intermolecular properties",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-199474",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-199474",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-207028",
+          "display_label": "Organize eukaryotic cells into tissues",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-207028",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-207028",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-207222",
+          "display_label": "Electrostatic fields and potential",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-207222",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-207222",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-217547",
+          "display_label": "Evaluate Passage Sources and Stance Effects",
+          "source_section_bucket": "CARS",
+          "slug": "v3-les-217547",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-217547",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-222431",
+          "display_label": "Preserve and copy nucleic-acid information",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-222431",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-222431",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-225658",
+          "display_label": "Discriminate and model associative learning",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-225658",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-225658",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-228369",
+          "display_label": "Interpret self-presentation and communication",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-228369",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-228369",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-251056",
+          "display_label": "Explain population change and evolution",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-251056",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-251056",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-252091",
+          "display_label": "Digest and absorb nutrients",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-252091",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-252091",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-253783",
+          "display_label": "Predict attitude-behavior dynamics",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-253783",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-253783",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-258629",
+          "display_label": "Electromagnetic wave and photon behavior",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-258629",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-258629",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-263440",
+          "display_label": "Electronic structure and periodic behavior",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-263440",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-263440",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-264096",
+          "display_label": "Explain amino-acid control of protein structure",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-264096",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-264096",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-264240",
+          "display_label": "Scientific Concepts and Representations",
+          "source_section_bucket": "B/B+C/P+P/S",
+          "slug": "v3-les-264240",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-264240",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-269427",
+          "display_label": "Evaluate Passage Logic, Evidence, Generalization, and Causality",
+          "source_section_bucket": "CARS",
+          "slug": "v3-les-269427",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-269427",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-282413",
+          "display_label": "Integrate fuel metabolism and regulation",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-282413",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-282413",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-310043",
+          "display_label": "Analyze protein separation and nonenzymatic function",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-310043",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-310043",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-315313",
+          "display_label": "Chemical kinetics and equilibrium response",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-315313",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-315313",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-320512",
+          "display_label": "Electrochemical cells and electrolysis",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-320512",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-320512",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-323416",
+          "display_label": "Nuclear identity, decay, and mass analysis",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-323416",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-323416",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-329622",
+          "display_label": "Trace biological redox carriers and centers",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-329622",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-329622",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-338400",
+          "display_label": "Work, energy, and power",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-338400",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-338400",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-385880",
+          "display_label": "Explain discrimination and institutional power",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-385880",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-385880",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-403395",
+          "display_label": "Compare meaning and exchange lenses and select among them",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-403395",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-403395",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-404423",
+          "display_label": "Relate mobility, poverty, resource access, and disparities",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-404423",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-404423",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-416343",
+          "display_label": "Model membrane transport and communication",
+          "source_section_bucket": "Bio/Biochem+Chem/Phys",
+          "slug": "v3-les-416343",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-416343",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-443492",
+          "display_label": "Geometrical optics and image formation",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-443492",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-443492",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        },
+        {
+          "lesson_id": "V3-LES-489818",
+          "display_label": "Transport materials through circulation",
+          "source_section_bucket": "Bio/Biochem+Chem/Phys",
+          "slug": "v3-les-489818",
+          "output_path": ".tmp/lesson-factory/lane-01/v3-les-489818",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-01",
+          "team_id": "primary",
+          "lane_id": "lane-01"
+        }
+      ]
+    },
+    {
+      "team_id": "team-A",
+      "lane_id": "lane-02",
+      "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+      "assignment_file": "content/lesson-factory/assignments/team-A-30.json",
+      "count": 30,
+      "subject_distribution": {
+        "B/B+C/P+P/S": 1,
+        "Bio/Biochem": 7,
+        "Bio/Biochem+Chem/Phys": 1,
+        "CARS": 3,
+        "Chem/Phys": 10,
+        "Psych/Soc": 8
+      },
+      "rows": [
+        {
+          "lesson_id": "V3-LES-275615",
+          "display_label": "Scientific Model Prediction and Evaluation",
+          "source_section_bucket": "B/B+C/P+P/S",
+          "slug": "v3-les-275615",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-275615",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-340525",
+          "display_label": "Trace carbohydrate and glucose pathways",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-340525",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-340525",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-349092",
+          "display_label": "Explain and regulate enzyme behavior",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-349092",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-349092",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-386478",
+          "display_label": "Reconstruct Argument Structure",
+          "source_section_bucket": "CARS",
+          "slug": "v3-les-386478",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-386478",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-467188",
+          "display_label": "Explain affiliative, aggressive, helping, and animal social behavior",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-467188",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-467188",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-469875",
+          "display_label": "Control the eukaryotic cell cycle",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-469875",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-469875",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-473390",
+          "display_label": "Detect and quantify sensory input",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-473390",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-473390",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-474771",
+          "display_label": "Organize nervous control and reflexes",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-474771",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-474771",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-485905",
+          "display_label": "Relate lipid and carbohydrate identity to reactivity",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-485905",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-485905",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-495267",
+          "display_label": "Describe demographic structure and population change",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-495267",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-495267",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-505131",
+          "display_label": "Establish the Passage's Basic Global Frame",
+          "source_section_bucket": "CARS",
+          "slug": "v3-les-505131",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-505131",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-515867",
+          "display_label": "Explain prokaryotic organization and adaptability",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-515867",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-515867",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-522245",
+          "display_label": "Periodic and wave relationships",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-522245",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-522245",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-540203",
+          "display_label": "Sound propagation, perception, and imaging",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-540203",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-540203",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-546762",
+          "display_label": "Regulate developmental cell fate and life-cycle outcomes",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-546762",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-546762",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-548488",
+          "display_label": "Explain neural and endocrine influences on behavior",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-548488",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-548488",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-556584",
+          "display_label": "Integrate Distant Passage Components",
+          "source_section_bucket": "CARS",
+          "slug": "v3-les-556584",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-556584",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-560768",
+          "display_label": "Carbonyl addition and enolate reactivity",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-560768",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-560768",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-563427",
+          "display_label": "Molecular spectroscopy",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-563427",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-563427",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-567976",
+          "display_label": "Current, resistance, and DC networks",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-567976",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-567976",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-580395",
+          "display_label": "Control genome access and expression",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-580395",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-580395",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-615860",
+          "display_label": "Translational-state reasoning",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-615860",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-615860",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-623852",
+          "display_label": "Covalent structure, geometry, and polarity",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-623852",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-623852",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-631100",
+          "display_label": "Enzyme mechanism, kinetics, and regulation",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-631100",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-631100",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-684434",
+          "display_label": "Separation-method selection and interpretation",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-684434",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-684434",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-705241",
+          "display_label": "Model conscious states and altered regulation",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-705241",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-705241",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-712077",
+          "display_label": "Differentiate and explain identity formation",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-712077",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-712077",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-771227",
+          "display_label": "Explain spatial and class inequality",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-771227",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-771227",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-772297",
+          "display_label": "Analyze social institutions",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-772297",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-772297",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        },
+        {
+          "lesson_id": "V3-LES-801639",
+          "display_label": "Exchange gases through the respiratory system",
+          "source_section_bucket": "Bio/Biochem+Chem/Phys",
+          "slug": "v3-les-801639",
+          "output_path": ".tmp/lesson-factory/lane-02/v3-les-801639",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-02",
+          "team_id": "team-A",
+          "lane_id": "lane-02"
+        }
+      ]
+    },
+    {
+      "team_id": "team-B",
+      "lane_id": "lane-03",
+      "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+      "assignment_file": "content/lesson-factory/assignments/team-B-30.json",
+      "count": 30,
+      "subject_distribution": {
+        "B/B+C/P+P/S": 1,
+        "Bio/Biochem": 7,
+        "Bio/Biochem+Chem/Phys": 2,
+        "CARS": 2,
+        "Chem/Phys": 10,
+        "Psych/Soc": 8
+      },
+      "rows": [
+        {
+          "lesson_id": "V3-LES-603825",
+          "display_label": "Select and interpret biotechnology workflows",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-603825",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-603825",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-619870",
+          "display_label": "Generate and control muscle contraction",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-619870",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-619870",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-631070",
+          "display_label": "Recover Local Textual Components",
+          "source_section_bucket": "CARS",
+          "slug": "v3-les-631070",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-631070",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-697045",
+          "display_label": "Fluid statics",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-697045",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-697045",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-704363",
+          "display_label": "Propagate and integrate neuronal signals",
+          "source_section_bucket": "Bio/Biochem+Chem/Phys",
+          "slug": "v3-les-704363",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-704363",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-710436",
+          "display_label": "Support and protect the organism",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-710436",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-710436",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-715826",
+          "display_label": "Coordinate lymphatic and immune defense",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-715826",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-715826",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-726940",
+          "display_label": "Magnetic fields and charged-particle motion",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-726940",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-726940",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-765609",
+          "display_label": "Research Questions, Design, and Inference Limits",
+          "source_section_bucket": "B/B+C/P+P/S",
+          "slug": "v3-les-765609",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-765609",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-773665",
+          "display_label": "Gas state and mixture behavior",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-773665",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-773665",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-774232",
+          "display_label": "Nerve-signal insulation and propagation",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-774232",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-774232",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-774377",
+          "display_label": "Trace sensory systems and construct perception",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-774377",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-774377",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-781935",
+          "display_label": "Model culture and cultural change",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-781935",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-781935",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-788522",
+          "display_label": "Model viscous and interfacial flow",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-788522",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-788522",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-804390",
+          "display_label": "Protein chemical structure and function",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-804390",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-804390",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-811780",
+          "display_label": "Forces and static equilibrium",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-811780",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-811780",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-817478",
+          "display_label": "Model memory processes, stores, and biological change",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-817478",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-817478",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-825706",
+          "display_label": "Solubility and titration evidence",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-825706",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-825706",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-839816",
+          "display_label": "Express sequence information as protein",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-839816",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-839816",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-841417",
+          "display_label": "Navigate roles, groups, networks, and organizations",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-841417",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-841417",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-865559",
+          "display_label": "Predict Mendelian inheritance",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-865559",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-865559",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-867084",
+          "display_label": "Infer Local Meaning and Intent",
+          "source_section_bucket": "CARS",
+          "slug": "v3-les-867084",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-867084",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-895906",
+          "display_label": "Control, develop, and evaluate cognition",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-895906",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-895906",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-915978",
+          "display_label": "Stoichiometric and redox accounting",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-915978",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-915978",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-930899",
+          "display_label": "Relate nucleotide and amino-acid identity to chemistry",
+          "source_section_bucket": "Chem/Phys",
+          "slug": "v3-les-930899",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-930899",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-932938",
+          "display_label": "Produce ATP through oxidative metabolism",
+          "source_section_bucket": "Bio/Biochem",
+          "slug": "v3-les-932938",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-932938",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-949725",
+          "display_label": "Predict behavior in the presence of groups",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-949725",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-949725",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-953302",
+          "display_label": "Explain emotion and stress responses",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-953302",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-953302",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-959228",
+          "display_label": "Attribute behavior and explain social bias",
+          "source_section_bucket": "Psych/Soc",
+          "slug": "v3-les-959228",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-959228",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        },
+        {
+          "lesson_id": "V3-LES-990746",
+          "display_label": "Apply biological energetics and redox",
+          "source_section_bucket": "Bio/Biochem+Chem/Phys",
+          "slug": "v3-les-990746",
+          "output_path": ".tmp/lesson-factory/lane-03/v3-les-990746",
+          "assignment_id": "lesson-factory-deadline-2026-08-03-assignment-03",
+          "team_id": "team-B",
+          "lane_id": "lane-03"
+        }
+      ]
+    }
+  ],
+  "invariants": {
+    "pairwise_disjoint": true,
+    "union_equals_remaining": true,
+    "existing_three_excluded": true,
+    "rows_union_exclusions_equals_canonical": true,
+    "unique_slugs": true,
+    "unique_output_paths": true,
+    "proof_schema_valid": true
+  },
+  "allocation_content_sha256": "3a7767168f721bf79b7de43816d8995438d2518960ec06814b83916356fe6101"
+}

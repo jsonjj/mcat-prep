@@ -1,0 +1,138 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes; a missed fresh re-entry returns control without exit credit.",
+  "items": [
+    {
+      "prompt_key": "QUIN_ENTRY",
+      "title": "Starting check: read the ring pattern",
+      "prompt": "A six-membered conjugated ring has two opposite carbonyl groups. Which redox form does this head-group pattern support?",
+      "response_type": "single_select",
+      "options": [
+        "The fully reduced hydroquinone form",
+        "The oxidized quinone form",
+        "A saturated hydrocarbon tail",
+        "A phosphate ester"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "QUIN_GUIDED",
+      "title": "Guided practice: balance reduction",
+      "prompt": "Which net equation represents reduction of quinone Q to hydroquinone QH2?",
+      "response_type": "single_select",
+      "options": [
+        "Q → QH2 + 2 e− + 2 H+",
+        "Q + 2 e− + 2 H+ → QH2",
+        "Q + O2 → QH2",
+        "QH2 + 2 e− → Q + 2 H+"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "QUIN_LIGHT",
+      "title": "Less help: classify the ring change",
+      "prompt": "A carrier's ring changes from two hydroxyl groups to two carbonyl groups. What net process occurred at the head group?",
+      "response_type": "single_select",
+      "options": [
+        "Reduction with uptake of 2 e− and 2 H+",
+        "Hydrolysis of the isoprenoid tail",
+        "Oxidation with release of 2 e− and 2 H+",
+        "Phosphorylation of both oxygens"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "QUIN_SOLO",
+      "title": "On your own: locate redox function",
+      "prompt": "Which region of ubiquinone directly changes between the fully oxidized and fully reduced forms?",
+      "response_type": "single_select",
+      "options": [
+        "The quinone ring oxygen groups",
+        "Every carbon in the isoprenoid tail",
+        "A peptide backbone attached to the ring",
+        "A phosphate group on the terminal tail carbon"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "QUIN_NEAR",
+      "title": "Near exit: evaluate carrier R",
+      "prompt": "Carrier R has an unchanged hydrophobic tail and a ring bearing two hydroxyl groups instead of two carbonyls. Which combined statement is supported?",
+      "response_type": "single_select",
+      "options": [
+        "R is oxidized after net release of 2 e− and 2 H+",
+        "R is reduced after net uptake of 2 e− and 2 H+",
+        "R is reduced because its tail gained two carbon atoms",
+        "R is oxidized because ring hydroxyls release electrons"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "QUIN_CHANGED",
+      "title": "Changed exit: compare two structural variants",
+      "prompt": "Variant A replaces one quinone carbonyl oxygen with a non-redox-active group while preserving the tail. Variant B shortens the hydrophobic tail while preserving both quinone carbonyls. Which paired prediction is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "A weakens head-group redox; B weakens membrane retention",
+        "A weakens membrane retention; B weakens head-group redox",
+        "A preserves head-group redox; B preserves membrane retention",
+        "A strengthens head-group redox; B strengthens membrane retention"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "QUIN_REPAIR_NEAR",
+      "title": "Repair: carbonyl versus hydroxyl",
+      "prompt": "Which structural change marks net reduction in the Q/QH2 pair?",
+      "response_type": "single_select",
+      "options": [
+        "Two ring hydroxyls become two carbonyls",
+        "The tail loses all double bonds",
+        "Two ring carbonyls become two hydroxyls",
+        "The ring is cleaved into two fragments"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "QUIN_REENTRY_NEAR",
+      "title": "Fresh near re-entry: carrier S",
+      "prompt": "Carrier S begins with two ring carbonyls and accepts 2 e− and 2 H+ while its tail remains unchanged. What product pattern is expected?",
+      "response_type": "single_select",
+      "options": [
+        "A ring with two hydroxyl groups",
+        "A ring with four carbonyl groups",
+        "A tail with two phosphate groups",
+        "Complete loss of the ring oxygens"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "QUIN_REPAIR_CHANGED",
+      "title": "Repair: assign region to function",
+      "prompt": "Which head–tail function map is supported for ubiquinone?",
+      "response_type": "single_select",
+      "options": [
+        "Head—membrane anchoring; tail—carbonyl redox conversion",
+        "Head—carbonyl redox conversion; tail—membrane anchoring",
+        "Head—peptide synthesis; tail—nuclear-envelope transport",
+        "Head—DNA sequence binding; tail—phosphate-group transfer"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "QUIN_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: evaluate analog C",
+      "prompt": "Analog C keeps a long hydrophobic tail but replaces both head-group carbonyls with groups that cannot undergo the Q/QH2 conversion. Which outcome is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Membrane residence may remain; head-group redox fails",
+        "The analog must become water soluble because the tail remains hydrophobic",
+        "The analog performs normal redox chemistry because localization alone is sufficient",
+        "The analog automatically carries four electrons instead of two"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    }
+  ]
+}

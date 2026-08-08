@@ -1,0 +1,268 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Feedback follows a committed response. The opening activity is informational; an unresolved fresh check returns to planning without credit.",
+  "items": [
+    {
+      "prompt_key": "SRC_ENTRY",
+      "title": "Starting check: direct access",
+      "prompt": "A transit-board memo quotes a maintenance engineer who inspected several rail joints that morning. Which passage-supplied detail most directly strengthens the engineer's credibility about whether those joints were cracked?",
+      "response_type": "single_select",
+      "options": [
+        "The memo places the engineer's quotation in its opening paragraph",
+        "The engineer personally inspected the rail joints named in the claim",
+        "The engineer describes the inspection in a calm, formal sentence",
+        "The board prints the statement beneath an official agency seal"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SRC_GUIDED",
+      "title": "Guided practice: relevant records",
+      "prompt": "A museum report compares a conservator who maintains twelve years of humidity logs with a donor who says one gallery felt damp during a visit. Who is better positioned to support a claim about the gallery's long-term humidity pattern?",
+      "response_type": "single_select",
+      "options": [
+        "The donor, because financial support gives broad authority over the gallery",
+        "The donor, because a visitor has fewer institutional duties than an employee",
+        "The museum director, because the highest title is always most credible",
+        "The conservator, because the relevant role and longitudinal records fit the claim"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SRC_LIGHT",
+      "title": "Less help: source for timing",
+      "prompt": "A passage asks when barriers first blocked a neighborhood road. A resident says she watched workers place them at 6 a.m.; a regional economist explains how closures can affect commerce. Which source is more credible for the timing claim?",
+      "response_type": "single_select",
+      "options": [
+        "The resident, because the passage gives her direct observation of the placement",
+        "The economist, because regional analysis covers more locations than one witness",
+        "The economist, because economic expertise determines when barriers were installed",
+        "Both sources equally, because every quoted source has the same access"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SRC_SOLO",
+      "title": "On your own: interest and corroboration",
+      "prompt": "A manufacturer-paid consultant reports that a filter removed 82% of a test contaminant. The passage also says two independent laboratories reproduced nearly the same result. Which evaluation is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "The payment proves the reported removal rate is false",
+        "The independent tests erase every possible concern about objectivity",
+        "The payment raises an objectivity concern, while corroboration supports the result",
+        "The consultant's technical title makes the independent tests irrelevant"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SRC_NEAR",
+      "title": "Near exit: purchasing audit",
+      "prompt": "A school-lunch audit says a dietitian analyzed six months of purchase records, while the principal offers a general assurance that meals are balanced. For a claim about how often whole grains were purchased, which evaluation is strongest?",
+      "response_type": "single_select",
+      "options": [
+        "The principal is stronger because administrative rank establishes nutritional expertise",
+        "The dietitian is stronger because relevant expertise is paired with the cited records",
+        "The principal is stronger because a confident assurance is direct evidence",
+        "The sources are equal because both work for the same school system"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SRC_CHANGED",
+      "title": "Changed exit: mixed cues",
+      "prompt": "An editorial quotes a beekeeper who reports fewer hive visits near a proposed construction site. The beekeeper sells honey from those hives, and the passage also cites a university count showing a smaller decline. Which judgment best evaluates the beekeeper's claim?",
+      "response_type": "single_select",
+      "options": [
+        "The financial stake makes the observation unusable regardless of other evidence",
+        "Direct observation makes the claim fully reliable despite the disclosed stake",
+        "The university count proves the beekeeper fabricated the larger decline",
+        "Direct access supports the report, while stake and partial corroboration limit confidence"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SRC_REPAIR_NEAR",
+      "title": "Repair: test relevant access",
+      "prompt": "Which question most directly tests whether a represented source has relevant access and expertise for a passage claim?",
+      "response_type": "single_select",
+      "options": [
+        "Did this source observe or work with the event and evidence named in the claim?",
+        "Does this source use the longest and most detailed sentence in the passage?",
+        "Is this source introduced before every other person quoted by the author?",
+        "Would readers probably agree with this source's conclusion outside the passage?"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SRC_REENTRY_NEAR",
+      "title": "Fresh re-entry: assay records",
+      "prompt": "A water-quality summary quotes a laboratory technician who ran the named blinded assays and a mayor who says the water looks clear. For a claim about the assay results, whose credibility is better supported by the passage?",
+      "response_type": "single_select",
+      "options": [
+        "The mayor's, because elected office grants authority over every technical result",
+        "The mayor's, because visual clarity is equivalent to a blinded chemical assay",
+        "The technician's, because direct work with the assays fits the specific claim",
+        "Both equally, because the summary presents each statement as a quotation"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SRC_REPAIR_CHANGED",
+      "title": "Repair: calibrate a disclosed stake",
+      "prompt": "When a passage discloses that a source may benefit from a claim, what is the most defensible next step?",
+      "response_type": "single_select",
+      "options": [
+        "Accept the claim if the source also speaks from direct experience",
+        "Treat the stake as one cue and compare the source's support and corroboration",
+        "Reject the claim before considering any records or independent observations",
+        "Ignore the stake whenever the source has a professional title"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SRC_REENTRY_CHANGED",
+      "title": "Fresh re-entry: advocacy and documents",
+      "prompt": "A preservation advocate says a theater is the city's oldest surviving venue. The passage notes the advocate's campaign role and cites dated permits and photographs that support the construction year. Which evaluation is best?",
+      "response_type": "single_select",
+      "options": [
+        "The campaign role proves the historical claim was invented",
+        "The dated records make the advocate's role irrelevant to source evaluation",
+        "Advocacy makes the claim less credible than any unsupported opposing statement",
+        "Advocacy warrants caution, while the cited documents provide specific support"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "STN_ENTRY",
+      "title": "Starting check: stance word",
+      "prompt": "A columnist writes that the board 'recklessly delayed the repair.' Which word most clearly signals the columnist's stance toward the delay?",
+      "response_type": "single_select",
+      "options": [
+        "recklessly",
+        "board",
+        "delayed",
+        "repair"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "STN_GUIDED",
+      "title": "Guided practice: certainty and praise",
+      "prompt": "A report says, 'The council wisely rejected the plan,' but supplies only the vote total. Which analysis best links the wording to reliability?",
+      "response_type": "single_select",
+      "options": [
+        "Council is a stance word because it names the group that voted",
+        "Rejected is unreliable because every negative verb proves bias",
+        "Wisely praises the decision beyond what the vote total alone establishes",
+        "Plan is unreliable because the sentence does not describe its length"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "STN_LIGHT",
+      "title": "Less help: calibrated hedge",
+      "prompt": "A study summary reports a small association and says the exposure 'may contribute' to the outcome. What reliability effect is most plausible from that phrase alone?",
+      "response_type": "single_select",
+      "options": [
+        "It proves the author doubts every measurement in the study",
+        "It can align the claim's certainty with limited correlational evidence",
+        "It turns the association into a demonstrated causal mechanism",
+        "It removes the need to examine the evidence supplied in the summary"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "STN_SOLO",
+      "title": "On your own: absolute claim",
+      "prompt": "After interviewing twelve volunteers, an essay states that the program 'always transforms participants into confident leaders.' Which reliability judgment is strongest?",
+      "response_type": "single_select",
+      "options": [
+        "The claim is reliable because confident language signals strong evidence",
+        "The claim is false because every absolute statement is necessarily fabricated",
+        "The sample size is irrelevant because the sentence describes participants",
+        "The absolute wording extends beyond what the limited interview sample supports"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "STN_NEAR",
+      "title": "Near exit: dismissive framing",
+      "prompt": "An author writes, 'Only a careless observer could accept the alternative explanation,' then presents no evidence against that alternative. How does the phrasing affect reliability?",
+      "response_type": "single_select",
+      "options": [
+        "It weakens reliability by dismissing an alternative through a label rather than evidence",
+        "It strengthens reliability because careless identifies a likely source of error",
+        "It has no effect because the sentence does not include a numerical claim",
+        "It proves the alternative explanation is correct and the author knows it"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "STN_CHANGED",
+      "title": "Changed exit: paired accounts",
+      "prompt": "Two accounts describe the same meeting. Account A says protesters 'finally forced a sensible delay' and omits the safety inspection. Account B reports the delay, notes the inspection, and says the cause remains uncertain. Which comparison is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "Account A is fully reliable because it states a clear cause for the delay",
+        "Account B is unreliable because uncertainty always signals weak research",
+        "Account A's certainty and omission weaken it relative to Account B",
+        "Both accounts are equally reliable because they agree that a delay occurred"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "STN_REPAIR_NEAR",
+      "title": "Repair: phrase and effect",
+      "prompt": "Which method most directly repairs an incomplete statement that a passage 'sounds biased'?",
+      "response_type": "single_select",
+      "options": [
+        "Identify the author's background and predict which opinions that identity usually produces",
+        "Quote the operative phrase, restate it neutrally, and name the framing change",
+        "Decide whether the stance matches your own reaction to the issue",
+        "Count every adjective and treat the passage with more adjectives as false"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "STN_REENTRY_NEAR",
+      "title": "Fresh re-entry: public-safety wording",
+      "prompt": "A safety notice calls a competing proposal 'a flashy distraction' without comparing its cost or effectiveness. What is the most direct reliability effect of that wording?",
+      "response_type": "single_select",
+      "options": [
+        "The notice becomes reliable because memorable wording improves comprehension",
+        "The proposal must be effective because the notice criticizes it",
+        "The phrase has no effect unless the notice identifies the proposal's author",
+        "The label discourages consideration without supplying a comparison that warrants dismissal"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "STN_REPAIR_CHANGED",
+      "title": "Repair: bias and factual support",
+      "prompt": "Which rule best separates evidence of biased framing from a judgment that a factual claim is false?",
+      "response_type": "single_select",
+      "options": [
+        "Evaluate the framing cue and the factual support as related but distinct questions",
+        "Treat every openly committed source as factually wrong before reading its evidence",
+        "Ignore selective language whenever one numerical detail appears in the passage",
+        "Accept any factual claim whose wording sounds neutral and unemotional"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "STN_REENTRY_CHANGED",
+      "title": "Fresh re-entry: advocacy report",
+      "prompt": "An advocacy report accurately lists 48 completed repairs but calls the program 'an unquestioned triumph' and omits that 70 repairs were scheduled. Which evaluation is most defensible?",
+      "response_type": "single_select",
+      "options": [
+        "The celebratory phrase proves the count of 48 was fabricated",
+        "The exact count makes the omitted schedule and evaluative wording irrelevant",
+        "The count may be accurate, while the language and omission overstate overall success",
+        "The report is fully neutral because it includes at least one numerical detail"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    }
+  ]
+}

@@ -1,0 +1,528 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes, and a missed fresh re-entry returns control without exit credit.",
+  "items": [
+    {
+      "prompt_key": "FAT_ENTRY",
+      "title": "Starting check: identify the mobilized fuel",
+      "prompt": "During fasting, adipose triacylglycerol is hydrolyzed. Which product is released for transport to oxidative tissues?",
+      "response_type": "single_select",
+      "options": [
+        "Glycogen particles packaged inside lipoproteins",
+        "Fatty acids carried through blood with albumin",
+        "Ketone bodies stored inside adipose droplets",
+        "Glucose covalently attached to serum proteins"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAT_GUIDED",
+      "title": "Guided practice: place mitochondrial entry",
+      "prompt": "A long-chain fatty acid has entered a muscle cell and has been activated. Which step is needed before beta oxidation in the mitochondrial matrix?",
+      "response_type": "single_select",
+      "options": [
+        "Conversion of the fatty acid into glycogen",
+        "Export of acetyl-CoA into the bloodstream",
+        "Use the carnitine shuttle for matrix entry",
+        "Synthesis of a peptide carrier by ribosomes"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAT_LIGHT",
+      "title": "Less help: identify oxidation products",
+      "prompt": "Which set of products most directly results from repeated beta-oxidation cycles?",
+      "response_type": "single_select",
+      "options": [
+        "Acetyl-CoA, NADH, and FADH2",
+        "Glucose, ATP, and molecular nitrogen",
+        "Glycogen, carbon dioxide, and urea",
+        "Lactate, ribose, and peptide bonds"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAT_SOLO",
+      "title": "On your own: connect cis unsaturation to packing",
+      "prompt": "Compared with a saturated fatty acid of similar length, what does a cis double bond most directly do?",
+      "response_type": "single_select",
+      "options": [
+        "Straightens the chain and raises packing efficiency",
+        "Removes every carbon from the hydrocarbon chain",
+        "Converts the fatty acid into a peptide",
+        "Introduces a bend that reduces tight packing"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAT_NEAR",
+      "title": "Near exit: trace fasting fatty-acid flow",
+      "prompt": "During an overnight fast, which sequence best traces a fatty acid from adipose storage to oxidation in muscle?",
+      "response_type": "single_select",
+      "options": [
+        "Adipose glycogen release → chylomicron transport → nuclear oxidation",
+        "Lipolysis → albumin transport → uptake → beta oxidation",
+        "Ketone storage → insulin release → cytosolic glycogen synthesis",
+        "Protein translation → bile packaging → lysosomal glycolysis"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAT_CHANGED",
+      "title": "Changed exit: predict hepatic ketone production",
+      "prompt": "A prolonged fast increases hepatic fatty-acid oxidation while carbohydrate availability remains low. Which change is most consistent?",
+      "response_type": "single_select",
+      "options": [
+        "The liver converts every fatty acid directly into glycogen",
+        "Adipose tissue stops releasing fatty acids immediately",
+        "More acetyl-CoA enters ketone synthesis and export",
+        "Long-chain acyl groups bypass mitochondria and become proteins"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAT_REPAIR_NEAR",
+      "title": "Repair: restore the transport sequence",
+      "prompt": "Which carrier–fuel pairing is correct during adipose fatty-acid mobilization?",
+      "response_type": "single_select",
+      "options": [
+        "Albumin carries nonesterified fatty acids in blood",
+        "Hemoglobin carries triacylglycerol inside red cells",
+        "DNA carries acetyl-CoA between organs",
+        "Glycogen carries ketone bodies through lymph"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAT_REENTRY_NEAR",
+      "title": "Fresh re-entry: trace a new tissue destination",
+      "prompt": "Adipose tissue releases fatty acids during fasting. Which path delivers a long-chain fatty acyl group to liver beta oxidation?",
+      "response_type": "single_select",
+      "options": [
+        "Albumin transport → liver uptake → glycogen packaging → nuclear entry",
+        "Lipoprotein storage → ribosomal activation → cytosolic fermentation",
+        "Ketone uptake → adipose synthesis → bile secretion",
+        "Albumin → liver uptake → activation → carnitine shuttle"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAT_REPAIR_CHANGED",
+      "title": "Repair: connect acetyl-CoA to ketone export",
+      "prompt": "Which condition most directly favors hepatic ketone-body production?",
+      "response_type": "single_select",
+      "options": [
+        "Low fatty-acid oxidation with abundant carbohydrate oxidation",
+        "High fat oxidation with sustained low carbohydrate",
+        "Complete absence of acetyl-CoA in liver mitochondria",
+        "Immediate conversion of every amino acid into glycogen"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FAT_REENTRY_CHANGED",
+      "title": "Fresh re-entry: apply the state to a new case",
+      "prompt": "A liver cell shows high beta-oxidation flux and rising mitochondrial acetyl-CoA during prolonged fasting. What exported fuel is expected to increase?",
+      "response_type": "single_select",
+      "options": [
+        "Glycogen particles released into plasma",
+        "Long-chain proteins secreted as fuel",
+        "Ketone bodies delivered to extrahepatic tissues",
+        "DNA fragments used for muscle oxidation"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ANA_ENTRY",
+      "title": "Starting check: classify storage synthesis",
+      "prompt": "A liver links many glucose units into glycogen after a meal. How should this process be classified?",
+      "response_type": "single_select",
+      "options": [
+        "Catabolic oxidation that removes every glucose carbon",
+        "Protein translation directed by messenger RNA",
+        "Anabolic polysaccharide storage through glycogenesis",
+        "Beta oxidation of fatty acyl chains"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ANA_GUIDED",
+      "title": "Guided practice: choose a fed-state storage route",
+      "prompt": "A cell has abundant carbon, ATP, and reducing power after immediate needs are met. Which process stores energy in a reduced carbon form?",
+      "response_type": "single_select",
+      "options": [
+        "Fatty-acid and triacylglycerol synthesis",
+        "Beta oxidation followed by ketone consumption",
+        "Glycogen breakdown followed by glucose release",
+        "Proteolysis followed by amino-acid oxidation"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ANA_LIGHT",
+      "title": "Less help: identify nontemplate synthesis",
+      "prompt": "Why is glycogen synthesis called nontemplate synthesis?",
+      "response_type": "single_select",
+      "options": [
+        "Because glycogen forms without enzymes or regulation",
+        "Because glycogen contains no covalent bonds",
+        "Because glucose units are copied from a DNA sequence",
+        "No nucleic-acid template specifies glucose-unit order"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ANA_SOLO",
+      "title": "On your own: distinguish build from breakdown",
+      "prompt": "Which pairing correctly matches an anabolic process with its storage product?",
+      "response_type": "single_select",
+      "options": [
+        "Beta oxidation → acetyl-CoA release",
+        "Glycogenesis → glycogen storage",
+        "Lipolysis → circulating fatty acids",
+        "Proteolysis → free amino acids"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ANA_NEAR",
+      "title": "Near exit: predict fed-state storage",
+      "prompt": "After a carbohydrate-rich meal, insulin action is high and immediate ATP demand is met. Which pair of net processes is most consistent?",
+      "response_type": "single_select",
+      "options": [
+        "Adipose lipolysis and hepatic ketone export",
+        "Muscle proteolysis and amino-acid oxidation",
+        "Glycogen synthesis and triacylglycerol storage",
+        "Glycogen breakdown and fatty-acid mobilization"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ANA_CHANGED",
+      "title": "Changed exit: distinguish template use",
+      "prompt": "A diagram compares protein synthesis, glycogen synthesis, and fatty-acid synthesis. Which statement correctly separates them?",
+      "response_type": "single_select",
+      "options": [
+        "All three copy monomer order directly from messenger RNA",
+        "Only glycogen synthesis uses a DNA sequence template",
+        "Fatty-acid synthesis is translation at a membrane ribosome",
+        "Protein is template-directed; glycogen and fatty acids are not"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ANA_REPAIR_NEAR",
+      "title": "Repair: use the build-or-break test",
+      "prompt": "Which feature identifies an anabolic storage process?",
+      "response_type": "single_select",
+      "options": [
+        "Energy assembles smaller units into stored molecules",
+        "A stored molecule is hydrolyzed to release circulating fuel",
+        "Reduced carriers transfer electrons to oxygen",
+        "A carbon chain is shortened into acetyl-CoA units"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ANA_REENTRY_NEAR",
+      "title": "Fresh re-entry: classify a new storage case",
+      "prompt": "A muscle cell uses glucose units to extend a branched glycogen molecule after exercise recovery. Which description fits?",
+      "response_type": "single_select",
+      "options": [
+        "Catabolic glycolysis that consumes glycogen",
+        "Anabolic glycogenesis restores carbohydrate storage",
+        "Fatty-acid oxidation that generates ketone bodies",
+        "Protein breakdown that supplies urea nitrogen"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ANA_REPAIR_CHANGED",
+      "title": "Repair: define nontemplate precisely",
+      "prompt": "Which statement best defines nontemplate lipid synthesis?",
+      "response_type": "single_select",
+      "options": [
+        "Lipids assemble randomly without enzymes",
+        "Every lipid carbon is copied from messenger RNA",
+        "Enzymes build lipids without a sequence template",
+        "Lipids cannot be regulated because no template exists"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "ANA_REENTRY_CHANGED",
+      "title": "Fresh re-entry: apply the template distinction",
+      "prompt": "Which process directly uses a messenger-RNA sequence to determine monomer order?",
+      "response_type": "single_select",
+      "options": [
+        "Protein synthesis at a ribosome",
+        "Glycogen synthesis in the cytosol",
+        "Fatty-acid synthesis from acetyl units",
+        "Triacylglycerol formation from glycerol and fatty acids"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PRO_ENTRY",
+      "title": "Starting check: identify the amino-acid pool",
+      "prompt": "Dietary protein is digested. Which product enters the body’s shared pool for protein synthesis or further metabolism?",
+      "response_type": "single_select",
+      "options": [
+        "Amino acids available for reuse or breakdown",
+        "Intact glycogen molecules copied from the meal",
+        "Ketone bodies containing peptide bonds",
+        "Fatty acids carrying amino nitrogen unchanged"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PRO_GUIDED",
+      "title": "Guided practice: separate nitrogen and carbon",
+      "prompt": "An amino acid is used as fuel rather than incorporated into protein. Which broad sequence is required?",
+      "response_type": "single_select",
+      "options": [
+        "Store the intact amino acid permanently in adipose droplets",
+        "Convert the amino group directly into glucose",
+        "Send the whole amino acid unchanged through beta oxidation",
+        "Separate nitrogen disposal from carbon metabolism"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PRO_LIGHT",
+      "title": "Less help: identify nitrogen disposal",
+      "prompt": "At bounded BIO depth, which product is the main endpoint for disposal of excess amino nitrogen in humans?",
+      "response_type": "single_select",
+      "options": [
+        "Glucose",
+        "Urea",
+        "Glycogen",
+        "Cholesterol"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PRO_SOLO",
+      "title": "On your own: reject a dedicated protein store",
+      "prompt": "Which statement best describes body protein in fuel metabolism?",
+      "response_type": "single_select",
+      "options": [
+        "A dedicated protein depot stores excess amino acids unchanged",
+        "Protein can never contribute carbon to energy metabolism",
+        "Functional proteins turn over; no separate fuel depot exists",
+        "All dietary amino acids are excreted without reuse"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PRO_NEAR",
+      "title": "Near exit: trace excess amino-acid use",
+      "prompt": "Amino-acid intake exceeds immediate synthesis needs. Which fate is most consistent?",
+      "response_type": "single_select",
+      "options": [
+        "Store every intact amino acid in a permanent reserve",
+        "Convert all amino nitrogen into fatty acids",
+        "Send intact amino acids through glycogenesis",
+        "Dispose of nitrogen and metabolize the carbon skeleton"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PRO_CHANGED",
+      "title": "Changed exit: predict fasting protein contribution",
+      "prompt": "During prolonged fasting, muscle protein breakdown increases. Which liver process can some amino-acid carbon skeletons support?",
+      "response_type": "single_select",
+      "options": [
+        "Carbon can support glucose; nitrogen goes toward urea",
+        "Direct storage of intact amino acids as glycogen",
+        "Synthesis of DNA from whole protein molecules",
+        "Beta oxidation of intact peptide chains"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PRO_REPAIR_NEAR",
+      "title": "Repair: use the two-destination model",
+      "prompt": "When an amino acid is broken down, which pair of destinations must be tracked?",
+      "response_type": "single_select",
+      "options": [
+        "Nitrogen to disposal; carbon to central metabolism",
+        "Nitrogen toward glycogen and carbon toward messenger RNA",
+        "The whole amino acid toward beta oxidation and bile",
+        "Peptide bonds toward ketone storage and DNA"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PRO_REENTRY_NEAR",
+      "title": "Fresh re-entry: trace a new excess case",
+      "prompt": "A hepatocyte oxidizes amino acids after synthesis needs are met. Which description is correct?",
+      "response_type": "single_select",
+      "options": [
+        "It stores all intact amino acids in glycogen granules",
+        "Handle nitrogen for disposal and metabolize carbon skeletons",
+        "It converts peptide bonds directly into ketone bodies",
+        "It sends intact amino acids through fatty-acid beta oxidation"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PRO_REPAIR_CHANGED",
+      "title": "Repair: bound the fasting claim",
+      "prompt": "Which statement is appropriately bounded for protein use during prolonged fasting?",
+      "response_type": "single_select",
+      "options": [
+        "Every amino acid follows one identical advanced pathway",
+        "Protein becomes the only fuel in every tissue",
+        "Some amino-acid carbon skeletons can support glucose production",
+        "Amino nitrogen is converted directly into glucose carbon"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "PRO_REENTRY_CHANGED",
+      "title": "Fresh re-entry: apply the fasting branch",
+      "prompt": "During fasting, an amino acid contributes its carbon skeleton to hepatic glucose production. What happens to its nitrogen at bounded depth?",
+      "response_type": "single_select",
+      "options": [
+        "It becomes part of the glucose molecule unchanged",
+        "It is stored permanently in glycogen",
+        "It enters fatty-acid beta oxidation as nitrogen gas",
+        "Nitrogen enters disposal pathways and ultimately urea"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_ENTRY",
+      "title": "Starting check: distinguish flux from pool size",
+      "prompt": "A metabolite pool remains at 5 mmol while 2 mmol/min enters and 2 mmol/min leaves. Which statement is correct?",
+      "response_type": "single_select",
+      "options": [
+        "The pathway has zero flux because concentration is constant",
+        "Only the input reaction is active",
+        "Only the output reaction is active",
+        "Dynamic steady state with ongoing flux"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_GUIDED",
+      "title": "Guided practice: predict a high-energy response",
+      "prompt": "A catabolic control enzyme is inhibited allosterically by high ATP. ATP rises sharply. What is the immediate predicted effect?",
+      "response_type": "single_select",
+      "options": [
+        "The enzyme is translated into a different protein",
+        "Flux through the controlled catabolic step decreases",
+        "Every pathway in the cell stops permanently",
+        "ATP crosses the nucleus and rewrites DNA"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_LIGHT",
+      "title": "Less help: locate peptide-hormone signaling",
+      "prompt": "Insulin is a peptide hormone. What is its first bounded signaling location at a target cell?",
+      "response_type": "single_select",
+      "options": [
+        "A DNA sequence inside the nucleus",
+        "A mitochondrial beta-oxidation intermediate",
+        "A receptor at the cell surface",
+        "A glycogen branch point acting as a receptor"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_SOLO",
+      "title": "On your own: predict fed-state direction",
+      "prompt": "After a meal, insulin signaling rises in liver and muscle. Which net direction is most consistent?",
+      "response_type": "single_select",
+      "options": [
+        "Greater glucose uptake and glycogen synthesis",
+        "Maximal glycogen breakdown and ketone export",
+        "Immediate proteolysis in every tissue",
+        "Permanent shutdown of all metabolic flux"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_NEAR",
+      "title": "Near exit: analyze reciprocal pathway control",
+      "prompt": "A fed-state signal activates glycogen synthesis and inhibits glycogen breakdown in the same tissue. What is the functional result?",
+      "response_type": "single_select",
+      "options": [
+        "Both opposing pathways run maximally at once",
+        "The glycogen pool must disappear immediately",
+        "The signal converts glycogen directly into protein",
+        "Net flux favors storage and limits futile cycling"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_CHANGED",
+      "title": "Changed exit: interpret a steady-state graph",
+      "prompt": "A graph shows pool concentration constant while both synthesis and consumption rates rise from 1 to 3 units/min and remain equal. What changed?",
+      "response_type": "single_select",
+      "options": [
+        "The pool stopped all turnover",
+        "Flux rises while the pool remains at steady state",
+        "Synthesis ceased while consumption continued",
+        "The metabolite became a hormone receptor"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_REPAIR_NEAR",
+      "title": "Repair: apply the reciprocal-control rule",
+      "prompt": "Why are opposing storage and mobilization pathways often regulated reciprocally?",
+      "response_type": "single_select",
+      "options": [
+        "To force both pathways to consume maximum energy together",
+        "To eliminate every enzyme from one pathway",
+        "To direct net flux and limit futile cycling",
+        "To make hormone structure irrelevant"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_REENTRY_NEAR",
+      "title": "Fresh re-entry: predict a fasting direction",
+      "prompt": "During fasting, glucagon signaling rises in liver. Which net direction is most consistent?",
+      "response_type": "single_select",
+      "options": [
+        "Greater hepatic glycogen breakdown and glucose support",
+        "Maximal glycogen synthesis from abundant dietary glucose",
+        "Direct glucagon diffusion to nuclear DNA",
+        "Permanent cessation of fatty-acid mobilization"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_REPAIR_CHANGED",
+      "title": "Repair: separate concentration and flux",
+      "prompt": "A pool concentration is constant. What additional information is needed to decide whether flux is zero or high?",
+      "response_type": "single_select",
+      "options": [
+        "The color used to draw the pool",
+        "Whether the enzyme name is long",
+        "The number of peptide hormones in a catalog",
+        "The pool’s input and output rates"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REG_REENTRY_CHANGED",
+      "title": "Fresh re-entry: read a new rate table",
+      "prompt": "A rate table shows 4 units/min entering a pool and 4 units/min leaving while concentration is unchanged. Which description fits?",
+      "response_type": "single_select",
+      "options": [
+        "The pool has no active reactions",
+        "Steady state with 4 units/min of flux",
+        "Only synthesis occurs at 8 units/min",
+        "Only consumption occurs at 8 units/min"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    }
+  ]
+}

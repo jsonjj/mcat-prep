@@ -1,0 +1,10 @@
+#!/bin/sh
+set -eu
+test "$#" -eq 0 || {
+  echo "usage: commands/package-handoff.txt" >&2
+  exit 2
+}
+COMMAND_DIR=${0%/*}
+KIT_ROOT=$(CDPATH= cd -- "$COMMAND_DIR/.." && pwd)
+REPOSITORY_ROOT=${REPOSITORY_ROOT:-$(git -C "$PWD" rev-parse --show-toplevel)}
+exec node "$KIT_ROOT/commands/kit-command.mjs" package-handoff --repository-root "$REPOSITORY_ROOT"

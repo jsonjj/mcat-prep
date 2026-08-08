@@ -1,0 +1,71 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "1.0.0-canonical-template",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "TPL-GRAPH-ENTRY",
+      "learner_prompt_key": "TPL_GRAPH_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "PRIVATE TEMPLATE RATIONALE: the keyed option index is 1 because each equal display step multiplies by ten.",
+      "post_commitment_feedback": "Each equal display step multiplies the labelled value by ten.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY"
+    },
+    {
+      "answer_record_id": "TPL-GRAPH-GUIDED",
+      "learner_prompt_key": "TPL_GRAPH_GUIDED",
+      "correct_response": "4 units per trial",
+      "accepted_responses": ["4 units per trial"],
+      "rationale": "The vertical change is 12 units and the horizontal change is 3 trials."
+    },
+    {
+      "answer_record_id": "TPL-GRAPH-LIGHT",
+      "learner_prompt_key": "TPL_GRAPH_LIGHT",
+      "correct_option_index": 1,
+      "rationale": "The labels increase by a factor of ten at each equal step."
+    },
+    {
+      "answer_record_id": "TPL-GRAPH-SOLO",
+      "learner_prompt_key": "TPL_GRAPH_SOLO",
+      "correct_option_index": 1,
+      "rationale": "The slope is (16 - 4) / (4 - 1) = 4."
+    },
+    {
+      "answer_record_id": "TPL-GRAPH-NEAR",
+      "learner_prompt_key": "TPL_GRAPH_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The graph changes 15 meters over 5 seconds, or 3 meters per second."
+    },
+    {
+      "answer_record_id": "TPL-GRAPH-CHANGED",
+      "learner_prompt_key": "TPL_GRAPH_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Each step multiplies by ten, so 400 becomes 4000."
+    },
+    {
+      "answer_record_id": "TPL-GRAPH-REPAIR-NEAR",
+      "learner_prompt_key": "TPL_GRAPH_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Slope is vertical change divided by horizontal change in a consistent point order."
+    },
+    {
+      "answer_record_id": "TPL-GRAPH-REENTRY-NEAR",
+      "learner_prompt_key": "TPL_GRAPH_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The vertical change is -15 meters over 5 seconds, giving -3 meters per second."
+    },
+    {
+      "answer_record_id": "TPL-GRAPH-REPAIR-CHANGED",
+      "learner_prompt_key": "TPL_GRAPH_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Consecutive labels differ by a factor of ten."
+    },
+    {
+      "answer_record_id": "TPL-GRAPH-REENTRY-CHANGED",
+      "learner_prompt_key": "TPL_GRAPH_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The fresh pattern multiplies by ten, so 70 becomes 700."
+    }
+  ]
+}

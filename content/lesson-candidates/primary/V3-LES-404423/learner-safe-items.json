@@ -1,0 +1,398 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears.",
+  "items": [
+    {
+      "prompt_key": "MOB_ITEM_ENTRY",
+      "title": "Mobility: Starting check",
+      "prompt": "A pharmacist’s parent worked in a lower-status service occupation. Which classification best fits the across-generation rise in rank?",
+      "response_type": "single_select",
+      "options": [
+        "Intergenerational vertical mobility",
+        "Intergenerational horizontal mobility",
+        "Intragenerational vertical mobility",
+        "Intragenerational horizontal mobility"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MOB_ITEM_GUIDED",
+      "title": "Mobility: Choose with support",
+      "prompt": "During one career, a laboratory technician becomes a supervisor with greater authority and pay. Which classification fits?",
+      "response_type": "single_select",
+      "options": [
+        "Intergenerational horizontal mobility",
+        "Intragenerational vertical mobility",
+        "Intragenerational horizontal mobility",
+        "Intergenerational vertical mobility"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MOB_ITEM_LIGHT",
+      "title": "Mobility: Choose with less support",
+      "prompt": "A physician moves from one hospital to another in a role with similar authority, pay, and prestige. Which classification fits the change?",
+      "response_type": "single_select",
+      "options": [
+        "Intergenerational vertical mobility",
+        "Intergenerational horizontal mobility",
+        "Intragenerational horizontal mobility",
+        "Intragenerational vertical mobility"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MOB_ITEM_SOLO",
+      "title": "Mobility: Choose independently",
+      "prompt": "A mechanic’s child becomes a mechanic in a different industry with similar income and standing. Which classification fits?",
+      "response_type": "single_select",
+      "options": [
+        "Intragenerational vertical mobility",
+        "Intergenerational vertical mobility",
+        "Intragenerational horizontal mobility",
+        "Intergenerational horizontal mobility"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MOB_ITEM_NEAR",
+      "title": "Mobility: Near-use check",
+      "prompt": "Over fifteen years, one employee moves from an executive role to a lower-authority assistant role. Which classification best fits?",
+      "response_type": "single_select",
+      "options": [
+        "Intragenerational vertical mobility",
+        "Intragenerational horizontal mobility",
+        "Intergenerational vertical mobility",
+        "Intergenerational horizontal mobility"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MOB_ITEM_CHANGED",
+      "title": "Mobility: Changed-task check",
+      "prompt": "An account says a worker rose because talent and effort are rewarded, but also notes unequal access to training. Which evaluation is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "The barrier proves that no individual effort can ever affect mobility",
+        "The account invokes meritocracy, but the stated barrier limits the claim",
+        "The account describes horizontal mobility because training is unequal",
+        "The account proves equal opportunity because the worker advanced"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MOB_ITEM_REPAIR_NEAR",
+      "title": "Mobility: Repair the near-use function",
+      "prompt": "After missing a mobility classification, which two questions should be answered before combining labels?",
+      "response_type": "single_select",
+      "options": [
+        "High income or low income; absolute poverty or relative poverty",
+        "Health outcome or care access; class pattern or race pattern",
+        "Across generations or within one life; changed rank or similar rank",
+        "Personal effort or shared meaning; exchange cost or social reward"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MOB_ITEM_REENTRY_NEAR",
+      "title": "Mobility: Fresh near-use re-entry",
+      "prompt": "A retail worker becomes a similarly ranked warehouse worker during the same decade. Which classification best fits?",
+      "response_type": "single_select",
+      "options": [
+        "Intergenerational vertical mobility",
+        "Intergenerational horizontal mobility",
+        "Intragenerational vertical mobility",
+        "Intragenerational horizontal mobility"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MOB_ITEM_REPAIR_CHANGED",
+      "title": "Mobility: Repair the changed-task function",
+      "prompt": "After missing a meritocracy item, which distinction most directly repairs the evaluation function?",
+      "response_type": "single_select",
+      "options": [
+        "Separate an effort-based reward claim from evidence of equal opportunity",
+        "Treat every upward movement as proof that all barriers are absent",
+        "Classify every job change as horizontal regardless of rank",
+        "Replace the mobility account with a detailed threshold calculation"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "MOB_ITEM_REENTRY_CHANGED",
+      "title": "Mobility: Fresh changed-task re-entry",
+      "prompt": "A report credits promotion entirely to effort while noting that only some workers could enter the required program. Which evaluation is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "The report proves equal opportunity because one promotion occurred",
+        "The report invokes meritocracy, but unequal program access qualifies it",
+        "The report describes horizontal mobility because training is involved",
+        "The report proves that effort has no relation to any promotion"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "POV_ITEM_ENTRY",
+      "title": "Poverty and exclusion: Starting check",
+      "prompt": "A household cannot consistently obtain food, safe water, or shelter. Which classification is most directly supported?",
+      "response_type": "single_select",
+      "options": [
+        "Relative poverty: resources fall below social norms",
+        "Social exclusion: participation is blocked by isolation",
+        "Absolute poverty: basic needs cannot be secured",
+        "No listed pattern: neither resource nor access gap"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "POV_ITEM_GUIDED",
+      "title": "Poverty and exclusion: Choose with support",
+      "prompt": "A family has food and shelter but cannot afford routine internet access required for local school and job participation. Which classification best fits the resource comparison?",
+      "response_type": "single_select",
+      "options": [
+        "Absolute poverty: basic needs cannot be secured",
+        "Social exclusion: participation is blocked by isolation",
+        "No listed pattern: neither resource nor access gap",
+        "Relative poverty: resources fall below social norms"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "POV_ITEM_LIGHT",
+      "title": "Poverty and exclusion: Choose with less support",
+      "prompt": "Residents of an isolated district have adequate household income but no transit connection to nearby clinics and schools. Which pattern is most directly described?",
+      "response_type": "single_select",
+      "options": [
+        "Social exclusion: participation is blocked by isolation",
+        "Relative poverty: resources fall below social norms",
+        "Absolute poverty: basic needs cannot be secured",
+        "No listed pattern: neither resource nor access gap"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "POV_ITEM_SOLO",
+      "title": "Poverty and exclusion: Choose independently",
+      "prompt": "A worker can meet basic needs but has far fewer resources than most neighbors and cannot join ordinary community activities. Which poverty classification fits best?",
+      "response_type": "single_select",
+      "options": [
+        "Absolute poverty: basic needs cannot be secured",
+        "Relative poverty: resources fall below social norms",
+        "No listed pattern: neither resource nor access gap",
+        "Social exclusion: participation is blocked by isolation"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "POV_ITEM_NEAR",
+      "title": "Poverty and exclusion: Near-use check",
+      "prompt": "A household must regularly skip meals to pay for minimal shelter. Which classification is most directly supported?",
+      "response_type": "single_select",
+      "options": [
+        "Relative poverty: resources fall below social norms",
+        "No listed pattern: neither resource nor access gap",
+        "Absolute poverty: basic needs cannot be secured",
+        "Social exclusion: participation is blocked by isolation"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "POV_ITEM_CHANGED",
+      "title": "Poverty and exclusion: Changed-task check",
+      "prompt": "A segregated residential zone is distant from employers, lacks transit, and has few ties to hiring networks. Which explanation best follows?",
+      "response_type": "single_select",
+      "options": [
+        "Relative poverty: resources fall below social norms",
+        "Absolute poverty: basic needs cannot be secured",
+        "No listed pattern: neither resource nor access gap",
+        "Social exclusion: participation is blocked by isolation"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "POV_ITEM_REPAIR_NEAR",
+      "title": "Poverty and exclusion: Repair the near-use function",
+      "prompt": "After missing the poverty contrast, which question should be asked first?",
+      "response_type": "single_select",
+      "options": [
+        "Can the household secure basic necessities such as food and shelter?",
+        "Is the neighborhood isolated from institutions and social networks?",
+        "Do group health outcomes differ across the observed populations?",
+        "Does one person change rank within a career or across generations?"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "POV_ITEM_REENTRY_NEAR",
+      "title": "Poverty and exclusion: Fresh near-use re-entry",
+      "prompt": "A household secures food and housing but cannot afford the transportation and clothing expected for routine work participation locally. Which classification fits best?",
+      "response_type": "single_select",
+      "options": [
+        "Absolute poverty: basic needs cannot be secured",
+        "Relative poverty: resources fall below social norms",
+        "Social exclusion: participation is blocked by isolation",
+        "No listed pattern: neither resource nor access gap"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "POV_ITEM_REPAIR_CHANGED",
+      "title": "Poverty and exclusion: Repair the changed-task function",
+      "prompt": "After missing an exclusion item, which chain should be reconstructed?",
+      "response_type": "single_select",
+      "options": [
+        "Low rank to occupational change to a mobility classification",
+        "Basic-needs loss to threshold calculation to policy selection",
+        "Segregation or isolation to blocked access to reduced participation",
+        "Care access difference to outcome difference to a causal conclusion"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "POV_ITEM_REENTRY_CHANGED",
+      "title": "Poverty and exclusion: Fresh changed-task re-entry",
+      "prompt": "People in a linguistically isolated community receive few public notices in accessible languages and participate less in local services. Which explanation is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "Relative poverty: resources fall below social norms",
+        "Absolute poverty: basic needs cannot be secured",
+        "No listed pattern: neither resource nor access gap",
+        "Social exclusion: participation is blocked by isolation"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "DIS_ITEM_ENTRY",
+      "title": "Health disparities: Starting check",
+      "prompt": "A population table shows that one income group has a higher rate of uncontrolled asthma. Which classification is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Health disparity: group health outcomes differ",
+        "Health-care disparity: access or delivery differs",
+        "Both disparity types: care and outcomes both differ",
+        "Neither type: no group-patterned difference appears"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "DIS_ITEM_GUIDED",
+      "title": "Health disparities: Choose with support",
+      "prompt": "One racial group waits longer for the same clinic appointment type, while no outcome data are given. Which classification fits?",
+      "response_type": "single_select",
+      "options": [
+        "Health disparity: group health outcomes differ",
+        "Health-care disparity: access or delivery differs",
+        "Neither type: no group-patterned difference appears",
+        "Both disparity types: care and outcomes both differ"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "DIS_ITEM_LIGHT",
+      "title": "Health disparities: Choose with less support",
+      "prompt": "A report shows both fewer offered follow-up visits and higher complication rates for one gender group. Which classification is supported?",
+      "response_type": "single_select",
+      "options": [
+        "Health-care disparity: access or delivery differs",
+        "Neither type: no group-patterned difference appears",
+        "Both disparity types: care and outcomes both differ",
+        "Health disparity: group health outcomes differ"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "DIS_ITEM_SOLO",
+      "title": "Health disparities: Choose independently",
+      "prompt": "Two class groups receive the same appointment availability and show the same disease rate. Which classification fits the reported comparison?",
+      "response_type": "single_select",
+      "options": [
+        "Health-care disparity: access or delivery differs",
+        "Health disparity: group health outcomes differ",
+        "Both disparity types: care and outcomes both differ",
+        "Neither type: no group-patterned difference appears"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "DIS_ITEM_NEAR",
+      "title": "Health disparities: Near-use check",
+      "prompt": "A graph shows shorter average life expectancy for one socioeconomic group. No care-access measure is included. Which classification is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Health disparity: group health outcomes differ",
+        "Both disparity types: care and outcomes both differ",
+        "Neither type: no group-patterned difference appears",
+        "Health-care disparity: access or delivery differs"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "DIS_ITEM_CHANGED",
+      "title": "Health disparities: Changed-task check",
+      "prompt": "One racial group has fewer available primary-care appointments and a higher hospitalization rate. What classification is supported without adding causality?",
+      "response_type": "single_select",
+      "options": [
+        "Health disparity: group health outcomes differ",
+        "Both disparity types: care and outcomes both differ",
+        "Health-care disparity: access or delivery differs",
+        "Neither type: no group-patterned difference appears"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "DIS_ITEM_REPAIR_NEAR",
+      "title": "Health disparities: Repair the near-use function",
+      "prompt": "After missing a disparity classification, which first question repairs the function?",
+      "response_type": "single_select",
+      "options": [
+        "Did the person move across generations or within one career?",
+        "Are basic needs unmet or merely below prevailing social norms?",
+        "Does the measure record health status or access and delivery of care?",
+        "Do institutional records stabilize a shared social category?"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "DIS_ITEM_REENTRY_NEAR",
+      "title": "Health disparities: Fresh near-use re-entry",
+      "prompt": "A population study reports a higher prevalence of chronic pain in one gender group and no care measure. Which classification is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Health-care disparity: access or delivery differs",
+        "Neither type: no group-patterned difference appears",
+        "Both disparity types: care and outcomes both differ",
+        "Health disparity: group health outcomes differ"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "DIS_ITEM_REPAIR_CHANGED",
+      "title": "Health disparities: Repair the changed-task function",
+      "prompt": "After missing a paired-measure item, which procedure repairs the exact function?",
+      "response_type": "single_select",
+      "options": [
+        "Sort each measure as care process or health outcome, then report both",
+        "Combine every measure into one disparity label before reading units",
+        "Infer that any access difference caused every reported outcome",
+        "Replace group-patterned observations with individual clinical judgments"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "DIS_ITEM_REENTRY_CHANGED",
+      "title": "Health disparities: Fresh changed-task re-entry",
+      "prompt": "One income group has lower screening availability and a higher late-diagnosis rate. What classification is supported without a causal claim?",
+      "response_type": "single_select",
+      "options": [
+        "Health disparity: group health outcomes differ",
+        "Both disparity types: care and outcomes both differ",
+        "Health-care disparity: access or delivery differs",
+        "Neither type: no group-patterned difference appears"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    }
+  ]
+}

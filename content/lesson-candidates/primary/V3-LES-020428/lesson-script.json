@@ -1,0 +1,3620 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-020428",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "e5e06533d979a4efe31e4278d69e406333320fae087de2023a856b00cd7eab8f",
+  "payload": {
+    "lesson_id": "V3-LES-020428",
+    "grouping_id": "V3-CL-020428",
+    "ordered_kc_ids": [
+      "V3-KC-747850",
+      "V3-KC-333232",
+      "V3-KC-461805"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-747850",
+      "V3-KC-333232",
+      "V3-KC-461805"
+    ],
+    "throughline": "Treat capacitance as a geometry-and-material property, then state what is held fixed before predicting charge, voltage, energy, network, or dielectric behavior.",
+    "nodes": [
+      {
+        "node_id": "GEO-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: compare one geometric change. Leaving the response blank records an abstention and cannot satisfy an exit."
+        ],
+        "representation_ids": [
+          "GEO-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEO-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "GEO-CP-ENTRY",
+        "source_claim_refs": [
+          "GEO-CLAIM-1",
+          "GEO-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEO-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: predict how ideal parallel-plate capacitance changes with plate overlap area and separation. The packet declares no hard prerequisite, so the proportional model is introduced before any consequential item."
+        ],
+        "representation_ids": [
+          "GEO-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEO-CP-ORIENTATION",
+        "source_claim_refs": [
+          "GEO-CLAIM-1",
+          "GEO-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEO-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "For ideal parallel plates, C = εA/d. At fixed material and separation, a larger overlapping plate area gives proportionally larger capacitance.",
+          "At fixed material and area, greater plate separation gives smaller capacitance. The permittivity ε represents the intervening material.",
+          "Capacitance describes how much charge is stored per volt: C = Q/V. For unchanged geometry and material, adding charge also raises voltage; it does not redefine C."
+        ],
+        "representation_ids": [
+          "GEO-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEO-CP-EXPLANATION",
+        "source_claim_refs": [
+          "GEO-CLAIM-1",
+          "GEO-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEO-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model: wider electrical “storage frontage” increases C; a larger gap weakens the plate coupling and decreases C. Read A and d before reading Q or V."
+        ],
+        "representation_ids": [
+          "GEO-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEO-CP-MODEL",
+        "source_claim_refs": [
+          "GEO-CLAIM-1",
+          "GEO-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEO-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: capacitor B has twice the overlap area and three times the separation of capacitor A. The area contributes a factor of 2 and separation contributes a factor of 1/3, so CB/CA = 2/3. Charge labels are irrelevant unless geometry or material also changes."
+        ],
+        "representation_ids": [
+          "GEO-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEO-CP-THINK",
+        "source_claim_refs": [
+          "GEO-CLAIM-1",
+          "GEO-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEO-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a capacitor keeps the same material and plate area while separation changes from d to d/2. Because d is in the denominator, the new capacitance is 2C.",
+          "A second capacitor doubles both area and separation. The two factors cancel, so its capacitance is unchanged."
+        ],
+        "representation_ids": [
+          "GEO-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEO-CP-WORKED",
+        "source_claim_refs": [
+          "GEO-CLAIM-1",
+          "GEO-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEO-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: write the area factor in the numerator and the separation factor in the denominator before combining them."
+        ],
+        "representation_ids": [
+          "GEO-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEO-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "GEO-CP-GUIDED",
+        "source_claim_refs": [
+          "GEO-CLAIM-1",
+          "GEO-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEO-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less support: compare two labelled plate diagrams using only “area helps; distance opposes.”"
+        ],
+        "representation_ids": [
+          "GEO-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEO-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "GEO-CP-LIGHT",
+        "source_claim_refs": [
+          "GEO-CLAIM-1",
+          "GEO-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEO-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: predict a geometry ratio without a displayed equation scaffold."
+        ],
+        "representation_ids": [
+          "GEO-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEO-ACT-SOLO"
+        ],
+        "checkpoint_ref": "GEO-CP-SOLO",
+        "source_claim_refs": [
+          "GEO-CLAIM-1",
+          "GEO-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEO-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: doubling stored charge on unchanged plates does not double capacitance. It doubles voltage because Q = CV while C remains fixed by geometry and material. The ideal relation also assumes edge effects are neglected."
+        ],
+        "representation_ids": [
+          "GEO-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEO-CP-CONTRAST",
+        "source_claim_refs": [
+          "GEO-CLAIM-1",
+          "GEO-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEO-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: calculate a fresh capacitance ratio from simultaneous area and separation changes."
+        ],
+        "representation_ids": [
+          "GEO-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEO-ACT-NEAR"
+        ],
+        "checkpoint_ref": "GEO-CP-NEAR",
+        "source_claim_refs": [
+          "GEO-CLAIM-1",
+          "GEO-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEO-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: infer the geometry change that explains a measured charge increase at the same applied voltage."
+        ],
+        "representation_ids": [
+          "GEO-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEO-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "GEO-CP-CHANGED",
+        "source_claim_refs": [
+          "GEO-CLAIM-1",
+          "GEO-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEO-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the ratio function: write Cnew/Cold = (Anew/Aold)(dold/dnew). Separation reverses because it is in the denominator."
+        ],
+        "representation_ids": [
+          "GEO-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEO-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "GEO-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "GEO-CLAIM-1",
+          "GEO-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEO-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near re-entry: combine a new area factor with a new separation factor; no exposed numbers or options recur."
+        ],
+        "representation_ids": [
+          "GEO-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEO-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "GEO-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "GEO-CLAIM-1",
+          "GEO-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEO-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the evidence-to-geometry function: at equal voltage, Q follows C. Translate the measured charge ratio into a capacitance ratio before selecting the geometry."
+        ],
+        "representation_ids": [
+          "GEO-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEO-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "GEO-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "GEO-CLAIM-1",
+          "GEO-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEO-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: use a different fixed-voltage observation to infer a plate change without reusing the prior answer."
+        ],
+        "representation_ids": [
+          "GEO-REP-MAIN"
+        ],
+        "activity_ids": [
+          "GEO-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "GEO-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "GEO-CLAIM-1",
+          "GEO-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GEO-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: ideal parallel-plate capacitance follows εA/d. Increase overlap area to raise C, increase separation to lower C, and do not confuse stored charge with capacitance."
+        ],
+        "representation_ids": [
+          "GEO-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEO-CP-RECAP",
+        "source_claim_refs": [
+          "GEO-CLAIM-1",
+          "GEO-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "ENG-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify one direct Q–V relationship. A blank response is a nonconsequential abstention."
+        ],
+        "representation_ids": [
+          "ENG-REP-MAIN"
+        ],
+        "activity_ids": [
+          "ENG-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "ENG-CP-ENTRY",
+        "source_claim_refs": [
+          "ENG-CLAIM-1",
+          "ENG-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "ENG-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: compare capacitor charge and stored energy by first identifying capacitance and then stating whether voltage or charge is held fixed. No hard prerequisite handoff is declared, so every equation used is developed here."
+        ],
+        "representation_ids": [
+          "ENG-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ENG-CP-ORIENTATION",
+        "source_claim_refs": [
+          "ENG-CLAIM-1",
+          "ENG-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "ENG-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Charge and voltage obey Q = CV. For a fixed capacitor, doubling voltage doubles stored charge.",
+          "Stored energy can be written U = 1/2 CV², U = 1/2 QV, or U = Q²/(2C). These are equivalent descriptions of the same stored energy.",
+          "Choose the form that keeps the controlled quantity visible. At fixed C, voltage changes produce a squared energy change. At fixed Q, increasing C lowers energy."
+        ],
+        "representation_ids": [
+          "ENG-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ENG-CP-EXPLANATION",
+        "source_claim_refs": [
+          "ENG-CLAIM-1",
+          "ENG-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "ENG-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model: C sets the charge-per-volt capacity; Q tracks V linearly for fixed C, while energy measures the accumulated work and therefore carries a square in V."
+        ],
+        "representation_ids": [
+          "ENG-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ENG-CP-MODEL",
+        "source_claim_refs": [
+          "ENG-CLAIM-1",
+          "ENG-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "ENG-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: the same capacitor moves from V to 3V. Q follows V, so Q becomes 3Q. Using U = 1/2 CV², energy becomes 9U. I do not assume the same factor for Q and U."
+        ],
+        "representation_ids": [
+          "ENG-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ENG-CP-THINK",
+        "source_claim_refs": [
+          "ENG-CLAIM-1",
+          "ENG-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "ENG-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a 2 μF capacitor at 3 V stores Q = CV = 6 μC. Its energy is 1/2(2 μF)(3 V)² = 9 μJ.",
+          "If voltage doubles on the same capacitor, charge doubles and energy quadruples."
+        ],
+        "representation_ids": [
+          "ENG-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ENG-CP-WORKED",
+        "source_claim_refs": [
+          "ENG-CLAIM-1",
+          "ENG-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "ENG-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: circle the held quantity, select the equation that keeps it explicit, and then compare factors before substituting units."
+        ],
+        "representation_ids": [
+          "ENG-REP-MAIN"
+        ],
+        "activity_ids": [
+          "ENG-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "ENG-CP-GUIDED",
+        "source_claim_refs": [
+          "ENG-CLAIM-1",
+          "ENG-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "ENG-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less support: distinguish a linear charge change from a squared energy change."
+        ],
+        "representation_ids": [
+          "ENG-REP-MAIN"
+        ],
+        "activity_ids": [
+          "ENG-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "ENG-CP-LIGHT",
+        "source_claim_refs": [
+          "ENG-CLAIM-1",
+          "ENG-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "ENG-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: compare energy using a fresh capacitance or voltage ratio."
+        ],
+        "representation_ids": [
+          "ENG-REP-MAIN"
+        ],
+        "activity_ids": [
+          "ENG-ACT-SOLO"
+        ],
+        "checkpoint_ref": "ENG-CP-SOLO",
+        "source_claim_refs": [
+          "ENG-CLAIM-1",
+          "ENG-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "ENG-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: U is not generally QV; the stored energy is 1/2 QV because voltage rises from zero as charge is accumulated. Also, changing C at fixed V is not the same administration as changing C at fixed Q."
+        ],
+        "representation_ids": [
+          "ENG-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ENG-CP-CONTRAST",
+        "source_claim_refs": [
+          "ENG-CLAIM-1",
+          "ENG-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "ENG-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: calculate charge and energy factors for the same capacitor after a voltage change."
+        ],
+        "representation_ids": [
+          "ENG-REP-MAIN"
+        ],
+        "activity_ids": [
+          "ENG-ACT-NEAR"
+        ],
+        "checkpoint_ref": "ENG-CP-NEAR",
+        "source_claim_refs": [
+          "ENG-CLAIM-1",
+          "ENG-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "ENG-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: infer an unknown voltage factor from an observed stored-energy ratio."
+        ],
+        "representation_ids": [
+          "ENG-REP-MAIN"
+        ],
+        "activity_ids": [
+          "ENG-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "ENG-CP-CHANGED",
+        "source_claim_refs": [
+          "ENG-CLAIM-1",
+          "ENG-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "ENG-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the charge-versus-energy function: write Q ∝ V and U ∝ V² when C is fixed. Apply the factor once to Q and twice to U."
+        ],
+        "representation_ids": [
+          "ENG-REP-MAIN"
+        ],
+        "activity_ids": [
+          "ENG-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "ENG-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "ENG-CLAIM-1",
+          "ENG-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "ENG-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near re-entry: use a new voltage factor and new option structure with no exposed answer."
+        ],
+        "representation_ids": [
+          "ENG-REP-MAIN"
+        ],
+        "activity_ids": [
+          "ENG-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "ENG-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "ENG-CLAIM-1",
+          "ENG-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "ENG-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the inverse inference: for fixed C, take the square root of the energy factor to recover the voltage factor."
+        ],
+        "representation_ids": [
+          "ENG-REP-MAIN"
+        ],
+        "activity_ids": [
+          "ENG-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "ENG-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "ENG-CLAIM-1",
+          "ENG-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "ENG-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: recover a voltage factor from a new fixed-capacitance energy factor without repeating the earlier values."
+        ],
+        "representation_ids": [
+          "ENG-REP-MAIN"
+        ],
+        "activity_ids": [
+          "ENG-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "ENG-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "ENG-CLAIM-1",
+          "ENG-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "ENG-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: Q = CV; U = 1/2 CV² = 1/2 QV = Q²/(2C). Name the fixed quantity before comparing factors."
+        ],
+        "representation_ids": [
+          "ENG-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "ENG-CP-RECAP",
+        "source_claim_refs": [
+          "ENG-CLAIM-1",
+          "ENG-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "NET-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: classify a two-capacitor connection. A blank response records an abstention and grants no exit credit."
+        ],
+        "representation_ids": [
+          "NET-REP-MAIN"
+        ],
+        "activity_ids": [
+          "NET-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "NET-CP-ENTRY",
+        "source_claim_refs": [
+          "NET-CLAIM-1",
+          "NET-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "NET-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: combine capacitors in series or parallel and predict a fully inserted dielectric’s effect under a stated battery condition. The packet declares no hard prerequisite, so topology and boundary conditions are taught explicitly."
+        ],
+        "representation_ids": [
+          "NET-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "NET-CP-ORIENTATION",
+        "source_claim_refs": [
+          "NET-CLAIM-1",
+          "NET-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "NET-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Capacitors in parallel share both endpoint nodes and therefore share voltage; their capacitances add: Ceq = C1 + C2 + ….",
+          "Capacitors in series lie on one path and carry equal-magnitude charge in the ideal steady state; reciprocals add: 1/Ceq = 1/C1 + 1/C2 + …. The series equivalent is smaller than either member.",
+          "A dielectric that fully fills the gap increases capacitance to κC. If the battery remains connected, V stays fixed and Q increases. If the capacitor is isolated, Q stays fixed and V decreases."
+        ],
+        "representation_ids": [
+          "NET-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "NET-CP-EXPLANATION",
+        "source_claim_refs": [
+          "NET-CLAIM-1",
+          "NET-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "NET-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model: parallel adds storage width; series adds effective gap. A dielectric improves polarization support, but the external connection decides which electrical quantity can change."
+        ],
+        "representation_ids": [
+          "NET-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "NET-CP-MODEL",
+        "source_claim_refs": [
+          "NET-CLAIM-1",
+          "NET-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "NET-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: two equal capacitors share both nodes, so they are parallel and give 2C. If instead they form one path, reciprocal addition gives C/2. Before analyzing a dielectric, I look for a connected battery: connected means fixed V; disconnected means fixed Q."
+        ],
+        "representation_ids": [
+          "NET-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "NET-CP-THINK",
+        "source_claim_refs": [
+          "NET-CLAIM-1",
+          "NET-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "NET-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: C and 2C in parallel give 3C. The same pair in series gives Ceq = (C·2C)/(C + 2C) = 2C/3.",
+          "For an isolated charged capacitor, inserting a dielectric raises C while Q stays fixed; V = Q/C and U = Q²/(2C) both decrease."
+        ],
+        "representation_ids": [
+          "NET-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "NET-CP-WORKED",
+        "source_claim_refs": [
+          "NET-CLAIM-1",
+          "NET-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "NET-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: mark endpoint nodes, select direct or reciprocal addition, then label the battery condition before predicting dielectric consequences."
+        ],
+        "representation_ids": [
+          "NET-REP-MAIN"
+        ],
+        "activity_ids": [
+          "NET-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "NET-CP-GUIDED",
+        "source_claim_refs": [
+          "NET-CLAIM-1",
+          "NET-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "NET-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less support: use the bounds—parallel exceeds the largest member; series is below the smallest—to check a proposed equivalent."
+        ],
+        "representation_ids": [
+          "NET-REP-MAIN"
+        ],
+        "activity_ids": [
+          "NET-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "NET-CP-LIGHT",
+        "source_claim_refs": [
+          "NET-CLAIM-1",
+          "NET-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "NET-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: calculate a fresh network and dielectric consequence without topology labels."
+        ],
+        "representation_ids": [
+          "NET-REP-MAIN"
+        ],
+        "activity_ids": [
+          "NET-ACT-SOLO"
+        ],
+        "checkpoint_ref": "NET-CP-SOLO",
+        "source_claim_refs": [
+          "NET-CLAIM-1",
+          "NET-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "NET-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: physical side-by-side placement does not prove parallel connection; shared endpoint nodes do. A dielectric does not always raise stored energy: energy rises at fixed V but falls at fixed Q."
+        ],
+        "representation_ids": [
+          "NET-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "NET-CP-CONTRAST",
+        "source_claim_refs": [
+          "NET-CLAIM-1",
+          "NET-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "NET-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: calculate a mixed comparison between equal-capacitor series and parallel networks."
+        ],
+        "representation_ids": [
+          "NET-REP-MAIN"
+        ],
+        "activity_ids": [
+          "NET-ACT-NEAR"
+        ],
+        "checkpoint_ref": "NET-CP-NEAR",
+        "source_claim_refs": [
+          "NET-CLAIM-1",
+          "NET-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "NET-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: predict charge and energy after dielectric insertion using a stated battery connection."
+        ],
+        "representation_ids": [
+          "NET-REP-MAIN"
+        ],
+        "activity_ids": [
+          "NET-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "NET-CP-CHANGED",
+        "source_claim_refs": [
+          "NET-CLAIM-1",
+          "NET-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "NET-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the network function: trace nodes first. Shared endpoints mean direct addition; one path means reciprocal addition. Check the result against the parallel-high and series-low bounds."
+        ],
+        "representation_ids": [
+          "NET-REP-MAIN"
+        ],
+        "activity_ids": [
+          "NET-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "NET-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "NET-CLAIM-1",
+          "NET-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "NET-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near re-entry: combine unequal capacitors in a new topology with new values."
+        ],
+        "representation_ids": [
+          "NET-REP-MAIN"
+        ],
+        "activity_ids": [
+          "NET-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "NET-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "NET-CLAIM-1",
+          "NET-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "NET-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the dielectric function: write Cnew = κC, then lock V if connected or Q if isolated. Only then choose Q, V, and U changes."
+        ],
+        "representation_ids": [
+          "NET-REP-MAIN"
+        ],
+        "activity_ids": [
+          "NET-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "NET-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "NET-CLAIM-1",
+          "NET-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "NET-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: analyze the opposite battery condition with a new dielectric factor and no repeated answer."
+        ],
+        "representation_ids": [
+          "NET-REP-MAIN"
+        ],
+        "activity_ids": [
+          "NET-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "NET-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "NET-CLAIM-1",
+          "NET-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "NET-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: parallel capacitances add; series reciprocals add; dielectrics raise C. The battery connection determines whether V or Q remains fixed."
+        ],
+        "representation_ids": [
+          "NET-REP-MAIN"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "NET-CP-RECAP",
+        "source_claim_refs": [
+          "NET-CLAIM-1",
+          "NET-CLAIM-2"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "GEO-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-747850",
+        "item_binding_id": "GEO-ITEM-ENTRY",
+        "learner_operation": "PREDICT_AREA_EFFECT",
+        "authorized_next_node_ids": [
+          "GEO-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "GEO-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-747850",
+        "item_binding_id": "GEO-ITEM-GUIDED",
+        "learner_operation": "CALCULATE_AREA_RATIO",
+        "authorized_next_node_ids": [
+          "GEO-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "GEO-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-747850",
+        "item_binding_id": "GEO-ITEM-LIGHT",
+        "learner_operation": "PREDICT_SEPARATION_EFFECT",
+        "authorized_next_node_ids": [
+          "GEO-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "GEO-ACT-SOLO",
+        "primary_kc_id": "V3-KC-747850",
+        "item_binding_id": "GEO-ITEM-SOLO",
+        "learner_operation": "COMBINE_GEOMETRY_FACTORS",
+        "authorized_next_node_ids": [
+          "GEO-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "GEO-ACT-NEAR",
+        "primary_kc_id": "V3-KC-747850",
+        "item_binding_id": "GEO-ITEM-NEAR",
+        "learner_operation": "CALCULATE_PARALLEL_PLATE_RATIO",
+        "authorized_next_node_ids": [
+          "GEO-NODE-CHANGED",
+          "GEO-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "GEO-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-747850",
+        "item_binding_id": "GEO-ITEM-CHANGED",
+        "learner_operation": "INFER_AREA_FROM_CHARGE_AT_FIXED_VOLTAGE",
+        "authorized_next_node_ids": [
+          "GEO-NODE-RECAP",
+          "GEO-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "GEO-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-747850",
+        "item_binding_id": "GEO-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_GEOMETRY_RATIO",
+        "authorized_next_node_ids": [
+          "GEO-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "GEO-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-747850",
+        "item_binding_id": "GEO-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_GEOMETRY_RATIO",
+        "authorized_next_node_ids": [
+          "GEO-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "GEO-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-747850",
+        "item_binding_id": "GEO-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_FIXED_VOLTAGE_INFERENCE",
+        "authorized_next_node_ids": [
+          "GEO-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "GEO-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-747850",
+        "item_binding_id": "GEO-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_GEOMETRY_FROM_FIXED_VOLTAGE_DATA",
+        "authorized_next_node_ids": [
+          "GEO-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "ENG-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-333232",
+        "item_binding_id": "ENG-ITEM-ENTRY",
+        "learner_operation": "PREDICT_CHARGE_FROM_VOLTAGE",
+        "authorized_next_node_ids": [
+          "ENG-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "ENG-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-333232",
+        "item_binding_id": "ENG-ITEM-GUIDED",
+        "learner_operation": "CALCULATE_STORED_CHARGE",
+        "authorized_next_node_ids": [
+          "ENG-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "ENG-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-333232",
+        "item_binding_id": "ENG-ITEM-LIGHT",
+        "learner_operation": "PREDICT_ENERGY_FROM_VOLTAGE",
+        "authorized_next_node_ids": [
+          "ENG-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "ENG-ACT-SOLO",
+        "primary_kc_id": "V3-KC-333232",
+        "item_binding_id": "ENG-ITEM-SOLO",
+        "learner_operation": "COMPARE_ENERGY_AT_FIXED_VOLTAGE",
+        "authorized_next_node_ids": [
+          "ENG-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "ENG-ACT-NEAR",
+        "primary_kc_id": "V3-KC-333232",
+        "item_binding_id": "ENG-ITEM-NEAR",
+        "learner_operation": "COMPARE_CHARGE_AND_ENERGY_FACTORS",
+        "authorized_next_node_ids": [
+          "ENG-NODE-CHANGED",
+          "ENG-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "ENG-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-333232",
+        "item_binding_id": "ENG-ITEM-CHANGED",
+        "learner_operation": "INFER_VOLTAGE_FROM_ENERGY_RATIO",
+        "authorized_next_node_ids": [
+          "ENG-NODE-RECAP",
+          "ENG-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "ENG-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-333232",
+        "item_binding_id": "ENG-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_Q_AND_U_SCALING",
+        "authorized_next_node_ids": [
+          "ENG-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "ENG-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-333232",
+        "item_binding_id": "ENG-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_CHARGE_ENERGY_SCALING",
+        "authorized_next_node_ids": [
+          "ENG-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "ENG-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-333232",
+        "item_binding_id": "ENG-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_INVERSE_ENERGY_INFERENCE",
+        "authorized_next_node_ids": [
+          "ENG-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "ENG-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-333232",
+        "item_binding_id": "ENG-ITEM-REENTRY-CHANGED",
+        "learner_operation": "INFER_VOLTAGE_FROM_ENERGY_RATIO",
+        "authorized_next_node_ids": [
+          "ENG-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "NET-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-461805",
+        "item_binding_id": "NET-ITEM-ENTRY",
+        "learner_operation": "CLASSIFY_PARALLEL_TOPOLOGY",
+        "authorized_next_node_ids": [
+          "NET-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "NET-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-461805",
+        "item_binding_id": "NET-ITEM-GUIDED",
+        "learner_operation": "CALCULATE_PARALLEL_EQUIVALENT",
+        "authorized_next_node_ids": [
+          "NET-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "NET-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-461805",
+        "item_binding_id": "NET-ITEM-LIGHT",
+        "learner_operation": "CALCULATE_EQUAL_SERIES_EQUIVALENT",
+        "authorized_next_node_ids": [
+          "NET-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "NET-ACT-SOLO",
+        "primary_kc_id": "V3-KC-461805",
+        "item_binding_id": "NET-ITEM-SOLO",
+        "learner_operation": "CHECK_SERIES_BOUND",
+        "authorized_next_node_ids": [
+          "NET-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "NET-ACT-NEAR",
+        "primary_kc_id": "V3-KC-461805",
+        "item_binding_id": "NET-ITEM-NEAR",
+        "learner_operation": "COMPARE_SERIES_AND_PARALLEL_EQUIVALENTS",
+        "authorized_next_node_ids": [
+          "NET-NODE-CHANGED",
+          "NET-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "NET-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-461805",
+        "item_binding_id": "NET-ITEM-CHANGED",
+        "learner_operation": "PREDICT_CONNECTED_DIELECTRIC_EFFECT",
+        "authorized_next_node_ids": [
+          "NET-NODE-RECAP",
+          "NET-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "NET-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-461805",
+        "item_binding_id": "NET-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_NETWORK_RULES",
+        "authorized_next_node_ids": [
+          "NET-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "NET-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-461805",
+        "item_binding_id": "NET-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_SERIES_EQUIVALENT",
+        "authorized_next_node_ids": [
+          "NET-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "NET-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-461805",
+        "item_binding_id": "NET-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_DIELECTRIC_BOUNDARY_CONDITION",
+        "authorized_next_node_ids": [
+          "NET-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "NET-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-461805",
+        "item_binding_id": "NET-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_ISOLATED_DIELECTRIC_EFFECT",
+        "authorized_next_node_ids": [
+          "NET-NODE-RECAP"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-747850",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-747850",
+        "scope_in_refs": [
+          "V3-KC-747850:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-747850:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "GEO-CLAIM-1",
+          "GEO-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "GEO-NODE-ENTRY",
+        "orientation_node_id": "GEO-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "GEO-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "GEO-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "GEO-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "GEO-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "GEO-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "GEO-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "GEO-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "GEO-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "GEO-NODE-NEAR",
+          "activity_ids": [
+            "GEO-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "GEO-NODE-CHANGED",
+          "activity_ids": [
+            "GEO-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "GEO-FEATURE-NEAR",
+          "GEO-FEATURE-CHANGED"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "GEO-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "GEO-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "GEO-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "GEO-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "GEO-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "GEO-ACT-REENTRY-NEAR",
+            "success_next_node_id": "GEO-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "GEO-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "GEO-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "GEO-NODE-RECAP",
+            "planner_handoff_node_id": "ENG-NODE-ENTRY"
+          }
+        ],
+        "representation_ids": [
+          "GEO-REP-MAIN"
+        ],
+        "accessibility_equivalent_ids": [
+          "GEO-REP-MAIN-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "GEO-NODE-ENTRY",
+            "GEO-NODE-RECAP"
+          ],
+          "standard": [
+            "GEO-NODE-ENTRY",
+            "GEO-NODE-ORIENTATION",
+            "GEO-NODE-EXPLANATION",
+            "GEO-NODE-MODEL",
+            "GEO-NODE-THINK",
+            "GEO-NODE-WORKED",
+            "GEO-NODE-GUIDED",
+            "GEO-NODE-LIGHT",
+            "GEO-NODE-SOLO",
+            "GEO-NODE-CONTRAST",
+            "GEO-NODE-NEAR",
+            "GEO-NODE-CHANGED",
+            "GEO-NODE-REPAIR-NEAR",
+            "GEO-NODE-REENTRY-NEAR",
+            "GEO-NODE-REPAIR-CHANGED",
+            "GEO-NODE-REENTRY-CHANGED",
+            "GEO-NODE-RECAP"
+          ],
+          "misconception": [
+            "GEO-NODE-ENTRY",
+            "GEO-NODE-CONTRAST",
+            "GEO-NODE-REPAIR-NEAR",
+            "GEO-NODE-REPAIR-CHANGED",
+            "GEO-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "GEO-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-333232",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-333232",
+        "scope_in_refs": [
+          "V3-KC-333232:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-333232:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "ENG-CLAIM-1",
+          "ENG-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "ENG-NODE-ENTRY",
+        "orientation_node_id": "ENG-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "ENG-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "ENG-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "ENG-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "ENG-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "ENG-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "ENG-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "ENG-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "ENG-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "ENG-NODE-NEAR",
+          "activity_ids": [
+            "ENG-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "ENG-NODE-CHANGED",
+          "activity_ids": [
+            "ENG-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "ENG-FEATURE-NEAR",
+          "ENG-FEATURE-CHANGED"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "ENG-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "ENG-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "ENG-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "ENG-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "ENG-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "ENG-ACT-REENTRY-NEAR",
+            "success_next_node_id": "ENG-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "ENG-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "ENG-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "ENG-NODE-RECAP",
+            "planner_handoff_node_id": "NET-NODE-ENTRY"
+          }
+        ],
+        "representation_ids": [
+          "ENG-REP-MAIN"
+        ],
+        "accessibility_equivalent_ids": [
+          "ENG-REP-MAIN-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "ENG-NODE-ENTRY",
+            "ENG-NODE-RECAP"
+          ],
+          "standard": [
+            "ENG-NODE-ENTRY",
+            "ENG-NODE-ORIENTATION",
+            "ENG-NODE-EXPLANATION",
+            "ENG-NODE-MODEL",
+            "ENG-NODE-THINK",
+            "ENG-NODE-WORKED",
+            "ENG-NODE-GUIDED",
+            "ENG-NODE-LIGHT",
+            "ENG-NODE-SOLO",
+            "ENG-NODE-CONTRAST",
+            "ENG-NODE-NEAR",
+            "ENG-NODE-CHANGED",
+            "ENG-NODE-REPAIR-NEAR",
+            "ENG-NODE-REENTRY-NEAR",
+            "ENG-NODE-REPAIR-CHANGED",
+            "ENG-NODE-REENTRY-CHANGED",
+            "ENG-NODE-RECAP"
+          ],
+          "misconception": [
+            "ENG-NODE-ENTRY",
+            "ENG-NODE-CONTRAST",
+            "ENG-NODE-REPAIR-NEAR",
+            "ENG-NODE-REPAIR-CHANGED",
+            "ENG-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "ENG-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-461805",
+        "canonical_ordinal": 3,
+        "objective_ref": "objective:V3-KC-461805",
+        "scope_in_refs": [
+          "V3-KC-461805:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-461805:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "NET-CLAIM-1",
+          "NET-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "NET-NODE-ENTRY",
+        "orientation_node_id": "NET-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "NET-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "NET-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "NET-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "NET-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "NET-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "NET-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "NET-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "NET-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "NET-NODE-NEAR",
+          "activity_ids": [
+            "NET-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "NET-NODE-CHANGED",
+          "activity_ids": [
+            "NET-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "NET-FEATURE-NEAR",
+          "NET-FEATURE-CHANGED"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "NET-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "NET-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "NET-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "NET-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "NET-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "NET-ACT-REENTRY-NEAR",
+            "success_next_node_id": "NET-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "NET-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "NET-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "NET-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "NET-REP-MAIN"
+        ],
+        "accessibility_equivalent_ids": [
+          "NET-REP-MAIN-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "NET-NODE-ENTRY",
+            "NET-NODE-RECAP"
+          ],
+          "standard": [
+            "NET-NODE-ENTRY",
+            "NET-NODE-ORIENTATION",
+            "NET-NODE-EXPLANATION",
+            "NET-NODE-MODEL",
+            "NET-NODE-THINK",
+            "NET-NODE-WORKED",
+            "NET-NODE-GUIDED",
+            "NET-NODE-LIGHT",
+            "NET-NODE-SOLO",
+            "NET-NODE-CONTRAST",
+            "NET-NODE-NEAR",
+            "NET-NODE-CHANGED",
+            "NET-NODE-REPAIR-NEAR",
+            "NET-NODE-REENTRY-NEAR",
+            "NET-NODE-REPAIR-CHANGED",
+            "NET-NODE-REENTRY-CHANGED",
+            "NET-NODE-RECAP"
+          ],
+          "misconception": [
+            "NET-NODE-ENTRY",
+            "NET-NODE-CONTRAST",
+            "NET-NODE-REPAIR-NEAR",
+            "NET-NODE-REPAIR-CHANGED",
+            "NET-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "NET-NODE-RECAP"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "GEO-ITEM-ENTRY",
+        "activity_id": "GEO-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "GEO-FAM-ENTRY",
+        "stimulus_lineage_id": "GEO-STIM-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEO-REP-MAIN",
+        "learner_operation": "PREDICT_AREA_EFFECT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEO_ENTRY",
+        "answer_authority_ref": "protected-items.json#GEO-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#GEO-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEO-PATH-ENTRY",
+        "decisive_cue_id": "GEO-CUE-ENTRY",
+        "distractor_lineage_id": "GEO-DISTRACTOR-ENTRY",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEO-FEATURE-ENTRY-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-ENTRY-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-ENTRY-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GEO-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "GEO-FAM-WORKED",
+        "stimulus_lineage_id": "GEO-STIM-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEO-REP-MAIN",
+        "learner_operation": "FOLLOW_GEO_WORKED_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:GEO-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEO-PATH-WORKED",
+        "decisive_cue_id": "GEO-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "GEO-ITEM-GUIDED",
+        "activity_id": "GEO-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "GEO-FAM-GUIDED",
+        "stimulus_lineage_id": "GEO-STIM-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_RELATIONSHIP_CUES",
+          "VISIBLE_PROCESS_STEPS"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEO-REP-MAIN",
+        "learner_operation": "CALCULATE_AREA_RATIO",
+        "hint_policy": "VISIBLE_NON_ANSWER_BEARING_STRUCTURE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEO_GUIDED",
+        "answer_authority_ref": "protected-items.json#GEO-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#GEO-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEO-PATH-GUIDED",
+        "decisive_cue_id": "GEO-CUE-GUIDED",
+        "distractor_lineage_id": "GEO-DISTRACTOR-GUIDED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEO-FEATURE-GUIDED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-GUIDED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-GUIDED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GEO-ITEM-LIGHT",
+        "activity_id": "GEO-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "GEO-FAM-LIGHT",
+        "stimulus_lineage_id": "GEO-STIM-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "ONE_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEO-REP-MAIN",
+        "learner_operation": "PREDICT_SEPARATION_EFFECT",
+        "hint_policy": "ONE_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEO_LIGHT",
+        "answer_authority_ref": "protected-items.json#GEO-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#GEO-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEO-PATH-LIGHT",
+        "decisive_cue_id": "GEO-CUE-LIGHT",
+        "distractor_lineage_id": "GEO-DISTRACTOR-LIGHT",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEO-FEATURE-LIGHT-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-LIGHT-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-LIGHT-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GEO-ITEM-SOLO",
+        "activity_id": "GEO-ACT-SOLO",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "GEO-FAM-SOLO",
+        "stimulus_lineage_id": "GEO-STIM-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEO-REP-MAIN",
+        "learner_operation": "COMBINE_GEOMETRY_FACTORS",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEO_SOLO",
+        "answer_authority_ref": "protected-items.json#GEO-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#GEO-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEO-PATH-SOLO",
+        "decisive_cue_id": "GEO-CUE-SOLO",
+        "distractor_lineage_id": "GEO-DISTRACTOR-SOLO",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEO-FEATURE-SOLO-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-SOLO-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-SOLO-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GEO-ITEM-NEAR",
+        "activity_id": "GEO-ACT-NEAR",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "GEO-FAM-NEAR",
+        "stimulus_lineage_id": "GEO-STIM-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEO-REP-MAIN",
+        "learner_operation": "CALCULATE_PARALLEL_PLATE_RATIO",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEO_NEAR",
+        "answer_authority_ref": "protected-items.json#GEO-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#GEO-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEO-PATH-NEAR",
+        "decisive_cue_id": "GEO-CUE-NEAR",
+        "distractor_lineage_id": "GEO-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEO-FEATURE-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GEO-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GEO-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GEO-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GEO-ITEM-CHANGED",
+        "activity_id": "GEO-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "GEO-FAM-CHANGED",
+        "stimulus_lineage_id": "GEO-STIM-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEO-REP-MAIN",
+        "learner_operation": "INFER_AREA_FROM_CHARGE_AT_FIXED_VOLTAGE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEO_CHANGED",
+        "answer_authority_ref": "protected-items.json#GEO-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#GEO-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEO-PATH-CHANGED",
+        "decisive_cue_id": "GEO-CUE-CHANGED",
+        "distractor_lineage_id": "GEO-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEO-FEATURE-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GEO-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GEO-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GEO-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "required_operation"
+        ],
+        "changed_dimension_detail": "The near task computes C from stated geometry factors; the changed task works backward from fixed-voltage charge evidence to geometry."
+      },
+      {
+        "item_binding_id": "GEO-ITEM-REPAIR-NEAR",
+        "activity_id": "GEO-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GEO-FAM-REPAIR-NEAR",
+        "stimulus_lineage_id": "GEO-STIM-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEO-REP-MAIN",
+        "learner_operation": "REBUILD_GEOMETRY_RATIO",
+        "hint_policy": "TARGETED_NEAR_USE_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEO_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#GEO-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#GEO-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEO-PATH-REPAIR-NEAR",
+        "decisive_cue_id": "GEO-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "GEO-DISTRACTOR-REPAIR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEO-FEATURE-REPAIR-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEO-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-REPAIR-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEO-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-REPAIR-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEO-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GEO-ITEM-REENTRY-NEAR",
+        "activity_id": "GEO-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GEO-FAM-REENTRY-NEAR",
+        "stimulus_lineage_id": "GEO-STIM-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEO-REP-MAIN",
+        "learner_operation": "REENTER_GEOMETRY_RATIO",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEO_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#GEO-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#GEO-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEO-PATH-REENTRY-NEAR",
+        "decisive_cue_id": "GEO-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "GEO-DISTRACTOR-REENTRY-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEO-FEATURE-REENTRY-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "GEO-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-REENTRY-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "GEO-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-REENTRY-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "GEO-FEATURE-NEAR_USE"
+          }
+        ],
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "GEO-ITEM-NEAR",
+          "stimulus_difference": "Fresh relate parallel-plate geometry and capacitance context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "GEO-ITEM-REPAIR-CHANGED",
+        "activity_id": "GEO-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GEO-FAM-REPAIR-CHANGED",
+        "stimulus_lineage_id": "GEO-STIM-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEO-REP-MAIN",
+        "learner_operation": "REBUILD_FIXED_VOLTAGE_INFERENCE",
+        "hint_policy": "TARGETED_CHANGED_TASK_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEO_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#GEO-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#GEO-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEO-PATH-REPAIR-CHANGED",
+        "decisive_cue_id": "GEO-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "GEO-DISTRACTOR-REPAIR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEO-FEATURE-REPAIR-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEO-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-REPAIR-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEO-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-REPAIR-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "GEO-FEATURE-CHANGED_TASK"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GEO-ITEM-REENTRY-CHANGED",
+        "activity_id": "GEO-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-747850",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GEO-FAM-REENTRY-CHANGED",
+        "stimulus_lineage_id": "GEO-STIM-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEO-REP-MAIN",
+        "learner_operation": "REENTER_GEOMETRY_FROM_FIXED_VOLTAGE_DATA",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEO_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#GEO-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#GEO-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEO-PATH-REENTRY-CHANGED",
+        "decisive_cue_id": "GEO-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "GEO-DISTRACTOR-REENTRY-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "GEO-FEATURE-REENTRY-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "GEO-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-REENTRY-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "GEO-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "GEO-FEATURE-REENTRY-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "GEO-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "required_operation"
+        ],
+        "changed_dimension_detail": "The near task computes C from stated geometry factors; the changed task works backward from fixed-voltage charge evidence to geometry.",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "GEO-ITEM-CHANGED",
+          "stimulus_difference": "Fresh relate parallel-plate geometry and capacitance context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "ENG-ITEM-ENTRY",
+        "activity_id": "ENG-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "ENG-FAM-ENTRY",
+        "stimulus_lineage_id": "ENG-STIM-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENG-REP-MAIN",
+        "learner_operation": "PREDICT_CHARGE_FROM_VOLTAGE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ENG_ENTRY",
+        "answer_authority_ref": "protected-items.json#ENG-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#ENG-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENG-PATH-ENTRY",
+        "decisive_cue_id": "ENG-CUE-ENTRY",
+        "distractor_lineage_id": "ENG-DISTRACTOR-ENTRY",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "ENG-FEATURE-ENTRY-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-ENTRY-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-ENTRY-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ENG-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "ENG-FAM-WORKED",
+        "stimulus_lineage_id": "ENG-STIM-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENG-REP-MAIN",
+        "learner_operation": "FOLLOW_ENG_WORKED_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:ENG-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENG-PATH-WORKED",
+        "decisive_cue_id": "ENG-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "ENG-ITEM-GUIDED",
+        "activity_id": "ENG-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "ENG-FAM-GUIDED",
+        "stimulus_lineage_id": "ENG-STIM-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_RELATIONSHIP_CUES",
+          "VISIBLE_PROCESS_STEPS"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENG-REP-MAIN",
+        "learner_operation": "CALCULATE_STORED_CHARGE",
+        "hint_policy": "VISIBLE_NON_ANSWER_BEARING_STRUCTURE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ENG_GUIDED",
+        "answer_authority_ref": "protected-items.json#ENG-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#ENG-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENG-PATH-GUIDED",
+        "decisive_cue_id": "ENG-CUE-GUIDED",
+        "distractor_lineage_id": "ENG-DISTRACTOR-GUIDED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "ENG-FEATURE-GUIDED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-GUIDED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-GUIDED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ENG-ITEM-LIGHT",
+        "activity_id": "ENG-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "ENG-FAM-LIGHT",
+        "stimulus_lineage_id": "ENG-STIM-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "ONE_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENG-REP-MAIN",
+        "learner_operation": "PREDICT_ENERGY_FROM_VOLTAGE",
+        "hint_policy": "ONE_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ENG_LIGHT",
+        "answer_authority_ref": "protected-items.json#ENG-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#ENG-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENG-PATH-LIGHT",
+        "decisive_cue_id": "ENG-CUE-LIGHT",
+        "distractor_lineage_id": "ENG-DISTRACTOR-LIGHT",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "ENG-FEATURE-LIGHT-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-LIGHT-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-LIGHT-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ENG-ITEM-SOLO",
+        "activity_id": "ENG-ACT-SOLO",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "ENG-FAM-SOLO",
+        "stimulus_lineage_id": "ENG-STIM-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENG-REP-MAIN",
+        "learner_operation": "COMPARE_ENERGY_AT_FIXED_VOLTAGE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ENG_SOLO",
+        "answer_authority_ref": "protected-items.json#ENG-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#ENG-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENG-PATH-SOLO",
+        "decisive_cue_id": "ENG-CUE-SOLO",
+        "distractor_lineage_id": "ENG-DISTRACTOR-SOLO",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "ENG-FEATURE-SOLO-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-SOLO-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-SOLO-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ENG-ITEM-NEAR",
+        "activity_id": "ENG-ACT-NEAR",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "ENG-FAM-NEAR",
+        "stimulus_lineage_id": "ENG-STIM-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENG-REP-MAIN",
+        "learner_operation": "COMPARE_CHARGE_AND_ENERGY_FACTORS",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ENG_NEAR",
+        "answer_authority_ref": "protected-items.json#ENG-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#ENG-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENG-PATH-NEAR",
+        "decisive_cue_id": "ENG-CUE-NEAR",
+        "distractor_lineage_id": "ENG-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "ENG-FEATURE-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ENG-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ENG-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ENG-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ENG-ITEM-CHANGED",
+        "activity_id": "ENG-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "ENG-FAM-CHANGED",
+        "stimulus_lineage_id": "ENG-STIM-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENG-REP-MAIN",
+        "learner_operation": "INFER_VOLTAGE_FROM_ENERGY_RATIO",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ENG_CHANGED",
+        "answer_authority_ref": "protected-items.json#ENG-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#ENG-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENG-PATH-CHANGED",
+        "decisive_cue_id": "ENG-CUE-CHANGED",
+        "distractor_lineage_id": "ENG-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "ENG-FEATURE-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ENG-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ENG-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "ENG-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "required_operation"
+        ],
+        "changed_dimension_detail": "The near task predicts Q and U from a voltage factor; the changed task inverts an energy ratio to recover the controlling factor."
+      },
+      {
+        "item_binding_id": "ENG-ITEM-REPAIR-NEAR",
+        "activity_id": "ENG-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ENG-FAM-REPAIR-NEAR",
+        "stimulus_lineage_id": "ENG-STIM-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENG-REP-MAIN",
+        "learner_operation": "REBUILD_Q_AND_U_SCALING",
+        "hint_policy": "TARGETED_NEAR_USE_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ENG_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#ENG-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#ENG-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENG-PATH-REPAIR-NEAR",
+        "decisive_cue_id": "ENG-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "ENG-DISTRACTOR-REPAIR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "ENG-FEATURE-REPAIR-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "ENG-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-REPAIR-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "ENG-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-REPAIR-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "ENG-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ENG-ITEM-REENTRY-NEAR",
+        "activity_id": "ENG-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ENG-FAM-REENTRY-NEAR",
+        "stimulus_lineage_id": "ENG-STIM-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENG-REP-MAIN",
+        "learner_operation": "REENTER_CHARGE_ENERGY_SCALING",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ENG_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#ENG-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#ENG-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENG-PATH-REENTRY-NEAR",
+        "decisive_cue_id": "ENG-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "ENG-DISTRACTOR-REENTRY-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "ENG-FEATURE-REENTRY-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "ENG-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-REENTRY-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "ENG-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-REENTRY-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "ENG-FEATURE-NEAR_USE"
+          }
+        ],
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "ENG-ITEM-NEAR",
+          "stimulus_difference": "Fresh relate capacitor charge, voltage, and energy context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "ENG-ITEM-REPAIR-CHANGED",
+        "activity_id": "ENG-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ENG-FAM-REPAIR-CHANGED",
+        "stimulus_lineage_id": "ENG-STIM-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENG-REP-MAIN",
+        "learner_operation": "REBUILD_INVERSE_ENERGY_INFERENCE",
+        "hint_policy": "TARGETED_CHANGED_TASK_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ENG_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#ENG-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#ENG-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENG-PATH-REPAIR-CHANGED",
+        "decisive_cue_id": "ENG-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "ENG-DISTRACTOR-REPAIR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "ENG-FEATURE-REPAIR-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "ENG-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-REPAIR-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "ENG-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-REPAIR-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "ENG-FEATURE-CHANGED_TASK"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "ENG-ITEM-REENTRY-CHANGED",
+        "activity_id": "ENG-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-333232",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "ENG-FAM-REENTRY-CHANGED",
+        "stimulus_lineage_id": "ENG-STIM-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "ENG-REP-MAIN",
+        "learner_operation": "INFER_VOLTAGE_FROM_ENERGY_RATIO",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "ENG_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#ENG-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#ENG-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "ENG-PATH-REENTRY-CHANGED",
+        "decisive_cue_id": "ENG-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "ENG-DISTRACTOR-REENTRY-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "ENG-FEATURE-REENTRY-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "ENG-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-REENTRY-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "ENG-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "ENG-FEATURE-REENTRY-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "ENG-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "required_operation"
+        ],
+        "changed_dimension_detail": "The near task predicts Q and U from a voltage factor; the changed task inverts an energy ratio to recover the controlling factor.",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "ENG-ITEM-CHANGED",
+          "stimulus_difference": "A fresh 25-fold energy change replaces the earlier 16-fold energy change.",
+          "solution_path_difference": "Both items invert the fixed-capacitance energy ratio to recover voltage, with different numerical evidence.",
+          "distractor_difference": "All substantive distractors are fresh for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "NET-ITEM-ENTRY",
+        "activity_id": "NET-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "NET-FAM-ENTRY",
+        "stimulus_lineage_id": "NET-STIM-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NET-REP-MAIN",
+        "learner_operation": "CLASSIFY_PARALLEL_TOPOLOGY",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "NET_ENTRY",
+        "answer_authority_ref": "protected-items.json#NET-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#NET-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NET-PATH-ENTRY",
+        "decisive_cue_id": "NET-CUE-ENTRY",
+        "distractor_lineage_id": "NET-DISTRACTOR-ENTRY",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "NET-FEATURE-ENTRY-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "NET-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-ENTRY-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "NET-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-ENTRY-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "NET-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "NET-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "NET-FAM-WORKED",
+        "stimulus_lineage_id": "NET-STIM-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NET-REP-MAIN",
+        "learner_operation": "FOLLOW_NET_WORKED_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:NET-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NET-PATH-WORKED",
+        "decisive_cue_id": "NET-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "NET-ITEM-GUIDED",
+        "activity_id": "NET-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "NET-FAM-GUIDED",
+        "stimulus_lineage_id": "NET-STIM-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_RELATIONSHIP_CUES",
+          "VISIBLE_PROCESS_STEPS"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NET-REP-MAIN",
+        "learner_operation": "CALCULATE_PARALLEL_EQUIVALENT",
+        "hint_policy": "VISIBLE_NON_ANSWER_BEARING_STRUCTURE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "NET_GUIDED",
+        "answer_authority_ref": "protected-items.json#NET-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#NET-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NET-PATH-GUIDED",
+        "decisive_cue_id": "NET-CUE-GUIDED",
+        "distractor_lineage_id": "NET-DISTRACTOR-GUIDED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "NET-FEATURE-GUIDED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "NET-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-GUIDED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "NET-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-GUIDED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "NET-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "NET-ITEM-LIGHT",
+        "activity_id": "NET-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "NET-FAM-LIGHT",
+        "stimulus_lineage_id": "NET-STIM-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "ONE_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NET-REP-MAIN",
+        "learner_operation": "CALCULATE_EQUAL_SERIES_EQUIVALENT",
+        "hint_policy": "ONE_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "NET_LIGHT",
+        "answer_authority_ref": "protected-items.json#NET-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#NET-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NET-PATH-LIGHT",
+        "decisive_cue_id": "NET-CUE-LIGHT",
+        "distractor_lineage_id": "NET-DISTRACTOR-LIGHT",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "NET-FEATURE-LIGHT-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "NET-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-LIGHT-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "NET-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-LIGHT-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "NET-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "NET-ITEM-SOLO",
+        "activity_id": "NET-ACT-SOLO",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "NET-FAM-SOLO",
+        "stimulus_lineage_id": "NET-STIM-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NET-REP-MAIN",
+        "learner_operation": "CHECK_SERIES_BOUND",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "NET_SOLO",
+        "answer_authority_ref": "protected-items.json#NET-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#NET-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NET-PATH-SOLO",
+        "decisive_cue_id": "NET-CUE-SOLO",
+        "distractor_lineage_id": "NET-DISTRACTOR-SOLO",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "NET-FEATURE-SOLO-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "NET-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-SOLO-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "NET-FEATURE-FOUNDATION"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-SOLO-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "NET-FEATURE-FOUNDATION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "NET-ITEM-NEAR",
+        "activity_id": "NET-ACT-NEAR",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "NET-FAM-NEAR",
+        "stimulus_lineage_id": "NET-STIM-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NET-REP-MAIN",
+        "learner_operation": "COMPARE_SERIES_AND_PARALLEL_EQUIVALENTS",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "NET_NEAR",
+        "answer_authority_ref": "protected-items.json#NET-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#NET-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NET-PATH-NEAR",
+        "decisive_cue_id": "NET-CUE-NEAR",
+        "distractor_lineage_id": "NET-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "NET-FEATURE-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "NET-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "NET-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "NET-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "NET-ITEM-CHANGED",
+        "activity_id": "NET-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "NET-FAM-CHANGED",
+        "stimulus_lineage_id": "NET-STIM-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NET-REP-MAIN",
+        "learner_operation": "PREDICT_CONNECTED_DIELECTRIC_EFFECT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "NET_CHANGED",
+        "answer_authority_ref": "protected-items.json#NET-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#NET-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NET-PATH-CHANGED",
+        "decisive_cue_id": "NET-CUE-CHANGED",
+        "distractor_lineage_id": "NET-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "NET-FEATURE-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "NET-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "NET-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "NET-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "section_application"
+        ],
+        "changed_dimension_detail": "The near task reduces a network; the changed task combines dielectric-induced capacitance change with an external connection condition."
+      },
+      {
+        "item_binding_id": "NET-ITEM-REPAIR-NEAR",
+        "activity_id": "NET-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "NET-FAM-REPAIR-NEAR",
+        "stimulus_lineage_id": "NET-STIM-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NET-REP-MAIN",
+        "learner_operation": "REBUILD_NETWORK_RULES",
+        "hint_policy": "TARGETED_NEAR_USE_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "NET_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#NET-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#NET-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NET-PATH-REPAIR-NEAR",
+        "decisive_cue_id": "NET-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "NET-DISTRACTOR-REPAIR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "NET-FEATURE-REPAIR-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "NET-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-REPAIR-NEAR-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "NET-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-REPAIR-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "NET-FEATURE-NEAR_USE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "NET-ITEM-REENTRY-NEAR",
+        "activity_id": "NET-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "NET-FAM-REENTRY-NEAR",
+        "stimulus_lineage_id": "NET-STIM-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NET-REP-MAIN",
+        "learner_operation": "REENTER_SERIES_EQUIVALENT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "NET_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#NET-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#NET-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NET-PATH-REENTRY-NEAR",
+        "decisive_cue_id": "NET-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "NET-DISTRACTOR-REENTRY-NEAR",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "NET-FEATURE-REENTRY-NEAR-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "NET-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-REENTRY-NEAR-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "NET-FEATURE-NEAR_USE"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-REENTRY-NEAR-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "NET-FEATURE-NEAR_USE"
+          }
+        ],
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "NET-ITEM-NEAR",
+          "stimulus_difference": "Fresh analyze capacitor networks and dielectrics context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      },
+      {
+        "item_binding_id": "NET-ITEM-REPAIR-CHANGED",
+        "activity_id": "NET-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "NET-FAM-REPAIR-CHANGED",
+        "stimulus_lineage_id": "NET-STIM-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_MODEL"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NET-REP-MAIN",
+        "learner_operation": "REBUILD_DIELECTRIC_BOUNDARY_CONDITION",
+        "hint_policy": "TARGETED_CHANGED_TASK_MODEL",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "NET_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#NET-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#NET-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NET-PATH-REPAIR-CHANGED",
+        "decisive_cue_id": "NET-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "NET-DISTRACTOR-REPAIR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "NET-FEATURE-REPAIR-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "NET-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-REPAIR-CHANGED-1",
+            "response_option_index": 1,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "NET-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-REPAIR-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "INSTRUCTIONAL_FEEDBACK",
+            "repair_feature_id": "NET-FEATURE-CHANGED_TASK"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "NET-ITEM-REENTRY-CHANGED",
+        "activity_id": "NET-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-461805",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "NET-FAM-REENTRY-CHANGED",
+        "stimulus_lineage_id": "NET-STIM-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "NET-REP-MAIN",
+        "learner_operation": "REENTER_ISOLATED_DIELECTRIC_EFFECT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "NET_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#NET-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#NET-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "NET-PATH-REENTRY-CHANGED",
+        "decisive_cue_id": "NET-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "NET-DISTRACTOR-REENTRY-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_feature_id": "NET-FEATURE-REENTRY-CHANGED-0",
+            "response_option_index": 0,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "NET-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-REENTRY-CHANGED-2",
+            "response_option_index": 2,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "NET-FEATURE-CHANGED_TASK"
+          },
+          {
+            "response_feature_id": "NET-FEATURE-REENTRY-CHANGED-3",
+            "response_option_index": 3,
+            "route_kind": "PLANNER_HANDOFF",
+            "repair_feature_id": "NET-FEATURE-CHANGED_TASK"
+          }
+        ],
+        "changed_dimensions": [
+          "section_application"
+        ],
+        "changed_dimension_detail": "The near task reduces a network; the changed task combines dielectric-induced capacitance change with an external connection condition.",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "NET-ITEM-CHANGED",
+          "stimulus_difference": "Fresh analyze capacitor networks and dielectrics context and evidence.",
+          "solution_path_difference": "The same failed function is rechecked through a different surface path.",
+          "distractor_difference": "All substantive distractors are newly authored for the re-entry."
+        }
+      }
+    ],
+    "transitions": [],
+    "attachment_bindings": [
+      {
+        "attachment_id": "V3-CAP-481386",
+        "host_kc_id": "V3-KC-747850",
+        "relation_id": "R14-CAP-481386",
+        "credits_kc_evidence": false,
+        "required_delivery": true
+      },
+      {
+        "attachment_id": "V3-CAP-481386",
+        "host_kc_id": "V3-KC-333232",
+        "relation_id": "R14-CAP-481386",
+        "credits_kc_evidence": false,
+        "required_delivery": true
+      },
+      {
+        "attachment_id": "V3-CAP-481386",
+        "host_kc_id": "V3-KC-461805",
+        "relation_id": "R14-CAP-481386",
+        "credits_kc_evidence": false,
+        "required_delivery": true
+      },
+      {
+        "attachment_id": "V3-CAP-723114",
+        "host_kc_id": "V3-KC-747850",
+        "relation_id": "R14-CAP-723114",
+        "credits_kc_evidence": false,
+        "required_delivery": true
+      },
+      {
+        "attachment_id": "V3-CAP-723114",
+        "host_kc_id": "V3-KC-333232",
+        "relation_id": "R14-CAP-723114",
+        "credits_kc_evidence": false,
+        "required_delivery": true
+      },
+      {
+        "attachment_id": "V3-CAP-723114",
+        "host_kc_id": "V3-KC-461805",
+        "relation_id": "R14-CAP-723114",
+        "credits_kc_evidence": false,
+        "required_delivery": true
+      }
+    ]
+  }
+}

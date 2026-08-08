@@ -1,0 +1,528 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes, and a missed fresh re-entry returns control without exit credit.",
+  "items": [
+    {
+      "prompt_key": "SCI_ENTRY",
+      "title": "Starting check: net particle movement",
+      "prompt": "Dye molecules spread through still water from a region of high dye concentration toward regions of lower dye concentration. Which concept best describes the net change?",
+      "response_type": "single_select",
+      "options": [
+        "Active transport against a concentration gradient",
+        "Diffusion down a concentration gradient",
+        "Osmosis of water through a selective membrane",
+        "Dynamic equilibrium with no net concentration change"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SCI_GUIDED",
+      "title": "Guided practice: follow the moving species",
+      "prompt": "Two solutions are separated by a membrane that water can cross but sucrose cannot. Side L has more sucrose than side R. Which statement identifies the expected process?",
+      "response_type": "single_select",
+      "options": [
+        "Sucrose actively moves from L to R through the membrane",
+        "Sucrose diffuses from R to L until its amount doubles",
+        "Water moves from R to L by osmosis",
+        "Water moves from L to R by active transport"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SCI_LIGHT",
+      "title": "Less help: identify the energy condition",
+      "prompt": "A membrane protein uses energy released from ATP to move calcium ions from lower calcium concentration to higher calcium concentration. Which concept fits?",
+      "response_type": "single_select",
+      "options": [
+        "Active transport",
+        "Simple diffusion",
+        "Dynamic equilibrium",
+        "Osmosis"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SCI_SOLO",
+      "title": "On your own: distinguish motion from net change",
+      "prompt": "At equilibrium, oxygen molecules cross a membrane in both directions at equal average rates. Which description is most accurate?",
+      "response_type": "single_select",
+      "options": [
+        "All molecular motion has stopped",
+        "Oxygen is being pumped in both directions using ATP",
+        "Only water can cross the membrane",
+        "Equal opposing diffusion gives zero net movement"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SCI_NEAR",
+      "title": "Near exit: classify a membrane process",
+      "prompt": "A cell is placed in a solution with a lower solute concentration than its cytoplasm. The membrane permits water but not the solute to cross. What process most directly causes the cell to gain water?",
+      "response_type": "single_select",
+      "options": [
+        "Active transport of water using ATP",
+        "Osmosis across the selectively permeable membrane",
+        "Diffusion of trapped solute out of the cell",
+        "Dynamic equilibrium before any water moves"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SCI_CHANGED",
+      "title": "Changed exit: relate equilibrium to diffusion",
+      "prompt": "A particle diagram shows equal concentrations on both sides of a permeable membrane. Arrows of equal size point left and right, and particles remain in constant motion. Which relationship is represented?",
+      "response_type": "single_select",
+      "options": [
+        "Osmosis has stopped because every particle is stationary",
+        "Active transport maintains unequal concentrations without energy",
+        "Two-way diffusion persists at dynamic equilibrium",
+        "Solute crosses only from right to left until concentrations become unequal"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SCI_REPAIR_NEAR",
+      "title": "Repair: apply the concept feature frame",
+      "prompt": "Which feature is required for osmosis but not for a general case of solute diffusion?",
+      "response_type": "single_select",
+      "options": [
+        "Net water movement across a selectively permeable barrier",
+        "Movement from lower toward higher concentration using energy",
+        "Permanent cessation of molecular motion",
+        "Equal concentrations at the beginning of the process"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SCI_REENTRY_NEAR",
+      "title": "Fresh re-entry: classify a new selective barrier",
+      "prompt": "A membrane allows water to cross but blocks dissolved protein. Compartment A has more dissolved protein than compartment B. Which immediate net movement is expected?",
+      "response_type": "single_select",
+      "options": [
+        "Protein moves from A to B by simple diffusion",
+        "Protein moves from B to A by active transport",
+        "Water moves from A to B by osmosis",
+        "Water moves from B to A by osmosis"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SCI_REPAIR_CHANGED",
+      "title": "Repair: separate movement from net flux",
+      "prompt": "Which observation is sufficient to identify dynamic equilibrium for a diffusible solute?",
+      "response_type": "single_select",
+      "options": [
+        "Particles are visible on only one side of a barrier",
+        "Opposing particle fluxes are equal while particles still move",
+        "A pump consumes ATP as it moves the solute",
+        "Water crosses while the solute remains trapped"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SCI_REENTRY_CHANGED",
+      "title": "Fresh re-entry: interpret balanced arrows",
+      "prompt": "A table reports 24 molecules crossing left-to-right and 24 crossing right-to-left during the same interval. Concentrations stay equal. What does the table show?",
+      "response_type": "single_select",
+      "options": [
+        "Active transport creates a larger left-side concentration",
+        "All molecular motion has stopped during the interval",
+        "Dynamic equilibrium with ongoing diffusion and zero net transfer",
+        "Osmosis moves trapped solute across a selective membrane"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "OBS_ENTRY",
+      "title": "Starting check: closed-system total",
+      "prompt": "A sealed flask has a total mass of 42.6 g before a reaction and 42.6 g after the reaction. Which principle is directly instantiated?",
+      "response_type": "single_select",
+      "options": [
+        "Negative feedback opposes a deviation",
+        "Output is inversely proportional to input",
+        "Mass is conserved in the closed system",
+        "A hidden catalyst must have been consumed"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "OBS_GUIDED",
+      "title": "Guided practice: look for the opposing response",
+      "prompt": "Body temperature rises above a reference value. Sweating increases, and temperature then moves back toward the reference value. Which principle is most directly represented?",
+      "response_type": "single_select",
+      "options": [
+        "Negative feedback",
+        "Conservation of charge",
+        "Direct proportionality",
+        "Random sampling"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "OBS_LIGHT",
+      "title": "Less help: compare a ratio",
+      "prompt": "A sensor produces 2 mV at 1 unit, 6 mV at 3 units, and 10 mV at 5 units. Which relationship is supported over the measured range?",
+      "response_type": "single_select",
+      "options": [
+        "The output is constant as input changes",
+        "The output is inversely proportional to input",
+        "The output shows negative feedback toward 2 mV",
+        "The output is directly proportional to input"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "OBS_SOLO",
+      "title": "On your own: keep the conclusion bounded",
+      "prompt": "In a closed circuit, 0.40 A enters a junction through one branch. Currents of 0.15 A and 0.25 A leave through two branches. Which principle is instantiated?",
+      "response_type": "single_select",
+      "options": [
+        "The junction creates 0.40 A of new current",
+        "Current is conserved at the junction",
+        "Resistance must be zero in every branch",
+        "Voltage is directly proportional to time"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "OBS_NEAR",
+      "title": "Near exit: identify the principle from a perturbation",
+      "prompt": "A regulated concentration is briefly pushed above its reference level. A measured removal process increases until the concentration returns toward the reference. Which principle best matches the observation?",
+      "response_type": "single_select",
+      "options": [
+        "Matter is absent from the system",
+        "Output remains directly proportional forever",
+        "Negative feedback opposes the concentration change",
+        "The removal enzyme has a specific unmeasured structure"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "OBS_CHANGED",
+      "title": "Changed exit: infer a principle from a data table",
+      "prompt": "A table for a closed container shows total measured carbon of 12.0 mmol before a process and 12.0 mmol afterward, although the amounts in three chemical forms change. Which statement is supported?",
+      "response_type": "single_select",
+      "options": [
+        "Carbon is conserved while its distribution among forms changes",
+        "One form must be an unmeasured catalyst",
+        "Carbon concentration is controlled by negative feedback",
+        "Every chemical form remains individually constant"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "OBS_REPAIR_NEAR",
+      "title": "Repair: test response direction",
+      "prompt": "Which pattern is the defining observable signature of negative feedback?",
+      "response_type": "single_select",
+      "options": [
+        "A response amplifies the initial deviation",
+        "A total remains equal before and after in a closed boundary",
+        "An output-to-input ratio stays constant",
+        "The response reduces the initial deviation"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "OBS_REENTRY_NEAR",
+      "title": "Fresh re-entry: a new regulated variable",
+      "prompt": "Blood pressure falls below a reference value. Heart rate rises, and pressure moves back toward the reference. Which principle is directly represented?",
+      "response_type": "single_select",
+      "options": [
+        "Direct proportionality between pressure and time",
+        "Negative feedback opposing the pressure decrease",
+        "Conservation of pressure in a sealed system",
+        "Proof of one specific neural pathway"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "OBS_REPAIR_CHANGED",
+      "title": "Repair: define the system boundary",
+      "prompt": "Before using a conservation principle, which question is most important?",
+      "response_type": "single_select",
+      "options": [
+        "Does every component have the same numerical amount?",
+        "Is the most complex mechanism named?",
+        "Can the quantity cross the defined system boundary?",
+        "Does the graph use a preferred color scheme?"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "OBS_REENTRY_CHANGED",
+      "title": "Fresh re-entry: conservation in a new display",
+      "prompt": "A closed tank contains 8.0 mol of nitrogen atoms before a reaction and 8.0 mol afterward. The atoms appear in different molecules after the reaction. Which conclusion is warranted?",
+      "response_type": "single_select",
+      "options": [
+        "Nitrogen atoms are conserved while molecular forms change",
+        "Every molecule is conserved without rearrangement",
+        "Negative feedback restores each original molecule",
+        "An unmeasured catalyst supplies additional nitrogen"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REP_ENTRY",
+      "title": "Starting check: equation to words",
+      "prompt": "Over a measured range, a sensor obeys S = 5C, where C is concentration in mmol/L and S is signal in mV. Which statement preserves the relation?",
+      "response_type": "single_select",
+      "options": [
+        "The signal is 5 mV for each 1 mmol/L of concentration",
+        "The signal is always 5 mV greater than the concentration",
+        "The concentration is 5 times the signal",
+        "The signal falls by 5 mV whenever concentration rises"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REP_GUIDED",
+      "title": "Guided practice: equation to table",
+      "prompt": "Which table row is consistent with E = 3n, where n is the number of events and E is energy in joules?",
+      "response_type": "single_select",
+      "options": [
+        "n = 2, E = 5 J",
+        "n = 3, E = 1 J",
+        "n = 4, E = 7 J",
+        "n = 4, E = 12 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REP_LIGHT",
+      "title": "Less help: text to equation",
+      "prompt": "A sample volume V is two milliliters for every gram of mass m, and V is zero when m is zero. Which equation represents the statement?",
+      "response_type": "single_select",
+      "options": [
+        "V = m + 2",
+        "V = 2m",
+        "m = 2V",
+        "V = 2/m"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REP_SOLO",
+      "title": "On your own: table to equation",
+      "prompt": "A table lists (time in s, distance in m) as (0, 0), (2, 6), and (5, 15). Which equation preserves the relationship?",
+      "response_type": "single_select",
+      "options": [
+        "d = t + 3",
+        "d = 5t",
+        "d = 3t",
+        "d = 3/t"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REP_NEAR",
+      "title": "Near exit: table to verbal invariant",
+      "prompt": "A table gives pressure P of 2, 6, and 10 kPa at input x values of 1, 3, and 5 units. Which statement best preserves the table?",
+      "response_type": "single_select",
+      "options": [
+        "Pressure remains constant as input changes",
+        "Pressure is input plus 2 kPa",
+        "Pressure is input squared",
+        "Pressure is 2 kPa per input unit"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REP_CHANGED",
+      "title": "Changed exit: graph features to equation",
+      "prompt": "A graph of product amount y versus reactant amount x is a straight line through (0, 0) and (4, 12). Which equation preserves the represented relation?",
+      "response_type": "single_select",
+      "options": [
+        "y = 3x",
+        "y = x + 3",
+        "y = 12x",
+        "y = 4x + 12"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REP_REPAIR_NEAR",
+      "title": "Repair: locate the invariant in a table",
+      "prompt": "When testing whether a table represents y = kx, which quantity should remain constant across nonzero rows?",
+      "response_type": "single_select",
+      "options": [
+        "y/x",
+        "y - x",
+        "x/y plus x",
+        "y + x"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REP_REENTRY_NEAR",
+      "title": "Fresh re-entry: a new table",
+      "prompt": "A table lists force F of 6, 15, and 24 N at displacement x of 2, 5, and 8 m. Which statement matches the data?",
+      "response_type": "single_select",
+      "options": [
+        "Force is displacement plus 4 N",
+        "Force is 3 N per meter of displacement",
+        "Force is displacement squared",
+        "Force is 8 N for every displacement"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REP_REPAIR_CHANGED",
+      "title": "Repair: read slope and intercept separately",
+      "prompt": "A straight-line graph passes through the origin and through (5, 20). Which pair of features must a matching equation preserve?",
+      "response_type": "single_select",
+      "options": [
+        "Slope 5 and intercept 20",
+        "Slope 20 and intercept 5",
+        "Slope 4 and intercept 0",
+        "Slope 0 and intercept 4"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "REP_REENTRY_CHANGED",
+      "title": "Fresh re-entry: text to graph-defining features",
+      "prompt": "A response R begins at zero and increases by 4 units for every 1-unit increase in stimulus S. Which graph features represent the statement?",
+      "response_type": "single_select",
+      "options": [
+        "A horizontal line at R = 4",
+        "A line with slope 1 and intercept 4",
+        "A curve with decreasing slope and intercept 0",
+        "A straight line through the origin with slope 4"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQN_ENTRY",
+      "title": "Starting check: direct substitution",
+      "prompt": "Use v = d/t. An object travels 24 m in 6 s. What is its average speed?",
+      "response_type": "single_select",
+      "options": [
+        "30 m/s",
+        "18 m/s",
+        "0.25 m/s",
+        "4 m/s"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQN_GUIDED",
+      "title": "Guided practice: track the target unit",
+      "prompt": "Use F = ma. A 3 kg object has acceleration 4 m/s². What force is predicted?",
+      "response_type": "single_select",
+      "options": [
+        "0.75 N",
+        "12 N",
+        "7 N",
+        "1.3 N"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQN_LIGHT",
+      "title": "Less help: use a temperature change",
+      "prompt": "Use Q = mcΔT. For m = 0.50 kg, c = 200 J/(kg·°C), and ΔT = 4.0 °C, what is Q?",
+      "response_type": "single_select",
+      "options": [
+        "25 J",
+        "100 J",
+        "400 J",
+        "1600 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQN_SOLO",
+      "title": "On your own: isolate time",
+      "prompt": "Use v = d/t. A cart moves 45 m at an average speed of 5 m/s. How long does the trip take?",
+      "response_type": "single_select",
+      "options": [
+        "9 s",
+        "225 s",
+        "40 s",
+        "0.11 s"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQN_NEAR",
+      "title": "Near exit: select and substitute quantities",
+      "prompt": "Use Q = mcΔT. A 0.30 kg sample with c = 600 J/(kg·°C) warms from 20 °C to 25 °C. What heat Q is absorbed?",
+      "response_type": "single_select",
+      "options": [
+        "36 J",
+        "180 J",
+        "625 J",
+        "900 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQN_CHANGED",
+      "title": "Changed exit: rearrange for mass",
+      "prompt": "Use Q = mcΔT. A process transfers 1200 J and changes temperature by 4.0 °C. If c = 300 J/(kg·°C), what mass m is involved?",
+      "response_type": "single_select",
+      "options": [
+        "0.25 kg",
+        "1.0 kg",
+        "16 kg",
+        "360000 kg"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQN_REPAIR_NEAR",
+      "title": "Repair: map the temperature change",
+      "prompt": "In Q = mcΔT, a sample warms from 18 °C to 23 °C. Which value belongs in the ΔT slot?",
+      "response_type": "single_select",
+      "options": [
+        "5 °C",
+        "18 °C",
+        "23 °C",
+        "41 °C"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQN_REENTRY_NEAR",
+      "title": "Fresh re-entry: apply heat relation again",
+      "prompt": "Use Q = mcΔT. A 0.25 kg sample with c = 800 J/(kg·°C) warms from 12 °C to 15 °C. What is Q?",
+      "response_type": "single_select",
+      "options": [
+        "66.7 J",
+        "200 J",
+        "600 J",
+        "2400 J"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQN_REPAIR_CHANGED",
+      "title": "Repair: isolate a factor in a product",
+      "prompt": "If Q = mcΔT and m is the target, which rearrangement is equivalent?",
+      "response_type": "single_select",
+      "options": [
+        "m = QcΔT",
+        "m = cΔT/Q",
+        "m = Qc/ΔT",
+        "m = Q/(cΔT)"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EQN_REENTRY_CHANGED",
+      "title": "Fresh re-entry: solve for a different factor",
+      "prompt": "Use F = ma. A net force of 18 N produces an acceleration of 6 m/s². What mass m does the equation imply?",
+      "response_type": "single_select",
+      "options": [
+        "108 kg",
+        "3 kg",
+        "24 kg",
+        "0.33 kg"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    }
+  ]
+}

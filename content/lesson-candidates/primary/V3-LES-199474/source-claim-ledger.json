@@ -1,0 +1,361 @@
+{
+  "artifact_type": "SOURCE_CLAIM_LEDGER",
+  "artifact_id": "V3-SCLD-199474",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT_TRACE_ONLY",
+  "canonical_lesson_binding": {
+    "lesson_id": "V3-LES-199474",
+    "grouping_id": "V3-CL-199474",
+    "ordered_kc_ids": [
+      "V3-KC-299822",
+      "V3-KC-515154",
+      "V3-KC-057279",
+      "V3-KC-497588"
+    ]
+  },
+  "authority_boundary": {
+    "source_ids": [
+      "AAMC-2020",
+      "AAMC-2020-MCAT-CONTENT"
+    ],
+    "source_class": "PACKET_GOVERNED_PERMITTED_SOURCES",
+    "source_anchor_ids": [
+      "CP-SA-020"
+    ],
+    "present_day_authority_refreshed": false,
+    "source_use_status": "PERMITTED_FOR_BOUNDED_INTERNAL_AUTHORING",
+    "human_rights_clearance_claimed": false,
+    "learner_validation_claimed": false
+  },
+  "source_trace_governance": {
+    "packet_sha256": "d53d55878b71f0bf9a48a113fd14d3a0861b75ddf7ac13916cc2736f2240e83e",
+    "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+    "permitted_use": [
+      "DERIVED_SCOPE_METADATA",
+      "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS",
+      "INTERNAL_HUMAN_REVIEW"
+    ],
+    "prohibited_use": [
+      "RAW_SOURCE_TEXT",
+      "QUOTATION",
+      "PASSAGE_REPRODUCTION",
+      "FIGURE_REPRODUCTION",
+      "PROPRIETARY_ITEM_REUSE",
+      "PRIVATE_COMPARISON_CONTENT"
+    ],
+    "expressive_copy_flag": false
+  },
+  "source_records": [
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100100",
+      "source_occurrence_id": "V3-SRC-100100",
+      "source_id": "AAMC-2020",
+      "official_topic": "Covalent Bond",
+      "printed_pages": [
+        67,
+        68
+      ],
+      "source_anchor_ids": [
+        "CP-SA-020"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-100101",
+      "source_occurrence_id": "V3-SRC-100101",
+      "source_id": "AAMC-2020",
+      "official_topic": "Liquid Phase — Intermolecular Forces",
+      "printed_pages": [
+        68
+      ],
+      "source_anchor_ids": [
+        "CP-SA-020"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    },
+    {
+      "source_record_id": "V3-SOURCE-TRACE-200069",
+      "source_occurrence_id": "V3-SRC-200069",
+      "source_id": "AAMC-2020-MCAT-CONTENT",
+      "official_topic": null,
+      "printed_pages": [
+        67,
+        68
+      ],
+      "source_anchor_ids": [
+        "CP-SA-020"
+      ],
+      "rights_status": "PERMITTED",
+      "derived_fields_only": true,
+      "source_use_receipt_sha256": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+    }
+  ],
+  "source_claims": [
+    {
+      "claim_id": "ISOM-CLAIM-PRIMARY",
+      "target_kc_id": "V3-KC-299822",
+      "authorial_claim": "Molecular isomer classes are distinguished by molecular formula, atom connectivity, rotational interconversion, and mirror-image relationship.",
+      "scope_in_refs": [
+        "V3-KC-299822:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-299822:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-020"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100100",
+        "V3-SRC-100101",
+        "V3-SRC-200069"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600949",
+        "V3-MAP-601063",
+        "V3-MAP-601541"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "ISOM-CLAIM-BOUNDARY",
+      "target_kc_id": "V3-KC-299822",
+      "authorial_claim": "Enantiomers are nonsuperimposable mirror images, whereas non-mirror configurational stereoisomers—including cis–trans pairs—are diastereomers.",
+      "scope_in_refs": [
+        "V3-KC-299822:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-299822:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-020"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100100",
+        "V3-SRC-100101",
+        "V3-SRC-200069"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600949",
+        "V3-MAP-601063",
+        "V3-MAP-601541"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "CONF-CLAIM-PRIMARY",
+      "target_kc_id": "V3-KC-515154",
+      "authorial_claim": "R/S assignment requires priority ordering and explicit treatment of the lowest-priority group’s viewing orientation.",
+      "scope_in_refs": [
+        "V3-KC-515154:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-515154:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-020"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100101",
+        "V3-SRC-200069",
+        "V3-SRC-100100"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-601064",
+        "V3-MAP-601224",
+        "V3-MAP-601542"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "CONF-CLAIM-BOUNDARY",
+      "target_kc_id": "V3-KC-515154",
+      "authorial_claim": "E/Z assignment compares the separately determined higher-priority substituent on each alkene carbon and labels same-side versus opposite-side placement.",
+      "scope_in_refs": [
+        "V3-KC-515154:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-515154:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-020"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100101",
+        "V3-SRC-200069",
+        "V3-SRC-100100"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-601064",
+        "V3-MAP-601224",
+        "V3-MAP-601542"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "OPT-CLAIM-PRIMARY",
+      "target_kc_id": "V3-KC-057279",
+      "authorial_claim": "Optical rotation sign and magnitude are empirical properties and do not by themselves assign R/S configuration.",
+      "scope_in_refs": [
+        "V3-KC-057279:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-057279:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-020"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100100",
+        "V3-SRC-100101",
+        "V3-SRC-200069"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600218",
+        "V3-MAP-601065",
+        "V3-MAP-601543"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "OPT-CLAIM-BOUNDARY",
+      "target_kc_id": "V3-KC-057279",
+      "authorial_claim": "Matched enantiomers have equal and opposite specific rotations; racemic cancellation and pure-reference ratios support bounded composition inferences.",
+      "scope_in_refs": [
+        "V3-KC-057279:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-057279:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-020"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100100",
+        "V3-SRC-100101",
+        "V3-SRC-200069"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-600218",
+        "V3-MAP-601065",
+        "V3-MAP-601543"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "IMF-CLAIM-PRIMARY",
+      "target_kc_id": "V3-KC-497588",
+      "authorial_claim": "London dispersion, permanent-dipole interactions, and hydrogen bonding can be distinguished from molecular structure and polarity.",
+      "scope_in_refs": [
+        "V3-KC-497588:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-497588:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-020"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100101",
+        "V3-SRC-200069",
+        "V3-SRC-100100"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-601066",
+        "V3-MAP-601500",
+        "V3-MAP-601544"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    },
+    {
+      "claim_id": "IMF-CLAIM-BOUNDARY",
+      "target_kc_id": "V3-KC-497588",
+      "authorial_claim": "Intermolecular attraction strength, polarizability, and surface contact support bounded predictions of boiling point, vapor pressure, and solubility.",
+      "scope_in_refs": [
+        "V3-KC-497588:SCOPE_IN:0"
+      ],
+      "scope_out_refs": [
+        "V3-KC-497588:SCOPE_OUT:0"
+      ],
+      "source_anchor_ids": [
+        "CP-SA-020"
+      ],
+      "source_occurrence_ids": [
+        "V3-SRC-100101",
+        "V3-SRC-200069",
+        "V3-SRC-100100"
+      ],
+      "crosswalk_mapping_ids": [
+        "V3-MAP-601066",
+        "V3-MAP-601500",
+        "V3-MAP-601544"
+      ],
+      "source_wording_status": "ORIGINAL_PROSE_FROM_UNCOPYRIGHTABLE_FACTS"
+    }
+  ],
+  "canonical_context": {
+    "placements": {
+      "phase_ids": [
+        "V3-PHS-714203",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-729418",
+        "V3-MOD-273816"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 12,
+          "relation_ids": [
+            "R14-PL-581402-012"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 12,
+          "relation_ids": [
+            "R14-PL-904137-012"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-749320",
+          "position": 12,
+          "relation_ids": [
+            "R14-PL-749320-012"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-199474",
+      "revisit_relation_ids": [
+        "R14-RV-199474"
+      ]
+    },
+    "hard_prerequisite_relation_ids": [
+      "V3-EDG-283561"
+    ],
+    "helpful_context_relation_ids": [],
+    "required_attachment_relation_ids": [],
+    "route_scope_code": "STANDARD_ONLY"
+  },
+  "lineage_and_limits": {
+    "open_hold_ids": [
+      "V3-HOLD-110001",
+      "V3-HOLD-110003",
+      "V3-HOLD-110005",
+      "V3-HOLD-110008",
+      "V3-HOLD-110009"
+    ],
+    "nonclaims": [
+      "NO_PRESENT_DAY_AUTHORITY_REFRESH",
+      "NO_LEARNER_VALIDATION",
+      "NO_EFFICACY",
+      "NO_MASTERY_CALIBRATION",
+      "NO_READINESS_VALIDATION",
+      "NO_PRODUCTION_PUBLICATION"
+    ]
+  }
+}

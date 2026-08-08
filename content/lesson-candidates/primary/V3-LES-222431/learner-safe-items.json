@@ -1,0 +1,658 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Feedback follows a committed response. The opening activity is informational; an unresolved fresh check returns to planning without credit.",
+  "items": [
+    {
+      "prompt_key": "NUC_ENTRY",
+      "title": "entry: Relate nucleotide composition to nucleic-acid structure",
+      "prompt": "A molecule contains ribose bonded to adenine but has no phosphate group. Which classification is most specific?",
+      "response_type": "single_select",
+      "options": [
+        "A nucleoside composed of a sugar and a purine base",
+        "A nucleotide composed only of phosphate and a purine base",
+        "A phosphodiester-linked polymer containing several residues",
+        "A pyrimidine residue attached directly to a phosphate backbone"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NUC_GUIDED",
+      "title": "guided: Relate nucleotide composition to nucleic-acid structure",
+      "prompt": "In a nucleic-acid strand, which repeating connection forms the main covalent path along the polymer?",
+      "response_type": "single_select",
+      "options": [
+        "Purine-pyrimidine-purine connections joined through base rings",
+        "Sugar-phosphate-sugar connections joined by phosphodiester bonds",
+        "Base-phosphate-base connections that omit every pentose sugar",
+        "Sugar-base-sugar connections joined by hydrogen bonds"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NUC_LIGHT",
+      "title": "light: Relate nucleotide composition to nucleic-acid structure",
+      "prompt": "A labelled residue has deoxyribose, phosphate, and a fused two-ring nitrogenous base. Which description fits the residue?",
+      "response_type": "single_select",
+      "options": [
+        "An RNA nucleoside carrying a pyrimidine but no phosphate",
+        "A backbone made entirely from fused purine ring systems",
+        "A DNA nucleotide carrying a purine base that projects from the backbone",
+        "A DNA sugar that replaces both the phosphate and the base"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NUC_SOLO",
+      "title": "solo: Relate nucleotide composition to nucleic-acid structure",
+      "prompt": "A DNA coding-strand segment is 5′-ATG-3′. An RNA strand preserving that information is written 5′→3′. Which option gives both the RNA sequence and its residue chemistry?",
+      "response_type": "single_select",
+      "options": [
+        "5′-ATG-3′ with ribose and thymine",
+        "3′-UAC-5′ with ribose and uracil",
+        "5′-TAC-3′ with deoxyribose and thymine",
+        "5′-AUG-3′ with ribose and uracil"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NUC_NEAR",
+      "title": "near: Relate nucleotide composition to nucleic-acid structure",
+      "prompt": "A polymer diagram shows a two-ring base attached to a sugar that is linked to phosphates on both sides. Which interpretation is correct?",
+      "response_type": "single_select",
+      "options": [
+        "The base is a purine residue projecting from a sugar-phosphate backbone",
+        "The base is a pyrimidine that forms the complete covalent backbone",
+        "The sugar is a base residue held to phosphate only by hydrogen bonds",
+        "The phosphates are side groups while linked bases form the main chain"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NUC_CHANGED",
+      "title": "changed: Relate nucleotide composition to nucleic-acid structure",
+      "prompt": "An enzyme cleaves one phosphodiester bond in the middle of a DNA strand without altering any base. What is the most direct structural consequence?",
+      "response_type": "single_select",
+      "options": [
+        "Every purine in the strand is converted into a pyrimidine",
+        "The sugar-phosphate backbone is interrupted at that position",
+        "All deoxyribose units are immediately changed into ribose units",
+        "The strand gains an extra base without changing its covalent path"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NUC_REPAIR_NEAR",
+      "title": "repair near: Relate nucleotide composition to nucleic-acid structure",
+      "prompt": "Which rule correctly locates a nitrogenous base in a nucleic-acid polymer?",
+      "response_type": "single_select",
+      "options": [
+        "It alternates with phosphate as the repeating covalent backbone",
+        "It replaces the pentose sugar whenever the residue is a purine",
+        "It attaches to a backbone sugar and projects away from the repeating chain",
+        "It connects adjacent phosphates while every sugar remains a side group"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NUC_REENTRY_NEAR",
+      "title": "reentry near: Relate nucleotide composition to nucleic-acid structure",
+      "prompt": "A fresh RNA residue contains ribose, phosphate, and cytosine. How should cytosine be placed in the polymer model?",
+      "response_type": "single_select",
+      "options": [
+        "As a purine residue replacing phosphate in the repeating backbone",
+        "As a sugar residue linking two bases through phosphodiester bonds",
+        "As a phosphate group that distinguishes RNA from DNA",
+        "As a pyrimidine residue attached to ribose and projecting from the backbone"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NUC_REPAIR_CHANGED",
+      "title": "repair changed: Relate nucleotide composition to nucleic-acid structure",
+      "prompt": "Which question best predicts the effect of a structural change in a nucleic-acid strand?",
+      "response_type": "single_select",
+      "options": [
+        "Does the change alter a backbone linkage or only a projecting base identity?",
+        "Is the changed component drawn with the darkest color in the figure?",
+        "Does the strand contain more purines than every other molecule?",
+        "Is the molecule called DNA rather than RNA in the title?"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NUC_REENTRY_CHANGED",
+      "title": "reentry changed: Relate nucleotide composition to nucleic-acid structure",
+      "prompt": "A new three-residue RNA strand loses the phosphate connecting its second and third sugars. Which result follows most directly?",
+      "response_type": "single_select",
+      "options": [
+        "Every pyrimidine in the strand becomes a two-ring purine",
+        "The covalent backbone no longer connects all three residues continuously",
+        "The ribose sugars all become deoxyribose without a bond break",
+        "The strand remains continuous because bases replace missing phosphates"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CMP_ENTRY",
+      "title": "entry: Apply nucleic-acid complementarity and strand transitions",
+      "prompt": "Which base is the Watson–Crick partner of guanine in a DNA double helix?",
+      "response_type": "single_select",
+      "options": [
+        "Adenine",
+        "Thymine",
+        "Cytosine",
+        "Uracil"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CMP_GUIDED",
+      "title": "guided: Apply nucleic-acid complementarity and strand transitions",
+      "prompt": "Which strand is the antiparallel DNA complement of 5′-AGTC-3′?",
+      "response_type": "single_select",
+      "options": [
+        "5′-TCAG-3′",
+        "3′-AGTC-5′",
+        "3′-UCAG-5′",
+        "3′-TCAG-5′"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CMP_LIGHT",
+      "title": "light: Apply nucleic-acid complementarity and strand transitions",
+      "prompt": "After DNA denaturation, which feature is expected to remain intact?",
+      "response_type": "single_select",
+      "options": [
+        "The covalent sugar-phosphate backbone of each separated strand",
+        "Every hydrogen bond joining the two complementary strands",
+        "The double helix with both strands still paired at every base",
+        "Only free bases after complete cleavage of both polymer chains"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CMP_SOLO",
+      "title": "solo: Apply nucleic-acid complementarity and strand transitions",
+      "prompt": "Which condition most directly supports reannealing of two previously separated DNA strands?",
+      "response_type": "single_select",
+      "options": [
+        "Their strands have equal length but unrelated base order",
+        "Their aligned sequences are complementary and antiparallel",
+        "Their backbones were cleaved into individual nucleotides",
+        "Their sequences contain the same bases in the same orientation"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CMP_NEAR",
+      "title": "near: Apply nucleic-acid complementarity and strand transitions",
+      "prompt": "What is the antiparallel DNA complement of 5′-CATA-3′?",
+      "response_type": "single_select",
+      "options": [
+        "3′-CATA-5′",
+        "5′-GTAT-3′",
+        "3′-GTAT-5′",
+        "3′-GUAU-5′"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CMP_CHANGED",
+      "title": "changed: Apply nucleic-acid complementarity and strand transitions",
+      "prompt": "A DNA target reads 5′-ACGT-3′. Which RNA probe aligns antiparallel and forms the most complete hybrid?",
+      "response_type": "single_select",
+      "options": [
+        "3′-ACGU-5′",
+        "5′-UGCA-3′",
+        "3′-UCCA-5′",
+        "3′-UGCA-5′"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CMP_REPAIR_NEAR",
+      "title": "repair near: Apply nucleic-acid complementarity and strand transitions",
+      "prompt": "Which sequence-building order prevents an orientation error when finding a DNA complement?",
+      "response_type": "single_select",
+      "options": [
+        "Label strand directions first, then complement each aligned base",
+        "Copy the original bases first, then remove both direction labels",
+        "Reverse the base order but keep every base identity unchanged",
+        "Count purines and pyrimidines without aligning individual positions"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CMP_REENTRY_NEAR",
+      "title": "reentry near: Apply nucleic-acid complementarity and strand transitions",
+      "prompt": "Which strand is the fresh antiparallel DNA complement of 5′-GGAT-3′?",
+      "response_type": "single_select",
+      "options": [
+        "5′-CCTA-3′",
+        "3′-CCTA-5′",
+        "3′-GGAT-5′",
+        "3′-CCUA-5′"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CMP_REPAIR_CHANGED",
+      "title": "repair changed: Apply nucleic-acid complementarity and strand transitions",
+      "prompt": "Which distinction is essential when reasoning about denaturation and hybridization?",
+      "response_type": "single_select",
+      "options": [
+        "Denaturation always converts every nucleotide into a free base",
+        "Any two strands of equal length will hybridize completely",
+        "Backbone continuity and interstrand base pairing are separate properties",
+        "A mismatch strengthens a duplex by adding another correct pair"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "CMP_REENTRY_CHANGED",
+      "title": "reentry changed: Apply nucleic-acid complementarity and strand transitions",
+      "prompt": "A DNA target changes from 5′-ACGT-3′ to 5′-ATGT-3′. Which RNA probe is now fully complementary and antiparallel?",
+      "response_type": "single_select",
+      "options": [
+        "3′-UGCA-5′",
+        "5′-UACA-3′",
+        "3′-ATGT-5′",
+        "3′-UACA-5′"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "REP_ENTRY",
+      "title": "entry: Explain semiconservative DNA replication",
+      "prompt": "After a DNA duplex opens, what is the direct role of each separated parental strand?",
+      "response_type": "single_select",
+      "options": [
+        "It serves as a template for synthesis of a complementary new strand",
+        "It is discarded so both daughter molecules contain only new DNA",
+        "It joins the other parental strand without any nucleotide synthesis",
+        "It acts as a primer that polymerase extends without a free end"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "REP_GUIDED",
+      "title": "guided: Explain semiconservative DNA replication",
+      "prompt": "Which sequence correctly orders the core actions at a newly activated replication origin?",
+      "response_type": "single_select",
+      "options": [
+        "Ligase opens DNA, polymerase removes primers, helicase seals fragments",
+        "Helicase opens DNA, primase supplies a primer, polymerase extends, ligase seals",
+        "Polymerase starts without a primer, then primase unwinds the duplex",
+        "Primase seals fragments, helicase adds bases, ligase copies templates"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "REP_LIGHT",
+      "title": "light: Explain semiconservative DNA replication",
+      "prompt": "A fork opens normally and primers form, but no complementary DNA is added. Which core activity is most directly defective?",
+      "response_type": "single_select",
+      "options": [
+        "Helicase separation of the parental strands at the fork",
+        "Primase production of the short starting nucleic-acid segment",
+        "DNA polymerase extension from the primer's free 3′ end",
+        "Ligase sealing of adjacent fragments after synthesis finishes"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "REP_SOLO",
+      "title": "solo: Explain semiconservative DNA replication",
+      "prompt": "A parental duplex has one strand labelled blue and one labelled gold. After semiconservative replication, how are the labels distributed?",
+      "response_type": "single_select",
+      "options": [
+        "One daughter receives both labelled strands and the other receives two new strands",
+        "Both labels are cut into pieces and mixed through every new strand",
+        "All four daughter strands retain the parental labels after copying",
+        "Each daughter duplex has one labelled parental strand and one unlabelled new strand"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "REP_NEAR",
+      "title": "near: Explain semiconservative DNA replication",
+      "prompt": "Which daughter-strand pattern is the defining result of semiconservative DNA replication?",
+      "response_type": "single_select",
+      "options": [
+        "Each daughter duplex contains one parental strand and one newly synthesized strand",
+        "One daughter contains both parental strands while the other contains both new strands",
+        "Every daughter strand contains alternating pieces of parental and new DNA",
+        "Both daughter duplexes contain only parental strands with no synthesis"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "REP_CHANGED",
+      "title": "changed: Explain semiconservative DNA replication",
+      "prompt": "Most origins on a long eukaryotic chromosome are disabled, but the remaining origins and forks work normally. What is the most direct consequence?",
+      "response_type": "single_select",
+      "options": [
+        "Every daughter duplex becomes conservative rather than semiconservative",
+        "Fewer regions begin copying concurrently, so completion takes longer",
+        "Polymerase reverses direction and begins synthesizing DNA three-prime to five-prime",
+        "Ligase becomes the enzyme that opens all remaining origins"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "REP_REPAIR_NEAR",
+      "title": "repair near: Explain semiconservative DNA replication",
+      "prompt": "Which tracking method most directly identifies semiconservative products?",
+      "response_type": "single_select",
+      "options": [
+        "Count origins without marking which strands existed before replication",
+        "List enzyme names without tracing any parental or new strand",
+        "Follow each intact parental strand into a daughter and identify its new complement",
+        "Assume both parental strands remain together because they began paired"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "REP_REENTRY_NEAR",
+      "title": "reentry near: Explain semiconservative DNA replication",
+      "prompt": "A fresh duplex has parental strands labelled P and Q. Which result follows after one semiconservative copying cycle?",
+      "response_type": "single_select",
+      "options": [
+        "One daughter has P plus Q, and the other has two new strands",
+        "Both daughters contain pieces of P and Q mixed through all strands",
+        "Both daughters have only new strands because P and Q are degraded",
+        "One daughter has P plus a new strand, and the other has Q plus a new strand"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "REP_REPAIR_CHANGED",
+      "title": "repair changed: Explain semiconservative DNA replication",
+      "prompt": "Which question best locates the first failed replication function?",
+      "response_type": "single_select",
+      "options": [
+        "Check opening, priming, extension, then sealing",
+        "How many enzyme names can be recalled beyond the lesson scope?",
+        "Is the chromosome drawn horizontally rather than vertically?",
+        "Does the daughter DNA contain more purines than the parent?"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "REP_REENTRY_CHANGED",
+      "title": "reentry changed: Explain semiconservative DNA replication",
+      "prompt": "At one origin, helicase opens DNA but primase is inactive. Other origins work normally. What happens first at the affected origin?",
+      "response_type": "single_select",
+      "options": [
+        "Ligase supplies a primer and performs all local nucleotide addition",
+        "Polymerase lacks a primer 3′ end and cannot begin local extension",
+        "The parental strands cannot separate because polymerase is absent",
+        "The daughter pattern becomes conservative at every other origin"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "END_ENTRY",
+      "title": "entry: Explain chromosome-end replication",
+      "prompt": "Why can DNA polymerase not begin a new strand at an arbitrary unprimed position?",
+      "response_type": "single_select",
+      "options": [
+        "It requires an existing free 3′ end to extend",
+        "It can add nucleotides only to a free 5′ end",
+        "It must first join two chromosome ends with ligase",
+        "It can copy DNA only after every base is removed"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "END_GUIDED",
+      "title": "guided: Explain chromosome-end replication",
+      "prompt": "After the final primer at a linear chromosome end is removed, which feature creates the end-replication problem?",
+      "response_type": "single_select",
+      "options": [
+        "The parental template is converted entirely into RNA",
+        "No upstream DNA 3′ end remains from which to fill the terminal gap",
+        "Every internal phosphodiester bond is broken at once",
+        "Complementary base-pair specificity stops operating at chromosome ends"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "END_LIGHT",
+      "title": "light: Explain chromosome-end replication",
+      "prompt": "Which primer-removal gap can conventional polymerase most directly fill?",
+      "response_type": "single_select",
+      "options": [
+        "A terminal gap beyond the last available DNA 3′ end",
+        "A gap after both template and new strand have been removed",
+        "An internal gap with an adjacent upstream DNA 3′ end",
+        "A terminal gap containing no template information at all"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "END_SOLO",
+      "title": "solo: Explain chromosome-end replication",
+      "prompt": "What is the expected cumulative effect of many replication cycles without specialized chromosome-end maintenance?",
+      "response_type": "single_select",
+      "options": [
+        "Every internal base is replaced by an RNA nucleotide",
+        "All chromosome ends fuse into one continuous circular molecule",
+        "Polymerase begins synthesizing new DNA in the 3′-to-5′ direction",
+        "The terminal DNA becomes progressively shorter"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "END_NEAR",
+      "title": "near: Explain chromosome-end replication",
+      "prompt": "Why is the gap left by removing the last lagging-strand primer at a chromosome end not filled normally?",
+      "response_type": "single_select",
+      "options": [
+        "The gap has no upstream DNA 3′ end available for polymerase extension",
+        "The chromosome end contains no bases capable of complementarity",
+        "Ligase prevents all polymerase activity near linear DNA",
+        "Helicase permanently removes the complete parental template strand"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "END_CHANGED",
+      "title": "changed: Explain chromosome-end replication",
+      "prompt": "A dividing cell has inactive telomerase, but internal replication and internal DNA repair remain functional. What pattern is most likely over repeated divisions?",
+      "response_type": "single_select",
+      "options": [
+        "All internal DNA becomes uncopyable during the first division",
+        "Chromosome ends shorten even though many internal errors can still be repaired",
+        "Every mutation is reversed because telomerase is absent",
+        "Linear chromosomes immediately become circular to avoid primer use"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "END_REPAIR_NEAR",
+      "title": "repair near: Explain chromosome-end replication",
+      "prompt": "Which check most directly reveals whether a primer-removal gap creates an end-replication problem?",
+      "response_type": "single_select",
+      "options": [
+        "Count all named repair pathways in the organism",
+        "Determine whether the chromosome contains any purine bases",
+        "Look for an upstream DNA 3′ end that polymerase could extend into the gap",
+        "Check whether the diagram uses a straight or curved chromosome"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "END_REENTRY_NEAR",
+      "title": "reentry near: Explain chromosome-end replication",
+      "prompt": "At the opposite end of a fresh linear chromosome diagram, the terminal primer is removed and no neighboring DNA lies upstream of the gap. What follows?",
+      "response_type": "single_select",
+      "options": [
+        "The missing segment is filled because polymerase starts without a primer",
+        "The entire chromosome is degraded because one primer was removed",
+        "The template sequence changes into RNA to provide a new end",
+        "Conventional polymerase cannot complete that terminal segment by extension alone"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "END_REPAIR_CHANGED",
+      "title": "repair changed: Explain chromosome-end replication",
+      "prompt": "Which distinction keeps chromosome-end maintenance separate from general DNA repair?",
+      "response_type": "single_select",
+      "options": [
+        "End maintenance changes every base, while repair changes no sequence",
+        "End maintenance occurs only in RNA, while repair occurs only in proteins",
+        "End maintenance solves terminal gaps; repair corrects internal defects",
+        "End maintenance removes all primers, while repair creates every origin"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "END_REENTRY_CHANGED",
+      "title": "reentry changed: Explain chromosome-end replication",
+      "prompt": "Telomerase activity is restored in a fresh cell line with short chromosome ends. What direct change best supports end maintenance?",
+      "response_type": "single_select",
+      "options": [
+        "Every internal mutation is automatically restored to its original base",
+        "Polymerase no longer requires a primer anywhere in the genome",
+        "All linear chromosomes are converted into circular chromosomes",
+        "Template-end extension permits additional complementary fill-in"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "FIX_ENTRY",
+      "title": "entry: Explain DNA repair",
+      "prompt": "One DNA strand has an abnormal base opposite an intact complementary strand. What feature can preserve the expected sequence information?",
+      "response_type": "single_select",
+      "options": [
+        "The corresponding base on the intact complementary strand",
+        "The color assigned to the abnormal base in the diagram",
+        "The total chromosome length without any local sequence data",
+        "The name of the tissue in which the damage occurred"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "FIX_GUIDED",
+      "title": "guided: Explain DNA repair",
+      "prompt": "Which order describes a complete general repair of one damaged DNA segment?",
+      "response_type": "single_select",
+      "options": [
+        "Seal backbone, remove template, create damage, then detect it",
+        "Detect defect, remove or reverse it, replace DNA from template, seal backbone",
+        "Remove both strands, skip replacement, and declare the sequence restored",
+        "Count mutations, shorten telomeres, and omit local verification"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "FIX_LIGHT",
+      "title": "light: Explain DNA repair",
+      "prompt": "A newly added T is paired opposite template G during replication. Which correction best uses the available information?",
+      "response_type": "single_select",
+      "options": [
+        "Remove the template G and insert A using the new T",
+        "Keep the mismatch because every opposite pair is equally valid",
+        "Remove the new T and insert C using the template G",
+        "Convert both bases into phosphates and leave the backbone open"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "FIX_SOLO",
+      "title": "solo: Explain DNA repair",
+      "prompt": "A damaged segment is removed and replacement DNA is synthesized, but the final backbone nick is not sealed. What remains defective?",
+      "response_type": "single_select",
+      "options": [
+        "The intact template automatically changes into an unrelated sequence",
+        "Every chromosome end becomes longer because ligase is absent",
+        "The removed damaged material returns without any covalent change",
+        "The sequence may be restored, but strand continuity remains interrupted"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "FIX_NEAR",
+      "title": "near: Explain DNA repair",
+      "prompt": "Which sequence of functions most directly restores a detected single-base mismatch and a continuous DNA strand?",
+      "response_type": "single_select",
+      "options": [
+        "Remove the incorrect base, replace it from intact template information, and seal",
+        "Leave the mismatch, remove the template, and shorten the chromosome end",
+        "Seal first, then add a random base without consulting the partner strand",
+        "Delete both strands and treat missing DNA as a completed repair"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "FIX_CHANGED",
+      "title": "changed: Explain DNA repair",
+      "prompt": "A base is damaged after replication, and the opposite strand remains intact. Which fact most directly guides accurate replacement?",
+      "response_type": "single_select",
+      "options": [
+        "The damaged base's current shape regardless of its partner",
+        "The complementary base on the undamaged opposite strand",
+        "The number of origins used during the previous replication cycle",
+        "The length of the telomere at the nearest chromosome end"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "FIX_REPAIR_NEAR",
+      "title": "repair near: Explain DNA repair",
+      "prompt": "Why is removing a damaged DNA segment alone not a complete repair?",
+      "response_type": "single_select",
+      "options": [
+        "Removal automatically copies the intact strand without synthesis",
+        "Removal converts the chromosome into a finished circular molecule",
+        "Missing sequence must be replaced and the backbone must be resealed",
+        "Removal prevents the defect from ever being detected"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "FIX_REENTRY_NEAR",
+      "title": "reentry near: Explain DNA repair",
+      "prompt": "A fresh mismatch has A on the intact template strand and C on the newly synthesized strand. What local correction is supported?",
+      "response_type": "single_select",
+      "options": [
+        "Replace the template A with G because the new strand is always correct",
+        "Keep A–C because every purine can pair with every pyrimidine",
+        "Remove both bases and leave the local strand gap unsealed",
+        "Replace the new C with T, then restore the backbone"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "FIX_REPAIR_CHANGED",
+      "title": "repair changed: Explain DNA repair",
+      "prompt": "Which pair of questions best determines whether complementarity can recover an earlier sequence?",
+      "response_type": "single_select",
+      "options": [
+        "When did the defect arise, and does one strand still preserve intact information?",
+        "What color is the diagram, and how long is its caption?",
+        "How many repair names are known, and which name sounds most specific?",
+        "Is the chromosome linear, and are all telomeres the same length?"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "FIX_REENTRY_CHANGED",
+      "title": "reentry changed: Explain DNA repair",
+      "prompt": "A lesion appears after replication. The damaged base is removed, but replacement synthesis is blocked while the opposite strand stays intact. What remains?",
+      "response_type": "single_select",
+      "options": [
+        "A fully restored duplex because removal alone completes repair",
+        "An unrepaired gap despite preserved template information",
+        "A corrected mutation copied into both strands without synthesis",
+        "A lengthened telomere at the chromosome end"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    }
+  ]
+}

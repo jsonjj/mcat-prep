@@ -1,0 +1,398 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Readiness checks are low stakes; an unresolved fresh re-entry returns control without target exit credit.",
+  "items": [
+    {
+      "prompt_key": "ENTH_ENTRY",
+      "title": "Readiness check: energy accounting",
+      "prompt": "A closed system absorbs 35 kJ of heat while 12 kJ of work is done on it. Using ΔU = q + w with both transfers positive into the system, what is ΔU?",
+      "response_type": "single_select",
+      "options": [
+        "+47 kJ",
+        "+23 kJ",
+        "−23 kJ",
+        "−47 kJ"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This check is low stakes and may return you to prerequisite study."
+    },
+    {
+      "prompt_key": "ENTH_GUIDED",
+      "title": "Guided practice: reaction direction",
+      "prompt": "The combustion equation for one mole of a fuel releases 640 kJ at constant pressure. What enthalpy belongs to the reaction as written?",
+      "response_type": "single_select",
+      "options": [
+        "+640 kJ/mol",
+        "−640 kJ/mol",
+        "+320 kJ/mol",
+        "−320 kJ/mol"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ENTH_LIGHT",
+      "title": "Less support: reverse a thermochemical equation",
+      "prompt": "For P → Q, ΔH = −72 kJ/mol. What value belongs to the reversed equation Q → P?",
+      "response_type": "single_select",
+      "options": [
+        "−144 kJ/mol",
+        "−72 kJ/mol",
+        "+72 kJ/mol",
+        "+144 kJ/mol"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ENTH_SOLO",
+      "title": "On your own: scale the equation",
+      "prompt": "For 2 R → S, ΔH = +90 kJ. What is ΔH for 6 R → 3 S under the same conditions?",
+      "response_type": "single_select",
+      "options": [
+        "+30 kJ",
+        "+90 kJ",
+        "+180 kJ",
+        "+270 kJ"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ENTH_NEAR",
+      "title": "Near exit: combine consecutive steps",
+      "prompt": "A → B has ΔH = +40 kJ/mol, and B → C has ΔH = −15 kJ/mol. What is ΔH for A → C?",
+      "response_type": "single_select",
+      "options": [
+        "+55 kJ/mol",
+        "+25 kJ/mol",
+        "−25 kJ/mol",
+        "−55 kJ/mol"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ENTH_CHANGED",
+      "title": "Changed exit: use a bond inventory",
+      "prompt": "Estimate ΔH for H₂ + Cl₂ → 2 HCl using H–H = 436 kJ/mol, Cl–Cl = 243 kJ/mol, and H–Cl = 431 kJ/mol.",
+      "response_type": "single_select",
+      "options": [
+        "−183 kJ/mol",
+        "+183 kJ/mol",
+        "−248 kJ/mol",
+        "+679 kJ/mol"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ENTH_REPAIR_NEAR",
+      "title": "Repair: make an intermediate cancel",
+      "prompt": "An intermediate X appears on the product side of two equations, but the target contains no X. What transformation is required before adding the equations?",
+      "response_type": "single_select",
+      "options": [
+        "Add the equations unchanged and delete X afterward",
+        "Reverse one equation and reverse its ΔH sign",
+        "Reverse one equation but retain its original ΔH sign",
+        "Multiply both equations by −1 without changing direction"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ENTH_REENTRY_NEAR",
+      "title": "Fresh re-entry: combine a reversed step",
+      "prompt": "M → N has ΔH = −55 kJ/mol, and P → N has ΔH = +20 kJ/mol. What is ΔH for M → P?",
+      "response_type": "single_select",
+      "options": [
+        "−75 kJ/mol",
+        "−35 kJ/mol",
+        "+35 kJ/mol",
+        "+75 kJ/mol"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ENTH_REPAIR_CHANGED",
+      "title": "Repair: choose the bond-energy subtraction",
+      "prompt": "Which expression correctly estimates reaction enthalpy from average bond energies?",
+      "response_type": "single_select",
+      "options": [
+        "Sum formed bond energies minus sum broken bond energies",
+        "Sum all listed bond energies without tracking side",
+        "Sum broken bond energies minus sum formed bond energies",
+        "Use only the single strongest bond in the reaction"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "ENTH_REENTRY_CHANGED",
+      "title": "Fresh re-entry: hydrogenate a double bond",
+      "prompt": "Estimate ΔH for C₂H₄ + H₂ → C₂H₆ using C=C = 614, H–H = 436, C–C = 347, and C–H = 413 kJ/mol. Count the net changes only.",
+      "response_type": "single_select",
+      "options": [
+        "+123 kJ/mol",
+        "−67 kJ/mol",
+        "+67 kJ/mol",
+        "−123 kJ/mol"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "GIBB_ENTRY",
+      "title": "Readiness check: entropy direction",
+      "prompt": "A pure gas condenses to a liquid at constant temperature. Considering only the substance, what is the sign of ΔS for this change?",
+      "response_type": "single_select",
+      "options": [
+        "Positive because heat can leave",
+        "Negative because dispersal decreases",
+        "Zero because temperature is fixed",
+        "Indeterminate without a rate constant"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This check is low stakes and may return you to prerequisite study."
+    },
+    {
+      "prompt_key": "GIBB_GUIDED",
+      "title": "Guided practice: calculate ΔG",
+      "prompt": "At 298 K, a process has ΔH = −40.0 kJ/mol and ΔS = −100 J/(mol·K). What is ΔG?",
+      "response_type": "single_select",
+      "options": [
+        "−69.8 kJ/mol",
+        "+10.2 kJ/mol",
+        "+69.8 kJ/mol",
+        "−10.2 kJ/mol"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "GIBB_LIGHT",
+      "title": "Less support: classify the sign pair",
+      "prompt": "A reaction has ΔH < 0 and ΔS > 0. Which temperature statement is supported for ΔG?",
+      "response_type": "single_select",
+      "options": [
+        "ΔG is negative at every positive temperature",
+        "ΔG is positive at every positive temperature",
+        "ΔG is negative only below a crossover temperature",
+        "ΔG is negative only above a crossover temperature"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "GIBB_SOLO",
+      "title": "On your own: identify the favorable regime",
+      "prompt": "For a process with ΔH > 0 and ΔS > 0, when can the forward process have ΔG < 0?",
+      "response_type": "single_select",
+      "options": [
+        "Only when temperature is low enough",
+        "At high enough T for TΔS to exceed ΔH",
+        "At every temperature because entropy is positive",
+        "At no temperature because enthalpy is positive"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "GIBB_NEAR",
+      "title": "Near exit: evaluate a new condition",
+      "prompt": "At 400 K, a reaction has ΔH = +24 kJ/mol and ΔS = +80 J/(mol·K). What is ΔG?",
+      "response_type": "single_select",
+      "options": [
+        "+56 kJ/mol",
+        "−56 kJ/mol",
+        "+8 kJ/mol",
+        "−8 kJ/mol"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "GIBB_CHANGED",
+      "title": "Changed exit: determine a temperature interval",
+      "prompt": "A reaction has ΔH = −60 kJ/mol and ΔS = −150 J/(mol·K). For which temperatures is ΔG < 0?",
+      "response_type": "single_select",
+      "options": [
+        "T < 400 K",
+        "T > 400 K",
+        "All positive temperatures",
+        "No positive temperature"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "GIBB_REPAIR_NEAR",
+      "title": "Repair: make energy units compatible",
+      "prompt": "ΔH is reported in kJ/mol and ΔS in J/(mol·K). What must happen before evaluating ΔH − TΔS?",
+      "response_type": "single_select",
+      "options": [
+        "Convert both energy terms to the same unit",
+        "Convert kelvin to degrees Celsius before multiplying",
+        "Discard the sign on ΔS and compare magnitudes only",
+        "Divide ΔH by temperature and add the entropy value"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "GIBB_REENTRY_NEAR",
+      "title": "Fresh re-entry: calculate with converted entropy",
+      "prompt": "At 350 K, a process has ΔH = +18 kJ/mol and ΔS = +60 J/(mol·K). What is ΔG?",
+      "response_type": "single_select",
+      "options": [
+        "−39 kJ/mol",
+        "+3 kJ/mol",
+        "−3 kJ/mol",
+        "+39 kJ/mol"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "GIBB_REPAIR_CHANGED",
+      "title": "Repair: locate the crossover",
+      "prompt": "When ΔH and ΔS have the same sign and a crossover exists, which condition locates it?",
+      "response_type": "single_select",
+      "options": [
+        "Set ΔG = ΔH + TΔS and solve for pressure",
+        "Set ΔG = 0 and solve T = ΔH/ΔS",
+        "Set ΔS = 0 and solve T = ΔG/ΔH",
+        "Set ΔH = 0 and choose the highest temperature"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "GIBB_REENTRY_CHANGED",
+      "title": "Fresh re-entry: infer a high-temperature regime",
+      "prompt": "A process has ΔH = +45 kJ/mol and ΔS = +150 J/(mol·K). Which temperature condition gives ΔG < 0?",
+      "response_type": "single_select",
+      "options": [
+        "T < 150 K",
+        "T < 300 K",
+        "T > 450 K",
+        "T > 300 K"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "EQDG_ENTRY",
+      "title": "Readiness check: equilibrium shift",
+      "prompt": "For A ⇌ B, extra A is added at constant temperature while all other conditions are unchanged. Which immediate equilibrium response is predicted before a new equilibrium is established?",
+      "response_type": "single_select",
+      "options": [
+        "The system shifts toward A and produces still more A",
+        "The equilibrium constant becomes zero",
+        "The forward and reverse reactions both stop",
+        "The system shifts toward B, consuming some added A"
+      ],
+      "directions": "Choose one response or leave the item unanswered. This check is low stakes and may return you to prerequisite study."
+    },
+    {
+      "prompt_key": "EQDG_GUIDED",
+      "title": "Guided practice: read the sign relation",
+      "prompt": "At a fixed positive temperature, K = 50 for a reaction. What sign must ΔG° have?",
+      "response_type": "single_select",
+      "options": [
+        "Positive",
+        "Zero",
+        "Negative",
+        "Indeterminate because rate is unknown"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "EQDG_LIGHT",
+      "title": "Less support: identify the boundary case",
+      "prompt": "At a stated temperature, a reaction has K = 1. Which standard free-energy value is consistent with this?",
+      "response_type": "single_select",
+      "options": [
+        "ΔG° < 0",
+        "ΔG° = 0",
+        "ΔG° > 0",
+        "ΔG° equals the activation energy"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "EQDG_SOLO",
+      "title": "On your own: infer equilibrium position",
+      "prompt": "A reaction has ΔG° > 0 at a stated temperature. Which equilibrium statement follows for the reaction as written?",
+      "response_type": "single_select",
+      "options": [
+        "K > 1 and products are favored",
+        "K = 1 with equal standard free energies",
+        "K < 1 and reactants are favored",
+        "K is determined only by the catalyst"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "EQDG_NEAR",
+      "title": "Near exit: interpret a large K",
+      "prompt": "At 310 K, a reaction has K = 100. Which paired conclusion is supported?",
+      "response_type": "single_select",
+      "options": [
+        "ΔG° < 0; products are equilibrium-favored",
+        "ΔG° > 0 and products are favored at equilibrium",
+        "ΔG° = 0 and neither side is favored",
+        "ΔG° < 0 and the reaction must be rapid"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "EQDG_CHANGED",
+      "title": "Changed exit: add a catalyst",
+      "prompt": "A catalyst lowers the activation energies of both directions for A ⇌ B at fixed temperature. What changes after the catalyst is added?",
+      "response_type": "single_select",
+      "options": [
+        "K increases because products form faster",
+        "ΔG° becomes more negative while K stays fixed",
+        "Faster equilibration; unchanged K and ΔG°",
+        "The reverse reaction stops once products appear"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "EQDG_REPAIR_NEAR",
+      "title": "Repair: track the logarithm sign",
+      "prompt": "Which sign chain is correct when 0 < K < 1 at positive temperature?",
+      "response_type": "single_select",
+      "options": [
+        "ln K > 0, so ΔG° < 0",
+        "ln K = 0, so ΔG° = 0",
+        "ln K < 0, so ΔG° < 0",
+        "ln K < 0, so ΔG° > 0"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "EQDG_REENTRY_NEAR",
+      "title": "Fresh re-entry: interpret a small K",
+      "prompt": "At a fixed temperature, a fresh reaction has K = 0.010. Which conclusion follows?",
+      "response_type": "single_select",
+      "options": [
+        "ΔG° is positive and reactants are favored",
+        "ΔG° is negative and reactants are favored",
+        "ΔG° is zero and products are favored",
+        "ΔG° is positive and the reaction cannot occur"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "EQDG_REPAIR_CHANGED",
+      "title": "Repair: separate endpoints from barriers",
+      "prompt": "On a reaction-energy profile, which feature can a catalyst change without changing the equilibrium constant at fixed temperature?",
+      "response_type": "single_select",
+      "options": [
+        "The free-energy difference between products and reactants",
+        "The identities and standard states of the products",
+        "The activation barrier along the reaction pathway",
+        "The value of RT in the equilibrium relation"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    },
+    {
+      "prompt_key": "EQDG_REENTRY_CHANGED",
+      "title": "Fresh re-entry: scale both rate constants",
+      "prompt": "For an elementary reversible step, a catalyst makes both forward and reverse rate constants five times larger at the same temperature. What is the most direct consequence?",
+      "response_type": "single_select",
+      "options": [
+        "The equilibrium constant becomes five times larger",
+        "The equilibrium constant becomes five times smaller",
+        "Same equilibrium ratio; faster approach",
+        "The standard free-energy change becomes zero"
+      ],
+      "directions": "Choose one response, then commit it before feedback is released."
+    }
+  ]
+}

@@ -1,0 +1,1488 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "WORK-ITEM-ENTRY",
+      "learner_prompt_key": "WORK_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "The force is perpendicular to displacement, so cos90° = 0.",
+      "post_commitment_feedback": "Use the included angle: a perpendicular force has no parallel component.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WORK-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WORK-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reports force magnitude without displacement."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WORK-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies Fd but omits the zero cosine."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WORK-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Negative work requires an opposing component, not a perpendicular one."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WORK-ITEM-GUIDED",
+      "learner_prompt_key": "WORK_GUIDED",
+      "correct_option_index": 2,
+      "rationale": "θ = 0°, so W = 15 × 4 × 1 = 60 J.",
+      "post_commitment_feedback": "Parallel force and displacement produce maximum positive work.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WORK-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This divides force by distance."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WORK-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds unlike force and distance values."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WORK-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WORK-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The force points with, not against, displacement."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WORK-ITEM-LIGHT",
+      "learner_prompt_key": "WORK_LIGHT",
+      "correct_option_index": 1,
+      "rationale": "W = 30 × 6 × 0.50 = 90 J.",
+      "post_commitment_feedback": "Project with cosine before multiplying by distance.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WORK-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This halves the parallel component a second time."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WORK-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WORK-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits the cosine projection."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WORK-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This doubles rather than halves Fd."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WORK-ITEM-SOLO",
+      "learner_prompt_key": "WORK_SOLO",
+      "correct_option_index": 3,
+      "rationale": "θ = 180° and cos180° = −1, so W = −63 J.",
+      "post_commitment_feedback": "An antiparallel force transfers energy out through negative work.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WORK-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Zero work applies at 90°, not 180°."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WORK-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds force and distance."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WORK-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The magnitude is right but the sign ignores opposition."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WORK-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WORK-ITEM-NEAR",
+      "learner_prompt_key": "WORK_NEAR",
+      "correct_option_index": 0,
+      "rationale": "W = 50 × 10 × 0.50 = 250 J.",
+      "post_commitment_feedback": "Only the 25 N horizontal component acts through the 10 m displacement.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WORK-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WORK-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This uses the full force without projecting."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WORK-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This divides rather than multiplies by distance."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WORK-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The force has a forward component, so its work is positive."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WORK-ITEM-CHANGED",
+      "learner_prompt_key": "WORK_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "cosθ = 50/(20×5) = 0.50, so θ = 60°.",
+      "post_commitment_feedback": "Recover the projection ratio before matching the angle.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WORK-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At 0°, work would be 100 J."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WORK-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WORK-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At 90°, work would be zero."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WORK-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At 180°, work would be −100 J."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WORK-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "WORK_REPAIR_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Opposite vectors have an included angle of 180°.",
+      "post_commitment_feedback": "Measure from displacement direction to force direction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WORK-REPAIRNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This describes parallel vectors."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WORK-REPAIRNEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is not the stated opposite geometry."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WORK-REPAIRNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This describes perpendicular vectors."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WORK-REPAIRNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WORK-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "WORK_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "W = 24×8×0.50 = 96 J.",
+      "post_commitment_feedback": "The fresh values preserve the projection-then-distance function.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WORK-REENTRYNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits cosine."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WORK-REENTRYNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WORK-REENTRYNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This divides the displacement by the projection."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WORK-REENTRYNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The projection is forward, so work is positive."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WORK-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "WORK_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Divide both sides by the product Fd.",
+      "post_commitment_feedback": "Keep the force-distance product together in the denominator.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WORK-REPAIRCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This takes the reciprocal."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WORK-REPAIRCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WORK-REPAIRCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies by force rather than dividing."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WORK-REPAIRCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Unlike quantities cannot be added to form a cosine."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WORK-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "WORK_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "cosθ = −40/(10×4) = −1, so θ = 180°.",
+      "post_commitment_feedback": "The fresh ratio identifies a fully opposing force.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WORK-REENTRYCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This would give +40 J."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WORK-REENTRYCHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This would give +20 J."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WORK-REENTRYCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This would give 0 J."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WORK-REENTRYCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WKET-ITEM-ENTRY",
+      "learner_prompt_key": "WKET_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "Net work is the signed sum: 45 − 20 = 25 J.",
+      "post_commitment_feedback": "Sum force-specific work before updating kinetic energy.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WKET-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WKET-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds magnitudes while ignoring friction's negative sign."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WKET-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the signed sum."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WKET-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This both adds magnitudes and assigns the wrong sign."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WKET-ITEM-GUIDED",
+      "learner_prompt_key": "WKET_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Kf = Ki + Wnet = 30 − 12 = 18 J.",
+      "post_commitment_feedback": "Negative net work lowers kinetic energy by its magnitude.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WKET-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reports the work magnitude as the final state."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WKET-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WKET-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This ignores the work."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WKET-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This treats negative work as positive."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WKET-ITEM-LIGHT",
+      "learner_prompt_key": "WKET_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "The theorem gives ΔK = +80 J.",
+      "post_commitment_feedback": "Net work specifies a change, not necessarily the final amount.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WKET-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the sign relationship."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WKET-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Scalar work can still change scalar kinetic energy."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WKET-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WKET-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Final K equals initial K plus 80 J."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WKET-ITEM-SOLO",
+      "learner_prompt_key": "WKET_SOLO",
+      "correct_option_index": 1,
+      "rationale": "Conservative work depends on endpoints rather than the path.",
+      "post_commitment_feedback": "Use endpoint dependence, not sign, to classify the force.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WKET-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Conservative work can be positive or negative."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WKET-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WKET-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "It is zero only for special endpoint choices or closed paths."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WKET-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Travel time is not the defining criterion."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WKET-ITEM-NEAR",
+      "learner_prompt_key": "WKET_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Ki = 4 J, Wnet = 12 J, Kf = 16 J, and v = sqrt(2K/m) = 4 m/s.",
+      "post_commitment_feedback": "Sum work, update K, then solve the kinetic-energy expression.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WKET-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This ignores net work."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WKET-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WKET-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This treats energy change as direct speed change."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WKET-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This overstates speed by skipping the square relation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WKET-ITEM-CHANGED",
+      "learner_prompt_key": "WKET_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Gravitational work depends on height endpoints; kinetic-friction work depends on path length under the stated comparable conditions.",
+      "post_commitment_feedback": "Separate endpoint-only conservative work from path-dependent friction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WKET-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the conservative and path-dependent roles."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WKET-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Friction is not endpoint-only."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WKET-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WKET-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Matching endpoints do not imply zero work for an open path."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WKET-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "WKET_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The signed sum is net work, which adds to initial kinetic energy.",
+      "post_commitment_feedback": "Preserve both signs and state quantities.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WKET-REPAIRNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WKET-REPAIRNEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Absolute values erase whether each force adds or removes energy."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WKET-REPAIRNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This rearrangement has the net-work sign reversed."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WKET-REPAIRNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Energy and work combine additively, not multiplicatively."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WKET-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "WKET_REENTRY_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Ki = 8 J, Kf = 18 J, so v² = 2K/m = 36 and v = 6 m/s.",
+      "post_commitment_feedback": "The fresh state uses K before v.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WKET-REENTRYNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This uses net work alone and omits initial energy."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WKET-REENTRYNEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds initial speed directly to the work-derived term instead of updating kinetic energy."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WKET-REENTRYNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WKET-REENTRYNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This miscomputes the kinetic-energy relation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WKET-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "WKET_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Frictional work scales with path distance, while gravitational work depends on height change.",
+      "post_commitment_feedback": "Attach each force to its defining dependence.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WKET-REPAIRCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Gravity depends on endpoints here."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WKET-REPAIRCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WKET-REPAIRCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Frictional work changes with distance."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WKET-REPAIRCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No conservation rule forces equal changes."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "WKET-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "WKET_REENTRY_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Height endpoints fix gravitational work; doubling path length doubles negative friction work at constant friction magnitude.",
+      "post_commitment_feedback": "The fresh geometry preserves endpoint versus path dependence.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "WKET-REENTRYCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "WKET-REENTRYCHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Gravity is unchanged and friction scales with distance."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "WKET-REENTRYCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neither conclusion follows from the stated geometry."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "WKET-REENTRYCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both forces can do nonzero work."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MENG-ITEM-ENTRY",
+      "learner_prompt_key": "MENG_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "K = 1/2(2)(3²) = 9 J.",
+      "post_commitment_feedback": "Square speed before multiplying by one-half the mass.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MENG-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This uses one-half mv without v²."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MENG-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies mass and speed without the correct expression."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MENG-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MENG-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits the one-half factor."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MENG-ITEM-GUIDED",
+      "learner_prompt_key": "MENG_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "ΔUg = mgh = 3×10×4 = 120 J.",
+      "post_commitment_feedback": "Use the local height change with mass and g.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MENG-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies only mass and height."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MENG-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits mass."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MENG-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds factors rather than multiplying."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MENG-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MENG-ITEM-LIGHT",
+      "learner_prompt_key": "MENG_LIGHT",
+      "correct_option_index": 1,
+      "rationale": "Us = 1/2(200)(0.10²) = 1.0 J.",
+      "post_commitment_feedback": "Square compression and include one-half.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MENG-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This halves the result again."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MENG-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MENG-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits the one-half factor."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MENG-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This fails to square compression."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MENG-ITEM-SOLO",
+      "learner_prompt_key": "MENG_SOLO",
+      "correct_option_index": 2,
+      "rationale": "Only potential-energy differences affect the mechanical prediction.",
+      "post_commitment_feedback": "A reference shift adds the same offset structure to state labels.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MENG-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Consistent reference changes do not alter observable predictions."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MENG-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Conservativeness is not set by the chosen zero."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MENG-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MENG-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Kinetic energy is independent of the potential zero."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MENG-ITEM-NEAR",
+      "learner_prompt_key": "MENG_NEAR",
+      "correct_option_index": 2,
+      "rationale": "mgh = 1/2mv² gives v = sqrt(2gh) = sqrt(400) = 20 m/s.",
+      "post_commitment_feedback": "Mass cancels in the gravity-to-kinetic transfer.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MENG-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This corresponds to a smaller height."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MENG-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This approximates sqrt(200), omitting the factor of two."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MENG-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MENG-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This uses v = 2gh without a square root."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MENG-ITEM-CHANGED",
+      "learner_prompt_key": "MENG_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Kf = 50 − 20 − 5 = 25 J.",
+      "post_commitment_feedback": "Allocate initial spring energy to height gain, frictional loss, and final kinetic energy.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MENG-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MENG-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits the frictional loss."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MENG-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This subtracts friction but not the full height gain."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MENG-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds final demands to initial energy."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MENG-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "MENG_REPAIR_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Initial gravitational potential becomes final kinetic energy.",
+      "post_commitment_feedback": "Match one energy expression to each endpoint store.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MENG-REPAIRNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Momentum-like mv is not kinetic energy."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MENG-REPAIRNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MENG-REPAIRNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This squares height rather than speed."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MENG-REPAIRNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both energy terms are nonnegative in this reference setup."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MENG-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "MENG_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "v = sqrt(2gh) = sqrt(100) = 10 m/s.",
+      "post_commitment_feedback": "The fresh height preserves the state-energy function.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MENG-REENTRYNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits the factor and square-root relation."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MENG-REENTRYNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MENG-REENTRYNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This uses a linear product instead of square root."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MENG-REENTRYNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reports gh as speed."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MENG-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "MENG_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Nonconservative work changes the mechanical-energy total between states.",
+      "post_commitment_feedback": "Place the signed work channel between initial and final state totals.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MENG-REPAIRCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MENG-REPAIRCHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This discards the final state energy."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MENG-REPAIRCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds all stores without state signs or conservation meaning."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MENG-REPAIRCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits the supplied nonconservative contribution."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "MENG-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "MENG_REENTRY_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Kf = 36 − 8 − 4 = 24 J.",
+      "post_commitment_feedback": "The fresh state inventory closes at 24 J.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "MENG-REENTRYCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "MENG-REENTRYCHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits friction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "MENG-REENTRYCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This subtracts only friction."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "MENG-REENTRYCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds demands to the initial store."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POWR-ITEM-ENTRY",
+      "learner_prompt_key": "POWR_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "P = W/t = 600/3 = 200 W.",
+      "post_commitment_feedback": "Divide energy transferred by elapsed time.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POWR-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POWR-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reports work as power without dividing by time."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POWR-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies work and time."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POWR-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This inverts and mis-scales the ratio."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POWR-ITEM-GUIDED",
+      "learner_prompt_key": "POWR_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "A delivers equal work in half the time, so its power is twice B's.",
+      "post_commitment_feedback": "For equal work, shorter time means greater power.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POWR-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The longer-time device has lower power."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POWR-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POWR-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal work does not imply equal work rate."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POWR-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Work and time are sufficient for average power."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POWR-ITEM-LIGHT",
+      "learner_prompt_key": "POWR_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Output work is 200 J, so input distance is 200/100 = 2.0 m.",
+      "post_commitment_feedback": "Preserve work: smaller input force acts through greater distance.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POWR-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This applies the distance ratio in the wrong direction."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POWR-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This ignores the force tradeoff."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POWR-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POWR-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This doubles the required distance."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POWR-ITEM-SOLO",
+      "learner_prompt_key": "POWR_SOLO",
+      "correct_option_index": 1,
+      "rationale": "η = 600/800 = 0.75.",
+      "post_commitment_feedback": "Useful output divided by input gives 75%.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POWR-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reports the loss fraction."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POWR-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POWR-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This subtracts or compares values incorrectly."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POWR-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the efficiency ratio and exceeds one."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POWR-ITEM-NEAR",
+      "learner_prompt_key": "POWR_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Output work is 1000 J; ideal input distance is 1000/250 = 4 m and power is 1000/4 = 250 W.",
+      "post_commitment_feedback": "Use one work value in both the machine and power ledgers.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POWR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This ignores the force advantage and halves power."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POWR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POWR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This doubles both distance and power."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POWR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the distance tradeoff and reports work as power."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POWR-ITEM-CHANGED",
+      "learner_prompt_key": "POWR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "PA = 400/4 = 100 W and Win,A = 400/0.80 = 500 J; PB = 50 W and Win,B = 800 J.",
+      "post_commitment_feedback": "Compute power from time and input energy from efficiency as separate steps.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POWR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POWR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal work with different times gives different power."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POWR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies by efficiency instead of dividing output by it."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POWR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Longer time does not imply greater efficiency."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POWR-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "POWR_REPAIR_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Power is work per time and efficiency is useful output work per input work.",
+      "post_commitment_feedback": "Keep rate and input-output ratios distinct.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POWR-REPAIRNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both ratios are reversed or multiplied incorrectly."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POWR-REPAIRNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POWR-REPAIRNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neither expression has the governed meaning."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POWR-REPAIRNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neither addition nor inverse force-distance defines these quantities."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POWR-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "POWR_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Work is 450 J; input distance is 450/150 = 3 m and power is 450/3 = 150 W.",
+      "post_commitment_feedback": "The fresh machine preserves the shared-work calculation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POWR-REENTRYNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This ignores force advantage and halves power."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POWR-REENTRYNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POWR-REENTRYNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This confuses output force with power."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POWR-REENTRYNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses distance advantage and reports work as power."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POWR-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "POWR_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "From η = Wout/Win, rearrange Win = Wout/η.",
+      "post_commitment_feedback": "A real machine needs at least as much input as useful output.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POWR-REPAIRCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This would make input smaller than output for η < 1."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POWR-REPAIRCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POWR-REPAIRCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This subtracts quantities with incompatible units."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POWR-REPAIRCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This inverts the units and relationship."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POWR-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "POWR_REENTRY_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Power uses output work/time; input work is output/efficiency.",
+      "post_commitment_feedback": "The fresh comparison separates faster delivery from higher efficiency.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POWR-REENTRYCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POWR-REENTRYCHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The times and efficiencies differ."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POWR-REENTRYCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies output by efficiency."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POWR-REENTRYCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "D is slower and more efficient, so it has lower output power and lower input energy."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1118 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "APR-ITEM-ENTRY",
+      "learner_prompt_key": "APR_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "The model coordinates biological, psychological, and social variables.",
+      "post_commitment_feedback": "Because all three levels are explicit, the model is biopsychosocial rather than biology-only.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "APR-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The model includes psychological learning and social conditions in addition to biology."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "APR-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "APR-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The statement supplies causal-factor classes rather than only a category label."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "APR-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No numerator, denominator, or time interval is reported."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "APR-ITEM-GUIDED",
+      "learner_prompt_key": "APR_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "Classification supports shared organization and communication while retaining person-level uncertainty.",
+      "post_commitment_feedback": "Use the category as an organizing language, not as a complete cause, identity, or diagnosis.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "APR-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A category does not establish a single complete cause."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "APR-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Classification does not substitute for clinical assessment."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "APR-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A category organizes observations and does not define the person."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "APR-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "APR-ITEM-LIGHT",
+      "learner_prompt_key": "APR_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Prevalence proportion = 80 ÷ 4,000 = 0.02 = 2%.",
+      "post_commitment_feedback": "Use cases over the sampled population for the stated one-year period.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "APR-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "APR-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This divides by a denominator ten times too large."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "APR-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This moves the decimal one place too far."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "APR-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The case count is not itself the percentage."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "APR-ITEM-SOLO",
+      "learner_prompt_key": "APR_SOLO",
+      "correct_option_index": 2,
+      "rationale": "Study A is 2%; Study B is 3%, so B has the higher proportion.",
+      "post_commitment_feedback": "Compare rates rather than raw counts: the smaller sample has the larger proportion.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "APR-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A has the larger count but the lower proportion: 2% versus 3%."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "APR-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The denominators differ, producing different proportions."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "APR-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "APR-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both case counts and denominators are supplied."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "APR-ITEM-NEAR",
+      "learner_prompt_key": "APR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The measure counts new cases among people at risk during a defined interval.",
+      "post_commitment_feedback": "Baseline exclusions and newly emerging cases identify an incidence measure.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "APR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Point prevalence counts existing cases at one time."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "APR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Period prevalence includes cases present during a period, not only new onsets among those at risk."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "APR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "APR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The design describes occurrence over time, not label validity."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "APR-ITEM-CHANGED",
+      "learner_prompt_key": "APR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "The time windows and case definitions differ, so the reported percentages do not estimate the same quantity.",
+      "post_commitment_feedback": "Before comparing values, align the interval and the rule used to count a case.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "APR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "APR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Different definitions and windows can produce different rates without proving a causal difference."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "APR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Nothing in the prompt shows an arithmetic error."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "APR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Matching units do not align time windows or case definitions."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "APR-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "APR_REPAIR_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Counting all existing cases in a defined population at one specified time estimates point prevalence.",
+      "post_commitment_feedback": "Use case timing: existing cases at a single time indicate point prevalence, whereas newly emerging cases over an interval indicate incidence.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "APR-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Incidence requires newly emerging cases during a defined follow-up interval."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "APR-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A one-day survey of current cases does not estimate whether a person will ever develop the condition."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "APR-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The survey includes existing cases rather than excluding them to count only new cases."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "APR-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "APR-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "APR_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Excluding existing cases and counting first-onset cases during a defined semester describes incidence.",
+      "post_commitment_feedback": "In this fresh setting, the baseline exclusion and first-onset count identify the same incidence-versus-prevalence function.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "APR-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Point prevalence would count cases present at enrollment instead of excluding them."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "APR-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "APR-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Period prevalence includes existing cases during the interval; this registry removes baseline cases."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "APR-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The descriptive registry design does not establish enrollment as a cause."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "APR-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "APR_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "All four fields determine what population quantity the rate represents.",
+      "post_commitment_feedback": "Do not compare until the numerator, denominator, interval, and case definition are aligned.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "APR-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "APR-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Without a denominator and interval, a count is not an interpretable rate."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "APR-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Display format does not supply population or case-definition identity."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "APR-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A causal model does not replace the numerator, interval, and counting rule."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "APR-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "APR_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "X is 1%; Y is 2%, so Y has the higher incidence proportion.",
+      "post_commitment_feedback": "Use new cases divided by the at-risk denominator: Y’s proportion is twice X’s.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "APR-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "X has more cases but a lower proportion: 1% versus 2%."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "APR-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The at-risk denominators make the proportions different."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "APR-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "APR-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Incidence requires a population at risk over an interval."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAM-ITEM-ENTRY",
+      "learner_prompt_key": "FAM_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "Intrusive obsessions paired with repetitive distress-reducing compulsions define the supplied pattern.",
+      "post_commitment_feedback": "The distinctive loop is obsession followed by compulsion; this is an educational family match, not a diagnosis.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAM-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Fear can be present, but the supplied obsession–compulsion loop is more specific."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAM-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No disruption of identity, memory, or continuity of experience is described."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAM-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No enduring inflexible cross-context personality pattern is established."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAM-ITEM-GUIDED",
+      "learner_prompt_key": "FAM_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "The symptoms are explicitly linked to a severe event and include intrusion and avoidance.",
+      "post_commitment_feedback": "The event-linked cluster is most consistent with the trauma- and stressor-related family at this bounded depth.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAM-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The vignette is organized around trauma-linked intrusions and avoidance, not symptom-focused health distress."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAM-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Event-linked intrusions are not described as a psychotic or disorganized process."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAM-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The pattern begins after a specific event rather than being an enduring cross-context style."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAM-ITEM-LIGHT",
+      "learner_prompt_key": "FAM_LIGHT",
+      "correct_option_index": 3,
+      "rationale": "The organizing feature is disproportionate distress and behavior related to physical symptoms, without dismissing the symptoms as unreal.",
+      "post_commitment_feedback": "Classify from the symptom-focused distress and checking; do not infer fabrication.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAM-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The central pattern is not disruption of identity, memory, or awareness."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAM-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No elevated-energy mood episode is described."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAM-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No psychotic symptom or disorganization is supplied."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAM-ITEM-SOLO",
+      "learner_prompt_key": "FAM_SOLO",
+      "correct_option_index": 1,
+      "rationale": "A distinct elevated or irritable mood episode with increased energy is the bipolar-family anchor.",
+      "post_commitment_feedback": "The episodic elevation and activation support a bipolar-family match, not a diagnosis.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAM-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The episode is organized by elevated mood and increased energy rather than low mood or anhedonia."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAM-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Worry or fear is not the dominant supplied feature."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAM-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No disruption of memory, identity, or awareness is described."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAM-ITEM-NEAR",
+      "learner_prompt_key": "FAM_NEAR",
+      "correct_option_index": 2,
+      "rationale": "The supplied combination of psychotic experiences and disorganization is the schizophrenia-family anchor.",
+      "post_commitment_feedback": "The pattern is educationally consistent with the schizophrenia family; diagnosis remains outside scope.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAM-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Dissociation centers on disruptions in identity, memory, or awareness rather than the supplied psychotic pattern."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAM-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Low mood or loss of interest is not the organizing feature."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAM-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An enduring personality style is not established by these psychotic symptoms."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAM-ITEM-CHANGED",
+      "learner_prompt_key": "FAM_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Disrupted memory and identity continuity anchor dissociation; an enduring inflexible cross-context pattern anchors the personality-disorder family.",
+      "post_commitment_feedback": "Use the defining contrast: continuity disruption versus enduring cross-context personality pattern.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAM-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A lacks the supplied psychosis/disorganization anchor, and B lacks a specific event-linked onset."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAM-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Neither low mood/anhedonia nor fear/worry organizes the stated records."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAM-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No symptom-focused health distress or elevated-energy episode is supplied."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAM-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "FAM_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Depressed mood and/or anhedonia organize the depressive-family row of the bounded matrix.",
+      "post_commitment_feedback": "Choose the defining feature, then make only a family-level consistency statement.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAM-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That loop is the obsessive-compulsive anchor."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAM-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That pattern is the bipolar-family anchor."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAM-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAM-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That feature anchors the dissociative family."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAM-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "FAM_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Persistent low mood and reduced interest are the supplied depressive-family anchors.",
+      "post_commitment_feedback": "The pattern is closest to the depressive family at introductory depth; it is not a diagnosis.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAM-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAM-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No elevated or unusually activated mood episode is supplied."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAM-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Fear and worry are not the organizing features."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAM-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The case is not centered on distress about physical symptoms."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAM-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "FAM_REPAIR_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "The obsession–compulsion loop supplies a more specific pattern than broad fear or worry.",
+      "post_commitment_feedback": "Contrast the organizing mechanisms: broad worry versus an intrusive thought linked to a ritual.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAM-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That contrast separates depressive and bipolar families."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAM-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That contrast separates schizophrenia and dissociative families."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAM-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That contrast addresses somatic-symptom and trauma/stressor families."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAM-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAM-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "FAM_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Broad excessive worry without a more specific supplied organizing feature fits the anxiety-family row.",
+      "post_commitment_feedback": "The bounded feature set is closest to the anxiety family while diagnosis and full criteria remain unclaimed.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAM-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No intrusive obsession linked to a compulsion is supplied."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAM-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAM-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No severe event or stressor linkage organizes the pattern."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAM-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No elevated or activated mood episode is described."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BIO-ITEM-ENTRY",
+      "learner_prompt_key": "BIO_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "The result supports possible involvement of dopamine signaling while leaving causation, sufficiency, and diagnosis unresolved.",
+      "post_commitment_feedback": "Use association language: the signaling system may contribute, but it is not a complete or diagnostic explanation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BIO-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A group association is not an individual diagnostic test."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BIO-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BIO-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The evidence is heterogeneous and does not establish a single sufficient cause."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BIO-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The association provides bounded evidence of biological involvement."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BIO-ITEM-GUIDED",
+      "learner_prompt_key": "BIO_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "Substantia nigra dopamine neurons support basal-ganglia movement regulation.",
+      "post_commitment_feedback": "The bounded prediction concerns movement circuitry; it does not establish a diagnosis by itself.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BIO-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Identity disruption is not the direct function of the supplied motor-circuit change."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BIO-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The stated pathway concerns movement circuits, not total memory deletion."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BIO-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Mechanistic evidence does not replace qualified diagnosis."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BIO-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BIO-ITEM-LIGHT",
+      "learner_prompt_key": "BIO_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Alzheimer’s disease is a progressive neurodegenerative condition with prominent memory context.",
+      "post_commitment_feedback": "The key bounded link is progressive neurodegeneration and memory decline.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BIO-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BIO-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The disorder is neurodegenerative and commonly affects memory."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BIO-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That pattern does not represent progressive neurodegeneration."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BIO-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "That pairing is more directly associated with Parkinson’s disease."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BIO-ITEM-SOLO",
+      "learner_prompt_key": "BIO_SOLO",
+      "correct_option_index": 2,
+      "rationale": "The findings support multifactorial biological involvement without sufficiency or diagnostic certainty.",
+      "post_commitment_feedback": "Several systems may contribute, and the evidence does not exclude psychological or social influences.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BIO-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Group-level differences do not establish a universal individual deficit or diagnosis."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BIO-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Biological contribution does not exclude other levels of explanation."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BIO-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BIO-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Treatment conclusions are outside the evidence supplied and outside lesson scope."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BIO-ITEM-NEAR",
+      "learner_prompt_key": "BIO_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Group differences with overlap support association, not perfect individual classification or unique causation.",
+      "post_commitment_feedback": "State the observed association and preserve the overlap and uncertainty.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BIO-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Substantial overlap directly contradicts perfect classification."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BIO-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Association and overlap do not establish a unique sufficient cause."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BIO-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BIO-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A reproducible group association can inform mechanism despite limits."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BIO-ITEM-CHANGED",
+      "learner_prompt_key": "BIO_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Substantia nigra dopamine-neuron degeneration is a central introductory biological link for Parkinson’s disease.",
+      "post_commitment_feedback": "Match the supplied structure and function, then stop before a person-level diagnostic claim.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BIO-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BIO-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Those findings are associated with Alzheimer’s disease, not ordinary transient worry."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BIO-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The mechanism is linked to Parkinsonian movement regulation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BIO-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A single measure does not provide diagnostic certainty."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BIO-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "BIO_REPAIR_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Association language preserves what the study observed without adding causation or diagnostic certainty.",
+      "post_commitment_feedback": "Name the group association and withhold stronger individual claims.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BIO-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Group association does not establish individual diagnosis."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BIO-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The study does not establish universal sufficiency."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BIO-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Biological evidence can coexist with psychological and social influences."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BIO-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BIO-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "BIO_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Overlapping group distributions can support mechanistic study but not perfect individual classification.",
+      "post_commitment_feedback": "Keep the claim at the group-mechanism level because overlap blocks certainty.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BIO-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Overlap means some individuals share values across groups."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BIO-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BIO-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A distribution difference alone does not prove unique causation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BIO-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Treatment selection is not established and is outside scope."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BIO-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "BIO_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Progressive neurodegeneration with memory decline is a bounded introductory Alzheimer’s link.",
+      "post_commitment_feedback": "Match the evidence while keeping each map contributory rather than diagnostic or exhaustive.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BIO-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BIO-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Parkinson’s is more directly linked to substantia nigra dopamine-neuron degeneration, and no single marker proves diagnosis."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BIO-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Dopamine evidence is contributory and heterogeneous, not a complete universal cause."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BIO-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Biological and stress-response evidence can be integrated rather than treated as exclusive."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BIO-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "BIO_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Progressive memory-related neurodegeneration maps to Alzheimer’s, while substantia nigra dopamine-neuron loss maps to Parkinson’s.",
+      "post_commitment_feedback": "The biological records support the two bounded mechanism links without completing a diagnosis.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BIO-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The memory-neurodegeneration and substantia-nigra movement links are reversed."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BIO-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The supplied pathology and movement evidence point to the two neurodegenerative disorders."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BIO-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BIO-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Fear/worry and identity-memory continuity are not the supplied mechanisms."
+        }
+      ]
+    }
+  ]
+}

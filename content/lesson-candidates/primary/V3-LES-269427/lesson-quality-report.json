@@ -1,0 +1,164 @@
+{
+  "artifact_type": "LESSON_QUALITY_REPORT",
+  "artifact_id": "V3-LQRP-269427",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "adbd64b1ed4cb890403bac0d3dd16410a9af3acf348f5609eb03cdf6d1dcfd3b",
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-269427",
+    "lesson_script_sha256": "82d1066c2a47e8dc938efb55a4e40124da0a51d97a29da1d03fd53cc0f4ea7db",
+    "kc_coverage_matrix_id": "V3-KCOV-269427",
+    "kc_coverage_matrix_sha256": "7fbefcd055008468bf96ecac4cc0a284a9e2b5f1de5c48fe8e6a0267fb3d5a30",
+    "lesson_presentation_plan_id": "V3-LPPL-269427",
+    "lesson_presentation_plan_sha256": "bf9d3ba4680148f68998f7f90113c9a89753572a58db6557bde08c28ec665c90"
+  },
+  "payload": {
+    "lesson_id": "V3-LES-269427",
+    "review_scope": "STANDARD_ROUTE_PRIMARY_CANDIDATE",
+    "rubric_identity": {
+      "rubric_path": "key-docs/lesson-quality-rubric.md",
+      "rubric_version": "0.9.1",
+      "rubric_sha256": "21f0cf751b752158b5c8f71fd762fcc956b9ba694c8f5ee8d50158b8972557b0"
+    },
+    "check_results": [
+      {
+        "check_id": "CANONICAL-PACKET-IDENTITY",
+        "status": "PASS",
+        "evidence_refs": [
+          "inputs/task-source-packet.json"
+        ]
+      },
+      {
+        "check_id": "STANDARD-ROUTE-SCOPE",
+        "status": "PASS",
+        "evidence_refs": [
+          "inputs/task-source-packet.json#/route_proofs"
+        ]
+      },
+      {
+        "check_id": "EXACT-PREREQUISITE-CHECK-AND-HANDOFF",
+        "status": "PASS",
+        "evidence_refs": [
+          "inputs/task-source-packet.json#/prerequisites/hard/0",
+          "lesson-script.json#/payload/curriculum_context/hard_prerequisite",
+          "kc-coverage-matrix.json#/payload/rows/0/prerequisite_failure_handoff"
+        ]
+      },
+      {
+        "check_id": "FORTY-MEASURABLE-ACTIVITIES",
+        "status": "PASS",
+        "evidence_refs": [
+          "lesson-script.json#/payload/activities"
+        ]
+      },
+      {
+        "check_id": "EIGHT-BOUNDED-REPAIR-REENTRY-PATHS",
+        "status": "PASS",
+        "evidence_refs": [
+          "lesson-script.json#/payload/kc_scripts"
+        ]
+      },
+      {
+        "check_id": "PACKET-KC-SCOPE-COVERAGE",
+        "status": "PASS",
+        "evidence_refs": [
+          "kc-coverage-matrix.json#/payload/rows",
+          "source-claim-ledger.json#/source_claims"
+        ]
+      },
+      {
+        "check_id": "DISTRACTOR-AND-ERROR-MAP-AUTHORED",
+        "status": "PASS",
+        "evidence_refs": [
+          "protected-items.json#/records/*/option_feedback",
+          "lesson-script.json#/payload/question_evidence_plan"
+        ]
+      },
+      {
+        "check_id": "NO-ITEM-DOK-CLAIMS-AUTHORIZED",
+        "status": "PASS",
+        "evidence_refs": [
+          "inputs/task-source-packet.json#/dok_authoring"
+        ]
+      },
+      {
+        "check_id": "R1-R15-STRUCTURAL",
+        "status": "PASS",
+        "evidence_refs": [
+          "validation/lesson-validate.json"
+        ]
+      },
+      {
+        "check_id": "CANONICAL-NORMALIZATION",
+        "status": "PASS",
+        "evidence_refs": [
+          "validation/normalization-smoke.json"
+        ]
+      },
+      {
+        "check_id": "PROTECTED-BOUNDARY",
+        "status": "PASS",
+        "evidence_refs": [
+          "validation/protected-scan.json"
+        ]
+      },
+      {
+        "check_id": "INDEPENDENT-JUDGE-PRE-SCREEN",
+        "status": "BLOCKED",
+        "blocker_code": "JUDGE_PRE_SCREEN_REQUIRED",
+        "reason": "No independent judge record was authored or claimed."
+      },
+      {
+        "check_id": "KIT-VALIDATE-ONE-WRAPPER",
+        "status": "BLOCKED",
+        "blocker_code": "KIT_MANIFEST_MISSING",
+        "reason": "The repository source-kit directory has no generated KIT-MANIFEST.json; direct pinned content-cli gates are retained separately."
+      },
+      {
+        "check_id": "RENDERED-ACCESSIBILITY-RELIABILITY-EVIDENCE",
+        "status": "BLOCKED",
+        "blocker_code": "HUMAN_AND_RENDERED_EVIDENCE_REQUIRED",
+        "reason": "No revision-bound browser, assistive-technology, novice, domain, or reliability evidence is claimed."
+      }
+    ],
+    "findings": [
+      {
+        "finding_id": "LQRP-269427-001",
+        "severity": "P2",
+        "status": "BLOCKED",
+        "required_correction": "Obtain an independent judge pre-screen for the current hashes."
+      },
+      {
+        "finding_id": "LQRP-269427-002",
+        "severity": "P2",
+        "status": "BLOCKED",
+        "required_correction": "Provide the generated primary-team KIT-MANIFEST.json before rerunning commands/validate-one.txt."
+      },
+      {
+        "finding_id": "LQRP-269427-003",
+        "severity": "P2",
+        "status": "BLOCKED",
+        "required_correction": "Obtain required independent domain, blind-solve, accessibility, novice, reliability, rights, and product decisions."
+      }
+    ],
+    "evidence_refs": [
+      "source-claim-ledger.json",
+      "validation/lesson-validate.json",
+      "validation/computed-quality.json",
+      "validation/normalization-smoke.json",
+      "validation/protected-scan.json",
+      "reviews/author-self-audit.json"
+    ],
+    "claim_limits": {
+      "learner_validated": false,
+      "efficacy_established": false,
+      "mastery_calibrated": false,
+      "readiness_validated": false,
+      "production_published": false,
+      "calibrated_thresholds_available": false
+    },
+    "final_gate_status": "BLOCKED",
+    "release_eligibility": "INTERNAL_DRAFT_ONLY",
+    "production_golden_status": "BLOCKED"
+  }
+}

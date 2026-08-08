@@ -1,0 +1,1858 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "ERED-ITEM-ENTRY",
+      "learner_prompt_key": "ERED_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "The iron half-reaction produces electrons, so iron is oxidized at the anode.",
+      "post_commitment_feedback": "Locate electrons on the product side first: iron produces them, fixing iron as the anode.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERED-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Gaining electrons identifies reduction at the cathode, not oxidation at the anode."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERED-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERED-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The silver half-reaction consumes rather than releases electrons."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERED-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Formation of Fe2+ accompanies oxidation, so the iron electrode is the anode rather than the cathode."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERED-ITEM-GUIDED",
+      "learner_prompt_key": "ERED_GUIDED",
+      "correct_option_index": 2,
+      "rationale": "Aluminum is oxidized and supplies electrons; nickel ions are reduced and consume them.",
+      "post_commitment_feedback": "Trace the external path from the oxidation electrode to the reduction electrode: aluminum → nickel.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERED-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the path from electron source to electron sink."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERED-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The salt bridge carries ions for charge balance, not external-circuit electrons."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERED-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERED-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ions move in the electrolyte, but the question asks for electrons in the external wire."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERED-ITEM-LIGHT",
+      "learner_prompt_key": "ERED_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "A galvanic cell has a negative oxidation anode and a positive reduction cathode.",
+      "post_commitment_feedback": "After assigning chemistry, apply the galvanic sign convention: anode negative, cathode positive.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERED-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERED-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This swaps the electrode identities fixed by oxidation and reduction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERED-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Those signs correspond to an electrolytic cell, not a galvanic cell."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERED-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A potential difference requires distinct electrode potentials; both electrodes are not assigned the same sign."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERED-ITEM-SOLO",
+      "learner_prompt_key": "ERED_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Electronic current uses the external conductor, while ionic migration inside the cell limits charge buildup.",
+      "post_commitment_feedback": "Keep the paths distinct: electrons use the wire; ions use the electrolyte connection.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERED-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the physical carriers and paths."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERED-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Cations do not move through the metallic external wire as the cell current carrier."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERED-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Anions carry charge but do not transport free electrons from cathode to anode."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERED-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERED-ITEM-NEAR",
+      "learner_prompt_key": "ERED_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Magnesium is oxidized at the negative galvanic anode, and copper ions are reduced at the positive cathode.",
+      "post_commitment_feedback": "The electron-producing magnesium half-reaction fixes both the anode and the start of electron flow.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERED-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Copper consumes electrons, so it is the cathode and cannot be the electron source."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERED-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Magnesium produces electrons and therefore cannot be the cathode."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERED-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERED-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Copper is the positive cathode, not the anode."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERED-ITEM-CHANGED",
+      "learner_prompt_key": "ERED_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Iodide oxidation occurs at P, making P the electrolytic anode; the power source removes electrons there, so P is positive.",
+      "post_commitment_feedback": "Preserve anode = oxidation, then apply driven-cell signs: P is the positive anode and Q the negative cathode.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERED-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERED-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "P releases electrons, so it is the anode; the source removes rather than supplies electrons there."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERED-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Q consumes electrons in reduction and is therefore the cathode."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERED-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Q is the negative cathode, not an anode, and receives electrons from the source."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERED-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "ERED_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Only bromide oxidation writes electrons as products.",
+      "post_commitment_feedback": "An anode half-reaction has electrons on the product side because oxidation releases them.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERED-REPAIRNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Electrons are reactants, so this is reduction."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERED-REPAIRNEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Electrons are reactants, so this is reduction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERED-REPAIRNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERED-REPAIRNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Electrons are reactants, so this is reduction."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERED-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "ERED_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Cobalt oxidation produces electrons at the negative galvanic anode; gold-ion reduction consumes them.",
+      "post_commitment_feedback": "The fresh pair preserves the same bookkeeping function: electron producer → negative anode → electron flow toward the cathode.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERED-REENTRYNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERED-REENTRYNEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Gold ions consume electrons and therefore do not define the anode."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERED-REENTRYNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Cobalt is oxidized, so it is not the cathode."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERED-REENTRYNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Gold is the cathode rather than the anode."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERED-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "ERED_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Electrode chemistry is invariant: oxidation is anodic and reduction cathodic; signs depend on cell type.",
+      "post_commitment_feedback": "Anchor the invariant first: oxidation occurs at the anode in either cell type.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERED-REPAIRCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An electrolytic anode is positive."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERED-REPAIRCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERED-REPAIRCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The cathode consumes incoming electrons during reduction."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERED-REPAIRCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An electrolytic cathode is negative, so reduction is not always at the positive electrode."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ERED-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "ERED_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Sulfide oxidation makes R the anode, which is positive in a driven cell; tin reduction makes T the negative cathode.",
+      "post_commitment_feedback": "The new substances preserve the changed-task function: identify chemistry first, then apply electrolytic signs.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ERED-REENTRYCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This swaps both chemical identities despite the supplied half-reactions."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ERED-REENTRYCHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The chemical identities are right, but the electrolytic signs are reversed."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ERED-REENTRYCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ERED-REENTRYCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "R releases electrons and cannot be the cathode; T consumes them and cannot be the anode."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ECEL-ITEM-ENTRY",
+      "learner_prompt_key": "ECEL_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "The more positive listed reduction potential is selected as the galvanic cathode reduction.",
+      "post_commitment_feedback": "Compare listed reductions directly: chlorine's +1.36 V is higher, so Cl2 is reduced.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ECEL-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ECEL-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Chloride is the product of reduction and would be oxidized in the reverse half-reaction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ECEL-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Copper metal is the product, not the species gaining electrons."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ECEL-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Potentials are not multiplied by stoichiometric coefficients."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ECEL-ITEM-GUIDED",
+      "learner_prompt_key": "ECEL_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Lead is the higher-potential cathode, so E°cell = −0.13 − (−0.25) = +0.12 V.",
+      "post_commitment_feedback": "Choose lead reduction, then subtract nickel's listed reduction potential to obtain +0.12 V.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ECEL-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds the two negative listed values instead of taking cathode minus anode."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ECEL-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ECEL-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The magnitude is right, but a spontaneous galvanic direction must use the positive sign here."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ECEL-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This subtracts signs incorrectly and overstates the potential difference."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ECEL-ITEM-LIGHT",
+      "learner_prompt_key": "ECEL_LIGHT",
+      "correct_option_index": 3,
+      "rationale": "Balancing coefficients does not scale a reduction potential.",
+      "post_commitment_feedback": "The silver reduction remains +0.80 V even when its half-reaction coefficient is multiplied.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ECEL-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This incorrectly multiplies voltage by the stoichiometric coefficient."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ECEL-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This both scales the potential and reverses its sign without selecting oxidation."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ECEL-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Balancing does not reverse the cathode half-reaction or its listed sign."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ECEL-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ECEL-ITEM-SOLO",
+      "learner_prompt_key": "ECEL_SOLO",
+      "correct_option_index": 1,
+      "rationale": "Iron has the lower reduction potential and is oxidized; electrons move from iron anode to tin cathode.",
+      "post_commitment_feedback": "Lower listed reduction potential runs in reverse as oxidation, fixing electron flow iron → tin.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ECEL-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This sends electrons from the selected cathode toward the anode."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ECEL-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ECEL-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The salt bridge carries ions, not external electrons."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ECEL-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Comparing the listed potentials identifies the spontaneous oxidation and reduction sides."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ECEL-ITEM-NEAR",
+      "learner_prompt_key": "ECEL_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Copper is reduced and chromium oxidized, so E°cell = 0.34 − (−0.74) = +1.08 V and electrons move chromium → copper.",
+      "post_commitment_feedback": "Cathode minus anode gives +1.08 V; the oxidation side supplies electrons.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ECEL-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ECEL-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This writes the reverse, nonspontaneous direction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ECEL-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This combines the values with incorrect sign handling."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ECEL-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This neither represents their difference nor the correct flow direction."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ECEL-ITEM-CHANGED",
+      "learner_prompt_key": "ECEL_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "E°cell = −0.18 − (+0.62) = −0.80 V, so the written standard direction is nonspontaneous and must be driven.",
+      "post_commitment_feedback": "Use the electrodes as written: cathode minus anode gives −0.80 V, identifying a driven direction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ECEL-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This subtracts magnitudes but ignores the electrode assignments in the written reaction."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ECEL-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This has the right magnitude but wrong sign and invokes irrelevant coefficient scaling."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ECEL-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ECEL-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The potential difference is 0.80 V, not 0.44 V, and a negative written direction is not galvanic."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ECEL-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "ECEL_REPAIR_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The standard cell-potential setup is listed cathode reduction minus listed anode reduction.",
+      "post_commitment_feedback": "Label first, then substitute unchanged listed values: +0.15 − (−0.52).",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ECEL-REPAIRNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses cathode and anode order."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ECEL-REPAIRNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ECEL-REPAIRNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Adding the signed values is not equivalent to subtracting the anode's negative reduction potential."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ECEL-REPAIRNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No coefficient information justifies scaling a potential, and potentials are not scaled in any case."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ECEL-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "ECEL_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Silver is reduced and manganese oxidized, giving 0.80 − (−1.18) = +1.98 V and flow manganese → silver.",
+      "post_commitment_feedback": "The fresh table uses the same function: select silver reduction, subtract manganese's listed value, and trace from manganese.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ECEL-REENTRYNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is the reverse sign and reverse flow."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ECEL-REENTRYNEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This subtracts magnitudes instead of handling the negative anode reduction potential."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ECEL-REENTRYNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The magnitude is right but the electron direction is reversed."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ECEL-REENTRYNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ECEL-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "ECEL_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "A negative standard cell potential marks the written direction as nonspontaneous under the stated standard conditions.",
+      "post_commitment_feedback": "Interpret the sign, not the magnitude: negative means the written direction must be driven.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ECEL-REPAIRCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ECEL-REPAIRCHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The sign, not the unsigned magnitude, determines this direction check."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ECEL-REPAIRCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Scaling coefficients does not change cell potential or spontaneity."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ECEL-REPAIRCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A cell potential describes a redox process involving electron transfer."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ECEL-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "ECEL_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The written direction has E°cell = −0.05 − (+0.47) = −0.52 V and is nonspontaneous under standard conditions.",
+      "post_commitment_feedback": "The fresh pair preserves the reverse-direction decision: −0.52 V requires driving.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ECEL-REENTRYCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This subtracts magnitudes incorrectly and assigns a positive sign."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ECEL-REENTRYCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ECEL-REENTRYCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Balancing does not multiply or reverse a potential."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ECEL-REENTRYCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The calculated difference is −0.52 V, and a negative written direction is not spontaneous."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FARD-ITEM-ENTRY",
+      "learner_prompt_key": "FARD_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "Q = It = 2.50 C/s × 400 s = 1000 C.",
+      "post_commitment_feedback": "Multiply current by elapsed seconds to obtain charge.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FARD-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This divides time by current instead of multiplying."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FARD-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds unlike quantities rather than using Q = It."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FARD-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FARD-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This squares or combines current without the elapsed-time product."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FARD-ITEM-GUIDED",
+      "learner_prompt_key": "FARD_GUIDED",
+      "correct_option_index": 0,
+      "rationale": "The charge is 0.200 mol e−, and the half-reaction uses one electron per silver atom.",
+      "post_commitment_feedback": "Divide charge by F, then use the 1:1 electron-to-silver ratio.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FARD-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FARD-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This halves the amount despite a one-electron silver half-reaction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FARD-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This moves the decimal in the wrong direction when dividing by Faraday's constant."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FARD-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This inverts the charge-to-electron conversion."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FARD-ITEM-LIGHT",
+      "learner_prompt_key": "FARD_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "The charge is 0.100 mol e−; two electron moles form one mole of copper, so 0.0500 mol Cu forms.",
+      "post_commitment_feedback": "After Q/F, divide electron moles by the coefficient 2.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FARD-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This doubles electron moles instead of applying the 2:1 electron-to-copper ratio."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FARD-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reports electron moles as copper moles."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FARD-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FARD-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This divides by the electron coefficient twice."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FARD-ITEM-SOLO",
+      "learner_prompt_key": "FARD_SOLO",
+      "correct_option_index": 1,
+      "rationale": "The charge is 2.00 mol e−, and the half-reaction produces one mole Cl2 per two mole e−.",
+      "post_commitment_feedback": "Convert to 2.00 mol electrons, then apply the 2 e− : 1 Cl2 ratio.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FARD-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This divides the product amount by two a second time."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FARD-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FARD-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reports electron moles as chlorine-gas moles."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FARD-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies by the electron coefficient rather than dividing."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FARD-ITEM-NEAR",
+      "learner_prompt_key": "FARD_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Q = 28,950 C = 0.300 mol e−; the three-electron ratio gives 0.100 mol Al, and 0.100 mol × 27.0 g/mol = 2.70 g.",
+      "post_commitment_feedback": "The correct unit ladder gives 0.300 mol e−, 0.100 mol Al, and 2.70 g Al.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FARD-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This treats the three-electron coefficient as a multiplier after converting to mass."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FARD-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This treats 0.300 mol electrons as one mole of aluminum."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FARD-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FARD-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies by the electron coefficient instead of dividing by it."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FARD-ITEM-CHANGED",
+      "learner_prompt_key": "FARD_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "0.0500 mol H2 requires 0.100 mol e− = 9650 C; t = Q/I = 1930 s.",
+      "post_commitment_feedback": "Work backward from gas to electrons to charge, then divide by 5.00 C/s.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FARD-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits the two-electron requirement for each mole of H2."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FARD-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FARD-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This applies the electron coefficient twice."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FARD-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This loses a factor of ten in charge or time."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FARD-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "FARD_REPAIR_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The dimensional path is charge, electron moles, product moles, then mass.",
+      "post_commitment_feedback": "Keep units visible: A·s = C, C/F = mol e−, then stoichiometry and molar mass.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FARD-REPAIRNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Current divided by time does not produce charge."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FARD-REPAIRNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FARD-REPAIRNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This inverts the Faraday conversion and mishandles the electron coefficient."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FARD-REPAIRNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Faraday's constant divides charge; multiplying gives incorrect dimensions."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FARD-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "FARD_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The charge is 0.200 mol e−, which forms 0.100 mol Ca and therefore 4.00 g.",
+      "post_commitment_feedback": "The fresh deposit uses the same ladder and a two-electron coefficient: 4.00 g.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FARD-REENTRYNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reports 0.200 mol electron equivalents as 0.200 mol calcium."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FARD-REENTRYNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FARD-REENTRYNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies by the electron coefficient."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FARD-REENTRYNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This divides by the coefficient twice."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FARD-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "FARD_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Backward design uses half-reaction stoichiometry to get electron moles, then charge, then time.",
+      "post_commitment_feedback": "Reverse the forward ladder cleanly and finish with t = Q/I.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FARD-REPAIRCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FARD-REPAIRCHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Mass is unnecessary unless the target is supplied as mass, and current cannot directly convert product moles."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FARD-REPAIRCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This starts with the unknown rather than the target amount."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FARD-REPAIRCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Dividing product moles by F has incompatible units."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FARD-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "FARD_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "0.0200 mol O2 requires 0.0800 mol e− = 7720 C; at 8.00 A, t = 965 s.",
+      "post_commitment_feedback": "The new gas uses four electrons per molecule: convert backward to 7720 C and divide by current.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FARD-REENTRYCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits most of the four-electron requirement."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FARD-REENTRYCHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This divides or multiplies by current in the wrong direction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FARD-REENTRYCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FARD-REENTRYCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This applies a two-electron ratio rather than the stated four-electron ratio."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONC-ITEM-ENTRY",
+      "learner_prompt_key": "CONC_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "Both electrodes and redox couples are zinc; only ion concentration differs.",
+      "post_commitment_feedback": "The cell's asymmetry is concentration, not electrode identity.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONC-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both electrodes are zinc metal."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONC-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The same zinc half-reaction applies on both sides."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONC-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONC-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Solid elemental zinc has oxidation state zero on both sides."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONC-ITEM-GUIDED",
+      "learner_prompt_key": "CONC_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Copper oxidation releases Cu2+ into the dilute solution.",
+      "post_commitment_feedback": "Ion creation occurs through metal oxidation on the dilute side.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONC-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reduction consumes Cu2+ and would lower its concentration."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONC-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONC-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ions do not travel through the metallic external wire."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONC-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Electrons participate in the half-reaction but do not independently become ions."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONC-ITEM-LIGHT",
+      "learner_prompt_key": "CONC_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Oxidation at the dilute side adds ions; reduction at the concentrated side consumes ions.",
+      "post_commitment_feedback": "Assign roles by the changes that narrow the concentration gap.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONC-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONC-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This would consume ions on the dilute side and create them on the concentrated side, widening the gap."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONC-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A complete cell requires both oxidation and reduction."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONC-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A concentration difference supplies a potential even with identical electrode materials."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONC-ITEM-SOLO",
+      "learner_prompt_key": "CONC_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Oxidation creates Ag+ on the dilute side, while reduction consumes Ag+ on the concentrated side.",
+      "post_commitment_feedback": "Both electrode processes act to narrow the concentration difference.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONC-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One side creates ions while the other consumes them."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONC-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This describes movement away from equilibrium."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONC-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Oxidation on the dilute side prevents both concentrations from falling."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONC-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONC-ITEM-NEAR",
+      "learner_prompt_key": "CONC_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The dilute L side oxidizes and sends electrons to reduction at the concentrated H side.",
+      "post_commitment_feedback": "Place ion creation at L and ion consumption at H, then draw electrons L → H.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONC-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reduction at the dilute side would lower its ion concentration and widen the gap."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONC-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONC-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The concentrated side undergoes reduction, not oxidation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONC-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Electrons flow toward H, and the two concentrations change in opposite directions."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONC-ITEM-CHANGED",
+      "learner_prompt_key": "CONC_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "After reversal, B is dilute and oxidizes; A is concentrated and reduces, so electrons move B → A.",
+      "post_commitment_feedback": "Recompute roles from current concentrations rather than preserving old side labels.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONC-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The concentrated side is the cathode and receives, rather than emits, electrons."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONC-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Identical electrodes do not eliminate the potential created by concentration difference."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONC-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONC-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The direction is right, but the stated reason assigns B the wrong concentration and electrode role."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONC-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "CONC_REPAIR_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Ion creation raises the dilute side and ion consumption lowers the concentrated side.",
+      "post_commitment_feedback": "Place each half-reaction where its ion effect narrows the gap.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONC-REPAIRNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This widens the difference by adding ions to the high side and removing them from the low side."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONC-REPAIRNEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A cell reaction needs paired oxidation and reduction and would consume ions on both sides only if electrons appeared from nowhere."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONC-REPAIRNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Paired oxidation on both sides would produce electrons without an electron sink."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONC-REPAIRNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONC-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "CONC_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The dilute X side oxidizes and the concentrated Y side reduces, producing X → Y electron flow.",
+      "post_commitment_feedback": "The fresh metal preserves the same gap-narrowing function.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONC-REENTRYNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONC-REENTRYNEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Oxidation at the concentrated side would widen the gap."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONC-REENTRYNEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The dilute side undergoes oxidation, and electrons leave rather than enter it."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONC-REENTRYNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Y does reduce, but electrons enter Y from X and the gap narrows."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONC-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "CONC_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "In a same-metal concentration cell, current concentration conditions determine which side oxidizes and reduces.",
+      "post_commitment_feedback": "Do not preserve a side label after the driving asymmetry moves; recompute roles.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONC-REPAIRCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Identical materials mean concentration, not permanent electrode identity, determines the role."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONC-REPAIRCHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Oxidation and reduction must remain paired."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONC-REPAIRCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONC-REPAIRCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Different electrode materials are not required for a concentration-cell potential."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CONC-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "CONC_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "N is now dilute and oxidizes, so it sends electrons to the now-concentrated M cathode.",
+      "post_commitment_feedback": "The fresh reversal confirms that current concentrations, not history, assign the roles.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CONC-REENTRYCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "M is now concentrated and therefore receives electrons as the cathode."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CONC-REENTRYCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CONC-REENTRYCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A cathode receives electrons rather than sending them."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CONC-REENTRYCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Initial conditions do not fix the roles after concentrations are replaced."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BATT-ITEM-ENTRY",
+      "learner_prompt_key": "BATT_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "Series cell voltages add: 4 × 1.2 V = 4.8 V.",
+      "post_commitment_feedback": "Add the four identical series-cell voltages.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BATT-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This divides one cell voltage by cell count."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BATT-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reports only one cell's voltage."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BATT-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BATT-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds cell count numerically to voltage instead of multiplying."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BATT-ITEM-GUIDED",
+      "learner_prompt_key": "BATT_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Lead and lead dioxide electrodes both move toward lead sulfate during discharge.",
+      "post_commitment_feedback": "The shared discharge product at both electrodes is PbSO4.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BATT-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Only one starting electrode is Pb, and both do not become elemental lead during discharge."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BATT-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BATT-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Oxygen evolution is not the bounded normal discharge change described here."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BATT-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "PbO2 is a starting positive-electrode material, not the product at both electrodes."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BATT-ITEM-LIGHT",
+      "learner_prompt_key": "BATT_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Lead-acid discharge consumes sulfuric acid and forms water, lowering acid concentration.",
+      "post_commitment_feedback": "The electrolyte participates in the net discharge chemistry, so acid concentration falls.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BATT-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BATT-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The net reaction consumes sulfuric acid rather than increasing it."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BATT-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The lead-acid electrolyte is a reactant in the bounded discharge description."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BATT-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Potassium hydroxide is associated with alkaline systems such as nickel-cadmium, not a lead-acid conversion."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BATT-ITEM-SOLO",
+      "learner_prompt_key": "BATT_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Recharge requires external electrical work to reverse the net discharge reactions.",
+      "post_commitment_feedback": "Treat recharge as an externally driven reverse chemical direction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BATT-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Continuing the spontaneous discharge direction would further discharge rather than recharge the cell."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BATT-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Voltage labeling does not restore reactants."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BATT-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Charging involves electron transfer and redox reactions."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BATT-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BATT-ITEM-NEAR",
+      "learner_prompt_key": "BATT_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Five 2.0 V series cells provide about 10 V, and both lead-acid electrodes form PbSO4 during discharge.",
+      "post_commitment_feedback": "Keep the two layers separate, then combine them: 10 V and shared PbSO4 formation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BATT-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BATT-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reports one-cell voltage and the wrong common discharge product."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BATT-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The voltage is right, but sulfuric acid is consumed rather than concentrated during discharge."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BATT-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The series calculation and chemistry both mismatch the described lead-acid battery."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BATT-ITEM-CHANGED",
+      "learner_prompt_key": "BATT_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Recharge reverses the cadmium-side discharge oxidation, so the oxidized cadmium product must be reduced back toward Cd.",
+      "post_commitment_feedback": "Reverse the named discharge half-reaction at the cadmium electrode under external drive.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BATT-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Further cadmium oxidation continues discharge rather than reversing it."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BATT-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BATT-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Recharge reverses each electrode's own discharge process rather than assigning the same reduction to both."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BATT-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Nickel-cadmium remains an alkaline chemistry; recharge does not convert it into lead-acid electrolyte."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BATT-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "BATT_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Redox chemistry and series aggregation are separate layers that can then be combined.",
+      "post_commitment_feedback": "Solve the cell chemistry and stack voltage as two distinct ledgers.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BATT-REPAIRNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Voltage alone does not specify all products, and cell count matters for a series stack."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BATT-REPAIRNEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Stoichiometric coefficients and volts are not quantities to add."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BATT-REPAIRNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BATT-REPAIRNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Voltage alone does not establish capacity."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BATT-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "BATT_REENTRY_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Six series cells provide about 12.6 V, and lead-acid discharge forms PbSO4 at both electrodes.",
+      "post_commitment_feedback": "The fresh stack confirms both layers: 12.6 V and PbSO4 formation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BATT-REENTRYNEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reports one-cell voltage and reverses the acid-concentration change."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BATT-REENTRYNEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The series arithmetic and common product are both incorrect."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BATT-REENTRYNEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BATT-REENTRYNEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Cadmium belongs to nickel-cadmium chemistry, not lead-acid."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BATT-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "BATT_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Restoration requires the reverse half-reaction, reduction, driven by the charger.",
+      "post_commitment_feedback": "Reverse both direction and electron placement under external drive.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BATT-REPAIRCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BATT-REPAIRCHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Further oxidation consumes more X rather than restoring it."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BATT-REPAIRCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A redox recharge necessarily transfers electrons."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BATT-REPAIRCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Voltage arithmetic cannot by itself reverse chemical products."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "BATT-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "BATT_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Incomplete reversal at the nickel electrode leaves that electrode's charged-state material incompletely restored.",
+      "post_commitment_feedback": "A rechargeable cell requires reverse progress at both electrode reactions, not only one.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "BATT-REENTRYCHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A charging fault does not change the named battery chemistry."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "BATT-REENTRYCHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "BATT-REENTRYCHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Voltage does not double merely because one electrode fails to restore."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "BATT-REENTRYCHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Correct cadmium restoration requires reduction rather than continued oxidation."
+        }
+      ]
+    }
+  ]
+}

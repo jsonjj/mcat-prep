@@ -1,0 +1,84 @@
+{
+  "answerPositionPatternCheck": {
+    "itemCount": 10,
+    "positionCounts": {
+      "0": 4,
+      "1": 4,
+      "2": 2,
+      "3": 0
+    },
+    "maximumPositionCountSpread": 4,
+    "maximumRepeatedPositionRun": 2,
+    "distributionStatus": "PREEXISTING_UNBALANCED",
+    "preservationStatus": "PASS",
+    "reviewedProtectedArtifactSha256": "0007e78acaf0b0a0d685d19ff71d885477ca2fc3bcde17db508f0f8de7785f5c",
+    "status": "PASS"
+  },
+  "distractorRationaleAudit": {
+    "explicitRejectionRationaleCount": 30,
+    "incorrectOptionCount": 30,
+    "missingRationaleRefs": [],
+    "status": "PASS"
+  },
+  "findings": [],
+  "format": "lesson-generation-protected-scan/2",
+  "lessonId": "V3-LES-329622",
+  "logHashes": {
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdoutSha256": "28cc5dc9217d9b8365a45214433d7a83d6a35050a5c91abb746c2e885eaeecb8"
+  },
+  "optionPresentationAudit": {
+    "auditedPromptKeys": [
+      "QUIN_NEAR",
+      "QUIN_CHANGED",
+      "QUIN_REPAIR_CHANGED"
+    ],
+    "optionLengthsByPromptKey": {
+      "QUIN_NEAR": [
+        48,
+        46,
+        53,
+        54
+      ],
+      "QUIN_CHANGED": [
+        56,
+        56,
+        60,
+        64
+      ],
+      "QUIN_REPAIR_CHANGED": [
+        55,
+        55,
+        55,
+        56
+      ]
+    },
+    "optionLengthSpreadByPromptKey": {
+      "QUIN_NEAR": 8,
+      "QUIN_CHANGED": 8,
+      "QUIN_REPAIR_CHANGED": 1
+    },
+    "maximumAllowedSpread": 15,
+    "status": "PASS"
+  },
+  "postCommitmentFeedbackCheck": {
+    "authoredCount": 10,
+    "requiredCount": 10,
+    "status": "PASS"
+  },
+  "protectedArtifact": {
+    "path": "protected-items.json",
+    "sha256": "0007e78acaf0b0a0d685d19ff71d885477ca2fc3bcde17db508f0f8de7785f5c",
+    "size": 16859
+  },
+  "scannedPathCount": 6,
+  "scannedPaths": [
+    "learner-safe-items.json",
+    "source-claim-ledger.json",
+    "candidate-quality-ledger.json",
+    "validation/lesson-validate.json",
+    "validation/computed-quality.json",
+    "validation/normalization-smoke.json"
+  ],
+  "status": "PASS"
+}

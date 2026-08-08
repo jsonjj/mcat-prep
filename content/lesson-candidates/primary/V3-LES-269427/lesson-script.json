@@ -1,0 +1,4414 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-269427",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "82d1066c2a47e8dc938efb55a4e40124da0a51d97a29da1d03fd53cc0f4ea7db",
+  "payload": {
+    "lesson_id": "V3-LES-269427",
+    "grouping_id": "V3-CL-269427",
+    "ordered_kc_ids": [
+      "V3-KC-717751",
+      "V3-KC-795113",
+      "V3-KC-521064",
+      "V3-KC-188841"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-717751",
+      "V3-KC-795113",
+      "V3-KC-521064",
+      "V3-KC-188841"
+    ],
+    "throughline": "Map the argument, test conclusion fit, weigh passage evidence, bound generalizations, and require a passage-grounded causal link.",
+    "curriculum_context": {
+      "canonical_title": "Evaluate Passage Logic, Evidence, Generalization, and Causality",
+      "phase_ids": [
+        "V3-PHS-935127",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-326514",
+        "V3-MOD-138674"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 88,
+          "relation_ids": [
+            "R14-PL-581402-088"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 88,
+          "relation_ids": [
+            "R14-PL-904137-088"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-862541",
+          "position": 6,
+          "relation_ids": [
+            "R14-PL-862541-006"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-269427",
+      "revisit_relation_ids": [
+        "R14-RV-269427"
+      ],
+      "hard_prerequisite": {
+        "lesson_id": "V3-LES-386478",
+        "relation_ids": [
+          "V3-EDG-192746"
+        ],
+        "source_kc_ids": [
+          "V3-KC-189442",
+          "V3-KC-730249",
+          "V3-KC-072322"
+        ],
+        "taught_at_sequence_position": 108,
+        "checked_at_activity_id": "LOG-ACT-ENTRY",
+        "unresolved_handoff_lesson_id": "V3-LES-386478",
+        "failed_check_handoff_node_id": "LOG-NODE-PREREQUISITE-HANDOFF",
+        "failed_check_predicate": "HARD_PREREQUISITE_CHECK_NOT_PASSED",
+        "planner_behavior": "BLOCK_CURRENT_PROGRESSION_AND_RETURN_TO_CANONICAL_PREREQUISITE",
+        "prerequisite_support_route_authored": false
+      },
+      "helpful_context": {
+        "lesson_id": "V3-LES-556584",
+        "relation_ids": [
+          "R14-HELPFUL-15"
+        ],
+        "required_for_progression": false
+      },
+      "route_scope_code": "STANDARD_ONLY",
+      "applicable_routes": [
+        "STANDARD"
+      ]
+    },
+    "nodes": [
+      {
+        "node_id": "LOG-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: locate the conclusion. This low-stakes check does not select a route, satisfy an exit, or establish mastery."
+        ],
+        "representation_ids": [
+          "LOG-REP-CORE"
+        ],
+        "activity_ids": [
+          "LOG-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "LOG-CP-ENTRY",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "LOG-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: test an argument from the inside—what follows from the passage’s own claims—without replacing the author’s premises with outside knowledge.",
+          "Prerequisite check: first distinguish the conclusion from its support and map the stated relation. If that mapping is not secure, stop and return to V3-LES-386478 under V3-EDG-192746."
+        ],
+        "representation_ids": [
+          "LOG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LOG-CP-ORIENTATION",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "LOG-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Reconstruct the argument as premises → bridge → conclusion. Then ask whether accepting the premises makes the conclusion reasonable, merely possible, or unsupported.",
+          "Plausibility asks whether a claim could fit the passage. Soundness within this bounded task asks whether the stated support and bridge actually warrant the conclusion.",
+          "Respect qualifiers. “Often,” “in these cases,” and “unless” limit what follows. Do not strengthen a qualified premise into an absolute conclusion."
+        ],
+        "representation_ids": [
+          "LOG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LOG-CP-EXPLANATION",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "LOG-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model: conclusion fit is a load test. Put only passage-supplied support on one side and the exact conclusion on the other; any missing bridge or enlarged claim is visible."
+        ],
+        "representation_ids": [
+          "LOG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LOG-CP-MODEL",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "LOG-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: the passage says a plan reduced delays in two offices, then concludes the plan can reduce delays where the same bottleneck exists. That is qualified. I reject the stronger reading that it will eliminate every delay everywhere."
+        ],
+        "representation_ids": [
+          "LOG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LOG-CP-THINK",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "LOG-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: “All archived letters in this collection are catalogued. Document M is an archived letter in this collection. Therefore Document M is catalogued.” If the premises are accepted, the conclusion follows directly.",
+          "Selection reasoning: the conclusion neither adds a new criterion nor widens the set. An alternative conclusion about the document’s historical value would require a premise the passage never supplied."
+        ],
+        "representation_ids": [
+          "LOG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LOG-CP-WORKED",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "LOG-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: use the visible passage-boundary checklist, then commit before feedback."
+        ],
+        "representation_ids": [
+          "LOG-REP-CORE"
+        ],
+        "activity_ids": [
+          "LOG-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "LOG-CP-GUIDED",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "LOG-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: apply the same evaluation with one brief non-answer-bearing cue."
+        ],
+        "representation_ids": [
+          "LOG-REP-CORE"
+        ],
+        "activity_ids": [
+          "LOG-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "LOG-CP-LIGHT",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "LOG-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: evaluate a fresh passage argument without answer-bearing assistance."
+        ],
+        "representation_ids": [
+          "LOG-REP-CORE"
+        ],
+        "activity_ids": [
+          "LOG-ACT-SOLO"
+        ],
+        "checkpoint_ref": "LOG-CP-SOLO",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "LOG-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: an argument can be internally well supported even if the reader doubts a premise outside the passage. Conversely, a familiar or agreeable conclusion can still be unsupported by the text."
+        ],
+        "representation_ids": [
+          "LOG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LOG-CP-CONTRAST",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "LOG-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: evaluate a closely aligned fresh passage using the taught model."
+        ],
+        "representation_ids": [
+          "LOG-REP-CORE"
+        ],
+        "activity_ids": [
+          "LOG-ACT-NEAR"
+        ],
+        "checkpoint_ref": "LOG-CP-NEAR",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "LOG-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: preserve the same evaluative construct while the passage relation or required operation changes."
+        ],
+        "representation_ids": [
+          "LOG-REP-ALT"
+        ],
+        "activity_ids": [
+          "LOG-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "LOG-CP-CHANGED",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "LOG-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near-function repair: Compare the exact demand of the conclusion with the conditions, scope, and certainty actually supplied. The cue does not disclose the fresh re-entry."
+        ],
+        "representation_ids": [
+          "LOG-REP-CORE"
+        ],
+        "activity_ids": [
+          "LOG-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "LOG-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "LOG-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near-function re-entry: evaluate an unexposed passage with no answer-bearing help."
+        ],
+        "representation_ids": [
+          "LOG-REP-CORE"
+        ],
+        "activity_ids": [
+          "LOG-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "LOG-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "LOG-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-function repair: Use the counterexample to remove the absolute claim; do not manufacture a new absolute conclusion. The cue does not disclose the fresh re-entry."
+        ],
+        "representation_ids": [
+          "LOG-REP-ALT"
+        ],
+        "activity_ids": [
+          "LOG-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "LOG-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "LOG-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-function re-entry: recheck the exact failed function in a new passage."
+        ],
+        "representation_ids": [
+          "LOG-REP-ALT"
+        ],
+        "activity_ids": [
+          "LOG-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "LOG-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "LOG-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Bounded stop: after one fresh re-entry miss, do not loop or award exit credit. Return control to the planner for later support."
+        ],
+        "representation_ids": [
+          "LOG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LOG-CP-HANDOFF",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "LOG-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: identify the exact conclusion, preserve every qualifier, locate the bridge from support to conclusion, and judge only the fit licensed by the passage."
+        ],
+        "representation_ids": [
+          "LOG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LOG-CP-RECAP",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "LOG-NODE-PREREQUISITE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Prerequisite handoff: the argument elements or their relations were not mapped securely. Stop this lesson and return to V3-LES-386478; do not substitute an in-lesson summary for the canonical prerequisite."
+        ],
+        "representation_ids": [
+          "LOG-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LOG-CP-PREREQUISITE-HANDOFF",
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "EVD-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify relevant evidence. This low-stakes check does not select a route, satisfy an exit, or establish mastery."
+        ],
+        "representation_ids": [
+          "EVD-REP-CORE"
+        ],
+        "activity_ids": [
+          "EVD-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "EVD-CP-ENTRY",
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "EVD-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: ask three separate questions—what evidence is present, whether it bears on the claim, and whether it is enough for the claim’s exact strength.",
+          "Bridge from V3-LES-386478: first map the claim and supporting passage part; if that mapping is unavailable, use the existing prerequisite handoff rather than guessing."
+        ],
+        "representation_ids": [
+          "EVD-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EVD-CP-ORIENTATION",
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "EVD-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Presence is not relevance: a detail can be true in the passage yet fail to change confidence in the target claim.",
+          "Relevance is not sufficiency: evidence may bear directly on a claim but remain too narrow for an absolute or broad conclusion.",
+          "Absence supports a claim only when the passage gives a reason the missing feature should have appeared and describes a search or observation capable of finding it."
+        ],
+        "representation_ids": [
+          "EVD-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EVD-CP-EXPLANATION",
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "EVD-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model: claim target → predicted evidence → observed passage detail → strength match. Mark each link separately."
+        ],
+        "representation_ids": [
+          "EVD-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EVD-CP-MODEL",
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "EVD-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: attendance rose after the schedule change, so the evidence is relevant to access. But the passage also reports a simultaneous fare reduction, so attendance alone is not sufficient to isolate the schedule as the only explanation."
+        ],
+        "representation_ids": [
+          "EVD-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EVD-CP-THINK",
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "EVD-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: claim—“The guide’s warning changed the travelers’ route.” Evidence—the travelers quote the warning, discuss its risk, and immediately choose the alternate road. Those details are relevant and jointly support the bounded claim.",
+          "Selection reasoning: a description of the road’s color would be present evidence but irrelevant to whether the warning changed the choice."
+        ],
+        "representation_ids": [
+          "EVD-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EVD-CP-WORKED",
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "EVD-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: use the visible passage-boundary checklist, then commit before feedback."
+        ],
+        "representation_ids": [
+          "EVD-REP-CORE"
+        ],
+        "activity_ids": [
+          "EVD-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "EVD-CP-GUIDED",
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "EVD-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: apply the same evaluation with one brief non-answer-bearing cue."
+        ],
+        "representation_ids": [
+          "EVD-REP-CORE"
+        ],
+        "activity_ids": [
+          "EVD-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "EVD-CP-LIGHT",
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "EVD-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: evaluate a fresh passage argument without answer-bearing assistance."
+        ],
+        "representation_ids": [
+          "EVD-REP-CORE"
+        ],
+        "activity_ids": [
+          "EVD-ACT-SOLO"
+        ],
+        "checkpoint_ref": "EVD-CP-SOLO",
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "EVD-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: missing mention is not automatically evidence of absence. The passage must establish that the author looked where the feature should have appeared or that the account aimed to be complete."
+        ],
+        "representation_ids": [
+          "EVD-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EVD-CP-CONTRAST",
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "EVD-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: evaluate a closely aligned fresh passage using the taught model."
+        ],
+        "representation_ids": [
+          "EVD-REP-CORE"
+        ],
+        "activity_ids": [
+          "EVD-ACT-NEAR"
+        ],
+        "checkpoint_ref": "EVD-CP-NEAR",
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "EVD-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: preserve the same evaluative construct while the passage relation or required operation changes."
+        ],
+        "representation_ids": [
+          "EVD-REP-ALT"
+        ],
+        "activity_ids": [
+          "EVD-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "EVD-CP-CHANGED",
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "EVD-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near-function repair: First test whether the detail changes confidence in the claim; then test whether the full set warrants the claim’s strength. The cue does not disclose the fresh re-entry."
+        ],
+        "representation_ids": [
+          "EVD-REP-CORE"
+        ],
+        "activity_ids": [
+          "EVD-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "EVD-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "EVD-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near-function re-entry: evaluate an unexposed passage with no answer-bearing help."
+        ],
+        "representation_ids": [
+          "EVD-REP-CORE"
+        ],
+        "activity_ids": [
+          "EVD-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "EVD-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "EVD-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-function repair: When the claim names a reason, evidence must connect that reason to the outcome rather than merely repeat the outcome. The cue does not disclose the fresh re-entry."
+        ],
+        "representation_ids": [
+          "EVD-REP-ALT"
+        ],
+        "activity_ids": [
+          "EVD-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "EVD-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "EVD-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-function re-entry: recheck the exact failed function in a new passage."
+        ],
+        "representation_ids": [
+          "EVD-REP-ALT"
+        ],
+        "activity_ids": [
+          "EVD-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "EVD-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "EVD-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Bounded stop: after one fresh re-entry miss, do not loop or award exit credit. Return control to the planner for later support."
+        ],
+        "representation_ids": [
+          "EVD-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EVD-CP-HANDOFF",
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "EVD-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: inventory what is present, connect it to the exact claim, compare evidence strength with claim strength, and treat silence cautiously."
+        ],
+        "representation_ids": [
+          "EVD-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "EVD-CP-RECAP",
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: preserve the observed group. This low-stakes check does not select a route, satisfy an exit, or establish mastery."
+        ],
+        "representation_ids": [
+          "GEN-REP-CORE"
+        ],
+        "activity_ids": [
+          "GEN-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "GEN-CP-ENTRY",
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: draw a scope box around the evidence, then ask whether the generalization stays inside that box.",
+          "Bridge from argument mapping: identify the basis and conclusion first; unresolved mapping returns to V3-LES-386478 through the lesson’s prerequisite handoff."
+        ],
+        "representation_ids": [
+          "GEN-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEN-CP-ORIENTATION",
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Track four scope dimensions: who or what was observed, where, when, and under which stated conditions.",
+          "Quantifiers matter. “Some,” “most in this set,” and “all” are different claims. A conclusion may cautiously extend to similar cases only when the passage supplies the similarity condition.",
+          "Do not import outside counterexamples. The defect is visible when the claim outruns the passage basis."
+        ],
+        "representation_ids": [
+          "GEN-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEN-CP-EXPLANATION",
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model: evidence scope box versus claim scope box. A warranted generalization fits within or explicitly qualifies any extension beyond the evidence box."
+        ],
+        "representation_ids": [
+          "GEN-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEN-CP-MODEL",
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: the passage reports one winter program in four rural schools. A conclusion about those schools during that winter fits; a claim about all schools in every season expands population, setting, and time at once."
+        ],
+        "representation_ids": [
+          "GEN-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEN-CP-THINK",
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: six neighborhood markets in one district extended hours and reported later customer visits. “These markets received later visits after extending hours” stays within the basis. “Every retailer should expect the same result” does not.",
+          "Selection reasoning: the warranted statement preserves the observed set and timing rather than changing a local pattern into a universal forecast."
+        ],
+        "representation_ids": [
+          "GEN-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEN-CP-WORKED",
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: use the visible passage-boundary checklist, then commit before feedback."
+        ],
+        "representation_ids": [
+          "GEN-REP-CORE"
+        ],
+        "activity_ids": [
+          "GEN-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "GEN-CP-GUIDED",
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: apply the same evaluation with one brief non-answer-bearing cue."
+        ],
+        "representation_ids": [
+          "GEN-REP-CORE"
+        ],
+        "activity_ids": [
+          "GEN-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "GEN-CP-LIGHT",
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: evaluate a fresh passage argument without answer-bearing assistance."
+        ],
+        "representation_ids": [
+          "GEN-REP-CORE"
+        ],
+        "activity_ids": [
+          "GEN-ACT-SOLO"
+        ],
+        "checkpoint_ref": "GEN-CP-SOLO",
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: a narrow conclusion is not automatically weak; it can be exactly as broad as the evidence warrants. Mentioning a larger group does not warrant a claim about that whole group."
+        ],
+        "representation_ids": [
+          "GEN-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEN-CP-CONTRAST",
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: evaluate a closely aligned fresh passage using the taught model."
+        ],
+        "representation_ids": [
+          "GEN-REP-CORE"
+        ],
+        "activity_ids": [
+          "GEN-ACT-NEAR"
+        ],
+        "checkpoint_ref": "GEN-CP-NEAR",
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: preserve the same evaluative construct while the passage relation or required operation changes."
+        ],
+        "representation_ids": [
+          "GEN-REP-ALT"
+        ],
+        "activity_ids": [
+          "GEN-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "GEN-CP-CHANGED",
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near-function repair: Use a five-part scope box so any unsupported expansion has a named dimension. The cue does not disclose the fresh re-entry."
+        ],
+        "representation_ids": [
+          "GEN-REP-CORE"
+        ],
+        "activity_ids": [
+          "GEN-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "GEN-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near-function re-entry: evaluate an unexposed passage with no answer-bearing help."
+        ],
+        "representation_ids": [
+          "GEN-REP-CORE"
+        ],
+        "activity_ids": [
+          "GEN-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "GEN-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-function repair: Carry the quantifier and population together; “some selected members” cannot become “all” or “most everywhere.” The cue does not disclose the fresh re-entry."
+        ],
+        "representation_ids": [
+          "GEN-REP-ALT"
+        ],
+        "activity_ids": [
+          "GEN-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "GEN-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-function re-entry: recheck the exact failed function in a new passage."
+        ],
+        "representation_ids": [
+          "GEN-REP-ALT"
+        ],
+        "activity_ids": [
+          "GEN-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "GEN-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Bounded stop: after one fresh re-entry miss, do not loop or award exit credit. Return control to the planner for later support."
+        ],
+        "representation_ids": [
+          "GEN-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEN-CP-HANDOFF",
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "GEN-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: mark population, setting, time, conditions, and quantifier in both evidence and conclusion; reject or revise every unsupported expansion."
+        ],
+        "representation_ids": [
+          "GEN-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GEN-CP-RECAP",
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "CAU-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify causal language. This low-stakes check does not select a route, satisfy an exit, or establish mastery."
+        ],
+        "representation_ids": [
+          "CAU-REP-CORE"
+        ],
+        "activity_ids": [
+          "CAU-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "CAU-CP-ENTRY",
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "CAU-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: identify exactly what the passage claims caused what, then inspect whether the passage supplies a link stronger than sequence or co-occurrence alone.",
+          "Bridge from V3-LES-386478: map the two events and their asserted relation before evaluation; failure uses the exact V3-LES-386478 handoff."
+        ],
+        "representation_ids": [
+          "CAU-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CAU-CP-ORIENTATION",
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "CAU-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "A causal claim says changing one factor produced a change in another. “After,” “alongside,” and “was associated with” do not by themselves say caused.",
+          "Within a passage, a causal link becomes more warranted when the text supplies direct intervention, removal-and-return, a traced mechanism, or an explicit contrast while addressing passage-mentioned alternatives.",
+          "Do not demand outside methods coursework. Judge the relation and evidence the passage actually supplies."
+        ],
+        "representation_ids": [
+          "CAU-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CAU-CP-EXPLANATION",
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "CAU-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model: proposed cause → linkage evidence → outcome, with passage-supplied alternatives placed beside the link rather than ignored."
+        ],
+        "representation_ids": [
+          "CAU-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CAU-CP-MODEL",
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "CAU-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Think aloud: waits fell after a policy change, but the passage says staffing increased the same day. Sequence makes the policy relevant, yet the staffing change is a passage-supplied alternative, so the policy-alone causal claim is not warranted."
+        ],
+        "representation_ids": [
+          "CAU-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CAU-CP-THINK",
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "CAU-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a door begins sticking only when a new seal is installed, moves freely when the seal is removed, and sticks again when the seal is replaced. The repeated change with installation status directly supports the bounded claim that this seal causes the sticking.",
+          "Selection reasoning: mere timing would be weaker; the removal-and-return pattern supplies the causal link."
+        ],
+        "representation_ids": [
+          "CAU-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CAU-CP-WORKED",
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "CAU-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: use the visible passage-boundary checklist, then commit before feedback."
+        ],
+        "representation_ids": [
+          "CAU-REP-CORE"
+        ],
+        "activity_ids": [
+          "CAU-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "CAU-CP-GUIDED",
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "CAU-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: apply the same evaluation with one brief non-answer-bearing cue."
+        ],
+        "representation_ids": [
+          "CAU-REP-CORE"
+        ],
+        "activity_ids": [
+          "CAU-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "CAU-CP-LIGHT",
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "CAU-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: evaluate a fresh passage argument without answer-bearing assistance."
+        ],
+        "representation_ids": [
+          "CAU-REP-CORE"
+        ],
+        "activity_ids": [
+          "CAU-ACT-SOLO"
+        ],
+        "checkpoint_ref": "CAU-CP-SOLO",
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "CAU-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: causation need not be absolute or universal. A passage may warrant that one factor contributed under stated conditions while leaving other factors possible."
+        ],
+        "representation_ids": [
+          "CAU-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CAU-CP-CONTRAST",
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "CAU-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: evaluate a closely aligned fresh passage using the taught model."
+        ],
+        "representation_ids": [
+          "CAU-REP-CORE"
+        ],
+        "activity_ids": [
+          "CAU-ACT-NEAR"
+        ],
+        "checkpoint_ref": "CAU-CP-NEAR",
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "CAU-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: preserve the same evaluative construct while the passage relation or required operation changes."
+        ],
+        "representation_ids": [
+          "CAU-REP-ALT"
+        ],
+        "activity_ids": [
+          "CAU-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "CAU-CP-CHANGED",
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "CAU-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near-function repair: Sequence establishes order; causal linkage requires evidence that the proposed factor produced the outcome under the passage conditions. The cue does not disclose the fresh re-entry."
+        ],
+        "representation_ids": [
+          "CAU-REP-CORE"
+        ],
+        "activity_ids": [
+          "CAU-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "CAU-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "CAU-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near-function re-entry: evaluate an unexposed passage with no answer-bearing help."
+        ],
+        "representation_ids": [
+          "CAU-REP-CORE"
+        ],
+        "activity_ids": [
+          "CAU-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "CAU-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "CAU-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-function repair: A removal-and-return pattern tests whether the outcome follows the proposed factor across changes. The cue does not disclose the fresh re-entry."
+        ],
+        "representation_ids": [
+          "CAU-REP-ALT"
+        ],
+        "activity_ids": [
+          "CAU-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "CAU-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "CAU-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-function re-entry: recheck the exact failed function in a new passage."
+        ],
+        "representation_ids": [
+          "CAU-REP-ALT"
+        ],
+        "activity_ids": [
+          "CAU-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "CAU-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "CAU-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Bounded stop: after one fresh re-entry miss, do not loop or award exit credit. Return control to the planner for later support."
+        ],
+        "representation_ids": [
+          "CAU-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CAU-CP-HANDOFF",
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ]
+      },
+      {
+        "node_id": "CAU-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: name cause and outcome, separate sequence from linkage, inspect passage-supplied alternatives, and match causal strength to the evidence."
+        ],
+        "representation_ids": [
+          "CAU-REP-CORE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CAU-CP-RECAP",
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "LOG-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-717751",
+        "item_binding_id": "LOG-ITEM-ENTRY",
+        "learner_operation": "DISTINGUISH_CONCLUSION_FROM_SUPPORT",
+        "authorized_next_node_ids": [
+          "LOG-NODE-ORIENTATION",
+          "LOG-NODE-PREREQUISITE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "LOG-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-717751",
+        "item_binding_id": "LOG-ITEM-GUIDED",
+        "learner_operation": "EVALUATE_DIRECT_PASSAGE_INFERENCE",
+        "authorized_next_node_ids": [
+          "LOG-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "LOG-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-717751",
+        "item_binding_id": "LOG-ITEM-LIGHT",
+        "learner_operation": "IDENTIFY_QUALIFIER_LOSS",
+        "authorized_next_node_ids": [
+          "LOG-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "LOG-ACT-SOLO",
+        "primary_kc_id": "V3-KC-717751",
+        "item_binding_id": "LOG-ITEM-SOLO",
+        "learner_operation": "LOCATE_UNSTATED_ARGUMENT_BRIDGE",
+        "authorized_next_node_ids": [
+          "LOG-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "LOG-ACT-NEAR",
+        "primary_kc_id": "V3-KC-717751",
+        "item_binding_id": "LOG-ITEM-NEAR",
+        "learner_operation": "EVALUATE_QUALIFIED_CONCLUSION_FIT",
+        "authorized_next_node_ids": [
+          "LOG-NODE-CHANGED",
+          "LOG-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "LOG-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-717751",
+        "item_binding_id": "LOG-ITEM-CHANGED",
+        "learner_operation": "REVISE_CONCLUSION_TO_FIT_QUALIFICATION",
+        "authorized_next_node_ids": [
+          "LOG-NODE-RECAP",
+          "LOG-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "LOG-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-717751",
+        "item_binding_id": "LOG-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_CONCLUSION_FIT_TEST",
+        "authorized_next_node_ids": [
+          "LOG-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "LOG-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-717751",
+        "item_binding_id": "LOG-ITEM-REENTRY-NEAR",
+        "learner_operation": "RECHECK_QUALIFIED_CONCLUSION_FIT",
+        "authorized_next_node_ids": [
+          "LOG-NODE-CHANGED",
+          "LOG-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "LOG-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-717751",
+        "item_binding_id": "LOG-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_COUNTEREXAMPLE_EFFECT",
+        "authorized_next_node_ids": [
+          "LOG-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "LOG-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-717751",
+        "item_binding_id": "LOG-ITEM-REENTRY-CHANGED",
+        "learner_operation": "RECHECK_CONCLUSION_REVISION_FROM_COUNTEREXAMPLE",
+        "authorized_next_node_ids": [
+          "LOG-NODE-RECAP",
+          "LOG-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "EVD-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-795113",
+        "item_binding_id": "EVD-ITEM-ENTRY",
+        "learner_operation": "IDENTIFY_CLAIM_RELEVANT_DETAIL",
+        "authorized_next_node_ids": [
+          "EVD-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "EVD-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-795113",
+        "item_binding_id": "EVD-ITEM-GUIDED",
+        "learner_operation": "DISTINGUISH_RELEVANCE_FROM_SUFFICIENCY",
+        "authorized_next_node_ids": [
+          "EVD-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "EVD-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-795113",
+        "item_binding_id": "EVD-ITEM-LIGHT",
+        "learner_operation": "IDENTIFY_IRRELEVANT_PASSAGE_DETAIL",
+        "authorized_next_node_ids": [
+          "EVD-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "EVD-ACT-SOLO",
+        "primary_kc_id": "V3-KC-795113",
+        "item_binding_id": "EVD-ITEM-SOLO",
+        "learner_operation": "EVALUATE_NONMENTION_AS_EVIDENCE",
+        "authorized_next_node_ids": [
+          "EVD-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "EVD-ACT-NEAR",
+        "primary_kc_id": "V3-KC-795113",
+        "item_binding_id": "EVD-ITEM-NEAR",
+        "learner_operation": "EVALUATE_COMBINED_EVIDENCE_SUFFICIENCY",
+        "authorized_next_node_ids": [
+          "EVD-NODE-CHANGED",
+          "EVD-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "EVD-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-795113",
+        "item_binding_id": "EVD-ITEM-CHANGED",
+        "learner_operation": "SELECT_GAP_CLOSING_PASSAGE_EVIDENCE",
+        "authorized_next_node_ids": [
+          "EVD-NODE-RECAP",
+          "EVD-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "EVD-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-795113",
+        "item_binding_id": "EVD-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_RELEVANCE_SUFFICIENCY_TEST",
+        "authorized_next_node_ids": [
+          "EVD-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "EVD-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-795113",
+        "item_binding_id": "EVD-ITEM-REENTRY-NEAR",
+        "learner_operation": "RECHECK_COMBINED_EVIDENCE",
+        "authorized_next_node_ids": [
+          "EVD-NODE-CHANGED",
+          "EVD-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "EVD-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-795113",
+        "item_binding_id": "EVD-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_REASON_EVIDENCE_LINK",
+        "authorized_next_node_ids": [
+          "EVD-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "EVD-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-795113",
+        "item_binding_id": "EVD-ITEM-REENTRY-CHANGED",
+        "learner_operation": "RECHECK_GAP_CLOSING_EVIDENCE",
+        "authorized_next_node_ids": [
+          "EVD-NODE-RECAP",
+          "EVD-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-521064",
+        "item_binding_id": "GEN-ITEM-ENTRY",
+        "learner_operation": "MATCH_CONCLUSION_TO_OBSERVED_SCOPE",
+        "authorized_next_node_ids": [
+          "GEN-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-521064",
+        "item_binding_id": "GEN-ITEM-GUIDED",
+        "learner_operation": "IDENTIFY_POPULATION_SCOPE_EXPANSION",
+        "authorized_next_node_ids": [
+          "GEN-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-521064",
+        "item_binding_id": "GEN-ITEM-LIGHT",
+        "learner_operation": "PRESERVE_STATED_GENERALIZATION_CONDITION",
+        "authorized_next_node_ids": [
+          "GEN-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-SOLO",
+        "primary_kc_id": "V3-KC-521064",
+        "item_binding_id": "GEN-ITEM-SOLO",
+        "learner_operation": "IDENTIFY_TIME_SCOPE_EXPANSION",
+        "authorized_next_node_ids": [
+          "GEN-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-NEAR",
+        "primary_kc_id": "V3-KC-521064",
+        "item_binding_id": "GEN-ITEM-NEAR",
+        "learner_operation": "EVALUATE_QUALIFIED_SCOPE_EXTENSION",
+        "authorized_next_node_ids": [
+          "GEN-NODE-CHANGED",
+          "GEN-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-521064",
+        "item_binding_id": "GEN-ITEM-CHANGED",
+        "learner_operation": "REVISE_CLAIM_TO_EVIDENCE_SCOPE",
+        "authorized_next_node_ids": [
+          "GEN-NODE-RECAP",
+          "GEN-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-521064",
+        "item_binding_id": "GEN-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_GENERALIZATION_SCOPE_INVENTORY",
+        "authorized_next_node_ids": [
+          "GEN-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-521064",
+        "item_binding_id": "GEN-ITEM-REENTRY-NEAR",
+        "learner_operation": "RECHECK_QUALIFIED_SCOPE_EXTENSION",
+        "authorized_next_node_ids": [
+          "GEN-NODE-CHANGED",
+          "GEN-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-521064",
+        "item_binding_id": "GEN-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_QUANTIFIER_PRESERVATION",
+        "authorized_next_node_ids": [
+          "GEN-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "GEN-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-521064",
+        "item_binding_id": "GEN-ITEM-REENTRY-CHANGED",
+        "learner_operation": "RECHECK_SCOPE_PRESERVING_REVISION",
+        "authorized_next_node_ids": [
+          "GEN-NODE-RECAP",
+          "GEN-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "CAU-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-188841",
+        "item_binding_id": "CAU-ITEM-ENTRY",
+        "learner_operation": "DISTINGUISH_CAUSAL_FROM_NONCAUSAL_LANGUAGE",
+        "authorized_next_node_ids": [
+          "CAU-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "CAU-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-188841",
+        "item_binding_id": "CAU-ITEM-GUIDED",
+        "learner_operation": "EVALUATE_TEMPORAL_SEQUENCE_AS_CAUSAL_EVIDENCE",
+        "authorized_next_node_ids": [
+          "CAU-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "CAU-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-188841",
+        "item_binding_id": "CAU-ITEM-LIGHT",
+        "learner_operation": "EVALUATE_CAUSAL_CLAIM_WITH_ALTERNATIVE",
+        "authorized_next_node_ids": [
+          "CAU-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "CAU-ACT-SOLO",
+        "primary_kc_id": "V3-KC-188841",
+        "item_binding_id": "CAU-ITEM-SOLO",
+        "learner_operation": "RECOGNIZE_REMOVAL_RETURN_CAUSAL_LINK",
+        "authorized_next_node_ids": [
+          "CAU-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "CAU-ACT-NEAR",
+        "primary_kc_id": "V3-KC-188841",
+        "item_binding_id": "CAU-ITEM-NEAR",
+        "learner_operation": "EVALUATE_EXCLUSIVE_CAUSAL_CLAIM",
+        "authorized_next_node_ids": [
+          "CAU-NODE-CHANGED",
+          "CAU-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "CAU-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-188841",
+        "item_binding_id": "CAU-ITEM-CHANGED",
+        "learner_operation": "EVALUATE_INTERVENTION_REVERSAL_CAUSAL_LINK",
+        "authorized_next_node_ids": [
+          "CAU-NODE-RECAP",
+          "CAU-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "CAU-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-188841",
+        "item_binding_id": "CAU-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_CAUSAL_LINK_TEST",
+        "authorized_next_node_ids": [
+          "CAU-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "CAU-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-188841",
+        "item_binding_id": "CAU-ITEM-REENTRY-NEAR",
+        "learner_operation": "RECHECK_CAUSAL_CLAIM_WITH_ALTERNATIVE",
+        "authorized_next_node_ids": [
+          "CAU-NODE-CHANGED",
+          "CAU-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "CAU-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-188841",
+        "item_binding_id": "CAU-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_INTERVENTION_REVERSAL_PATTERN",
+        "authorized_next_node_ids": [
+          "CAU-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "CAU-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-188841",
+        "item_binding_id": "CAU-ITEM-REENTRY-CHANGED",
+        "learner_operation": "RECHECK_INTERVENTION_REVERSAL_LINK",
+        "authorized_next_node_ids": [
+          "CAU-NODE-RECAP",
+          "CAU-NODE-HANDOFF"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-717751",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-717751",
+        "scope_in_refs": [
+          "V3-KC-717751:SCOPE_IN:0",
+          "V3-KC-717751:SCOPE_IN:1",
+          "V3-KC-717751:SCOPE_IN:2",
+          "V3-KC-717751:SCOPE_IN:3"
+        ],
+        "scope_out_refs": [
+          "V3-KC-717751:SCOPE_OUT:0",
+          "V3-KC-717751:SCOPE_OUT:1"
+        ],
+        "source_claim_refs": [
+          "LOG-CLAIM-BOUNDED"
+        ],
+        "prerequisite_point_refs": [
+          "V3-EDG-192746"
+        ],
+        "entry_check_boundary_id": "LOG-NODE-ENTRY",
+        "orientation_node_id": "LOG-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "LOG-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "LOG-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "LOG-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "LOG-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "LOG-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "LOG-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "LOG-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "LOG-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "LOG-NODE-NEAR",
+          "activity_ids": [
+            "LOG-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "LOG-NODE-CHANGED",
+          "activity_ids": [
+            "LOG-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "LOG-FEATURE-NEAR-FUNCTION",
+          "LOG-FEATURE-CHANGED-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "LOG-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "LOG-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "LOG-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "LOG-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "LOG-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "LOG-ACT-REENTRY-NEAR",
+            "success_next_node_id": "LOG-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "LOG-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "LOG-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "LOG-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "LOG-REP-CORE",
+          "LOG-REP-ALT"
+        ],
+        "accessibility_equivalent_ids": [
+          "LOG-REP-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "LOG-NODE-ENTRY",
+            "LOG-NODE-ORIENTATION",
+            "LOG-NODE-EXPLANATION",
+            "LOG-NODE-MODEL",
+            "LOG-NODE-THINK",
+            "LOG-NODE-WORKED",
+            "LOG-NODE-GUIDED",
+            "LOG-NODE-LIGHT",
+            "LOG-NODE-SOLO",
+            "LOG-NODE-CONTRAST",
+            "LOG-NODE-NEAR",
+            "LOG-NODE-CHANGED",
+            "LOG-NODE-REPAIR-NEAR",
+            "LOG-NODE-REENTRY-NEAR",
+            "LOG-NODE-REPAIR-CHANGED",
+            "LOG-NODE-REENTRY-CHANGED",
+            "LOG-NODE-HANDOFF",
+            "LOG-NODE-RECAP",
+            "LOG-NODE-PREREQUISITE-HANDOFF"
+          ],
+          "standard": [
+            "LOG-NODE-ENTRY",
+            "LOG-NODE-ORIENTATION",
+            "LOG-NODE-EXPLANATION",
+            "LOG-NODE-MODEL",
+            "LOG-NODE-THINK",
+            "LOG-NODE-WORKED",
+            "LOG-NODE-GUIDED",
+            "LOG-NODE-LIGHT",
+            "LOG-NODE-SOLO",
+            "LOG-NODE-CONTRAST",
+            "LOG-NODE-NEAR",
+            "LOG-NODE-CHANGED",
+            "LOG-NODE-REPAIR-NEAR",
+            "LOG-NODE-REENTRY-NEAR",
+            "LOG-NODE-REPAIR-CHANGED",
+            "LOG-NODE-REENTRY-CHANGED",
+            "LOG-NODE-HANDOFF",
+            "LOG-NODE-RECAP",
+            "LOG-NODE-PREREQUISITE-HANDOFF"
+          ],
+          "misconception": [
+            "LOG-NODE-ENTRY",
+            "LOG-NODE-ORIENTATION",
+            "LOG-NODE-EXPLANATION",
+            "LOG-NODE-MODEL",
+            "LOG-NODE-THINK",
+            "LOG-NODE-WORKED",
+            "LOG-NODE-GUIDED",
+            "LOG-NODE-LIGHT",
+            "LOG-NODE-SOLO",
+            "LOG-NODE-CONTRAST",
+            "LOG-NODE-NEAR",
+            "LOG-NODE-CHANGED",
+            "LOG-NODE-REPAIR-NEAR",
+            "LOG-NODE-REENTRY-NEAR",
+            "LOG-NODE-REPAIR-CHANGED",
+            "LOG-NODE-REENTRY-CHANGED",
+            "LOG-NODE-HANDOFF",
+            "LOG-NODE-RECAP",
+            "LOG-NODE-PREREQUISITE-HANDOFF"
+          ]
+        },
+        "recap_node_id": "LOG-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-795113",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-795113",
+        "scope_in_refs": [
+          "V3-KC-795113:SCOPE_IN:0",
+          "V3-KC-795113:SCOPE_IN:1",
+          "V3-KC-795113:SCOPE_IN:2",
+          "V3-KC-795113:SCOPE_IN:3"
+        ],
+        "scope_out_refs": [
+          "V3-KC-795113:SCOPE_OUT:0",
+          "V3-KC-795113:SCOPE_OUT:1"
+        ],
+        "source_claim_refs": [
+          "EVD-CLAIM-BOUNDED"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "EVD-NODE-ENTRY",
+        "orientation_node_id": "EVD-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "EVD-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "EVD-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "EVD-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "EVD-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "EVD-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "EVD-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "EVD-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "EVD-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "EVD-NODE-NEAR",
+          "activity_ids": [
+            "EVD-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "EVD-NODE-CHANGED",
+          "activity_ids": [
+            "EVD-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "EVD-FEATURE-NEAR-FUNCTION",
+          "EVD-FEATURE-CHANGED-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "EVD-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "EVD-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "EVD-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "EVD-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "EVD-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "EVD-ACT-REENTRY-NEAR",
+            "success_next_node_id": "EVD-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "EVD-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "EVD-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "EVD-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "EVD-REP-CORE",
+          "EVD-REP-ALT"
+        ],
+        "accessibility_equivalent_ids": [
+          "EVD-REP-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "EVD-NODE-ENTRY",
+            "EVD-NODE-ORIENTATION",
+            "EVD-NODE-EXPLANATION",
+            "EVD-NODE-MODEL",
+            "EVD-NODE-THINK",
+            "EVD-NODE-WORKED",
+            "EVD-NODE-GUIDED",
+            "EVD-NODE-LIGHT",
+            "EVD-NODE-SOLO",
+            "EVD-NODE-CONTRAST",
+            "EVD-NODE-NEAR",
+            "EVD-NODE-CHANGED",
+            "EVD-NODE-REPAIR-NEAR",
+            "EVD-NODE-REENTRY-NEAR",
+            "EVD-NODE-REPAIR-CHANGED",
+            "EVD-NODE-REENTRY-CHANGED",
+            "EVD-NODE-HANDOFF",
+            "EVD-NODE-RECAP"
+          ],
+          "standard": [
+            "EVD-NODE-ENTRY",
+            "EVD-NODE-ORIENTATION",
+            "EVD-NODE-EXPLANATION",
+            "EVD-NODE-MODEL",
+            "EVD-NODE-THINK",
+            "EVD-NODE-WORKED",
+            "EVD-NODE-GUIDED",
+            "EVD-NODE-LIGHT",
+            "EVD-NODE-SOLO",
+            "EVD-NODE-CONTRAST",
+            "EVD-NODE-NEAR",
+            "EVD-NODE-CHANGED",
+            "EVD-NODE-REPAIR-NEAR",
+            "EVD-NODE-REENTRY-NEAR",
+            "EVD-NODE-REPAIR-CHANGED",
+            "EVD-NODE-REENTRY-CHANGED",
+            "EVD-NODE-HANDOFF",
+            "EVD-NODE-RECAP"
+          ],
+          "misconception": [
+            "EVD-NODE-ENTRY",
+            "EVD-NODE-ORIENTATION",
+            "EVD-NODE-EXPLANATION",
+            "EVD-NODE-MODEL",
+            "EVD-NODE-THINK",
+            "EVD-NODE-WORKED",
+            "EVD-NODE-GUIDED",
+            "EVD-NODE-LIGHT",
+            "EVD-NODE-SOLO",
+            "EVD-NODE-CONTRAST",
+            "EVD-NODE-NEAR",
+            "EVD-NODE-CHANGED",
+            "EVD-NODE-REPAIR-NEAR",
+            "EVD-NODE-REENTRY-NEAR",
+            "EVD-NODE-REPAIR-CHANGED",
+            "EVD-NODE-REENTRY-CHANGED",
+            "EVD-NODE-HANDOFF",
+            "EVD-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "EVD-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-521064",
+        "canonical_ordinal": 3,
+        "objective_ref": "objective:V3-KC-521064",
+        "scope_in_refs": [
+          "V3-KC-521064:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-521064:SCOPE_OUT:0",
+          "V3-KC-521064:SCOPE_OUT:1"
+        ],
+        "source_claim_refs": [
+          "GEN-CLAIM-BOUNDED"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "GEN-NODE-ENTRY",
+        "orientation_node_id": "GEN-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "GEN-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "GEN-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "GEN-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "GEN-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "GEN-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "GEN-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "GEN-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "GEN-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "GEN-NODE-NEAR",
+          "activity_ids": [
+            "GEN-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "GEN-NODE-CHANGED",
+          "activity_ids": [
+            "GEN-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "GEN-FEATURE-NEAR-FUNCTION",
+          "GEN-FEATURE-CHANGED-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "GEN-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "GEN-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "GEN-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "GEN-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "GEN-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "GEN-ACT-REENTRY-NEAR",
+            "success_next_node_id": "GEN-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "GEN-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "GEN-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "GEN-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "GEN-REP-CORE",
+          "GEN-REP-ALT"
+        ],
+        "accessibility_equivalent_ids": [
+          "GEN-REP-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "GEN-NODE-ENTRY",
+            "GEN-NODE-ORIENTATION",
+            "GEN-NODE-EXPLANATION",
+            "GEN-NODE-MODEL",
+            "GEN-NODE-THINK",
+            "GEN-NODE-WORKED",
+            "GEN-NODE-GUIDED",
+            "GEN-NODE-LIGHT",
+            "GEN-NODE-SOLO",
+            "GEN-NODE-CONTRAST",
+            "GEN-NODE-NEAR",
+            "GEN-NODE-CHANGED",
+            "GEN-NODE-REPAIR-NEAR",
+            "GEN-NODE-REENTRY-NEAR",
+            "GEN-NODE-REPAIR-CHANGED",
+            "GEN-NODE-REENTRY-CHANGED",
+            "GEN-NODE-HANDOFF",
+            "GEN-NODE-RECAP"
+          ],
+          "standard": [
+            "GEN-NODE-ENTRY",
+            "GEN-NODE-ORIENTATION",
+            "GEN-NODE-EXPLANATION",
+            "GEN-NODE-MODEL",
+            "GEN-NODE-THINK",
+            "GEN-NODE-WORKED",
+            "GEN-NODE-GUIDED",
+            "GEN-NODE-LIGHT",
+            "GEN-NODE-SOLO",
+            "GEN-NODE-CONTRAST",
+            "GEN-NODE-NEAR",
+            "GEN-NODE-CHANGED",
+            "GEN-NODE-REPAIR-NEAR",
+            "GEN-NODE-REENTRY-NEAR",
+            "GEN-NODE-REPAIR-CHANGED",
+            "GEN-NODE-REENTRY-CHANGED",
+            "GEN-NODE-HANDOFF",
+            "GEN-NODE-RECAP"
+          ],
+          "misconception": [
+            "GEN-NODE-ENTRY",
+            "GEN-NODE-ORIENTATION",
+            "GEN-NODE-EXPLANATION",
+            "GEN-NODE-MODEL",
+            "GEN-NODE-THINK",
+            "GEN-NODE-WORKED",
+            "GEN-NODE-GUIDED",
+            "GEN-NODE-LIGHT",
+            "GEN-NODE-SOLO",
+            "GEN-NODE-CONTRAST",
+            "GEN-NODE-NEAR",
+            "GEN-NODE-CHANGED",
+            "GEN-NODE-REPAIR-NEAR",
+            "GEN-NODE-REENTRY-NEAR",
+            "GEN-NODE-REPAIR-CHANGED",
+            "GEN-NODE-REENTRY-CHANGED",
+            "GEN-NODE-HANDOFF",
+            "GEN-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "GEN-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-188841",
+        "canonical_ordinal": 4,
+        "objective_ref": "objective:V3-KC-188841",
+        "scope_in_refs": [
+          "V3-KC-188841:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-188841:SCOPE_OUT:0",
+          "V3-KC-188841:SCOPE_OUT:1"
+        ],
+        "source_claim_refs": [
+          "CAU-CLAIM-BOUNDED"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "CAU-NODE-ENTRY",
+        "orientation_node_id": "CAU-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "CAU-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "CAU-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "CAU-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "CAU-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "CAU-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "CAU-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "CAU-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "CAU-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "CAU-NODE-NEAR",
+          "activity_ids": [
+            "CAU-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "CAU-NODE-CHANGED",
+          "activity_ids": [
+            "CAU-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "CAU-FEATURE-NEAR-FUNCTION",
+          "CAU-FEATURE-CHANGED-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "CAU-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "CAU-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "CAU-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "CAU-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "CAU-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "CAU-ACT-REENTRY-NEAR",
+            "success_next_node_id": "CAU-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "CAU-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "CAU-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "CAU-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "CAU-REP-CORE",
+          "CAU-REP-ALT"
+        ],
+        "accessibility_equivalent_ids": [
+          "CAU-REP-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "CAU-NODE-ENTRY",
+            "CAU-NODE-ORIENTATION",
+            "CAU-NODE-EXPLANATION",
+            "CAU-NODE-MODEL",
+            "CAU-NODE-THINK",
+            "CAU-NODE-WORKED",
+            "CAU-NODE-GUIDED",
+            "CAU-NODE-LIGHT",
+            "CAU-NODE-SOLO",
+            "CAU-NODE-CONTRAST",
+            "CAU-NODE-NEAR",
+            "CAU-NODE-CHANGED",
+            "CAU-NODE-REPAIR-NEAR",
+            "CAU-NODE-REENTRY-NEAR",
+            "CAU-NODE-REPAIR-CHANGED",
+            "CAU-NODE-REENTRY-CHANGED",
+            "CAU-NODE-HANDOFF",
+            "CAU-NODE-RECAP"
+          ],
+          "standard": [
+            "CAU-NODE-ENTRY",
+            "CAU-NODE-ORIENTATION",
+            "CAU-NODE-EXPLANATION",
+            "CAU-NODE-MODEL",
+            "CAU-NODE-THINK",
+            "CAU-NODE-WORKED",
+            "CAU-NODE-GUIDED",
+            "CAU-NODE-LIGHT",
+            "CAU-NODE-SOLO",
+            "CAU-NODE-CONTRAST",
+            "CAU-NODE-NEAR",
+            "CAU-NODE-CHANGED",
+            "CAU-NODE-REPAIR-NEAR",
+            "CAU-NODE-REENTRY-NEAR",
+            "CAU-NODE-REPAIR-CHANGED",
+            "CAU-NODE-REENTRY-CHANGED",
+            "CAU-NODE-HANDOFF",
+            "CAU-NODE-RECAP"
+          ],
+          "misconception": [
+            "CAU-NODE-ENTRY",
+            "CAU-NODE-ORIENTATION",
+            "CAU-NODE-EXPLANATION",
+            "CAU-NODE-MODEL",
+            "CAU-NODE-THINK",
+            "CAU-NODE-WORKED",
+            "CAU-NODE-GUIDED",
+            "CAU-NODE-LIGHT",
+            "CAU-NODE-SOLO",
+            "CAU-NODE-CONTRAST",
+            "CAU-NODE-NEAR",
+            "CAU-NODE-CHANGED",
+            "CAU-NODE-REPAIR-NEAR",
+            "CAU-NODE-REENTRY-NEAR",
+            "CAU-NODE-REPAIR-CHANGED",
+            "CAU-NODE-REENTRY-CHANGED",
+            "CAU-NODE-HANDOFF",
+            "CAU-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "CAU-NODE-RECAP"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "LOG-ITEM-ENTRY",
+        "activity_id": "LOG-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "LOG-FAMILY-ENTRY",
+        "stimulus_lineage_id": "LOG-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "LOG-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "DISTINGUISH_CONCLUSION_FROM_SUPPORT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "LOG_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#LOG-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#LOG-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LOG-SOLUTION-ENTRY",
+        "decisive_cue_id": "LOG-CUE-ENTRY",
+        "distractor_lineage_id": "LOG-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "LOG-ITEM-GUIDED",
+        "activity_id": "LOG-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "LOG-FAMILY-GUIDED",
+        "stimulus_lineage_id": "LOG-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_PASSAGE_BOUNDARY_CHECKLIST"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LOG-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "EVALUATE_DIRECT_PASSAGE_INFERENCE",
+        "hint_policy": "VISIBLE_PASSAGE_BOUNDARY_CHECKLIST",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "LOG_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#LOG-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#LOG-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LOG-SOLUTION-GUIDED",
+        "decisive_cue_id": "LOG-CUE-GUIDED",
+        "distractor_lineage_id": "LOG-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "LOG-ITEM-LIGHT",
+        "activity_id": "LOG-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "LOG-FAMILY-LIGHT",
+        "stimulus_lineage_id": "LOG-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LOG-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_QUALIFIER_LOSS",
+        "hint_policy": "BRIEF_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "LOG_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#LOG-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#LOG-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LOG-SOLUTION-LIGHT",
+        "decisive_cue_id": "LOG-CUE-LIGHT",
+        "distractor_lineage_id": "LOG-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "LOG-ITEM-SOLO",
+        "activity_id": "LOG-ACT-SOLO",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "LOG-FAMILY-SOLO",
+        "stimulus_lineage_id": "LOG-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LOG-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "LOCATE_UNSTATED_ARGUMENT_BRIDGE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "LOG_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#LOG-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#LOG-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LOG-SOLUTION-SOLO",
+        "decisive_cue_id": "LOG-CUE-SOLO",
+        "distractor_lineage_id": "LOG-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "LOG-ITEM-NEAR",
+        "activity_id": "LOG-ACT-NEAR",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "LOG-FAMILY-NEAR",
+        "stimulus_lineage_id": "LOG-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "LOG-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "EVALUATE_QUALIFIED_CONCLUSION_FIT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LOG_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#LOG-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#LOG-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LOG-SOLUTION-NEAR",
+        "decisive_cue_id": "LOG-CUE-NEAR",
+        "distractor_lineage_id": "LOG-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "LOG-ITEM-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LOG-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "LOG-ITEM-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LOG-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "LOG-ITEM-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LOG-FEATURE-NEAR-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "LOG-ITEM-CHANGED",
+        "activity_id": "LOG-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "LOG-FAMILY-CHANGED",
+        "stimulus_lineage_id": "LOG-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "LOG-REP-ALT",
+        "changed_dimensions": [
+          "required_operation",
+          "passage_or_data"
+        ],
+        "learner_operation": "REVISE_CONCLUSION_TO_FIT_QUALIFICATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LOG_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#LOG-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#LOG-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LOG-SOLUTION-CHANGED",
+        "decisive_cue_id": "LOG-CUE-CHANGED",
+        "distractor_lineage_id": "LOG-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "LOG-ITEM-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LOG-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "LOG-ITEM-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LOG-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "LOG-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LOG-FEATURE-CHANGED-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "LOG-ITEM-REPAIR-NEAR",
+        "activity_id": "LOG-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LOG-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "LOG-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_CUE_VISIBLE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "LOG-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_CONCLUSION_FIT_TEST",
+        "hint_policy": "FUNCTION_SPECIFIC_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LOG_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#LOG-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#LOG-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LOG-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "LOG-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "LOG-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "LOG-ITEM-REENTRY-NEAR",
+        "activity_id": "LOG-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LOG-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "LOG-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "LOG-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "RECHECK_QUALIFIED_CONCLUSION_FIT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LOG_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#LOG-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#LOG-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LOG-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "LOG-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "LOG-DISTRACTOR-REENTRY-NEAR"
+      },
+      {
+        "item_binding_id": "LOG-ITEM-REPAIR-CHANGED",
+        "activity_id": "LOG-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LOG-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "LOG-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_CUE_VISIBLE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "LOG-REP-ALT",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_COUNTEREXAMPLE_EFFECT",
+        "hint_policy": "FUNCTION_SPECIFIC_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LOG_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#LOG-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#LOG-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LOG-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "LOG-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "LOG-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "LOG-ITEM-REENTRY-CHANGED",
+        "activity_id": "LOG-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LOG-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "LOG-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "LOG-REP-ALT",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "RECHECK_CONCLUSION_REVISION_FROM_COUNTEREXAMPLE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LOG_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#LOG-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#LOG-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LOG-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "LOG-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "LOG-DISTRACTOR-REENTRY-CHANGED"
+      },
+      {
+        "item_binding_id": "LOG-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-717751",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "LOG-FAMILY-WORKED",
+        "stimulus_lineage_id": "LOG-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LOG-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "FOLLOW_PASSAGE_BOUNDED_SELECTION_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:LOG-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LOG-SOLUTION-WORKED",
+        "decisive_cue_id": "LOG-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "EVD-ITEM-ENTRY",
+        "activity_id": "EVD-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "EVD-FAMILY-ENTRY",
+        "stimulus_lineage_id": "EVD-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "EVD-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_CLAIM_RELEVANT_DETAIL",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "EVD_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#EVD-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#EVD-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EVD-SOLUTION-ENTRY",
+        "decisive_cue_id": "EVD-CUE-ENTRY",
+        "distractor_lineage_id": "EVD-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "EVD-ITEM-GUIDED",
+        "activity_id": "EVD-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "EVD-FAMILY-GUIDED",
+        "stimulus_lineage_id": "EVD-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_PASSAGE_BOUNDARY_CHECKLIST"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EVD-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "DISTINGUISH_RELEVANCE_FROM_SUFFICIENCY",
+        "hint_policy": "VISIBLE_PASSAGE_BOUNDARY_CHECKLIST",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "EVD_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#EVD-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#EVD-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EVD-SOLUTION-GUIDED",
+        "decisive_cue_id": "EVD-CUE-GUIDED",
+        "distractor_lineage_id": "EVD-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "EVD-ITEM-LIGHT",
+        "activity_id": "EVD-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "EVD-FAMILY-LIGHT",
+        "stimulus_lineage_id": "EVD-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EVD-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_IRRELEVANT_PASSAGE_DETAIL",
+        "hint_policy": "BRIEF_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "EVD_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#EVD-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#EVD-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EVD-SOLUTION-LIGHT",
+        "decisive_cue_id": "EVD-CUE-LIGHT",
+        "distractor_lineage_id": "EVD-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "EVD-ITEM-SOLO",
+        "activity_id": "EVD-ACT-SOLO",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "EVD-FAMILY-SOLO",
+        "stimulus_lineage_id": "EVD-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EVD-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "EVALUATE_NONMENTION_AS_EVIDENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "EVD_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#EVD-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#EVD-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EVD-SOLUTION-SOLO",
+        "decisive_cue_id": "EVD-CUE-SOLO",
+        "distractor_lineage_id": "EVD-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "EVD-ITEM-NEAR",
+        "activity_id": "EVD-ACT-NEAR",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "EVD-FAMILY-NEAR",
+        "stimulus_lineage_id": "EVD-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "EVD-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "EVALUATE_COMBINED_EVIDENCE_SUFFICIENCY",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EVD_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#EVD-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#EVD-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EVD-SOLUTION-NEAR",
+        "decisive_cue_id": "EVD-CUE-NEAR",
+        "distractor_lineage_id": "EVD-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "EVD-ITEM-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EVD-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "EVD-ITEM-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EVD-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "EVD-ITEM-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EVD-FEATURE-NEAR-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "EVD-ITEM-CHANGED",
+        "activity_id": "EVD-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "EVD-FAMILY-CHANGED",
+        "stimulus_lineage_id": "EVD-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "EVD-REP-ALT",
+        "changed_dimensions": [
+          "required_operation",
+          "passage_or_data"
+        ],
+        "learner_operation": "SELECT_GAP_CLOSING_PASSAGE_EVIDENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EVD_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#EVD-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#EVD-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EVD-SOLUTION-CHANGED",
+        "decisive_cue_id": "EVD-CUE-CHANGED",
+        "distractor_lineage_id": "EVD-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "EVD-ITEM-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EVD-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "EVD-ITEM-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EVD-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "EVD-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "EVD-FEATURE-CHANGED-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "EVD-ITEM-REPAIR-NEAR",
+        "activity_id": "EVD-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "EVD-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "EVD-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_CUE_VISIBLE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "EVD-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_RELEVANCE_SUFFICIENCY_TEST",
+        "hint_policy": "FUNCTION_SPECIFIC_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EVD_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#EVD-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#EVD-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EVD-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "EVD-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "EVD-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "EVD-ITEM-REENTRY-NEAR",
+        "activity_id": "EVD-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "EVD-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "EVD-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "EVD-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "RECHECK_COMBINED_EVIDENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EVD_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#EVD-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#EVD-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EVD-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "EVD-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "EVD-DISTRACTOR-REENTRY-NEAR"
+      },
+      {
+        "item_binding_id": "EVD-ITEM-REPAIR-CHANGED",
+        "activity_id": "EVD-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "EVD-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "EVD-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_CUE_VISIBLE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "EVD-REP-ALT",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_REASON_EVIDENCE_LINK",
+        "hint_policy": "FUNCTION_SPECIFIC_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EVD_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#EVD-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#EVD-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EVD-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "EVD-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "EVD-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "EVD-ITEM-REENTRY-CHANGED",
+        "activity_id": "EVD-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "EVD-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "EVD-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "EVD-REP-ALT",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "RECHECK_GAP_CLOSING_EVIDENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "EVD_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#EVD-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#EVD-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EVD-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "EVD-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "EVD-DISTRACTOR-REENTRY-CHANGED"
+      },
+      {
+        "item_binding_id": "EVD-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-795113",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "EVD-FAMILY-WORKED",
+        "stimulus_lineage_id": "EVD-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "EVD-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "FOLLOW_PASSAGE_BOUNDED_SELECTION_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:EVD-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "EVD-SOLUTION-WORKED",
+        "decisive_cue_id": "EVD-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "GEN-ITEM-ENTRY",
+        "activity_id": "GEN-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "GEN-FAMILY-ENTRY",
+        "stimulus_lineage_id": "GEN-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "GEN-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "MATCH_CONCLUSION_TO_OBSERVED_SCOPE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "GEN_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#GEN-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#GEN-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-SOLUTION-ENTRY",
+        "decisive_cue_id": "GEN-CUE-ENTRY",
+        "distractor_lineage_id": "GEN-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "GEN-ITEM-GUIDED",
+        "activity_id": "GEN-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "GEN-FAMILY-GUIDED",
+        "stimulus_lineage_id": "GEN-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_PASSAGE_BOUNDARY_CHECKLIST"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEN-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_POPULATION_SCOPE_EXPANSION",
+        "hint_policy": "VISIBLE_PASSAGE_BOUNDARY_CHECKLIST",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "GEN_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#GEN-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#GEN-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-SOLUTION-GUIDED",
+        "decisive_cue_id": "GEN-CUE-GUIDED",
+        "distractor_lineage_id": "GEN-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "GEN-ITEM-LIGHT",
+        "activity_id": "GEN-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "GEN-FAMILY-LIGHT",
+        "stimulus_lineage_id": "GEN-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEN-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "PRESERVE_STATED_GENERALIZATION_CONDITION",
+        "hint_policy": "BRIEF_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "GEN_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#GEN-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#GEN-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-SOLUTION-LIGHT",
+        "decisive_cue_id": "GEN-CUE-LIGHT",
+        "distractor_lineage_id": "GEN-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "GEN-ITEM-SOLO",
+        "activity_id": "GEN-ACT-SOLO",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "GEN-FAMILY-SOLO",
+        "stimulus_lineage_id": "GEN-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEN-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_TIME_SCOPE_EXPANSION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "GEN_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#GEN-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#GEN-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-SOLUTION-SOLO",
+        "decisive_cue_id": "GEN-CUE-SOLO",
+        "distractor_lineage_id": "GEN-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "GEN-ITEM-NEAR",
+        "activity_id": "GEN-ACT-NEAR",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "GEN-FAMILY-NEAR",
+        "stimulus_lineage_id": "GEN-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "GEN-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "EVALUATE_QUALIFIED_SCOPE_EXTENSION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEN_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#GEN-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#GEN-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-SOLUTION-NEAR",
+        "decisive_cue_id": "GEN-CUE-NEAR",
+        "distractor_lineage_id": "GEN-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "GEN-ITEM-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GEN-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "GEN-ITEM-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GEN-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "GEN-ITEM-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GEN-FEATURE-NEAR-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GEN-ITEM-CHANGED",
+        "activity_id": "GEN-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "GEN-FAMILY-CHANGED",
+        "stimulus_lineage_id": "GEN-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "GEN-REP-ALT",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "learner_operation": "REVISE_CLAIM_TO_EVIDENCE_SCOPE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEN_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#GEN-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#GEN-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-SOLUTION-CHANGED",
+        "decisive_cue_id": "GEN-CUE-CHANGED",
+        "distractor_lineage_id": "GEN-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "GEN-ITEM-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GEN-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "GEN-ITEM-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GEN-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "GEN-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "GEN-FEATURE-CHANGED-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "GEN-ITEM-REPAIR-NEAR",
+        "activity_id": "GEN-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GEN-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "GEN-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_CUE_VISIBLE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "GEN-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_GENERALIZATION_SCOPE_INVENTORY",
+        "hint_policy": "FUNCTION_SPECIFIC_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEN_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#GEN-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#GEN-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "GEN-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "GEN-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "GEN-ITEM-REENTRY-NEAR",
+        "activity_id": "GEN-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GEN-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "GEN-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "GEN-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "RECHECK_QUALIFIED_SCOPE_EXTENSION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEN_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#GEN-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#GEN-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "GEN-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "GEN-DISTRACTOR-REENTRY-NEAR"
+      },
+      {
+        "item_binding_id": "GEN-ITEM-REPAIR-CHANGED",
+        "activity_id": "GEN-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GEN-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "GEN-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_CUE_VISIBLE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "GEN-REP-ALT",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_QUANTIFIER_PRESERVATION",
+        "hint_policy": "FUNCTION_SPECIFIC_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEN_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#GEN-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#GEN-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "GEN-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "GEN-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "GEN-ITEM-REENTRY-CHANGED",
+        "activity_id": "GEN-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GEN-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "GEN-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "GEN-REP-ALT",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "RECHECK_SCOPE_PRESERVING_REVISION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GEN_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#GEN-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#GEN-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "GEN-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "GEN-DISTRACTOR-REENTRY-CHANGED"
+      },
+      {
+        "item_binding_id": "GEN-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-521064",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "GEN-FAMILY-WORKED",
+        "stimulus_lineage_id": "GEN-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GEN-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "FOLLOW_PASSAGE_BOUNDED_SELECTION_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:GEN-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "GEN-SOLUTION-WORKED",
+        "decisive_cue_id": "GEN-CUE-WORKED",
+        "distractor_lineage_id": null
+      },
+      {
+        "item_binding_id": "CAU-ITEM-ENTRY",
+        "activity_id": "CAU-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "CAU-FAMILY-ENTRY",
+        "stimulus_lineage_id": "CAU-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "CAU-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "DISTINGUISH_CAUSAL_FROM_NONCAUSAL_LANGUAGE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "CAU_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#CAU-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#CAU-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CAU-SOLUTION-ENTRY",
+        "decisive_cue_id": "CAU-CUE-ENTRY",
+        "distractor_lineage_id": "CAU-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "CAU-ITEM-GUIDED",
+        "activity_id": "CAU-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "CAU-FAMILY-GUIDED",
+        "stimulus_lineage_id": "CAU-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_PASSAGE_BOUNDARY_CHECKLIST"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CAU-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "EVALUATE_TEMPORAL_SEQUENCE_AS_CAUSAL_EVIDENCE",
+        "hint_policy": "VISIBLE_PASSAGE_BOUNDARY_CHECKLIST",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "CAU_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#CAU-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#CAU-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CAU-SOLUTION-GUIDED",
+        "decisive_cue_id": "CAU-CUE-GUIDED",
+        "distractor_lineage_id": "CAU-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "CAU-ITEM-LIGHT",
+        "activity_id": "CAU-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "CAU-FAMILY-LIGHT",
+        "stimulus_lineage_id": "CAU-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_NON_ANSWER_BEARING_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CAU-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "EVALUATE_CAUSAL_CLAIM_WITH_ALTERNATIVE",
+        "hint_policy": "BRIEF_NON_ANSWER_BEARING_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "CAU_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#CAU-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#CAU-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CAU-SOLUTION-LIGHT",
+        "decisive_cue_id": "CAU-CUE-LIGHT",
+        "distractor_lineage_id": "CAU-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "CAU-ITEM-SOLO",
+        "activity_id": "CAU-ACT-SOLO",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "CAU-FAMILY-SOLO",
+        "stimulus_lineage_id": "CAU-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CAU-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "RECOGNIZE_REMOVAL_RETURN_CAUSAL_LINK",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "CAU_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#CAU-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#CAU-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CAU-SOLUTION-SOLO",
+        "decisive_cue_id": "CAU-CUE-SOLO",
+        "distractor_lineage_id": "CAU-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "CAU-ITEM-NEAR",
+        "activity_id": "CAU-ACT-NEAR",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "CAU-FAMILY-NEAR",
+        "stimulus_lineage_id": "CAU-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "CAU-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "EVALUATE_EXCLUSIVE_CAUSAL_CLAIM",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CAU_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#CAU-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#CAU-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CAU-SOLUTION-NEAR",
+        "decisive_cue_id": "CAU-CUE-NEAR",
+        "distractor_lineage_id": "CAU-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "CAU-ITEM-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "CAU-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "CAU-ITEM-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "CAU-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "CAU-ITEM-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "CAU-FEATURE-NEAR-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "CAU-ITEM-CHANGED",
+        "activity_id": "CAU-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "CAU-FAMILY-CHANGED",
+        "stimulus_lineage_id": "CAU-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "CAU-REP-ALT",
+        "changed_dimensions": [
+          "representation",
+          "required_operation"
+        ],
+        "learner_operation": "EVALUATE_INTERVENTION_REVERSAL_CAUSAL_LINK",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CAU_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#CAU-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#CAU-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CAU-SOLUTION-CHANGED",
+        "decisive_cue_id": "CAU-CUE-CHANGED",
+        "distractor_lineage_id": "CAU-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "CAU-ITEM-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "CAU-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "CAU-ITEM-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "CAU-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "CAU-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "CAU-FEATURE-CHANGED-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "CAU-ITEM-REPAIR-NEAR",
+        "activity_id": "CAU-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CAU-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "CAU-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_CUE_VISIBLE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "CAU-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_CAUSAL_LINK_TEST",
+        "hint_policy": "FUNCTION_SPECIFIC_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CAU_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#CAU-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#CAU-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CAU-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "CAU-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "CAU-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "CAU-ITEM-REENTRY-NEAR",
+        "activity_id": "CAU-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CAU-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "CAU-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "CAU-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "RECHECK_CAUSAL_CLAIM_WITH_ALTERNATIVE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CAU_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#CAU-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#CAU-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CAU-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "CAU-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "CAU-DISTRACTOR-REENTRY-NEAR"
+      },
+      {
+        "item_binding_id": "CAU-ITEM-REPAIR-CHANGED",
+        "activity_id": "CAU-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CAU-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "CAU-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "FUNCTION_SPECIFIC_CUE_VISIBLE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "CAU-REP-ALT",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_INTERVENTION_REVERSAL_PATTERN",
+        "hint_policy": "FUNCTION_SPECIFIC_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CAU_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#CAU-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#CAU-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CAU-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "CAU-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "CAU-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "CAU-ITEM-REENTRY-CHANGED",
+        "activity_id": "CAU-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CAU-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "CAU-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL_EXIT"
+        ],
+        "representation_id": "CAU-REP-ALT",
+        "changed_dimensions": [
+          "domain_context",
+          "representation"
+        ],
+        "learner_operation": "RECHECK_INTERVENTION_REVERSAL_LINK",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CAU_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#CAU-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#CAU-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CAU-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "CAU-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "CAU-DISTRACTOR-REENTRY-CHANGED"
+      },
+      {
+        "item_binding_id": "CAU-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-188841",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "CAU-FAMILY-WORKED",
+        "stimulus_lineage_id": "CAU-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CAU-REP-CORE",
+        "changed_dimensions": [],
+        "learner_operation": "FOLLOW_PASSAGE_BOUNDED_SELECTION_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:CAU-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CAU-SOLUTION-WORKED",
+        "decisive_cue_id": "CAU-CUE-WORKED",
+        "distractor_lineage_id": null
+      }
+    ],
+    "transitions": [
+      {
+        "transition_id": "LOG-TO-EVD-ENTRY",
+        "from_node_id": "LOG-NODE-RECAP",
+        "to_node_id": "EVD-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      },
+      {
+        "transition_id": "EVD-TO-GEN-ENTRY",
+        "from_node_id": "EVD-NODE-RECAP",
+        "to_node_id": "GEN-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      },
+      {
+        "transition_id": "GEN-TO-CAU-ENTRY",
+        "from_node_id": "GEN-NODE-RECAP",
+        "to_node_id": "CAU-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      },
+      {
+        "transition_id": "LOG-PREREQUISITE-CHECK-PASS",
+        "from_node_id": "LOG-NODE-ENTRY",
+        "to_node_id": "LOG-NODE-ORIENTATION",
+        "predicate": "HARD_PREREQUISITE_CHECK_PASSED"
+      },
+      {
+        "transition_id": "LOG-PREREQUISITE-CHECK-HANDOFF",
+        "from_node_id": "LOG-NODE-ENTRY",
+        "to_node_id": "LOG-NODE-PREREQUISITE-HANDOFF",
+        "predicate": "HARD_PREREQUISITE_CHECK_NOT_PASSED"
+      }
+    ],
+    "attachment_bindings": [
+      {
+        "attachment_id": "V3-CAP-027756",
+        "attachment_type": "CAPSTONE",
+        "owner_lesson_id": "V3-LES-269427",
+        "host_scope": {
+          "kind": "MULTI_KC",
+          "kc_ids": [
+            "V3-KC-717751",
+            "V3-KC-795113",
+            "V3-KC-521064",
+            "V3-KC-188841"
+          ]
+        },
+        "declared_host_core_ids": [
+          "V3-KC-189442",
+          "V3-KC-730249",
+          "V3-KC-072322",
+          "V3-KC-717751",
+          "V3-KC-795113",
+          "V3-KC-521064",
+          "V3-KC-188841",
+          "V3-KC-543225",
+          "V3-KC-614766"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": true,
+        "relation_ids": [
+          "R14-CAP-027756"
+        ],
+        "relation_class": "CAPSTONE_PLACEMENT",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": true
+      }
+    ]
+  }
+}

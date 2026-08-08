@@ -1,0 +1,301 @@
+{
+  "artifact_type": "KC_COVERAGE_MATRIX",
+  "artifact_id": "V3-KCOV-310043",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "203a6220b6b88b9293719d156c1c45ba197d939cc8987f76ec4645eed3bdf5ac",
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-310043",
+    "lesson_script_sha256": "570a42552bea9f03d2345e9ed34e2999f14756f5ad9deb749d66409090fe6bcd"
+  },
+  "payload": {
+    "lesson_id": "V3-LES-310043",
+    "ordered_required_kc_ids": [
+      "V3-KC-506402",
+      "V3-KC-314628"
+    ],
+    "lesson_script_id": "V3-LSCR-310043",
+    "lesson_script_sha256": "570a42552bea9f03d2345e9ed34e2999f14756f5ad9deb749d66409090fe6bcd",
+    "rows": [
+      {
+        "kc_id": "V3-KC-506402",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-506402",
+        "entry_check_boundary_id": "SEP-NODE-ENTRY",
+        "orientation_node_id": "SEP-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "SEP-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "SEP-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "SEP-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "SEP-NODE-WORKED"
+        ],
+        "practice_item_ids": [
+          "SEP-ITEM-GUIDED",
+          "SEP-ITEM-LIGHT",
+          "SEP-ITEM-SOLO"
+        ],
+        "near_exit_item_ids": [
+          "SEP-ITEM-NEAR"
+        ],
+        "changed_exit_item_ids": [
+          "SEP-ITEM-CHANGED"
+        ],
+        "repair_node_ids": [
+          "SEP-NODE-REPAIR-NEAR",
+          "SEP-NODE-REPAIR-CHANGED"
+        ],
+        "fresh_confirmation_item_ids": [
+          "SEP-ITEM-REPAIR-NEAR",
+          "SEP-ITEM-REENTRY-NEAR",
+          "SEP-ITEM-REPAIR-CHANGED",
+          "SEP-ITEM-REENTRY-CHANGED"
+        ],
+        "exact_reentry_refs": [
+          "SEP-NODE-REENTRY-NEAR",
+          "SEP-NODE-REENTRY-CHANGED"
+        ],
+        "bounded_failure_handoff_node_id": "SEP-NODE-HANDOFF",
+        "recap_node_id": "SEP-NODE-RECAP",
+        "route_coverage": {
+          "concise": {
+            "teaching_ids": [
+              "SEP-NODE-ORIENTATION",
+              "SEP-NODE-EXPLANATION",
+              "SEP-NODE-MODEL",
+              "SEP-NODE-THINK",
+              "SEP-NODE-WORKED",
+              "SEP-NODE-CONTRAST"
+            ],
+            "practice_ids": [
+              "SEP-ITEM-GUIDED",
+              "SEP-ITEM-LIGHT",
+              "SEP-ITEM-SOLO"
+            ],
+            "exit_ids": [
+              "SEP-ITEM-NEAR",
+              "SEP-ITEM-CHANGED"
+            ],
+            "repair_ids": [
+              "SEP-NODE-REPAIR-NEAR",
+              "SEP-NODE-REENTRY-NEAR",
+              "SEP-NODE-REPAIR-CHANGED",
+              "SEP-NODE-REENTRY-CHANGED",
+              "SEP-NODE-HANDOFF"
+            ],
+            "recap_ids": [
+              "SEP-NODE-RECAP"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "standard": {
+            "teaching_ids": [
+              "SEP-NODE-ORIENTATION",
+              "SEP-NODE-EXPLANATION",
+              "SEP-NODE-MODEL",
+              "SEP-NODE-THINK",
+              "SEP-NODE-WORKED",
+              "SEP-NODE-CONTRAST"
+            ],
+            "practice_ids": [
+              "SEP-ITEM-GUIDED",
+              "SEP-ITEM-LIGHT",
+              "SEP-ITEM-SOLO"
+            ],
+            "exit_ids": [
+              "SEP-ITEM-NEAR",
+              "SEP-ITEM-CHANGED"
+            ],
+            "repair_ids": [
+              "SEP-NODE-REPAIR-NEAR",
+              "SEP-NODE-REENTRY-NEAR",
+              "SEP-NODE-REPAIR-CHANGED",
+              "SEP-NODE-REENTRY-CHANGED",
+              "SEP-NODE-HANDOFF"
+            ],
+            "recap_ids": [
+              "SEP-NODE-RECAP"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "misconception": {
+            "teaching_ids": [
+              "SEP-NODE-ORIENTATION",
+              "SEP-NODE-EXPLANATION",
+              "SEP-NODE-MODEL",
+              "SEP-NODE-THINK",
+              "SEP-NODE-WORKED",
+              "SEP-NODE-CONTRAST"
+            ],
+            "practice_ids": [
+              "SEP-ITEM-GUIDED",
+              "SEP-ITEM-LIGHT",
+              "SEP-ITEM-SOLO"
+            ],
+            "exit_ids": [
+              "SEP-ITEM-NEAR",
+              "SEP-ITEM-CHANGED"
+            ],
+            "repair_ids": [
+              "SEP-NODE-REPAIR-NEAR",
+              "SEP-NODE-REENTRY-NEAR",
+              "SEP-NODE-REPAIR-CHANGED",
+              "SEP-NODE-REENTRY-CHANGED",
+              "SEP-NODE-HANDOFF"
+            ],
+            "recap_ids": [
+              "SEP-NODE-RECAP"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          }
+        },
+        "row_status": "CONTENT_AUTHORED_RUNTIME_PENDING"
+      },
+      {
+        "kc_id": "V3-KC-314628",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-314628",
+        "entry_check_boundary_id": "FUN-NODE-ENTRY",
+        "orientation_node_id": "FUN-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "FUN-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "FUN-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "FUN-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "FUN-NODE-WORKED"
+        ],
+        "practice_item_ids": [
+          "FUN-ITEM-GUIDED",
+          "FUN-ITEM-LIGHT",
+          "FUN-ITEM-SOLO"
+        ],
+        "near_exit_item_ids": [
+          "FUN-ITEM-NEAR"
+        ],
+        "changed_exit_item_ids": [
+          "FUN-ITEM-CHANGED"
+        ],
+        "repair_node_ids": [
+          "FUN-NODE-REPAIR-NEAR",
+          "FUN-NODE-REPAIR-CHANGED"
+        ],
+        "fresh_confirmation_item_ids": [
+          "FUN-ITEM-REPAIR-NEAR",
+          "FUN-ITEM-REENTRY-NEAR",
+          "FUN-ITEM-REPAIR-CHANGED",
+          "FUN-ITEM-REENTRY-CHANGED"
+        ],
+        "exact_reentry_refs": [
+          "FUN-NODE-REENTRY-NEAR",
+          "FUN-NODE-REENTRY-CHANGED"
+        ],
+        "bounded_failure_handoff_node_id": "FUN-NODE-HANDOFF",
+        "recap_node_id": "FUN-NODE-RECAP",
+        "route_coverage": {
+          "concise": {
+            "teaching_ids": [
+              "FUN-NODE-ORIENTATION",
+              "FUN-NODE-EXPLANATION",
+              "FUN-NODE-MODEL",
+              "FUN-NODE-THINK",
+              "FUN-NODE-WORKED",
+              "FUN-NODE-CONTRAST"
+            ],
+            "practice_ids": [
+              "FUN-ITEM-GUIDED",
+              "FUN-ITEM-LIGHT",
+              "FUN-ITEM-SOLO"
+            ],
+            "exit_ids": [
+              "FUN-ITEM-NEAR",
+              "FUN-ITEM-CHANGED"
+            ],
+            "repair_ids": [
+              "FUN-NODE-REPAIR-NEAR",
+              "FUN-NODE-REENTRY-NEAR",
+              "FUN-NODE-REPAIR-CHANGED",
+              "FUN-NODE-REENTRY-CHANGED",
+              "FUN-NODE-HANDOFF"
+            ],
+            "recap_ids": [
+              "FUN-NODE-RECAP"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "standard": {
+            "teaching_ids": [
+              "FUN-NODE-ORIENTATION",
+              "FUN-NODE-EXPLANATION",
+              "FUN-NODE-MODEL",
+              "FUN-NODE-THINK",
+              "FUN-NODE-WORKED",
+              "FUN-NODE-CONTRAST"
+            ],
+            "practice_ids": [
+              "FUN-ITEM-GUIDED",
+              "FUN-ITEM-LIGHT",
+              "FUN-ITEM-SOLO"
+            ],
+            "exit_ids": [
+              "FUN-ITEM-NEAR",
+              "FUN-ITEM-CHANGED"
+            ],
+            "repair_ids": [
+              "FUN-NODE-REPAIR-NEAR",
+              "FUN-NODE-REENTRY-NEAR",
+              "FUN-NODE-REPAIR-CHANGED",
+              "FUN-NODE-REENTRY-CHANGED",
+              "FUN-NODE-HANDOFF"
+            ],
+            "recap_ids": [
+              "FUN-NODE-RECAP"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "misconception": {
+            "teaching_ids": [
+              "FUN-NODE-ORIENTATION",
+              "FUN-NODE-EXPLANATION",
+              "FUN-NODE-MODEL",
+              "FUN-NODE-THINK",
+              "FUN-NODE-WORKED",
+              "FUN-NODE-CONTRAST"
+            ],
+            "practice_ids": [
+              "FUN-ITEM-GUIDED",
+              "FUN-ITEM-LIGHT",
+              "FUN-ITEM-SOLO"
+            ],
+            "exit_ids": [
+              "FUN-ITEM-NEAR",
+              "FUN-ITEM-CHANGED"
+            ],
+            "repair_ids": [
+              "FUN-NODE-REPAIR-NEAR",
+              "FUN-NODE-REENTRY-NEAR",
+              "FUN-NODE-REPAIR-CHANGED",
+              "FUN-NODE-REENTRY-CHANGED",
+              "FUN-NODE-HANDOFF"
+            ],
+            "recap_ids": [
+              "FUN-NODE-RECAP"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          }
+        },
+        "row_status": "CONTENT_AUTHORED_RUNTIME_PENDING"
+      }
+    ],
+    "matrix_status": "CANDIDATE"
+  }
+}

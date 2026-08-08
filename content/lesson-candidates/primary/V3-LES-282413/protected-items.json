@@ -1,0 +1,1488 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "FAT-ITEM-ENTRY",
+      "learner_prompt_key": "FAT_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "Mobilized fatty acids circulate noncovalently associated with albumin.",
+      "post_commitment_feedback": "Adipose lipolysis releases fatty acids, which travel through blood bound to albumin.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAT-ITEM-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Adipose triacylglycerol hydrolysis does not release glycogen particles."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAT-ITEM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAT-ITEM-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ketone bodies are produced mainly by liver and are not the stored adipose product."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAT-ITEM-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Triacylglycerol hydrolysis does not generate glucose–protein conjugates."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAT-ITEM-GUIDED",
+      "learner_prompt_key": "FAT_GUIDED",
+      "correct_option_index": 2,
+      "rationale": "The carnitine shuttle transfers long-chain fatty acyl groups into the mitochondrial matrix.",
+      "post_commitment_feedback": "After activation, a long-chain fatty acyl group uses the carnitine shuttle to access matrix beta oxidation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAT-ITEM-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Fatty acids are not converted directly into glycogen before oxidation."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAT-ITEM-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Acetyl-CoA is produced after beta oxidation and is not exported as the entry step."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAT-ITEM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAT-ITEM-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ribosomal peptide synthesis is not the mitochondrial transport step."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAT-ITEM-LIGHT",
+      "learner_prompt_key": "FAT_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Beta oxidation releases acetyl-CoA and generates reduced electron carriers.",
+      "post_commitment_feedback": "Beta oxidation shortens the acyl chain while producing acetyl-CoA, NADH, and FADH2.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAT-ITEM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAT-ITEM-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Beta oxidation does not directly generate glucose or molecular nitrogen."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAT-ITEM-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glycogen and urea are not direct beta-oxidation products."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAT-ITEM-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "These products belong to other metabolic contexts."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAT-ITEM-SOLO",
+      "learner_prompt_key": "FAT_SOLO",
+      "correct_option_index": 3,
+      "rationale": "The cis geometry bends the chain and weakens close packing.",
+      "post_commitment_feedback": "A cis double bond introduces a bend, generally lowering packing efficiency and melting point.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAT-ITEM-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Saturation permits straighter packing; a cis bond introduces a bend."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAT-ITEM-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A double bond does not remove the chain carbons."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAT-ITEM-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A fatty acid does not become a peptide through unsaturation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAT-ITEM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAT-ITEM-NEAR",
+      "learner_prompt_key": "FAT_NEAR",
+      "correct_option_index": 1,
+      "rationale": "This sequence preserves the mobilized form, blood carrier, uptake, and mitochondrial destination.",
+      "post_commitment_feedback": "Stored triacylglycerol is hydrolyzed, fatty acids travel with albumin, and oxidative tissues route them to mitochondrial beta oxidation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAT-ITEM-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Adipose tissue does not release glycogen in chylomicrons for nuclear oxidation."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAT-ITEM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAT-ITEM-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ketone bodies are not stored in adipose triacylglycerol and insulin is not the fasting mobilization signal."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAT-ITEM-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "These steps do not trace a stored fatty acid to oxidation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAT-ITEM-CHANGED",
+      "learner_prompt_key": "FAT_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "High hepatic fatty-acid oxidation with low carbohydrate availability favors ketone production.",
+      "post_commitment_feedback": "The state favors hepatic conversion of excess acetyl-CoA into exportable ketone bodies.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAT-ITEM-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Fatty acids cannot provide net glucose through direct conversion into glycogen in this bounded model."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAT-ITEM-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Prolonged fasting supports continued, not immediate cessation of, mobilization."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAT-ITEM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAT-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Fatty acyl groups require mitochondrial access for beta oxidation and do not become proteins."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAT-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "FAT_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Albumin provides the circulating carrier for mobilized fatty acids.",
+      "post_commitment_feedback": "Anchor the trace at the blood step: mobilized fatty acids travel with albumin.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAT-ITEM-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAT-ITEM-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Hemoglobin does not transport triacylglycerol as its metabolic cargo."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAT-ITEM-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "DNA is not an interorgan acetyl-CoA carrier."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAT-ITEM-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glycogen does not carry ketone bodies."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAT-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "FAT_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "This sequence correctly preserves carrier, uptake, activation, and matrix entry.",
+      "post_commitment_feedback": "The fresh liver trace uses albumin, uptake, activation, and the carnitine shuttle before beta oxidation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAT-ITEM-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glycogen packaging and nuclear entry are not steps in fatty-acid oxidation."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAT-ITEM-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ribosomes and fermentation do not activate and import long-chain fatty acids."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAT-ITEM-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the fasting flow and does not describe fatty-acid oxidation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAT-ITEM-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAT-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "FAT_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "This combination increases hepatic acetyl-CoA supply while constraining its usual oxidation.",
+      "post_commitment_feedback": "Ketone production is favored when liver beta oxidation supplies abundant acetyl-CoA during sustained low carbohydrate availability.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAT-ITEM-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This state does not supply the high hepatic acetyl-CoA flow associated with ketogenesis."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAT-ITEM-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAT-ITEM-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ketone bodies require acetyl-CoA as a carbon source."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAT-ITEM-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This statement neither supplies the ketone pathway condition nor reflects bounded protein use."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FAT-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "FAT_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The liver converts acetyl-CoA into ketone bodies for export during prolonged fasting.",
+      "post_commitment_feedback": "The fresh state predicts increased hepatic ketone-body production and export.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FAT-ITEM-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glycogen is not exported as circulating particles."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FAT-ITEM-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Proteins are not synthesized as the direct exported product of excess acetyl-CoA."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FAT-ITEM-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FAT-ITEM-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "DNA fragments are not a circulating metabolic fuel."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANA-ITEM-ENTRY",
+      "learner_prompt_key": "ANA_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "Glycogenesis is the anabolic assembly of glucose units into glycogen.",
+      "post_commitment_feedback": "Linking glucose units into glycogen is anabolic polysaccharide storage.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANA-ITEM-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Linking glucose units builds a storage polymer rather than oxidizing all carbon."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANA-ITEM-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glycogen synthesis does not use messenger RNA as a sequence template."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANA-ITEM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANA-ITEM-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Beta oxidation breaks fatty acids and does not build glycogen."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANA-ITEM-GUIDED",
+      "learner_prompt_key": "ANA_GUIDED",
+      "correct_option_index": 0,
+      "rationale": "Building fatty acids and esterifying them into triacylglycerol creates dense stored fuel.",
+      "post_commitment_feedback": "Excess fed-state carbon can be built into fatty acids and stored as triacylglycerol.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANA-ITEM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANA-ITEM-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "These processes break or consume fuels rather than store excess carbon."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANA-ITEM-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glycogen breakdown mobilizes rather than stores fuel."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANA-ITEM-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Protein breakdown is catabolic and not the stated storage route."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANA-ITEM-LIGHT",
+      "learner_prompt_key": "ANA_LIGHT",
+      "correct_option_index": 3,
+      "rationale": "The polymer is assembled enzymatically without a nucleic-acid sequence template.",
+      "post_commitment_feedback": "Nontemplate means assembly is not copied from DNA or RNA, not that enzymes are absent.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANA-ITEM-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glycogen synthesis depends on enzymes and regulation."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANA-ITEM-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glycogen contains covalent glycosidic bonds."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANA-ITEM-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A DNA sequence does not specify glycogen monomer order."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANA-ITEM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANA-ITEM-SOLO",
+      "learner_prompt_key": "ANA_SOLO",
+      "correct_option_index": 1,
+      "rationale": "Glycogenesis builds glycogen from glucose units.",
+      "post_commitment_feedback": "Glycogenesis is anabolic and produces the polysaccharide storage form glycogen.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANA-ITEM-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Beta oxidation is a catabolic fuel-breakdown process."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANA-ITEM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANA-ITEM-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lipolysis mobilizes stored lipid rather than creating storage."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANA-ITEM-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Proteolysis breaks protein into amino acids."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANA-ITEM-NEAR",
+      "learner_prompt_key": "ANA_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Fed-state signaling supports storage of glucose and lipid.",
+      "post_commitment_feedback": "With abundant fuel and insulin, net glycogen synthesis and triacylglycerol storage are favored.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANA-ITEM-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "These are fasting-associated mobilization processes."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANA-ITEM-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Protein breakdown is not the primary fed-state storage response."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANA-ITEM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANA-ITEM-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both listed processes mobilize stored fuel."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANA-ITEM-CHANGED",
+      "learner_prompt_key": "ANA_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "This statement preserves the template distinction without denying enzymatic control.",
+      "post_commitment_feedback": "Protein monomer order is template-directed, whereas lipid and polysaccharide assembly is nontemplate.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANA-ITEM-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Only protein sequence is directly specified by messenger RNA."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANA-ITEM-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glycogen monomer order is not copied from DNA."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANA-ITEM-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Fatty-acid synthesis is metabolic assembly, not ribosomal translation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANA-ITEM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANA-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "ANA_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Assembly of a larger storage molecule with energy input is anabolic.",
+      "post_commitment_feedback": "Anabolism builds a larger product and requires energy; mobilization and oxidation run in the opposite direction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANA-ITEM-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANA-ITEM-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Hydrolysis that releases fuel is catabolic mobilization."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANA-ITEM-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Electron transfer supports energy extraction rather than storage assembly."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANA-ITEM-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Chain shortening describes beta oxidation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANA-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "ANA_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Adding glucose units to glycogen restores a storage polymer.",
+      "post_commitment_feedback": "The fresh case is glycogenesis: anabolic extension of the glycogen store.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANA-ITEM-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The cell is extending glycogen, not breaking it through glycolysis."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANA-ITEM-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANA-ITEM-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No fatty acid or ketone pathway is described."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANA-ITEM-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No protein breakdown or nitrogen disposal is described."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANA-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "ANA_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Nontemplate distinguishes metabolic assembly from sequence copying.",
+      "post_commitment_feedback": "Nontemplate synthesis is enzyme-guided assembly without a nucleic-acid sequence template.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANA-ITEM-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Metabolic lipid synthesis is enzyme-directed, not random."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANA-ITEM-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Messenger RNA does not template lipid carbon order."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANA-ITEM-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANA-ITEM-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lipid synthesis remains strongly regulated."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ANA-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "ANA_REENTRY_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Ribosomes read messenger RNA to specify amino-acid order.",
+      "post_commitment_feedback": "The fresh comparison identifies protein synthesis as template-directed and the storage pathways as nontemplate.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ANA-ITEM-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ANA-ITEM-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glycogen is assembled without an RNA sequence specifying glucose order."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ANA-ITEM-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Fatty-acid carbon assembly is not ribosomal translation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ANA-ITEM-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Esterification into triacylglycerol is not template-directed."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRO-ITEM-ENTRY",
+      "learner_prompt_key": "PRO_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "Protein digestion supplies amino acids to a metabolic pool.",
+      "post_commitment_feedback": "Protein digestion releases amino acids that can be reused for synthesis or enter bounded breakdown pathways.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRO-ITEM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRO-ITEM-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Dietary protein is not converted into intact copied glycogen."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRO-ITEM-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ketone bodies do not contain peptide bonds from dietary protein."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRO-ITEM-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Amino nitrogen is not carried unchanged on fatty acids."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRO-ITEM-GUIDED",
+      "learner_prompt_key": "PRO_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "Fuel use requires separating nitrogen handling from carbon-skeleton metabolism.",
+      "post_commitment_feedback": "Amino-acid fuel use splits nitrogen disposal from carbon-skeleton entry into central metabolism.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRO-ITEM-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "There is no dedicated permanent store of intact excess amino acids."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRO-ITEM-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Amino nitrogen is disposed rather than converted directly into glucose."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRO-ITEM-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Beta oxidation is a fatty-acid pathway and does not accept intact amino acids."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRO-ITEM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRO-ITEM-LIGHT",
+      "learner_prompt_key": "PRO_LIGHT",
+      "correct_option_index": 1,
+      "rationale": "Urea carries nitrogen for excretion.",
+      "post_commitment_feedback": "Excess amino nitrogen is ultimately converted mainly to urea for excretion.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRO-ITEM-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glucose contains carbon, hydrogen, and oxygen but is not the main nitrogen-disposal product."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRO-ITEM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRO-ITEM-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glycogen stores glucose and is not a nitrogen-disposal product."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRO-ITEM-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Cholesterol is a lipid and is not the main amino-nitrogen endpoint."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRO-ITEM-SOLO",
+      "learner_prompt_key": "PRO_SOLO",
+      "correct_option_index": 2,
+      "rationale": "Proteins serve functional roles and can be turned over, but are not a dedicated fuel store.",
+      "post_commitment_feedback": "Protein turnover can supply amino acids, but there is no dedicated protein storage depot.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRO-ITEM-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The body lacks a dedicated depot analogous to glycogen or triacylglycerol for excess amino acids."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRO-ITEM-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Amino-acid carbon skeletons can enter energy metabolism."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRO-ITEM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRO-ITEM-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Many dietary amino acids are reused for biosynthesis."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRO-ITEM-NEAR",
+      "learner_prompt_key": "PRO_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The bounded fate separates nitrogen disposal from carbon-skeleton metabolism.",
+      "post_commitment_feedback": "Excess amino acids are broken down by separating nitrogen handling from carbon-skeleton use.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRO-ITEM-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Excess amino acids are not stored intact in a dedicated reserve."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRO-ITEM-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Nitrogen must be managed and is not converted into fatty-acid carbon."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRO-ITEM-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glycogenesis does not accept intact amino acids."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRO-ITEM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRO-ITEM-CHANGED",
+      "learner_prompt_key": "PRO_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Some carbon skeletons support gluconeogenesis while nitrogen is separately disposed.",
+      "post_commitment_feedback": "In fasting, some amino-acid carbon skeletons support hepatic glucose production while nitrogen is routed toward urea.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRO-ITEM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRO-ITEM-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Intact amino acids are not linked into glycogen."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRO-ITEM-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Whole proteins are not direct DNA substrates."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRO-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Beta oxidation acts on fatty acyl chains, not intact peptides."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRO-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "PRO_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "This pair preserves the distinct metabolic handling of nitrogen and carbon.",
+      "post_commitment_feedback": "Repair the trace by splitting amino nitrogen from the carbon skeleton before assigning destinations.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRO-ITEM-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRO-ITEM-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Nitrogen is not stored in glycogen, and carbon skeletons are not messenger RNA."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRO-ITEM-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Intact amino acids do not enter fatty-acid beta oxidation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRO-ITEM-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "These are not the broad destinations of amino-acid breakdown."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRO-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "PRO_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "This description preserves the nitrogen–carbon split at bounded depth.",
+      "post_commitment_feedback": "The fresh case again requires separate nitrogen disposal and carbon-skeleton metabolism.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRO-ITEM-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glycogen does not store intact amino acids."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRO-ITEM-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRO-ITEM-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Peptide bonds are hydrolyzed; they are not direct ketone-body precursors."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRO-ITEM-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Intact amino acids do not enter beta oxidation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRO-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "PRO_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "This is a bounded, accurate role for some amino-acid carbon skeletons.",
+      "post_commitment_feedback": "Keep the claim broad but accurate: some carbon skeletons support glucose production; do not universalize every amino acid.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRO-ITEM-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Amino acids have varied routes, and the lesson excludes an advanced catalog."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRO-ITEM-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Fasting uses multiple fuels and does not make protein the only fuel everywhere."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRO-ITEM-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRO-ITEM-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Nitrogen is disposed separately rather than becoming glucose carbon."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PRO-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "PRO_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Nitrogen is handled separately and ultimately excreted mainly as urea.",
+      "post_commitment_feedback": "The fresh branch preserves the split: carbon supports glucose production while nitrogen moves toward urea.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PRO-ITEM-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glucose production uses carbon skeletons, not unchanged amino nitrogen."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PRO-ITEM-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glycogen does not serve as a nitrogen store."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PRO-ITEM-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Amino nitrogen does not become nitrogen gas in beta oxidation."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PRO-ITEM-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REG-ITEM-ENTRY",
+      "learner_prompt_key": "REG_ENTRY",
+      "correct_option_index": 3,
+      "rationale": "Equal input and output produce a constant pool with ongoing turnover.",
+      "post_commitment_feedback": "A constant concentration can coexist with nonzero, balanced input and output fluxes.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REG-ITEM-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal nonzero rates preserve concentration while flux continues."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REG-ITEM-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The stated output rate is nonzero."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REG-ITEM-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The stated input rate is nonzero."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REG-ITEM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REG-ITEM-GUIDED",
+      "learner_prompt_key": "REG_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "The stated inhibitor reduces activity at the controlled step.",
+      "post_commitment_feedback": "High ATP binding to an inhibitory allosteric site lowers flux through that catabolic control step.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REG-ITEM-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Allosteric binding changes activity without requiring new protein identity."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REG-ITEM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REG-ITEM-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One control event does not permanently stop every pathway."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REG-ITEM-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Allosteric metabolic control does not rewrite DNA."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REG-ITEM-LIGHT",
+      "learner_prompt_key": "REG_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Peptide hormones signal through cell-surface receptors.",
+      "post_commitment_feedback": "Insulin binds a cell-surface receptor and triggers intracellular signaling.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REG-ITEM-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A peptide hormone does not first diffuse to DNA."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REG-ITEM-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A pathway intermediate is not the hormone receptor."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REG-ITEM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REG-ITEM-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glycogen is a storage polymer, not a receptor."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REG-ITEM-SOLO",
+      "learner_prompt_key": "REG_SOLO",
+      "correct_option_index": 0,
+      "rationale": "Fed-state insulin favors uptake and carbohydrate storage.",
+      "post_commitment_feedback": "Fed-state insulin shifts flux toward glucose uptake and glycogen storage.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REG-ITEM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REG-ITEM-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "These are fasting-oriented mobilization responses."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REG-ITEM-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Insulin does not require universal immediate proteolysis."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REG-ITEM-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Metabolism shifts direction; it does not permanently stop."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REG-ITEM-NEAR",
+      "learner_prompt_key": "REG_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Activation and inhibition coordinate net storage and reduce wasteful cycling.",
+      "post_commitment_feedback": "Reciprocal control pushes net flux toward glycogen storage rather than maximal simultaneous synthesis and breakdown.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REG-ITEM-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reciprocal control prevents maximal simultaneous opposition."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REG-ITEM-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Activating synthesis favors maintenance or growth of the pool."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REG-ITEM-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glycogen is not directly converted into protein by the signal."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REG-ITEM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REG-ITEM-CHANGED",
+      "learner_prompt_key": "REG_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Balanced rates preserve concentration while greater material moves through the pool.",
+      "post_commitment_feedback": "The equal rates preserve the pool, but their higher values mean greater pathway flux.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REG-ITEM-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both rates are nonzero and increased."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REG-ITEM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REG-ITEM-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The graph shows synthesis rising, not ceasing."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REG-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A rate graph does not change metabolite identity into a receptor."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REG-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "REG_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Opposite activity changes coordinate a useful net direction.",
+      "post_commitment_feedback": "Reciprocal regulation creates a clear net direction and reduces wasteful simultaneous cycling.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REG-ITEM-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Maximal simultaneous opposition wastes energy."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REG-ITEM-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Regulation changes activity and need not eliminate enzymes."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REG-ITEM-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REG-ITEM-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Hormone structure still determines signaling location."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REG-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "REG_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Fasting glucagon supports hepatic fuel mobilization and glucose maintenance.",
+      "post_commitment_feedback": "The fresh state predicts hepatic mobilization and glucose support rather than storage.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REG-ITEM-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REG-ITEM-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is a fed-state storage direction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REG-ITEM-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glucagon is a peptide hormone and signals through a surface receptor."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REG-ITEM-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Fasting generally supports rather than permanently stops mobilization."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REG-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "REG_REPAIR_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Equal zero rates and equal high rates both give constant concentration, so rates distinguish them.",
+      "post_commitment_feedback": "A constant pool can hide either no turnover or rapid balanced turnover; input and output rates decide.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REG-ITEM-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Display color does not measure flux."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REG-ITEM-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Name length does not measure pathway rates."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REG-ITEM-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A hormone catalog does not establish this pool’s turnover."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REG-ITEM-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "REG-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "REG_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Balanced nonzero rates preserve concentration while defining ongoing flux.",
+      "post_commitment_feedback": "The fresh table shows nonzero balanced turnover: dynamic steady state with ongoing flux.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "REG-ITEM-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both stated rates are active and nonzero."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "REG-ITEM-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "REG-ITEM-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The input rate is 4, and output is also present."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "REG-ITEM-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The output rate is 4, and input is also present."
+        }
+      ]
+    }
+  ]
+}

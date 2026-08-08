@@ -1,0 +1,53 @@
+{
+  "format": "lesson-generation-protected-scan/2",
+  "lessonId": "V3-LES-404423",
+  "scannedPaths": [
+    "learner-safe-items.json",
+    "source-claim-ledger.json",
+    "candidate-quality-ledger.json",
+    "validation/lesson-validate.json",
+    "validation/computed-quality.json",
+    "validation/normalization-smoke.json"
+  ],
+  "scannedPathCount": 6,
+  "protectedArtifact": {
+    "path": "protected-items.json",
+    "sha256": "567ea44a7f761ec1ee2e9ed692995afdfec58476bf3a2608cd413857cbfbf106",
+    "size": 75524
+  },
+  "logHashes": {
+    "candidateStdoutSha256": "79c05a84cd53cc22f73643f166d2ff659f93754697f6999be94211a50d236e49",
+    "candidateStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "answerPositionPatternCheck": {
+    "itemCount": 30,
+    "maximumPositionCountSpread": 1,
+    "maximumRepeatedPositionRun": 1,
+    "status": "PASS"
+  },
+  "distractorRationaleAudit": {
+    "incorrectOptionCount": 90,
+    "explicitRejectionRationaleCount": 90,
+    "missingRationaleCount": 0,
+    "status": "PASS"
+  },
+  "optionPresentationAudit": {
+    "auditedMeasurableItemCount": 30,
+    "grammaticalParallelismReviewedCount": 30,
+    "incorrectOptionLengthStandardDeviation": 9.961010410348024,
+    "residualLengthClueCount": 0,
+    "residualLengthClueItemIds": [],
+    "status": "PASS"
+  },
+  "postCommitmentFeedbackCheck": {
+    "requiredCount": 30,
+    "authoredCount": 30,
+    "status": "PASS"
+  },
+  "itemDokClaimCheck": {
+    "itemLevelDokClaimsPresent": false,
+    "status": "PASS"
+  },
+  "findings": [],
+  "status": "PASS"
+}

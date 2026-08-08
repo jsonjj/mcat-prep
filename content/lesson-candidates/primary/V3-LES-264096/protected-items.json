@@ -1,0 +1,1488 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "AAC-ITEM-ENTRY",
+      "learner_prompt_key": "AAC_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "A hydrocarbon-rich side chain lacks charge and strong polar groups.",
+      "post_commitment_feedback": "The branched hydrocarbon has the strongest hydrophobic character among the choices.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "AAC-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A charged carboxylate interacts strongly with water and is hydrophilic."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "AAC-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "AAC-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A positively charged amine is hydrophilic under the stated condition."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "AAC-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A hydroxyl can hydrogen-bond with water and is polar."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "AAC-ITEM-GUIDED",
+      "learner_prompt_key": "AAC_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "A deprotonated carboxylate is the charged form of an acidic, water-compatible side chain.",
+      "post_commitment_feedback": "The −COO⁻ group is acidic in class and hydrophilic in interaction tendency.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "AAC-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A negatively charged carboxylate is neither basic nor hydrophobic."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "AAC-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The formal negative charge contradicts a neutral hydrophobic classification."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "AAC-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The group is hydrophilic, but a deprotonated carboxylate is acidic rather than basic."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "AAC-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "AAC-ITEM-LIGHT",
+      "learner_prompt_key": "AAC_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "An uncharged hydroxyl is polar and can hydrogen-bond with water.",
+      "post_commitment_feedback": "Hydrophilic does not require formal charge; a neutral hydroxyl is polar.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "AAC-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "AAC-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A hydroxyl has a strong bond dipole and can hydrogen-bond with water."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "AAC-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The stated hydroxyl is uncharged and does not carry a positive amine charge."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "AAC-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt states an uncharged hydroxyl rather than a carboxylate."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "AAC-ITEM-SOLO",
+      "learner_prompt_key": "AAC_SOLO",
+      "correct_option_index": 2,
+      "rationale": "Opposite formal charges can form a favorable ionic interaction.",
+      "post_commitment_feedback": "A positive side chain can pair favorably with a negative carboxylate.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "AAC-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Like charges repel rather than form the favorable ionic pair requested."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "AAC-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A nonpolar hydrocarbon does not provide the opposite ionic charge."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "AAC-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "AAC-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An uncharged carbon does not supply the opposite ionic partner."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "AAC-ITEM-NEAR",
+      "learner_prompt_key": "AAC_NEAR",
+      "correct_option_index": 1,
+      "rationale": "A protonated amine is a positively charged basic side chain with favorable water interactions.",
+      "post_commitment_feedback": "The charged amine is hydrophilic and often compatible with an aqueous protein surface.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "AAC-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The protonated amine carries positive charge and is hydrophilic."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "AAC-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "AAC-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Every part of this classification conflicts with a protonated amine."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "AAC-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The formal charge makes the side chain polar and interaction-capable."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "AAC-ITEM-CHANGED",
+      "learner_prompt_key": "AAC_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "A permanent charge is poorly matched to a dry hydrophobic core unless compensating interactions are supplied.",
+      "post_commitment_feedback": "The changed task requires environment matching: the buried charged group tends to destabilize the core.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "AAC-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Replacing hydrocarbon with charge makes the site less hydrophobic."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "AAC-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A side-chain substitution does not directly cleave every backbone amide."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "AAC-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A residue substitution changes primary sequence."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "AAC-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "AAC-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "AAC_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "A deprotonated side-chain carboxyl group is negatively charged and hydrophilic.",
+      "post_commitment_feedback": "Formal charge first: carboxylate identifies the acidic hydrophilic class.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "AAC-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "AAC-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An alkyl group is hydrophobic and not acidic in this bounded classification."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "AAC-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A protonated amine is basic and positively charged."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "AAC-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A hydrocarbon aromatic group is generally hydrophobic, not acidic."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "AAC-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "AAC_REENTRY_NEAR",
+      "correct_option_index": 2,
+      "rationale": "A neutral amide has polar hydrogen-bond donor and acceptor features without formal charge.",
+      "post_commitment_feedback": "The fresh side chain is polar uncharged and compatible with water.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "AAC-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The carbonyl and N−H can participate in hydrogen bonding."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "AAC-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt specifies a neutral amide, not a protonated amine."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "AAC-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "AAC-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A neutral amide is not a deprotonated carboxylate."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "AAC-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "AAC_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "An isolated charge is energetically mismatched to a dry hydrophobic environment.",
+      "post_commitment_feedback": "Compare old and new solvent preference at the fixed buried location.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "AAC-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both side chains remain compatible with a nonpolar core."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "AAC-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "AAC-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Packing may change, but both remain hydrophobic; the charge mismatch is more direct."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "AAC-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both can remain water-compatible at an exposed site."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "AAC-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "AAC_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Replacing an exposed charge with hydrocarbon reduces local water compatibility.",
+      "post_commitment_feedback": "The fresh environment mismatch is an exposed hydrophobic patch rather than a buried charge.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "AAC-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A hydrocarbon is less hydrophilic than the charged group it replaces."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "AAC-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One surface mutation does not guarantee loss of every subunit interaction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "AAC-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Peptide bonds are not disulfides and are not reduced by this substitution."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "AAC-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ION-ITEM-ENTRY",
+      "learner_prompt_key": "ION_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "The ammonium and carboxylate charges are opposite and sum to zero.",
+      "post_commitment_feedback": "A zwitterionic backbone contains NH₃⁺ and COO⁻ simultaneously.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ION-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both groups are shown uncharged, so this is not the dipolar ammonium-carboxylate form."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ION-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The charges sum positive because the carboxyl group is not deprotonated."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ION-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ION-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The charges sum negative because the amino group is not protonated."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ION-ITEM-GUIDED",
+      "learner_prompt_key": "ION_GUIDED",
+      "correct_option_index": 0,
+      "rationale": "The +1 and −1 backbone charges cancel.",
+      "post_commitment_feedback": "The molecule is dipolar but has net charge zero.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ION-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ION-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This counts ammonium but omits the −1 carboxylate."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ION-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This counts carboxylate but omits the +1 ammonium."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ION-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Only one +1 group is shown."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ION-ITEM-LIGHT",
+      "learner_prompt_key": "ION_LIGHT",
+      "correct_option_index": 3,
+      "rationale": "Strongly acidic conditions favor protonated NH₃⁺ and COOH, giving a positive net charge.",
+      "post_commitment_feedback": "Greater protonation shifts the simple amino acid toward positive net charge.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ION-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Strong acid favors protonation rather than the more deprotonated negative form."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ION-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Protonation of the carboxylate removes a negative charge and can make the net charge positive."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ION-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The amino group can remain protonated and positively charged."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ION-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ION-ITEM-SOLO",
+      "learner_prompt_key": "ION_SOLO",
+      "correct_option_index": 1,
+      "rationale": "Two identical hydrogen substituents prevent the α carbon from being stereogenic.",
+      "post_commitment_feedback": "The glycine-like α carbon with two hydrogens is achiral.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ION-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Four different substituents make the center chiral."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ION-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ION-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Those four total substituents are all different."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ION-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An assigned R center is chiral by definition."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ION-ITEM-NEAR",
+      "learner_prompt_key": "ION_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Backbone +1 and −1 cancel; the side chain leaves net −1.",
+      "post_commitment_feedback": "Add every formal charge, including the side chain: the net charge is −1.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ION-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This omits both negative groups."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ION-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The backbone cancels, but the side chain contributes an additional −1."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ION-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ION-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "There are two negative groups but also one positive ammonium group."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ION-ITEM-CHANGED",
+      "learner_prompt_key": "ION_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "With priority 4 away, clockwise 1→2→3 is R.",
+      "post_commitment_feedback": "Orientation is already correct, so the clockwise trace assigns R.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ION-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ION-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "With priority 4 away, counterclockwise rather than clockwise gives S."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ION-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt supplies a four-priority stereocenter."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ION-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Zwitterionic describes charge state, not absolute configuration."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ION-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "ION_REPAIR_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The neutral amino group contributes 0, and +1 plus −1 sum to zero.",
+      "post_commitment_feedback": "Write all three terms: 0 − 1 + 1 = 0.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ION-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Only the carboxylate contributes a negative charge."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ION-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The +1 side-chain charge cancels the −1 carboxylate."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ION-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The positive side chain is balanced by the negative carboxylate."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ION-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ION-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "ION_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Strong base favors NH₂ and COO⁻, giving net negative charge.",
+      "post_commitment_feedback": "The fresh pH condition shifts the simple amino acid toward negative net charge.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ION-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Strong base favors deprotonation, not the highly protonated positive form."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ION-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ION-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Deprotonating ammonium removes its positive charge while carboxylate remains negative."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ION-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Acid-base charge state is not described by loss of every electron pair."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ION-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "ION_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Clockwise appears R only when priority 4 is away; with 4 toward, invert to S.",
+      "post_commitment_feedback": "The lowest-priority group points toward, so invert the visible clockwise result.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ION-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A toward-viewer priority 4 requires inversion of the visible trace."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ION-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt supplies four priorities at a stereocenter."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ION-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ION-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Net charge is separate from stereochemical assignment."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "ION-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "ION_REENTRY_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "With priority 4 away, a counterclockwise trace is S.",
+      "post_commitment_feedback": "The fresh correctly oriented trace assigns S.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "ION-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "ION-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "With priority 4 away, clockwise rather than counterclockwise gives R."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "ION-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A full priority sequence implies a stereogenic center."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "ION-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Dipolar charge does not determine R or S."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PEP-ITEM-ENTRY",
+      "learner_prompt_key": "PEP_ENTRY",
+      "correct_option_index": 3,
+      "rationale": "The carboxyl carbon and amino nitrogen form an amide linkage.",
+      "post_commitment_feedback": "Adjacent amino-acid residues are connected by peptide amide bonds.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PEP-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Glycosidic bonds join carbohydrate units rather than amino-acid residues."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PEP-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Phosphodiester bonds form nucleic-acid backbones."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PEP-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Disulfides join cysteine side chains but do not form every peptide backbone link."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PEP-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PEP-ITEM-GUIDED",
+      "learner_prompt_key": "PEP_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Peptide formation links a carboxyl carbon to an amino nitrogen.",
+      "post_commitment_feedback": "The reacting pair is carboxyl plus amino group.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PEP-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Hydrocarbon groups do not form the backbone amide linkage."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PEP-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PEP-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Phosphates are not the paired amino-acid groups that form peptide bonds."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PEP-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The amide bond requires an amino nitrogen partner."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PEP-ITEM-LIGHT",
+      "learner_prompt_key": "PEP_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Four linearly connected residues require three peptide bonds.",
+      "post_commitment_feedback": "Use n−1 for a linear chain: a tetrapeptide has three peptide bonds.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PEP-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One bond can join only two residues, not a four-residue linear chain."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PEP-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Two bonds join at most three residues in one linear chain."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PEP-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PEP-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A linear n-residue peptide has n−1 inter-residue peptide bonds."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PEP-ITEM-SOLO",
+      "learner_prompt_key": "PEP_SOLO",
+      "correct_option_index": 0,
+      "rationale": "Cleaving the single linkage separates the two original residues.",
+      "post_commitment_feedback": "Complete dipeptide hydrolysis yields two amino-acid products.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PEP-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PEP-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Hydrolysis separates rather than preserves the two-residue chain as one product."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PEP-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A dipeptide contains only two amino-acid residues."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PEP-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Hydrolysis does not destroy the amino-acid residues."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PEP-ITEM-NEAR",
+      "learner_prompt_key": "PEP_NEAR",
+      "correct_option_index": 3,
+      "rationale": "A linear chain of n residues has n−1 peptide bonds and yields n residues on complete hydrolysis.",
+      "post_commitment_feedback": "For five residues, hydrolysis cleaves four backbone links and releases five residues.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PEP-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A five-residue linear chain has four, not five, inter-residue bonds."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PEP-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Cleavage count is four, but the chain contains five residues."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PEP-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both counts reverse the n and n−1 relationship."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PEP-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PEP-ITEM-CHANGED",
+      "learner_prompt_key": "PEP_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Reduction cleaves the cystine S−S linkage while leaving peptide bonds intact under the stated condition.",
+      "post_commitment_feedback": "Select the highlighted bond: reduction removes the disulfide cross-link.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PEP-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt excludes backbone hydrolysis and targets the S−S bond."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PEP-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PEP-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reduction breaks a disulfide rather than forming an amide."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PEP-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Disulfide reduction does not convert every side chain class."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PEP-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "PEP_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Six residues have five adjacent pairs.",
+      "post_commitment_feedback": "Use n−1: six linearly connected residues require five peptide bonds.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PEP-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Four bonds join only five residues in one linear chain."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PEP-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A linear chain has one fewer inter-residue bond than residues."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PEP-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PEP-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The bond count cannot exceed the number of adjacent residue pairs."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PEP-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "PEP_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "A three-residue linear chain contains two peptide bonds.",
+      "post_commitment_feedback": "The fresh chain follows the same count: two cleavages release three residues.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PEP-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PEP-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the n and n−1 counts."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PEP-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Complete hydrolysis must cleave both inter-residue bonds."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PEP-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Without cleavage the tripeptide remains connected."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PEP-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "PEP_REPAIR_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Oxidation of two thiols forms the disulfide bond.",
+      "post_commitment_feedback": "Use the reversible sulfur rule: oxidation forms S−S; reduction breaks it.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PEP-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Hydrolysis cleaves amide bonds and does not form the S−S link."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PEP-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reduction breaks rather than forms the sulfur-sulfur bond."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PEP-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Protonation does not create the covalent S−S link."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PEP-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "PEP-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "PEP_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "If the disulfide is the only interchain covalent link, its reduction permits chain separation.",
+      "post_commitment_feedback": "The fresh case preserves backbone bonds and selectively removes the interchain S−S connection.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "PEP-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reduction removes rather than creates a covalent cross-link."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "PEP-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "PEP-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt specifies selective disulfide reduction, not complete peptide hydrolysis."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "PEP-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reduction changes the sulfur bond, not residue identities."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STR-ITEM-ENTRY",
+      "learner_prompt_key": "STR_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "Primary structure is the covalent amino-acid sequence.",
+      "post_commitment_feedback": "The residue order defines primary protein structure.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STR-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STR-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An α helix is secondary structure rather than the residue sequence itself."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STR-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The three-dimensional fold of one chain is tertiary structure."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STR-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A multi-chain interface is quaternary structure."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STR-ITEM-GUIDED",
+      "learner_prompt_key": "STR_GUIDED",
+      "correct_option_index": 2,
+      "rationale": "An α helix is a local backbone secondary structure.",
+      "post_commitment_feedback": "Backbone hydrogen bonding in a local helix identifies secondary structure.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STR-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Primary structure is sequence and peptide connectivity, not the local helix pattern."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STR-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt specifies a local backbone pattern rather than the complete one-chain fold."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STR-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STR-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No interaction between separate subunits is described."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STR-ITEM-LIGHT",
+      "learner_prompt_key": "STR_LIGHT",
+      "correct_option_index": 1,
+      "rationale": "Organization among multiple polypeptide chains is quaternary structure.",
+      "post_commitment_feedback": "The subunit interface identifies quaternary structure.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STR-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Secondary structure describes local backbone patterns within a chain."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STR-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STR-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Primary structure is the sequence of one chain."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STR-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Tertiary structure describes one chain; the prompt joins separate chains."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STR-ITEM-SOLO",
+      "learner_prompt_key": "STR_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Hydrophobic interactions favor burial of nonpolar groups away from water.",
+      "post_commitment_feedback": "Aqueous folding commonly packs nonpolar side chains into the interior.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STR-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Nonpolar groups are generally poorly solvated by water."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STR-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Folding changes position and interactions, not residue identity."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STR-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Hydrophobic burial does not require peptide-bond cleavage."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STR-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STR-ITEM-NEAR",
+      "learner_prompt_key": "STR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The α helix is secondary structure, and proline directly perturbs its local backbone geometry.",
+      "post_commitment_feedback": "The first named structural consequence is secondary-structure disruption.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The substitution changes primary sequence, and the stated immediate geometric effect is on the helix."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt identifies a local helix disruption before any subunit effect."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Proline can constrain backbone geometry and disrupt regular helices."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STR-ITEM-CHANGED",
+      "learner_prompt_key": "STR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Preserved peptide bonds retain sequence while noncovalent disruption can remove secondary, tertiary, and quaternary organization.",
+      "post_commitment_feedback": "Denaturation need not hydrolyze the backbone; primary sequence can persist as higher structure unfolds.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt explicitly preserves peptide bonds."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Disrupting noncovalent interactions can unfold higher structure."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Heat denaturation does not require inversion of every α carbon."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STR-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "STR_REPAIR_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Tertiary structure is the overall three-dimensional organization of one polypeptide chain.",
+      "post_commitment_feedback": "Use the unit: one complete chain fold is tertiary.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STR-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The sequence is primary structure."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STR-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STR-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A local β sheet is secondary structure."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STR-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A multi-chain arrangement is quaternary structure."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STR-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "STR_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "An interaction between distinct subunits stabilizes quaternary structure.",
+      "post_commitment_feedback": "The fresh interface crosses chains, so the direct level is quaternary.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STR-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An ionic contact between subunits does not define residue sequence."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STR-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Local backbone patterns are not the multi-subunit contact described."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STR-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The contact crosses two separate chains rather than staying within one chain."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STR-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STR-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "STR_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Peptide-bond preservation retains residue connectivity and sequence.",
+      "post_commitment_feedback": "Track bond classes: intact peptide bonds preserve primary structure.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STR-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STR-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Hydrogen-bond disruption can remove secondary structure."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STR-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Hydrophobic packing disruption can unfold tertiary structure."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STR-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Noncovalent quaternary contacts may also be disrupted."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "STR-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "STR_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Disulfides can stabilize one-chain folds or multi-chain assemblies, while primary peptide connectivity remains.",
+      "post_commitment_feedback": "The fresh preservation analysis keeps primary sequence and weakens disulfide-supported higher structure.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "STR-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Disulfide reduction does not cleave peptide backbone bonds."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "STR-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The prompt selectively targets disulfides."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "STR-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "STR-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reduction changes sulfur linkage state, not every side-chain class."
+        }
+      ]
+    }
+  ]
+}

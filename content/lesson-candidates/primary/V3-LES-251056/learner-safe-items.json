@@ -1,0 +1,398 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Feedback follows a committed response. The opening activity is informational; an unresolved fresh check returns to planning without credit.",
+  "items": [
+    {
+      "prompt_key": "ANA_ENTRY",
+      "title": "entry: Apply Hardy-Weinberg, testcross, mapping, and biometry",
+      "prompt": "A problem gives the frequency of a recessive phenotype in a large model population and asks for the expected heterozygote frequency. Which method is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Hardy–Weinberg equations",
+        "A testcross with a homozygous recessive tester",
+        "A crossover-frequency linkage calculation",
+        "A backcross between F1 offspring and one parent"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "ANA_GUIDED",
+      "title": "guided: Apply Hardy-Weinberg, testcross, mapping, and biometry",
+      "prompt": "Under Hardy–Weinberg, a recessive phenotype has frequency 0.16. What is the recessive allele frequency q?",
+      "response_type": "single_select",
+      "options": [
+        "0.16",
+        "0.40",
+        "0.60",
+        "0.84"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "ANA_LIGHT",
+      "title": "light: Apply Hardy-Weinberg, testcross, mapping, and biometry",
+      "prompt": "An organism with an unknown dominant phenotype is crossed with a homozygous recessive individual to reveal the unknown gametes. What is this cross?",
+      "response_type": "single_select",
+      "options": [
+        "A Hardy–Weinberg sample",
+        "An F1 intercross",
+        "A testcross",
+        "A recombination-free clone"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "ANA_SOLO",
+      "title": "solo: Apply Hardy-Weinberg, testcross, mapping, and biometry",
+      "prompt": "A linked-locus testcross produces 18 recombinant offspring among 200 total offspring. What is the estimated map distance?",
+      "response_type": "single_select",
+      "options": [
+        "18 map units",
+        "91 map units",
+        "182 map units",
+        "9 map units"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "ANA_NEAR",
+      "title": "near: Apply Hardy-Weinberg, testcross, mapping, and biometry",
+      "prompt": "A problem asks whether observed genotype counts match p², 2pq, and q² expectations. Which analytic step is most appropriate?",
+      "response_type": "single_select",
+      "options": [
+        "Compute expected counts and compare them with the observed table",
+        "Cross every sampled organism with a recessive tester",
+        "Count only recombinant offspring and ignore genotype totals",
+        "Assume the model fits because the frequencies are written as symbols"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "ANA_CHANGED",
+      "title": "changed: Apply Hardy-Weinberg, testcross, mapping, and biometry",
+      "prompt": "An F1 is testcrossed, producing 420 and 398 offspring in two large classes and 91 and 89 in two small classes. Which estimate is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "Recombination frequency is 818 divided by 998, about 82%",
+        "Recombination frequency is 180 divided by 998, about 18%",
+        "Map distance is 91 plus 89, or 180 map units",
+        "The F1 must be homozygous because four offspring classes appear"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "ANA_REPAIR_NEAR",
+      "title": "repair near: Apply Hardy-Weinberg, testcross, mapping, and biometry",
+      "prompt": "Which first question prevents using the wrong genetic method?",
+      "response_type": "single_select",
+      "options": [
+        "Which equation has the greatest number of symbols?",
+        "Can every data set be forced into Hardy–Weinberg form?",
+        "What quantity or model is the problem asking me to estimate or test?",
+        "Which answer choice contains the largest numerical value?"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "ANA_REENTRY_NEAR",
+      "title": "reentry near: Apply Hardy-Weinberg, testcross, mapping, and biometry",
+      "prompt": "P generation parents produce an F1, and two F1 individuals are crossed to examine an F2 ratio. Which analysis is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Use a population equilibrium equation without the cross history",
+        "Compute recombination from classes that were never identified",
+        "Average phenotype names without assigning genotypes",
+        "Track parental genotypes into F1 gametes and predict F2 outcomes"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "ANA_REPAIR_CHANGED",
+      "title": "repair changed: Apply Hardy-Weinberg, testcross, mapping, and biometry",
+      "prompt": "Which rule correctly computes introductory linkage distance from a testcross?",
+      "response_type": "single_select",
+      "options": [
+        "Add recombinant classes, divide by total offspring, then multiply by 100%",
+        "Add parental classes and report the raw count as map units",
+        "Divide total offspring by one recombinant class only",
+        "Subtract every small class from one large class without a denominator"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "ANA_REENTRY_CHANGED",
+      "title": "reentry changed: Apply Hardy-Weinberg, testcross, mapping, and biometry",
+      "prompt": "A fresh testcross yields 44 and 36 recombinant offspring among 800 total. What map distance is estimated?",
+      "response_type": "single_select",
+      "options": [
+        "80 map units",
+        "10 map units",
+        "20 map units",
+        "720 map units"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NSL_ENTRY",
+      "title": "entry: Explain nonselective gene-pool change",
+      "prompt": "A flood randomly leaves a small set of survivors, and an allele becomes rare even though it did not affect survival. Which process is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Natural selection through differential survival",
+        "Outbreeding through mating between populations",
+        "Genetic drift through random sampling",
+        "Migration through movement of allele carriers"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NSL_GUIDED",
+      "title": "guided: Explain nonselective gene-pool change",
+      "prompt": "A population falls from thousands to twenty after a disaster and later returns to thousands, but several alleles remain absent. What explains the persistent loss?",
+      "response_type": "single_select",
+      "options": [
+        "Population recovery recreated every lost allele automatically",
+        "Inbreeding converted every missing allele into a dominant allele",
+        "Outbreeding occurred despite no outside individuals entering",
+        "A bottleneck reduced the genetic diversity carried by survivors"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NSL_LIGHT",
+      "title": "light: Explain nonselective gene-pool change",
+      "prompt": "Individuals from a neighboring population enter and reproduce, introducing an allele not previously present. Which mechanism changed the gene pool?",
+      "response_type": "single_select",
+      "options": [
+        "Gene flow through migration",
+        "Genetic drift without movement between populations",
+        "Inbreeding among close relatives within the original population",
+        "A bottleneck caused by random survivor sampling"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NSL_SOLO",
+      "title": "solo: Explain nonselective gene-pool change",
+      "prompt": "Which immediate genotype pattern is most expected when mating among relatives increases while allele frequencies initially remain fixed?",
+      "response_type": "single_select",
+      "options": [
+        "Fewer homozygotes and more heterozygotes",
+        "More homozygotes and fewer heterozygotes",
+        "An entirely new allele at every locus",
+        "No change in genotype proportions under any condition"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NSL_NEAR",
+      "title": "near: Explain nonselective gene-pool change",
+      "prompt": "A small island population shows unpredictable allele-frequency swings across generations with no trait-related reproductive difference. Which explanation fits?",
+      "response_type": "single_select",
+      "options": [
+        "Natural selection",
+        "Directed adaptation",
+        "Genetic drift",
+        "Obligate outbreeding"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NSL_CHANGED",
+      "title": "changed: Explain nonselective gene-pool change",
+      "prompt": "Migrants enter a highly inbred population and mate broadly. What combined change is most likely first?",
+      "response_type": "single_select",
+      "options": [
+        "No allele change and increased homozygosity from outbreeding",
+        "Loss of every migrant allele before reproduction occurs",
+        "Automatic selection for the rarest allele in both populations",
+        "New allele representation and increased heterozygosity"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NSL_REPAIR_NEAR",
+      "title": "repair near: Explain nonselective gene-pool change",
+      "prompt": "Which question best separates genetic drift from natural selection?",
+      "response_type": "single_select",
+      "options": [
+        "Was change random sampling or trait-linked reproduction?",
+        "Did the population change in any way over time?",
+        "Was the changing allele dominant rather than recessive?",
+        "Did the organisms need the allele to become more common?"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NSL_REENTRY_NEAR",
+      "title": "reentry near: Explain nonselective gene-pool change",
+      "prompt": "Ten seeds randomly colonize a new site, and their allele frequencies differ from the source population. No fitness difference is known. Which mechanism fits?",
+      "response_type": "single_select",
+      "options": [
+        "Selection for every allele common among the founders",
+        "Drift from a small founding sample",
+        "Inbreeding that created all founder alleles",
+        "Migration that equalized the source and new populations"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NSL_REPAIR_CHANGED",
+      "title": "repair changed: Explain nonselective gene-pool change",
+      "prompt": "Which two quantities should be tracked separately when mating structure changes?",
+      "response_type": "single_select",
+      "options": [
+        "Only total population size and habitat area",
+        "Only the frequency of one phenotype without genotypes",
+        "Allele frequencies and homozygote–heterozygote proportions",
+        "Only birth order and parental age"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "NSL_REENTRY_CHANGED",
+      "title": "reentry changed: Explain nonselective gene-pool change",
+      "prompt": "A new population receives migrants carrying allele R, then mates mostly with unrelated individuals. Which result best fits?",
+      "response_type": "single_select",
+      "options": [
+        "R cannot enter because migration never changes allele frequencies",
+        "Unrelated mating necessarily eliminates every rare allele",
+        "Homozygosity must increase because the mates are less related",
+        "R enters the gene pool and heterozygosity tends to increase"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SEL_ENTRY",
+      "title": "entry: Explain natural selection, fitness, and speciation",
+      "prompt": "Two heritable forms survive equally, but one produces twice as many fertile offspring. Which form has higher fitness in that environment?",
+      "response_type": "single_select",
+      "options": [
+        "The form producing more fertile offspring",
+        "The form with the longest individual lifespan",
+        "The form that appears physically larger",
+        "Both forms because their survival is equal"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SEL_GUIDED",
+      "title": "guided: Explain natural selection, fitness, and speciation",
+      "prompt": "A heritable beak form allows more offspring to be raised during years dominated by hard seeds. What change is predicted if that environment persists?",
+      "response_type": "single_select",
+      "options": [
+        "Every individual changes its beak during its lifetime",
+        "Alleles associated with that beak form tend to increase",
+        "The beak form disappears because useful traits are costly",
+        "Allele frequencies remain fixed despite differential reproduction"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SEL_LIGHT",
+      "title": "light: Explain natural selection, fitness, and speciation",
+      "prompt": "Which observation best supports calling a population trait an adaptation?",
+      "response_type": "single_select",
+      "options": [
+        "One organism acquired the trait through exercise",
+        "The trait looks complex to a human observer",
+        "The heritable trait raised reproductive success in context",
+        "The population needed the trait before it appeared"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SEL_SOLO",
+      "title": "solo: Explain natural selection, fitness, and speciation",
+      "prompt": "Two alleles persist because each has higher fitness in a different recurring environment. Which outcome is most plausible?",
+      "response_type": "single_select",
+      "options": [
+        "Immediate fixation of both alleles at 100%",
+        "No evolutionary change because selection is absent",
+        "Automatic speciation after one generation",
+        "A maintained polymorphism"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SEL_NEAR",
+      "title": "near: Explain natural selection, fitness, and speciation",
+      "prompt": "A heritable trait raises average fertile offspring from two to five, with all else similar. What is the most direct population prediction?",
+      "response_type": "single_select",
+      "options": [
+        "The trait-associated allele tends to increase in later generations",
+        "The trait disappears because fitter forms reproduce less",
+        "Every organism acquires the trait before reproducing",
+        "Allele frequency changes randomly with no relation to the trait"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SEL_CHANGED",
+      "title": "changed: Explain natural selection, fitness, and speciation",
+      "prompt": "Two isolated populations occupy different habitats. In each, a heritable trait raises fertile-offspring output locally; migration declines, mating compatibility falls, and genomic differences accumulate. Which conclusion is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "Individuals adapt by need, so allele frequencies and mating compatibility remain unchanged",
+        "Local selection can drive specialization while reduced gene flow and isolation support speciation over time",
+        "The pattern must be drift because every allele-frequency change is random",
+        "A group benefit alone proves selection even without any reproductive difference"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SEL_REPAIR_NEAR",
+      "title": "repair near: Explain natural selection, fitness, and speciation",
+      "prompt": "Which measure is closest to biological fitness in a stated environment?",
+      "response_type": "single_select",
+      "options": [
+        "Maximum body size reached by one individual",
+        "How strongly an organism appears to try to survive",
+        "Relative allele or fertile-offspring contribution",
+        "Total lifespan without any reproductive information"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SEL_REENTRY_NEAR",
+      "title": "reentry near: Explain natural selection, fitness, and speciation",
+      "prompt": "A heritable flower form produces 30 viable seeds per plant while another produces 12 under the same conditions. What is predicted?",
+      "response_type": "single_select",
+      "options": [
+        "The 12-seed form must increase because it makes fewer seeds",
+        "Both forms have identical fitness because both survive",
+        "Every plant changes form after counting its seeds",
+        "The allele linked to the 30-seed form tends to rise"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SEL_REPAIR_CHANGED",
+      "title": "repair changed: Explain natural selection, fitness, and speciation",
+      "prompt": "Which evidence chain supports selection-driven divergence toward speciation?",
+      "response_type": "single_select",
+      "options": [
+        "Heritable trait differences → different fertile-offspring output → allele change; reduced gene flow → reproductive isolation",
+        "Acquired individual change → identical offspring output → unrestricted gene flow",
+        "Temporary appearance difference → no heritability evidence → immediate species status",
+        "Group benefit alone → no differential persistence → certain genomic divergence"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    },
+    {
+      "prompt_key": "SEL_REENTRY_CHANGED",
+      "title": "reentry changed: Explain natural selection, fitness, and speciation",
+      "prompt": "Two lake populations have heritable feeding forms that raise offspring output in their local habitats. Migration then resumes and successful interbreeding becomes common. What is the best prediction?",
+      "response_type": "single_select",
+      "options": [
+        "Migration guarantees speciation because local selection no longer affects allele frequencies",
+        "Local selection can continue, but renewed gene flow opposes further divergence toward speciation",
+        "Every specialization disappears within one individual lifetime",
+        "Successful interbreeding must increase genomic differences between the populations"
+      ],
+      "directions": "Select one option and commit the choice before feedback is released."
+    }
+  ]
+}

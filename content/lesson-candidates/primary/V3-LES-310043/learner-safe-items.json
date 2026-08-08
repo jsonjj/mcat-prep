@@ -1,0 +1,268 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes, and a missed fresh re-entry returns control without exit credit.",
+  "items": [
+    {
+      "prompt_key": "SEP_ENTRY",
+      "title": "Starting check: compare pH with pI",
+      "prompt": "Protein A has pI 6.0 and is placed in buffer at pH 8.0. What is its approximate net charge?",
+      "response_type": "single_select",
+      "options": [
+        "Net positive because pH is above pI",
+        "Net negative because pH is above pI",
+        "Exactly neutral because every protein is neutral at pH 8",
+        "Permanently positive regardless of buffer pH"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SEP_GUIDED",
+      "title": "Guided practice: predict electrode direction",
+      "prompt": "A native protein has pI 9.0 in a pH 7.0 buffer. The left electrode is negative and the right electrode is positive. Which direction is expected?",
+      "response_type": "single_select",
+      "options": [
+        "Toward the positive right electrode because the protein is negative",
+        "No movement because every native protein is neutral",
+        "Toward the negative left electrode as a positive protein",
+        "Toward both electrodes at the same time"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SEP_LIGHT",
+      "title": "Less help: identify an isoelectric focus",
+      "prompt": "A protein migrates through a stable pH gradient and stops where local pH equals 5.2. What does 5.2 most directly represent?",
+      "response_type": "single_select",
+      "options": [
+        "The protein’s isoelectric point",
+        "The protein’s molecular mass in kilodaltons",
+        "The SDS concentration in the gel",
+        "The voltage of the negative electrode"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SEP_SOLO",
+      "title": "On your own: rank SDS-PAGE migration",
+      "prompt": "Two single-chain proteins are fully denatured with SDS. Protein X is 30 kDa and Protein Y is 90 kDa. Which result is expected?",
+      "response_type": "single_select",
+      "options": [
+        "Y moves farther because it contains more amino acids",
+        "Both stop at their pI values in the SDS gel",
+        "Both move identically because SDS removes all size effects",
+        "X moves farther because its chain is smaller"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SEP_NEAR",
+      "title": "Near exit: integrate charge and electrode labels",
+      "prompt": "Protein M has pI 8.4 in a pH 5.4 native buffer. The cathode is labelled negative. What behavior is most likely?",
+      "response_type": "single_select",
+      "options": [
+        "M is negative and migrates away from the cathode",
+        "M is positive and migrates toward the cathode",
+        "M is neutral and focuses at every point in the buffer",
+        "M receives a uniform negative SDS coat"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SEP_CHANGED",
+      "title": "Changed exit: compare focusing positions",
+      "prompt": "An isoelectric-focusing gradient runs from pH 4 on the left to pH 10 on the right. Protein R has pI 5 and Protein S has pI 9. Which pattern is expected?",
+      "response_type": "single_select",
+      "options": [
+        "R and S both focus at pH 7 because size controls focusing",
+        "R focuses near pH 9 and S near pH 5",
+        "R focuses left of S at their respective pI values",
+        "SDS drives both proteins to the far-right edge"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SEP_REPAIR_NEAR",
+      "title": "Repair: rebuild the charge-sign rule",
+      "prompt": "Which rule correctly predicts protein net charge?",
+      "response_type": "single_select",
+      "options": [
+        "Below pI is positive; above pI is negative",
+        "pH below pI gives net negative; pH above pI gives net positive",
+        "Every protein is neutral whenever pH is not 7",
+        "Protein charge depends only on molecular mass"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SEP_REENTRY_NEAR",
+      "title": "Fresh re-entry: apply the sign rule again",
+      "prompt": "Protein Q has pI 4.5 in a pH 7.5 native buffer. Which electrode attracts Q?",
+      "response_type": "single_select",
+      "options": [
+        "The negative electrode because Q is positive",
+        "Neither electrode because Q is exactly neutral",
+        "Both electrodes because Q has two charges",
+        "The positive electrode because Q is negative"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SEP_REPAIR_CHANGED",
+      "title": "Repair: compare focusing positions",
+      "prompt": "In an isoelectric-focusing gradient that increases in pH from left to right, which rule correctly compares two proteins’ positions?",
+      "response_type": "single_select",
+      "options": [
+        "Lower pI focuses farther left; higher pI focuses farther right",
+        "Lower mass focuses farther left; higher mass focuses farther right",
+        "More negative charge always focuses left; positive charge always focuses right",
+        "Greater SDS binding focuses left; weaker SDS binding focuses right"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "SEP_REENTRY_CHANGED",
+      "title": "Fresh re-entry: compare new focusing positions",
+      "prompt": "A fresh isoelectric-focusing gradient runs from pH 3 on the left to pH 11 on the right. Protein U has pI 6.2 and Protein V has pI 8.7. Which pattern is expected?",
+      "response_type": "single_select",
+      "options": [
+        "U and V both focus near pH 7 because size fixes position",
+        "U focuses near pH 8.7 while V focuses near pH 6.2",
+        "U focuses near pH 6.2 left of V, which focuses near pH 8.7",
+        "V reaches the far-right edge because larger pI prevents focusing"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FUN_ENTRY",
+      "title": "Starting check: infer binding from complementarity",
+      "prompt": "A protein pocket is negatively charged at the decisive contact. Which ligand feature most directly supports selective binding there?",
+      "response_type": "single_select",
+      "options": [
+        "A second negative group aimed at the contact",
+        "A bulky group that cannot enter the pocket",
+        "A neutral surface located far from the pocket",
+        "A positive group positioned at the contact"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FUN_GUIDED",
+      "title": "Guided practice: predict a pocket mutation",
+      "prompt": "A mutation removes a hydrophobic side chain that forms the wall of a ligand pocket, but the protein remains folded. What is the most direct prediction?",
+      "response_type": "single_select",
+      "options": [
+        "The protein must become a DNA molecule",
+        "Affinity may fall after pocket complementarity changes",
+        "Every immune cell in the body stops functioning",
+        "The ligand becomes covalently attached more strongly"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FUN_LIGHT",
+      "title": "Less help: identify antibody recognition",
+      "prompt": "Which feature most directly determines whether an antibody binds a supplied antigen epitope?",
+      "response_type": "single_select",
+      "options": [
+        "The total number of cells in the organism",
+        "The color used to draw the antigen",
+        "Shape and chemistry match at the binding site",
+        "The molecular mass of every unrelated protein"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FUN_SOLO",
+      "title": "On your own: predict denaturation effect",
+      "prompt": "A carrier protein is denatured so its ligand-binding pocket collapses. Which outcome is most likely?",
+      "response_type": "single_select",
+      "options": [
+        "Selective ligand binding decreases",
+        "The protein gains a perfectly matched pocket",
+        "The ligand becomes part of the protein sequence",
+        "All proteins acquire the same conformation"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FUN_NEAR",
+      "title": "Near exit: analyze an antibody interface",
+      "prompt": "An antibody pocket has a positive rim that contacts a negative epitope group. A mutation changes the rim to negative while preserving overall folding. What is expected?",
+      "response_type": "single_select",
+      "options": [
+        "Binding strengthens because like charges attract",
+        "The antibody becomes a motor protein",
+        "The epitope is converted into an enzyme",
+        "Binding weakens after the charge reversal"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FUN_CHANGED",
+      "title": "Changed exit: interpret a motor cycle",
+      "prompt": "A motor diagram shows track binding, a nucleotide-linked conformational shift, forward movement, and release. A mutation prevents the conformational shift but not initial binding. What is most likely?",
+      "response_type": "single_select",
+      "options": [
+        "The motor moves faster because the step is skipped",
+        "Static binding remains, but forward stepping falls",
+        "The track is converted into a ligand pocket",
+        "Every antibody loses antigen recognition"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FUN_REPAIR_NEAR",
+      "title": "Repair: rebuild the interface test",
+      "prompt": "Which comparison best predicts selective protein binding?",
+      "response_type": "single_select",
+      "options": [
+        "Whole-protein color and drawing size",
+        "Pocket–partner shape and contact chemistry",
+        "Organism age and unrelated cell count",
+        "The alphabetical order of protein names"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FUN_REENTRY_NEAR",
+      "title": "Fresh re-entry: analyze a new binding pocket",
+      "prompt": "A receptor pocket contains a hydrogen-bond donor aimed at a ligand acceptor. A mutation removes the donor but leaves pocket shape intact. What is expected?",
+      "response_type": "single_select",
+      "options": [
+        "Affinity may fall because one favorable contact is lost",
+        "Affinity must rise because fewer contacts always bind better",
+        "The ligand becomes a covalent part of the receptor",
+        "The receptor becomes an antibody class"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FUN_REPAIR_CHANGED",
+      "title": "Repair: identify the motor-function sequence",
+      "prompt": "Which sequence best describes a bounded motor-protein cycle?",
+      "response_type": "single_select",
+      "options": [
+        "Permanent binding → no conformational change → no release",
+        "Antigen binding → antibody synthesis → DNA replication",
+        "Track binding → conformational change → step → release",
+        "Protein denaturation → random diffusion → permanent attachment"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "FUN_REENTRY_CHANGED",
+      "title": "Fresh re-entry: predict another motor defect",
+      "prompt": "A motor can undergo its conformational shift but cannot release its rear track contact. What outcome is most likely?",
+      "response_type": "single_select",
+      "options": [
+        "The motor becomes an antibody",
+        "The motor crosses the membrane as a hormone",
+        "The motor catalyzes glycogen synthesis",
+        "Cycling fails because attachment cannot reset"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    }
+  ]
+}

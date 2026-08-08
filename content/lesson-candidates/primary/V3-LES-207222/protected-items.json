@@ -1,0 +1,1488 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "CHG-ITEM-ENTRY",
+      "learner_prompt_key": "CHG_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "The final signed charges must sum to the unchanged total: +1 nC + +5 nC = +6 nC.",
+      "post_commitment_feedback": "Charge conservation requires sphere B to carry +5 nC so the isolated total remains +6 nC.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CHG-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CHG-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A −5 nC value would make the final total −4 nC."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CHG-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A +7 nC value would make the final total +8 nC."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CHG-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A −7 nC value would make the final total −6 nC."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CHG-ITEM-GUIDED",
+      "learner_prompt_key": "CHG_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Electron loss leaves an excess of positive charge relative to electrons.",
+      "post_commitment_feedback": "When negative electrons leave, the object that lost them becomes positively charged.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CHG-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Losing negative charge makes the object less negative, not more negative."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CHG-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CHG-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The ordinary transfer described moves electrons rather than protons out of nuclei."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CHG-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Charge is conserved across the two-object system."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CHG-ITEM-LIGHT",
+      "learner_prompt_key": "CHG_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Repelled mobile electrons shift away, producing charge separation without contact.",
+      "post_commitment_feedback": "Mobile electrons move away from the negative rod, polarizing the neutral conductor without changing its total charge.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CHG-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Charge remains present and conserved in the metal."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CHG-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The fixed positive lattice does not flow through the bar like mobile electrons."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CHG-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CHG-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Induced redistribution can occur while the bar’s total net charge stays zero."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CHG-ITEM-SOLO",
+      "learner_prompt_key": "CHG_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Limited charge mobility keeps the added charge comparatively localized.",
+      "post_commitment_feedback": "Because charges are not freely mobile through the insulator, the deposited charge remains localized.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CHG-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Uniform rapid spreading is characteristic of mobile charge in a conductor."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CHG-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No process is given that removes all electrons through the air."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CHG-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Depositing charge does not convert the material into a perfect conductor."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CHG-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CHG-ITEM-NEAR",
+      "learner_prompt_key": "CHG_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The Earth can accept excess mobile electrons, reducing the conductor’s negative charge.",
+      "post_commitment_feedback": "Excess electrons can move from the negatively charged conductor into Earth during grounding.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CHG-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CHG-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Protons remain bound in nuclei during ordinary grounding."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CHG-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Grounding transfers charge; it does not create positive charge."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CHG-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Charge conservation still applies to the enlarged conductor–Earth system."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CHG-ITEM-CHANGED",
+      "learner_prompt_key": "CHG_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Equal and opposite transfer gives +5 nC on the other object.",
+      "post_commitment_feedback": "The isolated pair started at zero net charge, so the partner must carry +5 nC.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CHG-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A −10 nC partner would not preserve the initial zero total."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CHG-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CHG-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A neutral partner would leave the isolated pair with −5 nC."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CHG-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A +10 nC partner would make the pair total +5 nC."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CHG-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "CHG_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Algebraic charge conservation equates the signed totals before and after.",
+      "post_commitment_feedback": "Begin with equality of the signed total charge before and after the transfer.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CHG-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CHG-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Contact does not require charge magnitudes to double."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CHG-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A system can have a nonzero positive total charge."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CHG-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Electron transfer is precisely what changes object charge signs and magnitudes."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CHG-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "CHG_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The conserved +8 nC total divides equally between identical spheres.",
+      "post_commitment_feedback": "Identical connected conductors share the conserved +8 nC equally, leaving +4 nC on each.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CHG-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Mobile charge redistributes when the identical conductors touch."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CHG-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This would create a total of +16 nC from an initial +8 nC."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CHG-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An unequal division is inconsistent with identical spheres at equilibrium."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CHG-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CHG-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "CHG_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "Electron transfer changes the two object ledgers oppositely while conserving the total.",
+      "post_commitment_feedback": "Rubbing transfers electrons between the objects, producing equal-and-opposite charge changes.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CHG-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CHG-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Charging separates or transfers existing charge rather than creating net charge."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CHG-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ordinary rubbing transfers electrons, not nuclear protons."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CHG-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both object charges participate in the conserved pair total."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CHG-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "CHG_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Attracted electrons redistribute toward the rod while the isolated conductor remains neutral overall.",
+      "post_commitment_feedback": "The neutral conductor polarizes as mobile electrons shift toward the positive rod, while total charge remains zero.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CHG-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Induction separates existing charge without creating a positive net total."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CHG-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CHG-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Positive nuclei remain fixed in the material lattice."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CHG-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Electron mobility is the defining reason a conductor polarizes readily."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "COUL-ITEM-ENTRY",
+      "learner_prompt_key": "COUL_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "The charge product doubles, so the force magnitude doubles.",
+      "post_commitment_feedback": "Coulomb force is linear in each charge magnitude, so doubling one charge gives 2F.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "COUL-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A factor of one-fourth would follow from doubling separation, not one charge."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "COUL-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Halving is opposite to the linear charge dependence."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "COUL-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "COUL-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A fourfold increase would require both charge magnitudes to double."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "COUL-ITEM-GUIDED",
+      "learner_prompt_key": "COUL_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "The positive charge is attracted toward the negative charge on its right.",
+      "post_commitment_feedback": "Opposite charges attract along their connecting line, so the positive charge is pulled rightward.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "COUL-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Opposite signs attract rather than repel."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "COUL-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The Coulomb force lies along the line joining the charges."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "COUL-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Opposite signs do not cancel the pairwise interaction."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "COUL-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "COUL-ITEM-LIGHT",
+      "learner_prompt_key": "COUL_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "The inverse-square factor gives 1/(2²) = 1/4.",
+      "post_commitment_feedback": "Doubling the distance reduces Coulomb force to one-fourth of its original magnitude.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "COUL-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "COUL-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A one-half factor would treat distance as inverse-linear."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "COUL-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Increasing separation cannot double the attractive or repulsive magnitude here."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "COUL-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A fourfold increase reverses the inverse-square relation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "COUL-ITEM-SOLO",
+      "learner_prompt_key": "COUL_SOLO",
+      "correct_option_index": 1,
+      "rationale": "Each charge contributes a factor of two, so the product contributes four.",
+      "post_commitment_feedback": "Doubling both charges multiplies their product by four, producing 4F.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "COUL-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The charge product changes and cannot leave the force unchanged."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "COUL-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "COUL-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A factor of two accounts for only one doubled charge."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "COUL-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The force increases rather than decreases at fixed separation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "COUL-ITEM-NEAR",
+      "learner_prompt_key": "COUL_NEAR",
+      "correct_option_index": 2,
+      "rationale": "|(+2)(−3)| / |(+1)(−1)| = 6.",
+      "post_commitment_feedback": "With equal separation, the force ratio is the charge-product ratio, 6.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "COUL-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The larger charge product increases rather than decreases the force."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "COUL-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A factor of three omits the factor of two on the first charge."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "COUL-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "COUL-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A factor of nine incorrectly squares the charge product."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "COUL-ITEM-CHANGED",
+      "learner_prompt_key": "COUL_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Newton’s third law gives equal magnitudes and opposite directions.",
+      "post_commitment_feedback": "Each charge experiences the same force magnitude, directed toward the other charge.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "COUL-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Interaction-pair forces are equal in magnitude despite unequal charges."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "COUL-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Interaction-pair forces are equal in magnitude despite unequal charges."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "COUL-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both charges participate in the Coulomb interaction."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "COUL-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "COUL-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "COUL_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Magnitude uses the absolute charge product and inverse-square separation.",
+      "post_commitment_feedback": "Use the positive magnitude k|q1q2|/r², then determine direction from the signs.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "COUL-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "COUL-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Charges multiply rather than add, and distance is not in the numerator."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "COUL-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses both charge and distance dependence."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "COUL-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Charge difference and inverse-linear distance are not Coulomb’s law."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "COUL-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "COUL_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The inverse square gives 1/(1/2)² = 4.",
+      "post_commitment_feedback": "Halving separation increases the Coulomb force magnitude by a factor of four.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "COUL-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Halving distance increases rather than decreases force."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "COUL-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "COUL-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This uses an inverse-linear decrease."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "COUL-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This accounts for only one factor of two."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "COUL-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "COUL_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The sign pair determines attraction versus repulsion.",
+      "post_commitment_feedback": "Use the sign pair: like signs point away from one another, and opposite signs point toward.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "COUL-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Like-signed pairs repel rather than always attract."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "COUL-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Two negative charges also repel one another."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "COUL-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "COUL-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Magnitude alone cannot determine whether the force points toward or away."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "COUL-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "COUL_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "The charge factor 3 and inverse-square distance factor 1/3 cancel.",
+      "post_commitment_feedback": "Tripling one charge is exactly canceled by increasing r² by three, so the force stays unchanged.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "COUL-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The distance factor cancels the charge factor rather than leaving a triple increase."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "COUL-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The charge increases by three while r² also increases by three."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "COUL-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The square applies to distance, not to the tripled charge factor twice."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "COUL-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FIELD-ITEM-ENTRY",
+      "learner_prompt_key": "FIELD_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "A positive source creates an outward field, which is rightward at the stated point.",
+      "post_commitment_feedback": "The positive source produces an outward field, so the field points rightward.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FIELD-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FIELD-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Toward-source direction applies to a negative source."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FIELD-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A point-charge field is radial rather than perpendicular."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FIELD-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Electric field is a vector, not a scalar."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FIELD-ITEM-GUIDED",
+      "learner_prompt_key": "FIELD_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "At the right-side point, toward the negative source is leftward.",
+      "post_commitment_feedback": "A negative source draws the positive-test-charge direction inward, which is leftward here.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FIELD-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Fields point toward, not away from, negative sources."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FIELD-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FIELD-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Source sign does not rotate a radial field upward."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FIELD-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Electric field has both magnitude and direction."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FIELD-ITEM-LIGHT",
+      "learner_prompt_key": "FIELD_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "E = F/q = 10/2 = 5 N/C east.",
+      "post_commitment_feedback": "Dividing by the positive test charge gives 5 N/C in the same eastward direction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FIELD-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Multiplying F by q gives the wrong magnitude."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FIELD-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The magnitude is 5 N/C, but a positive test charge does not reverse direction."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FIELD-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FIELD-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both magnitude operation and direction are incorrect."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FIELD-ITEM-SOLO",
+      "learner_prompt_key": "FIELD_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Electric field is a property of the source configuration at that point.",
+      "post_commitment_feedback": "Doubling the positive probe doubles force but leaves the source-created field unchanged.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FIELD-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Force doubles with test charge, leaving F/q unchanged."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FIELD-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The source field is not diluted by a larger test charge."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FIELD-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A positive test charge does not reverse the field definition."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FIELD-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FIELD-ITEM-NEAR",
+      "learner_prompt_key": "FIELD_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Each outward field has equal magnitude and opposite direction at the midpoint.",
+      "post_commitment_feedback": "The equal outward source fields oppose at the midpoint and cancel to zero.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FIELD-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FIELD-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Symmetry gives an equal opposing contribution from the right charge."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FIELD-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Symmetry gives an equal opposing contribution from the left charge."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FIELD-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One vector cannot point simultaneously toward both separated charges."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FIELD-ITEM-CHANGED",
+      "learner_prompt_key": "FIELD_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The central field is approximately uniform and points from positive to negative.",
+      "post_commitment_feedback": "Away from edges, the plate fields add to an approximately uniform field directed positive to negative.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FIELD-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The bounded central plate field is approximately straight rather than circular."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FIELD-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FIELD-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Opposite plate fields add between the plates instead of canceling there."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FIELD-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The electric-field direction is reversed in this option."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FIELD-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "FIELD_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Common-point vectors make direction and component addition explicit.",
+      "post_commitment_feedback": "Draw every source contribution at the single observation point before adding vectors.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FIELD-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Field is vector-valued and cannot be found from a scalar sign sum alone."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FIELD-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "All source contributions participate in superposition."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FIELD-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FIELD-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Vectors at different points cannot be directly averaged for the requested field."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FIELD-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "FIELD_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Both field contributions align from the positive side toward the negative side.",
+      "post_commitment_feedback": "At the midpoint, the positive-source and negative-source fields add toward the negative charge.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FIELD-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The negative-source field points toward the negative charge."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FIELD-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both contributions point away from positive and toward negative."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FIELD-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The equal magnitudes point in the same direction rather than opposite directions."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FIELD-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FIELD-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "FIELD_REPAIR_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "The tangent gives local direction, and a unique field direction prevents crossings.",
+      "post_commitment_feedback": "Field-line tangents show direction, and lines cannot cross because the net field direction is unique.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FIELD-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FIELD-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Field lines represent direction but are not mandatory particle trajectories."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FIELD-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Field strength is represented by calibrated density, not arbitrary color alone."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FIELD-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "One point cannot have two distinct net-field directions."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "FIELD-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "FIELD_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "F = qE gives a westward force when q is negative and E points east.",
+      "post_commitment_feedback": "The negative sign of q reverses the force, so an eastward field produces a westward force.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "FIELD-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A negative charge reverses force direction relative to E."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "FIELD-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "FIELD-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Electrostatic force is parallel or antiparallel to E, not perpendicular."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "FIELD-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A nonzero negative charge experiences a nonzero force in a nonzero field."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POT-ITEM-ENTRY",
+      "learner_prompt_key": "POT_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "With q positive and r finite, kq/r is positive.",
+      "post_commitment_feedback": "A positive point source creates positive electric potential relative to the chosen zero at infinity.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POT-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Outward field direction does not make positive-source potential negative."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POT-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A scalar can have a nonzero signed value."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POT-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POT-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Source-created potential exists independently of a test charge."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POT-ITEM-GUIDED",
+      "learner_prompt_key": "POT_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "Scalar algebra gives +6 V + (−2 V) = +4 V.",
+      "post_commitment_feedback": "Potential contributions add algebraically, giving a net value of +4 V.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POT-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This subtracts magnitudes in the wrong order."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POT-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The magnitude is four but the signed sum is positive."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POT-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Adding magnitudes ignores the negative contribution."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POT-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POT-ITEM-LIGHT",
+      "learner_prompt_key": "POT_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "Points on one equipotential share the same potential, so ΔV = 0.",
+      "post_commitment_feedback": "Motion along one equipotential has zero potential difference.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POT-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POT-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Potential difference is path-independent and not set by distance traveled."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POT-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Particle speed does not define electrostatic potential difference."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POT-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Curvature does not make a finite equipotential difference infinite."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POT-ITEM-SOLO",
+      "learner_prompt_key": "POT_SOLO",
+      "correct_option_index": 1,
+      "rationale": "U = qV = (+3 C)(−2 J/C) = −6 J.",
+      "post_commitment_feedback": "Multiplying charge by potential gives U = −6 J.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POT-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The magnitude is six, but positive q times negative V is negative."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POT-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POT-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Dividing rather than multiplying gives the wrong magnitude."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POT-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both magnitude and sign are incorrect."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POT-ITEM-NEAR",
+      "learner_prompt_key": "POT_NEAR",
+      "correct_option_index": 2,
+      "rationale": "For q > 0, ΔV = 4 − 9 < 0 gives ΔU < 0.",
+      "post_commitment_feedback": "The positive charge moves to lower potential, so its electrostatic potential energy decreases.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POT-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Motion alone does not set the energy sign."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POT-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Charge conservation does not require potential energy to remain fixed."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POT-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POT-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A scalar potential difference still determines an energy change."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POT-ITEM-CHANGED",
+      "learner_prompt_key": "POT_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "ΔU = qΔV is negative when q < 0 and ΔV > 0.",
+      "post_commitment_feedback": "The negative charge’s energy decreases because its negative q reverses the positive potential change.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POT-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "For a negative charge, potential and potential-energy changes have opposite signs."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POT-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Constant charge does not eliminate the effect of changing V."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POT-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A negative charge at positive potential has negative, not necessarily zero, U."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POT-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POT-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "POT_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Potential is scalar, so signed source contributions add algebraically.",
+      "post_commitment_feedback": "Write one signed potential term for each source and add the scalar values.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POT-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POT-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Every source contributes to superposition."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POT-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No squaring or direction arrow is part of scalar potential addition."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POT-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Field is vector-valued, but potential is not added by vector arrows."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POT-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "POT_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Equal-distance kq/r terms have opposite signs and sum to zero.",
+      "post_commitment_feedback": "The equal and opposite scalar potential contributions cancel to zero at the midpoint.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POT-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The positive contribution is canceled by the equal negative contribution."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POT-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POT-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The negative contribution does not dominate at equal magnitude and distance."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POT-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Field vectors add there, but scalar potentials cancel."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POT-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "POT_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The electric field direction is toward lower electric potential.",
+      "post_commitment_feedback": "Electric field points in the direction of decreasing electric potential.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POT-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Electric field points downhill rather than uphill in potential."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POT-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Field is perpendicular only to equipotential surfaces, not to every potential change."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POT-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POT-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Field and potential are linked by spatial change in potential."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "POT-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "POT_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Wfield = −ΔU, so +6 J of field work gives ΔU = −6 J.",
+      "post_commitment_feedback": "Positive work by the electric field corresponds to an equal decrease in electrostatic potential energy.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "POT-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The work–energy relation does not double the value."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "POT-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Work by the field has the opposite sign from ΔU."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "POT-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Nonzero field work changes electrostatic potential energy."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "POT-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    }
+  ]
+}

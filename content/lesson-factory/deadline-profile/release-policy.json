@@ -1,0 +1,71 @@
+{
+  "contract_id": "lesson-factory.release-policy",
+  "contract_version": "3.0.0",
+  "policy_id": "lesson-factory-deadline-release",
+  "policy_version": "2.0.0",
+  "status": "ACTIVE",
+  "effective_from": "2026-08-03T23:05:00Z",
+  "route_scope_code": "STANDARD_ONLY",
+  "applicable_routes": ["STANDARD"],
+  "route_proofs": {
+    "STANDARD": {
+      "route_applicability": "APPLICABLE",
+      "absence_proof_basis": null,
+      "absence_proof_ref": null,
+      "blocker_code": null,
+      "evidence_refs": [
+        "spec:docs/design/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md#sha256:f9df47b75a7aca5bf5c59030d66261c118d6ea1f71002c4d4fde92592b05c8c8"
+      ]
+    },
+    "CONCISE": {
+      "route_applicability": "NOT_APPLICABLE",
+      "absence_proof_basis": "VERSIONED_RELEASE_POLICY",
+      "absence_proof_ref": "policy:lesson-factory-deadline-release@2.0.0#clause:ROUTE_ABSENCE_CONCISE",
+      "blocker_code": null,
+      "evidence_refs": [
+        "spec:docs/design/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md#sha256:f9df47b75a7aca5bf5c59030d66261c118d6ea1f71002c4d4fde92592b05c8c8"
+      ]
+    },
+    "MISCONCEPTION": {
+      "route_applicability": "NOT_APPLICABLE",
+      "absence_proof_basis": "VERSIONED_RELEASE_POLICY",
+      "absence_proof_ref": "policy:lesson-factory-deadline-release@2.0.0#clause:ROUTE_ABSENCE_MISCONCEPTION",
+      "blocker_code": null,
+      "evidence_refs": [
+        "spec:docs/design/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md#sha256:f9df47b75a7aca5bf5c59030d66261c118d6ea1f71002c4d4fde92592b05c8c8"
+      ]
+    },
+    "PREREQUISITE_SUPPORT": {
+      "route_applicability": "NOT_APPLICABLE",
+      "absence_proof_basis": "VERSIONED_RELEASE_POLICY",
+      "absence_proof_ref": "policy:lesson-factory-deadline-release@2.0.0#clause:ROUTE_ABSENCE_PREREQUISITE_SUPPORT",
+      "blocker_code": null,
+      "evidence_refs": [
+        "rubric:key-docs/lesson-quality-rubric.md#sha256:21f0cf751b752158b5c8f71fd762fcc956b9ba694c8f5ee8d50158b8972557b0"
+      ]
+    }
+  },
+  "policy_authority": {
+    "decided_by_role": "PRODUCT_PEDAGOGY_OWNER",
+    "decision_status": "RATIFIED",
+    "decision_ref": "receipt:content/lesson-factory/deadline-profile/owner-route-policy-receipt.json#sha256:45d9667a9ad297de586e7d1ee837e99c28bc9579368967e4cefb24accdba12bd",
+    "decision_authority_scope": "RELEASE_ROUTE_SCOPE_ONLY",
+    "ratification_blockers": []
+  },
+  "rubric_identity": {
+    "rubric_path": "key-docs/lesson-quality-rubric.md",
+    "rubric_version": "0.9.1",
+    "rubric_sha256": "21f0cf751b752158b5c8f71fd762fcc956b9ba694c8f5ee8d50158b8972557b0"
+  },
+  "nonclaims": {
+    "official_rubric_pass": false,
+    "human_approved": false,
+    "release_approved": false,
+    "efficacy_established": false,
+    "mastery_calibrated": false,
+    "readiness_validated": false,
+    "learner_validated": false,
+    "publication_safe": false,
+    "production_published": false
+  }
+}

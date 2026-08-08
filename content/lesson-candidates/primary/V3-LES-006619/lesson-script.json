@@ -1,0 +1,3479 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-006619",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "8c421b2c21c5566f394a79b1b7f7b5e31bb18912e664d96d70d0d9c333a7b8df",
+  "payload": {
+    "lesson_id": "V3-LES-006619",
+    "grouping_id": "V3-CL-006619",
+    "ordered_kc_ids": [
+      "V3-KC-187351",
+      "V3-KC-010372",
+      "V3-KC-376473"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-187351",
+      "V3-KC-010372",
+      "V3-KC-376473"
+    ],
+    "throughline": "Classify signal entry and hormone structure, then map endocrine source to cellular action.",
+    "curriculum_context": {
+      "canonical_title": "Coordinate endocrine and cellular signaling",
+      "phase_ids": [
+        "V3-PHS-935127",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-597243",
+        "V3-MOD-907235"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 67,
+          "relation_ids": [
+            "R14-PL-581402-067"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 67,
+          "relation_ids": [
+            "R14-PL-904137-067"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-236815",
+          "position": 29,
+          "relation_ids": [
+            "R14-PL-236815-029"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-006619",
+      "revisit_relation_ids": [
+        "R14-RV-006619"
+      ],
+      "hard_prerequisite": {
+        "lesson_id": "V3-LES-474771",
+        "relation_ids": [
+          "V3-EDG-103186"
+        ],
+        "source_kc_ids": [
+          "V3-KC-446820",
+          "V3-KC-937306"
+        ],
+        "checked_at_activity_id": "END-ACT-ENTRY",
+        "unresolved_handoff_lesson_id": "V3-LES-474771",
+        "failed_check_handoff_node_id": "END-NODE-HANDOFF",
+        "failed_check_predicate": "HARD_PREREQUISITE_CHECK_NOT_PASSED",
+        "planner_behavior": "BLOCK_CURRENT_PROGRESSION_AND_RETURN_TO_CANONICAL_PREREQUISITE",
+        "prerequisite_support_route_authored": false
+      },
+      "route_scope_code": "STANDARD_ONLY",
+      "applicable_routes": [
+        "STANDARD"
+      ]
+    },
+    "nodes": [
+      {
+        "node_id": "SIG-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify the membrane protein class from the first event after a signal arrives. This is low stakes; it does not select a route or establish mastery."
+        ],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES"
+        ],
+        "activity_ids": [
+          "SIG-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "SIG-CP-ENTRY",
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ]
+      },
+      {
+        "node_id": "SIG-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: use the trigger and the first controlled step to distinguish four membrane-signaling mechanisms, then predict the immediate consequence before following any longer cascade.",
+          "Bridge from prior nervous-system organization: a signal must be sensed before an effector response can occur. Here, the membrane protein is the signal-entry element."
+        ],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SIG-CP-ORIENTATION",
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ]
+      },
+      {
+        "node_id": "SIG-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "A voltage-gated ion channel responds to membrane potential. A ligand-gated ion channel responds when a chemical messenger binds. In both cases, gate opening changes membrane permeability and permits selected ions to move down their electrochemical gradients.",
+          "A receptor enzyme converts ligand binding into enzyme activity on the cytosolic side, often by phosphorylation. Its direct action is chemical modification, not formation of an ion-conducting pore.",
+          "A G protein–coupled receptor changes conformation and promotes GDP-for-GTP exchange on a heterotrimeric G protein. The activated G-protein subunits then regulate an effector. The receptor does not itself transport the ligand or act as an ion pore."
+        ],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES",
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SIG-CP-EXPLANATION",
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ]
+      },
+      {
+        "node_id": "SIG-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — Trigger → first controlled step → immediate consequence. Voltage or ligand can open a channel; ligand can activate an enzyme domain; ligand can activate a G protein through a G protein–coupled receptor."
+        ],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES",
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SIG-CP-MODEL",
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ]
+      },
+      {
+        "node_id": "SIG-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Expert selection: if a prompt reports an ion current immediately after a gate opens, I choose a channel mechanism. If it reports receptor-side phosphorylation, I choose a receptor enzyme. If GDP/GTP exchange appears before an effector, I choose a G protein–coupled receptor. I rule out alternatives by locating the earliest stated event."
+        ],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES",
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SIG-CP-THINK",
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ]
+      },
+      {
+        "node_id": "SIG-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: an extracellular messenger binds a seven-pass membrane protein. The receptor changes shape, a G alpha subunit releases GDP and binds GTP, and an effector enzyme changes activity. The decisive cue is nucleotide exchange on a G protein, so the receptor is a G protein–coupled receptor. A ligand-gated channel is ruled out because no ion-conducting pore is the first controlled step; a receptor enzyme is ruled out because the receptor itself is not described as catalyzing phosphorylation."
+        ],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES",
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SIG-CP-WORKED",
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ]
+      },
+      {
+        "node_id": "SIG-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: name the trigger first, then identify the directly controlled membrane event."
+        ],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES"
+        ],
+        "activity_ids": [
+          "SIG-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "SIG-CP-GUIDED",
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ]
+      },
+      {
+        "node_id": "SIG-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: use only the earliest intracellular consequence to classify the receptor."
+        ],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES"
+        ],
+        "activity_ids": [
+          "SIG-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "SIG-CP-LIGHT",
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ]
+      },
+      {
+        "node_id": "SIG-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: distinguish a G protein–coupled receptor from a channel and a receptor enzyme without an answer-bearing hint."
+        ],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES"
+        ],
+        "activity_ids": [
+          "SIG-ACT-SOLO"
+        ],
+        "checkpoint_ref": "SIG-CP-SOLO",
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ]
+      },
+      {
+        "node_id": "SIG-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: ligand binding does not automatically mean ligand-gated channel. Ask whether binding opens a pore, activates an enzyme function, or activates a G protein. A downstream ion change does not make every upstream receptor an ion channel."
+        ],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES",
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SIG-CP-CONTRAST",
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ]
+      },
+      {
+        "node_id": "SIG-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: predict the direct effect of disrupting the gate-sensing machinery of a voltage-gated channel."
+        ],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES"
+        ],
+        "activity_ids": [
+          "SIG-ACT-NEAR"
+        ],
+        "checkpoint_ref": "SIG-CP-NEAR",
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ]
+      },
+      {
+        "node_id": "SIG-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: move from an ion-channel decision to a receptor–G-protein sequence and identify the earliest blocked step."
+        ],
+        "representation_ids": [
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "activity_ids": [
+          "SIG-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "SIG-CP-CHANGED",
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ]
+      },
+      {
+        "node_id": "SIG-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Targeted repair for the direct-mechanism function: locate the trigger, then ask what the membrane protein itself does. A channel changes permeability by opening a pore; an enzyme receptor catalyzes a chemical change; a G protein–coupled receptor activates a G protein."
+        ],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES"
+        ],
+        "activity_ids": [
+          "SIG-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "SIG-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ]
+      },
+      {
+        "node_id": "SIG-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh exact re-entry: classify the immediate channel consequence in a new ligand, ion, and pore setting. No exposed item or answer is reused."
+        ],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES"
+        ],
+        "activity_ids": [
+          "SIG-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "SIG-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ]
+      },
+      {
+        "node_id": "SIG-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Targeted repair for the G-protein sequence: ligand binds receptor → receptor changes conformation → G alpha exchanges GDP for GTP → G-protein subunit regulates an effector. Stop at the first broken arrow."
+        ],
+        "representation_ids": [
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "activity_ids": [
+          "SIG-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "SIG-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ]
+      },
+      {
+        "node_id": "SIG-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh exact re-entry: predict the first missing GPCR consequence in a new effector setting without reusing the exposed task."
+        ],
+        "representation_ids": [
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "activity_ids": [
+          "SIG-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "SIG-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ]
+      },
+      {
+        "node_id": "SIG-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair is bounded to one targeted cue and one fresh re-entry for each failed function. If the fresh check is still unresolved, the lesson returns control for later support and does not award exit success."
+        ],
+        "representation_ids": [
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SIG-CP-HANDOFF",
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ]
+      },
+      {
+        "node_id": "SIG-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap and exit: retrieve the three-part test — trigger, first controlled step, immediate consequence. Use it to separate gated channels, receptor enzymes, and G protein–coupled receptors without tracing an unnecessary full cascade."
+        ],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES",
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SIG-CP-RECAP",
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ]
+      },
+      {
+        "node_id": "LIP-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: use a compact structural description to predict how an endocrine signal can reach its receptor. This is low stakes and cannot satisfy an exit."
+        ],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES"
+        ],
+        "activity_ids": [
+          "LIP-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "LIP-CP-ENTRY",
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ]
+      },
+      {
+        "node_id": "LIP-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: connect molecular structure to signaling behavior. Focus on steroid, terpene, and terpenoid structures only, then predict whether a membrane or intracellular receptor is plausible."
+        ],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LIP-CP-ORIENTATION",
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ]
+      },
+      {
+        "node_id": "LIP-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Steroids share a characteristic core of four fused carbon rings. Many steroid hormones have enough nonpolar surface to cross a phospholipid bilayer and bind receptors in the cytosol or nucleus; the hormone–receptor complex can regulate transcription.",
+          "Terpenes are assembled from five-carbon isoprene units. Terpenoids are modified terpene derivatives, commonly containing oxygen-bearing functional groups. Members of these families can participate in signaling or endocrine biology.",
+          "Structure constrains but does not uniquely determine receptor location. A largely nonpolar signal is more able to cross a membrane than a permanently charged signal, but experimental information about the receptor remains decisive."
+        ],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES",
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LIP-CP-EXPLANATION",
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ]
+      },
+      {
+        "node_id": "LIP-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — Structural scaffold → polarity and membrane passage → receptor location → cellular action. Keep each arrow conditional on the facts supplied in the task."
+        ],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES",
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LIP-CP-MODEL",
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ]
+      },
+      {
+        "node_id": "LIP-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Expert selection: I first look for a four-fused-ring steroid core or a repeating isoprene-derived skeleton. Then I inspect polar or charged groups. I predict intracellular signaling only when membrane passage and an intracellular receptor are both supported; I do not treat every lipid-like molecule as a steroid."
+        ],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES",
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LIP-CP-THINK",
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ]
+      },
+      {
+        "node_id": "LIP-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a hormone has four fused rings, few polar groups, and a receptor in the cytosol. Its steroid scaffold and low polarity support membrane passage. After binding, the receptor complex enters the nucleus and changes transcription. I rule out a membrane-channel mechanism because no pore or ion flux is described, and I do not call the molecule a terpene merely because both families are rich in carbon."
+        ],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES",
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LIP-CP-WORKED",
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ]
+      },
+      {
+        "node_id": "LIP-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: identify the scaffold, estimate membrane passage from polarity, then place the receptor."
+        ],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES"
+        ],
+        "activity_ids": [
+          "LIP-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "LIP-CP-GUIDED",
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ]
+      },
+      {
+        "node_id": "LIP-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: distinguish an isoprene-derived scaffold from a steroid fused-ring core."
+        ],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES"
+        ],
+        "activity_ids": [
+          "LIP-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "LIP-CP-LIGHT",
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ]
+      },
+      {
+        "node_id": "LIP-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: classify a modified terpene structure and connect it to a signaling role."
+        ],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES"
+        ],
+        "activity_ids": [
+          "LIP-ACT-SOLO"
+        ],
+        "checkpoint_ref": "LIP-CP-SOLO",
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ]
+      },
+      {
+        "node_id": "LIP-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: lipid-soluble does not mean “must be a steroid,” and oxygen-containing does not mean “cannot cross a membrane.” Use the actual scaffold, charge, and receptor evidence. Broad fatty-acid and membrane-lipid chemistry is outside this KC."
+        ],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES",
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LIP-CP-CONTRAST",
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ]
+      },
+      {
+        "node_id": "LIP-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: use a steroid scaffold and a disrupted intracellular receptor step to predict the most direct signaling consequence."
+        ],
+        "representation_ids": [
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "activity_ids": [
+          "LIP-ACT-NEAR"
+        ],
+        "checkpoint_ref": "LIP-CP-NEAR",
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ]
+      },
+      {
+        "node_id": "LIP-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: use an isoprene-derived, oxygenated signaling structure and a nuclear response to classify the structure–function relation."
+        ],
+        "representation_ids": [
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "activity_ids": [
+          "LIP-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "LIP-CP-CHANGED",
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ]
+      },
+      {
+        "node_id": "LIP-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Targeted repair for steroid-receptor consequence reasoning: confirm that the signal has entered the cell, identify the disrupted intracellular-receptor step, and then predict the first downstream output that step can no longer support. Do not return to membrane-passage reasoning once entry is stated."
+        ],
+        "representation_ids": [
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "activity_ids": [
+          "LIP-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "LIP-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ]
+      },
+      {
+        "node_id": "LIP-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh exact re-entry: use a new intracellular-receptor disruption to predict the most direct steroid-signaling consequence."
+        ],
+        "representation_ids": [
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "activity_ids": [
+          "LIP-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "LIP-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ]
+      },
+      {
+        "node_id": "LIP-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Targeted repair for family distinction: steroid means a four-fused-ring core; terpene means an isoprene-unit carbon framework; terpenoid means a modified terpene derivative. Signaling role is a separate decision."
+        ],
+        "representation_ids": [
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "activity_ids": [
+          "LIP-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "LIP-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ]
+      },
+      {
+        "node_id": "LIP-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh exact re-entry: classify a new oxygenated isoprene-derived messenger and connect it to an intracellular receptor observation."
+        ],
+        "representation_ids": [
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "activity_ids": [
+          "LIP-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "LIP-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ]
+      },
+      {
+        "node_id": "LIP-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Each failed function receives one targeted repair and one fresh item. A second miss returns control for later support; repair completion alone never counts as exit success."
+        ],
+        "representation_ids": [
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LIP-CP-HANDOFF",
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ]
+      },
+      {
+        "node_id": "LIP-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap and exit: retrieve the chain scaffold → polarity → membrane passage → receptor location → action. Keep steroid and terpene/terpenoid classification separate from the final signaling-role prediction."
+        ],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES",
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "LIP-CP-RECAP",
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ]
+      },
+      {
+        "node_id": "END-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Prerequisite check from V3-LES-474771: order a sensor, central integration step, and effector output in a control loop. This low-stakes check activates the nervous-control bridge and cannot satisfy an endocrine exit.",
+          "If that sensor → integration → effector organization is unfamiliar, return to the prerequisite lesson before relying on the neuroendocrine examples."
+        ],
+        "representation_ids": [
+          "END-REP-BODY-MAP"
+        ],
+        "activity_ids": [
+          "END-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "END-CP-ENTRY",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      },
+      {
+        "node_id": "END-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: build a location → gland → product → hormone-type map, then keep hormone synthesis distinct from storage and release. The nervous-system control-loop prerequisite supports the hypothalamus–pituitary bridge."
+        ],
+        "representation_ids": [
+          "END-REP-BODY-MAP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "END-CP-ORIENTATION",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      },
+      {
+        "node_id": "END-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Endocrine glands release hormones into internal fluids rather than through ducts. A hormone affects only cells with the appropriate receptor. Peptide or protein hormones generally use membrane receptors; many steroids use intracellular receptors; amino-acid derivatives vary, so receptor location must be learned from the supplied hormone context.",
+          "Major source map: hypothalamus in the brain controls the pituitary and synthesizes vasopressin (ADH) and oxytocin; the posterior pituitary stores and releases those two hormones. The anterior pituitary produces hormones including TSH and ACTH. The thyroid in the anterior neck produces thyroid hormones; the parathyroids on its posterior surface produce parathyroid hormone.",
+          "The adrenal cortex produces steroid hormones such as cortisol and aldosterone; the adrenal medulla produces catecholamines such as epinephrine. Pancreatic islet beta cells produce insulin and alpha cells produce glucagon. Ovaries and testes produce major gonadal steroids; the pineal gland produces melatonin."
+        ],
+        "representation_ids": [
+          "END-REP-BODY-MAP",
+          "END-REP-SOURCE-PRODUCT",
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "END-CP-EXPLANATION",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      },
+      {
+        "node_id": "END-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — Location → source tissue → synthesized product → release site → chemical class → receptor-bearing target. A single arrow may split, as in hypothalamic synthesis followed by posterior-pituitary release."
+        ],
+        "representation_ids": [
+          "END-REP-BODY-MAP",
+          "END-REP-SOURCE-PRODUCT",
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "END-CP-MODEL",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      },
+      {
+        "node_id": "END-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Expert selection: I refuse to map a hormone by name alone. I locate the tissue, separate synthesis from release, classify the hormone, and then use receptor information. For TSH, “thyroid” in the name is the target cue, not the source: the anterior pituitary is the source."
+        ],
+        "representation_ids": [
+          "END-REP-BODY-MAP",
+          "END-REP-SOURCE-PRODUCT",
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "END-CP-THINK",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      },
+      {
+        "node_id": "END-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: compare three rows. Cortisol maps to adrenal cortex → steroid → intracellular-receptor signaling. Insulin maps to pancreatic beta cell → peptide → membrane-receptor signaling. ADH maps to hypothalamic synthesis → posterior-pituitary storage and release → peptide. The ADH row demonstrates why “where it is released” and “where it is made” cannot be collapsed."
+        ],
+        "representation_ids": [
+          "END-REP-BODY-MAP",
+          "END-REP-SOURCE-PRODUCT",
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "END-CP-WORKED",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      },
+      {
+        "node_id": "END-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: use location, source, and target words to avoid assigning a tropic hormone to the gland it stimulates."
+        ],
+        "representation_ids": [
+          "END-REP-BODY-MAP"
+        ],
+        "activity_ids": [
+          "END-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "END-CP-GUIDED",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      },
+      {
+        "node_id": "END-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: separate hypothalamic synthesis from posterior-pituitary release."
+        ],
+        "representation_ids": [
+          "END-REP-BODY-MAP"
+        ],
+        "activity_ids": [
+          "END-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "END-CP-LIGHT",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      },
+      {
+        "node_id": "END-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: pair a major gland region with a hormone product and chemical type."
+        ],
+        "representation_ids": [
+          "END-REP-BODY-MAP"
+        ],
+        "activity_ids": [
+          "END-ACT-SOLO"
+        ],
+        "checkpoint_ref": "END-CP-SOLO",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      },
+      {
+        "node_id": "END-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: a hormone name can identify its target without identifying its source. TSH targets the thyroid but is produced by the anterior pituitary. ADH and oxytocin are released from the posterior pituitary but synthesized in the hypothalamus. Do not create a separate KC for every gland or hormone."
+        ],
+        "representation_ids": [
+          "END-REP-BODY-MAP",
+          "END-REP-SOURCE-PRODUCT",
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "END-CP-CONTRAST",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      },
+      {
+        "node_id": "END-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: identify a major gland from location and product."
+        ],
+        "representation_ids": [
+          "END-REP-BODY-MAP"
+        ],
+        "activity_ids": [
+          "END-ACT-NEAR"
+        ],
+        "checkpoint_ref": "END-CP-NEAR",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      },
+      {
+        "node_id": "END-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: use a lesion in the hypothalamic–posterior-pituitary connection to distinguish synthesis from release."
+        ],
+        "representation_ids": [
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "activity_ids": [
+          "END-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "END-CP-CHANGED",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      },
+      {
+        "node_id": "END-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Targeted repair for gland mapping: locate the organ first, separate cortex from medulla or anterior from posterior, then bind the specific product to that source."
+        ],
+        "representation_ids": [
+          "END-REP-BODY-MAP"
+        ],
+        "activity_ids": [
+          "END-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "END-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      },
+      {
+        "node_id": "END-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh exact re-entry: map a pancreatic cell source to its product in a new metabolic condition."
+        ],
+        "representation_ids": [
+          "END-REP-BODY-MAP"
+        ],
+        "activity_ids": [
+          "END-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "END-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      },
+      {
+        "node_id": "END-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Targeted repair for neuroendocrine source logic: hypothalamic neurons synthesize ADH and oxytocin; axons carry them to the posterior pituitary; the posterior pituitary stores and releases them."
+        ],
+        "representation_ids": [
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "activity_ids": [
+          "END-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "END-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      },
+      {
+        "node_id": "END-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh exact re-entry: infer the release consequence of reduced hypothalamic synthesis without reusing the lesion item."
+        ],
+        "representation_ids": [
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "activity_ids": [
+          "END-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "END-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      },
+      {
+        "node_id": "END-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "If END-ACT-ENTRY does not show readiness for the sensor → integration → effector control-loop prerequisite, stop endocrine progression and return to the planner for canonical hard prerequisite V3-LES-474771 through relation V3-EDG-103186. This lesson does not author a prerequisite-support route.",
+          "If a bounded endocrine exit re-entry remains unresolved, also return to the planner without exit credit."
+        ],
+        "representation_ids": [
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "END-CP-HANDOFF",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      },
+      {
+        "node_id": "END-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap and exit: retrieve one source map from each region — brain, neck, adrenal, pancreas, and gonad — and preserve the special hypothalamus-synthesis/posterior-pituitary-release distinction."
+        ],
+        "representation_ids": [
+          "END-REP-BODY-MAP",
+          "END-REP-SOURCE-PRODUCT",
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "END-CP-RECAP",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      },
+      {
+        "node_id": "END-NODE-CAPSTONE-EXIT",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Lesson exit: continue to the required coordination capstones, where these component skills are applied together. The capstone content and evidence remain separate from this lesson candidate."
+        ],
+        "representation_ids": [
+          "END-REP-BODY-MAP",
+          "END-REP-SOURCE-PRODUCT",
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "END-CP-CAPSTONE-EXIT",
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "SIG-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-187351",
+        "item_binding_id": "SIG-ITEM-ENTRY",
+        "learner_operation": "CLASSIFY_FROM_FIRST_EVENT",
+        "authorized_next_node_ids": [
+          "SIG-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "SIG-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-187351",
+        "item_binding_id": "SIG-ITEM-GUIDED",
+        "learner_operation": "MATCH_TRIGGER_TO_CHANNEL",
+        "authorized_next_node_ids": [
+          "SIG-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "SIG-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-187351",
+        "item_binding_id": "SIG-ITEM-LIGHT",
+        "learner_operation": "CLASSIFY_FROM_INTRACELLULAR_ACTION",
+        "authorized_next_node_ids": [
+          "SIG-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "SIG-ACT-SOLO",
+        "primary_kc_id": "V3-KC-187351",
+        "item_binding_id": "SIG-ITEM-SOLO",
+        "learner_operation": "ORDER_GPCR_EVENTS",
+        "authorized_next_node_ids": [
+          "SIG-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "SIG-ACT-NEAR",
+        "primary_kc_id": "V3-KC-187351",
+        "item_binding_id": "SIG-ITEM-NEAR",
+        "learner_operation": "PREDICT_DIRECT_CHANNEL_CONSEQUENCE",
+        "authorized_next_node_ids": [
+          "SIG-NODE-CHANGED",
+          "SIG-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "SIG-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-187351",
+        "item_binding_id": "SIG-ITEM-CHANGED",
+        "learner_operation": "LOCATE_FIRST_BLOCKED_GPCR_STEP",
+        "authorized_next_node_ids": [
+          "SIG-NODE-RECAP",
+          "SIG-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "SIG-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-187351",
+        "item_binding_id": "SIG-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_DIRECT_MECHANISM_RULE",
+        "authorized_next_node_ids": [
+          "SIG-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "SIG-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-187351",
+        "item_binding_id": "SIG-ITEM-REENTRY-NEAR",
+        "learner_operation": "RECHECK_DIRECT_CHANNEL_CONSEQUENCE",
+        "authorized_next_node_ids": [
+          "SIG-NODE-CHANGED",
+          "SIG-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "SIG-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-187351",
+        "item_binding_id": "SIG-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_GPCR_CAUSAL_ORDER",
+        "authorized_next_node_ids": [
+          "SIG-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "SIG-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-187351",
+        "item_binding_id": "SIG-ITEM-REENTRY-CHANGED",
+        "learner_operation": "RECHECK_FIRST_BLOCKED_GPCR_STEP",
+        "authorized_next_node_ids": [
+          "SIG-NODE-RECAP",
+          "SIG-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "LIP-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-010372",
+        "item_binding_id": "LIP-ITEM-ENTRY",
+        "learner_operation": "RELATE_STEROID_STRUCTURE_TO_LOCATION",
+        "authorized_next_node_ids": [
+          "LIP-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "LIP-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-010372",
+        "item_binding_id": "LIP-ITEM-GUIDED",
+        "learner_operation": "ORDER_STEROID_RECEPTOR_ACTION",
+        "authorized_next_node_ids": [
+          "LIP-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "LIP-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-010372",
+        "item_binding_id": "LIP-ITEM-LIGHT",
+        "learner_operation": "IDENTIFY_ISOPRENE_DERIVATION",
+        "authorized_next_node_ids": [
+          "LIP-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "LIP-ACT-SOLO",
+        "primary_kc_id": "V3-KC-010372",
+        "item_binding_id": "LIP-ITEM-SOLO",
+        "learner_operation": "CLASSIFY_MODIFIED_ISOPRENE_STRUCTURE",
+        "authorized_next_node_ids": [
+          "LIP-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "LIP-ACT-NEAR",
+        "primary_kc_id": "V3-KC-010372",
+        "item_binding_id": "LIP-ITEM-NEAR",
+        "learner_operation": "PREDICT_STEROID_RECEPTOR_CONSEQUENCE",
+        "authorized_next_node_ids": [
+          "LIP-NODE-CHANGED",
+          "LIP-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "LIP-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-010372",
+        "item_binding_id": "LIP-ITEM-CHANGED",
+        "learner_operation": "INTEGRATE_TERPENOID_STRUCTURE_AND_RECEPTOR_DATA",
+        "authorized_next_node_ids": [
+          "LIP-NODE-RECAP",
+          "LIP-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "LIP-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-010372",
+        "item_binding_id": "LIP-ITEM-REPAIR-NEAR",
+        "learner_operation": "PREDICT_STEROID_RECEPTOR_CONSEQUENCE",
+        "authorized_next_node_ids": [
+          "LIP-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "LIP-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-010372",
+        "item_binding_id": "LIP-ITEM-REENTRY-NEAR",
+        "learner_operation": "PREDICT_STEROID_RECEPTOR_CONSEQUENCE",
+        "authorized_next_node_ids": [
+          "LIP-NODE-CHANGED",
+          "LIP-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "LIP-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-010372",
+        "item_binding_id": "LIP-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_STEROID_TERPENE_DISTINCTION",
+        "authorized_next_node_ids": [
+          "LIP-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "LIP-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-010372",
+        "item_binding_id": "LIP-ITEM-REENTRY-CHANGED",
+        "learner_operation": "RECHECK_TERPENOID_STRUCTURE_AND_RECEPTOR_DATA",
+        "authorized_next_node_ids": [
+          "LIP-NODE-RECAP",
+          "LIP-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "END-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-376473",
+        "item_binding_id": "END-ITEM-ENTRY",
+        "learner_operation": "ACTIVATE_CONTROL_LOOP_PREREQUISITE",
+        "authorized_next_node_ids": [
+          "END-NODE-ORIENTATION",
+          "END-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "END-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-376473",
+        "item_binding_id": "END-ITEM-GUIDED",
+        "learner_operation": "MAP_TROPIC_HORMONE_SOURCE",
+        "authorized_next_node_ids": [
+          "END-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "END-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-376473",
+        "item_binding_id": "END-ITEM-LIGHT",
+        "learner_operation": "DISTINGUISH_SYNTHESIS_AND_RELEASE",
+        "authorized_next_node_ids": [
+          "END-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "END-ACT-SOLO",
+        "primary_kc_id": "V3-KC-376473",
+        "item_binding_id": "END-ITEM-SOLO",
+        "learner_operation": "MAP_GLAND_REGION_PRODUCT_AND_TYPE",
+        "authorized_next_node_ids": [
+          "END-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "END-ACT-NEAR",
+        "primary_kc_id": "V3-KC-376473",
+        "item_binding_id": "END-ITEM-NEAR",
+        "learner_operation": "IDENTIFY_GLAND_FROM_LOCATION_AND_PRODUCT",
+        "authorized_next_node_ids": [
+          "END-NODE-CHANGED",
+          "END-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "END-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-376473",
+        "item_binding_id": "END-ITEM-CHANGED",
+        "learner_operation": "PREDICT_NEUROENDOCRINE_CONNECTION_CONSEQUENCE",
+        "authorized_next_node_ids": [
+          "END-NODE-RECAP",
+          "END-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "END-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-376473",
+        "item_binding_id": "END-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_LOCATION_PRODUCT_MAP",
+        "authorized_next_node_ids": [
+          "END-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "END-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-376473",
+        "item_binding_id": "END-ITEM-REENTRY-NEAR",
+        "learner_operation": "RECHECK_LOCATION_PRODUCT_MAP",
+        "authorized_next_node_ids": [
+          "END-NODE-CHANGED",
+          "END-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "END-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-376473",
+        "item_binding_id": "END-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_NEUROENDOCRINE_SOURCE_RULE",
+        "authorized_next_node_ids": [
+          "END-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "END-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-376473",
+        "item_binding_id": "END-ITEM-REENTRY-CHANGED",
+        "learner_operation": "RECHECK_NEUROENDOCRINE_SOURCE_RULE",
+        "authorized_next_node_ids": [
+          "END-NODE-RECAP",
+          "END-NODE-HANDOFF"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-187351",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-187351",
+        "scope_in_refs": [
+          "V3-KC-187351:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-187351:SCOPE_OUT:0",
+          "V3-KC-187351:SCOPE_OUT:1"
+        ],
+        "source_claim_refs": [
+          "SIG-CLAIM-CLASSIFY",
+          "SIG-CLAIM-CONSEQUENCE"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "SIG-NODE-ENTRY",
+        "orientation_node_id": "SIG-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "SIG-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "SIG-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "SIG-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "SIG-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "SIG-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "SIG-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "SIG-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "SIG-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "SIG-NODE-NEAR",
+          "activity_ids": [
+            "SIG-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "SIG-NODE-CHANGED",
+          "activity_ids": [
+            "SIG-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "SIG-FEATURE-DIRECT-MEMBRANE-MECHANISM",
+          "SIG-FEATURE-GPCR-EARLY-SEQUENCE"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "SIG-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "SIG-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "SIG-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "SIG-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "SIG-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "SIG-ACT-REENTRY-NEAR",
+            "success_next_node_id": "SIG-NODE-CHANGED",
+            "planner_handoff_node_id": "SIG-NODE-HANDOFF"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "SIG-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "SIG-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "SIG-NODE-RECAP",
+            "planner_handoff_node_id": "SIG-NODE-HANDOFF"
+          }
+        ],
+        "representation_ids": [
+          "SIG-REP-MEMBRANE-CLASSES",
+          "SIG-REP-FIRST-CONSEQUENCE"
+        ],
+        "accessibility_equivalent_ids": [
+          "SIG-REP-MEMBRANE-CLASSES-TEXT",
+          "SIG-REP-FIRST-CONSEQUENCE-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [],
+          "standard": [
+            "SIG-NODE-ENTRY",
+            "SIG-NODE-ORIENTATION",
+            "SIG-NODE-EXPLANATION",
+            "SIG-NODE-MODEL",
+            "SIG-NODE-THINK",
+            "SIG-NODE-WORKED",
+            "SIG-NODE-GUIDED",
+            "SIG-NODE-LIGHT",
+            "SIG-NODE-SOLO",
+            "SIG-NODE-CONTRAST",
+            "SIG-NODE-NEAR",
+            "SIG-NODE-CHANGED",
+            "SIG-NODE-REPAIR-NEAR",
+            "SIG-NODE-REENTRY-NEAR",
+            "SIG-NODE-REPAIR-CHANGED",
+            "SIG-NODE-REENTRY-CHANGED",
+            "SIG-NODE-HANDOFF",
+            "SIG-NODE-RECAP"
+          ],
+          "misconception": []
+        },
+        "recap_node_id": "SIG-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-010372",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-010372",
+        "scope_in_refs": [
+          "V3-KC-010372:SCOPE_IN:0",
+          "V3-KC-010372:SCOPE_IN:1",
+          "V3-KC-010372:SCOPE_IN:2"
+        ],
+        "scope_out_refs": [
+          "V3-KC-010372:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "LIP-CLAIM-STRUCTURE",
+          "LIP-CLAIM-LOCATION"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "LIP-NODE-ENTRY",
+        "orientation_node_id": "LIP-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "LIP-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "LIP-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "LIP-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "LIP-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "LIP-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "LIP-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "LIP-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "LIP-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "LIP-NODE-NEAR",
+          "activity_ids": [
+            "LIP-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "LIP-NODE-CHANGED",
+          "activity_ids": [
+            "LIP-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "LIP-FEATURE-STEROID-RECEPTOR-CONSEQUENCE",
+          "LIP-FEATURE-STEROID-TERPENOID-DISTINCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "LIP-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "LIP-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "LIP-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "LIP-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "LIP-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "LIP-ACT-REENTRY-NEAR",
+            "success_next_node_id": "LIP-NODE-CHANGED",
+            "planner_handoff_node_id": "LIP-NODE-HANDOFF"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "LIP-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "LIP-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "LIP-NODE-RECAP",
+            "planner_handoff_node_id": "LIP-NODE-HANDOFF"
+          }
+        ],
+        "representation_ids": [
+          "LIP-REP-STRUCTURE-CUES",
+          "LIP-REP-RECEPTOR-LOCATION"
+        ],
+        "accessibility_equivalent_ids": [
+          "LIP-REP-STRUCTURE-CUES-TEXT",
+          "LIP-REP-RECEPTOR-LOCATION-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [],
+          "standard": [
+            "LIP-NODE-ENTRY",
+            "LIP-NODE-ORIENTATION",
+            "LIP-NODE-EXPLANATION",
+            "LIP-NODE-MODEL",
+            "LIP-NODE-THINK",
+            "LIP-NODE-WORKED",
+            "LIP-NODE-GUIDED",
+            "LIP-NODE-LIGHT",
+            "LIP-NODE-SOLO",
+            "LIP-NODE-CONTRAST",
+            "LIP-NODE-NEAR",
+            "LIP-NODE-CHANGED",
+            "LIP-NODE-REPAIR-NEAR",
+            "LIP-NODE-REENTRY-NEAR",
+            "LIP-NODE-REPAIR-CHANGED",
+            "LIP-NODE-REENTRY-CHANGED",
+            "LIP-NODE-HANDOFF",
+            "LIP-NODE-RECAP"
+          ],
+          "misconception": []
+        },
+        "recap_node_id": "LIP-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-376473",
+        "canonical_ordinal": 3,
+        "objective_ref": "objective:V3-KC-376473",
+        "scope_in_refs": [
+          "V3-KC-376473:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-376473:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "END-CLAIM-MAP",
+          "END-CLAIM-NEURO"
+        ],
+        "prerequisite_point_refs": [
+          "V3-EDG-103186"
+        ],
+        "entry_check_boundary_id": "END-NODE-ENTRY",
+        "orientation_node_id": "END-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "END-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "END-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "END-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "END-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "END-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "END-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "END-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "END-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "END-NODE-NEAR",
+          "activity_ids": [
+            "END-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "END-NODE-CHANGED",
+          "activity_ids": [
+            "END-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "END-FEATURE-GLAND-LOCATION-PRODUCT",
+          "END-FEATURE-SYNTHESIS-VERSUS-RELEASE"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "END-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "END-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "END-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "END-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "END-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "END-ACT-REENTRY-NEAR",
+            "success_next_node_id": "END-NODE-CHANGED",
+            "planner_handoff_node_id": "END-NODE-HANDOFF"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "END-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "END-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "END-NODE-RECAP",
+            "planner_handoff_node_id": "END-NODE-HANDOFF"
+          }
+        ],
+        "representation_ids": [
+          "END-REP-BODY-MAP",
+          "END-REP-SOURCE-PRODUCT",
+          "END-REP-NEUROENDOCRINE"
+        ],
+        "accessibility_equivalent_ids": [
+          "END-REP-BODY-MAP-TEXT",
+          "END-REP-SOURCE-PRODUCT-TEXT",
+          "END-REP-NEUROENDOCRINE-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [],
+          "standard": [
+            "END-NODE-ENTRY",
+            "END-NODE-ORIENTATION",
+            "END-NODE-EXPLANATION",
+            "END-NODE-MODEL",
+            "END-NODE-THINK",
+            "END-NODE-WORKED",
+            "END-NODE-GUIDED",
+            "END-NODE-LIGHT",
+            "END-NODE-SOLO",
+            "END-NODE-CONTRAST",
+            "END-NODE-NEAR",
+            "END-NODE-CHANGED",
+            "END-NODE-REPAIR-NEAR",
+            "END-NODE-REENTRY-NEAR",
+            "END-NODE-REPAIR-CHANGED",
+            "END-NODE-REENTRY-CHANGED",
+            "END-NODE-HANDOFF",
+            "END-NODE-RECAP"
+          ],
+          "misconception": []
+        },
+        "recap_node_id": "END-NODE-RECAP"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "SIG-ITEM-ENTRY",
+        "activity_id": "SIG-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "SIG-FAMILY-ENTRY",
+        "stimulus_lineage_id": "SIG-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "SIG-REP-MEMBRANE-CLASSES",
+        "changed_dimensions": [],
+        "learner_operation": "CLASSIFY_FROM_FIRST_EVENT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_LOW_STAKES_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "SIG_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#SIG-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#SIG-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SIG-SOLUTION-ENTRY",
+        "decisive_cue_id": "SIG-CUE-ENTRY",
+        "distractor_lineage_id": "SIG-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "SIG-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "SIG-FAMILY-WORKED",
+        "stimulus_lineage_id": "SIG-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SIG-REP-MEMBRANE-CLASSES",
+        "changed_dimensions": [],
+        "learner_operation": "FOLLOW_EXPERT_SELECTION_AND_ELIMINATION",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:SIG-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SIG-SOLUTION-WORKED",
+        "decisive_cue_id": "SIG-CUE-WORKED",
+        "distractor_lineage_id": "SIG-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "SIG-ITEM-GUIDED",
+        "activity_id": "SIG-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "SIG-FAMILY-GUIDED",
+        "stimulus_lineage_id": "SIG-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SIG-REP-MEMBRANE-CLASSES",
+        "changed_dimensions": [],
+        "learner_operation": "MATCH_TRIGGER_TO_CHANNEL",
+        "hint_policy": "SELECTION_SEQUENCE_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "SIG_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#SIG-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#SIG-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SIG-SOLUTION-GUIDED",
+        "decisive_cue_id": "SIG-CUE-GUIDED",
+        "distractor_lineage_id": "SIG-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "SIG-ITEM-LIGHT",
+        "activity_id": "SIG-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "SIG-FAMILY-LIGHT",
+        "stimulus_lineage_id": "SIG-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SIG-REP-MEMBRANE-CLASSES",
+        "changed_dimensions": [],
+        "learner_operation": "CLASSIFY_FROM_INTRACELLULAR_ACTION",
+        "hint_policy": "BRIEF_REMINDER_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "SIG_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#SIG-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#SIG-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SIG-SOLUTION-LIGHT",
+        "decisive_cue_id": "SIG-CUE-LIGHT",
+        "distractor_lineage_id": "SIG-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "SIG-ITEM-SOLO",
+        "activity_id": "SIG-ACT-SOLO",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "SIG-FAMILY-SOLO",
+        "stimulus_lineage_id": "SIG-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SIG-REP-MEMBRANE-CLASSES",
+        "changed_dimensions": [],
+        "learner_operation": "ORDER_GPCR_EVENTS",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "SIG_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#SIG-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#SIG-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SIG-SOLUTION-SOLO",
+        "decisive_cue_id": "SIG-CUE-SOLO",
+        "distractor_lineage_id": "SIG-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "SIG-ITEM-NEAR",
+        "activity_id": "SIG-ACT-NEAR",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "SIG-FAMILY-NEAR",
+        "stimulus_lineage_id": "SIG-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SIG-REP-MEMBRANE-CLASSES",
+        "changed_dimensions": [],
+        "learner_operation": "PREDICT_DIRECT_CHANNEL_CONSEQUENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SIG_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#SIG-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#SIG-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SIG-SOLUTION-NEAR",
+        "decisive_cue_id": "SIG-CUE-NEAR",
+        "distractor_lineage_id": "SIG-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "SIG-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SIG-FEATURE-DIRECT-MEMBRANE-MECHANISM"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "SIG-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SIG-FEATURE-DIRECT-MEMBRANE-MECHANISM"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "SIG-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SIG-FEATURE-DIRECT-MEMBRANE-MECHANISM"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "SIG-ITEM-CHANGED",
+        "activity_id": "SIG-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "SIG-FAMILY-CHANGED",
+        "stimulus_lineage_id": "SIG-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SIG-REP-FIRST-CONSEQUENCE",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "learner_operation": "LOCATE_FIRST_BLOCKED_GPCR_STEP",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SIG_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#SIG-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#SIG-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SIG-SOLUTION-CHANGED",
+        "decisive_cue_id": "SIG-CUE-CHANGED",
+        "distractor_lineage_id": "SIG-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "SIG-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SIG-FEATURE-GPCR-EARLY-SEQUENCE"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "SIG-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SIG-FEATURE-GPCR-EARLY-SEQUENCE"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "SIG-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SIG-FEATURE-GPCR-EARLY-SEQUENCE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "SIG-ITEM-REPAIR-NEAR",
+        "activity_id": "SIG-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SIG-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "SIG-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "SIG-REP-FIRST-CONSEQUENCE",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_DIRECT_MECHANISM_RULE",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "SIG_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#SIG-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#SIG-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SIG-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "SIG-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "SIG-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "SIG-ITEM-REENTRY-NEAR",
+        "activity_id": "SIG-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SIG-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "SIG-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SIG-REP-FIRST-CONSEQUENCE",
+        "changed_dimensions": [
+          "domain_context"
+        ],
+        "learner_operation": "RECHECK_DIRECT_CHANNEL_CONSEQUENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_REPEAT_AFTER_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SIG_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#SIG-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#SIG-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SIG-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "SIG-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "SIG-DISTRACTOR-REENTRY-NEAR",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "SIG-ITEM-NEAR",
+          "stimulus_difference": "NEW_CONTEXT_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_NEW_CAUSAL_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "SIG-ITEM-REPAIR-CHANGED",
+        "activity_id": "SIG-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SIG-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "SIG-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "SIG-REP-FIRST-CONSEQUENCE",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_GPCR_CAUSAL_ORDER",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "SIG_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#SIG-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#SIG-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SIG-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "SIG-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "SIG-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "SIG-ITEM-REENTRY-CHANGED",
+        "activity_id": "SIG-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-187351",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SIG-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "SIG-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SIG-REP-FIRST-CONSEQUENCE",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "RECHECK_FIRST_BLOCKED_GPCR_STEP",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_REPEAT_AFTER_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SIG_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#SIG-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#SIG-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SIG-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "SIG-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "SIG-DISTRACTOR-REENTRY-CHANGED",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "SIG-ITEM-CHANGED",
+          "stimulus_difference": "NEW_CONTEXT_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_NEW_CAUSAL_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "LIP-ITEM-ENTRY",
+        "activity_id": "LIP-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "LIP-FAMILY-ENTRY",
+        "stimulus_lineage_id": "LIP-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "LIP-REP-RECEPTOR-LOCATION",
+        "changed_dimensions": [],
+        "learner_operation": "RELATE_STEROID_STRUCTURE_TO_LOCATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_LOW_STAKES_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "LIP_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#LIP-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#LIP-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIP-SOLUTION-ENTRY",
+        "decisive_cue_id": "LIP-CUE-ENTRY",
+        "distractor_lineage_id": "LIP-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "LIP-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "LIP-FAMILY-WORKED",
+        "stimulus_lineage_id": "LIP-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIP-REP-STRUCTURE-CUES",
+        "changed_dimensions": [],
+        "learner_operation": "FOLLOW_EXPERT_SELECTION_AND_ELIMINATION",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:LIP-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIP-SOLUTION-WORKED",
+        "decisive_cue_id": "LIP-CUE-WORKED",
+        "distractor_lineage_id": "LIP-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "LIP-ITEM-GUIDED",
+        "activity_id": "LIP-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "LIP-FAMILY-GUIDED",
+        "stimulus_lineage_id": "LIP-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIP-REP-STRUCTURE-CUES",
+        "changed_dimensions": [],
+        "learner_operation": "ORDER_STEROID_RECEPTOR_ACTION",
+        "hint_policy": "SELECTION_SEQUENCE_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "LIP_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#LIP-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#LIP-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIP-SOLUTION-GUIDED",
+        "decisive_cue_id": "LIP-CUE-GUIDED",
+        "distractor_lineage_id": "LIP-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "LIP-ITEM-LIGHT",
+        "activity_id": "LIP-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "LIP-FAMILY-LIGHT",
+        "stimulus_lineage_id": "LIP-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIP-REP-STRUCTURE-CUES",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_ISOPRENE_DERIVATION",
+        "hint_policy": "BRIEF_REMINDER_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "LIP_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#LIP-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#LIP-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIP-SOLUTION-LIGHT",
+        "decisive_cue_id": "LIP-CUE-LIGHT",
+        "distractor_lineage_id": "LIP-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "LIP-ITEM-SOLO",
+        "activity_id": "LIP-ACT-SOLO",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "LIP-FAMILY-SOLO",
+        "stimulus_lineage_id": "LIP-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIP-REP-STRUCTURE-CUES",
+        "changed_dimensions": [],
+        "learner_operation": "CLASSIFY_MODIFIED_ISOPRENE_STRUCTURE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "LIP_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#LIP-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#LIP-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIP-SOLUTION-SOLO",
+        "decisive_cue_id": "LIP-CUE-SOLO",
+        "distractor_lineage_id": "LIP-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "LIP-ITEM-NEAR",
+        "activity_id": "LIP-ACT-NEAR",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "LIP-FAMILY-NEAR",
+        "stimulus_lineage_id": "LIP-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIP-REP-RECEPTOR-LOCATION",
+        "changed_dimensions": [],
+        "learner_operation": "PREDICT_STEROID_RECEPTOR_CONSEQUENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LIP_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#LIP-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#LIP-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIP-SOLUTION-NEAR",
+        "decisive_cue_id": "LIP-CUE-NEAR",
+        "distractor_lineage_id": "LIP-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "LIP-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LIP-FEATURE-STEROID-RECEPTOR-CONSEQUENCE"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "LIP-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LIP-FEATURE-STEROID-RECEPTOR-CONSEQUENCE"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "LIP-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LIP-FEATURE-STEROID-RECEPTOR-CONSEQUENCE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "LIP-ITEM-CHANGED",
+        "activity_id": "LIP-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "LIP-FAMILY-CHANGED",
+        "stimulus_lineage_id": "LIP-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIP-REP-RECEPTOR-LOCATION",
+        "changed_dimensions": [
+          "representation",
+          "required_operation"
+        ],
+        "learner_operation": "INTEGRATE_TERPENOID_STRUCTURE_AND_RECEPTOR_DATA",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LIP_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#LIP-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#LIP-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIP-SOLUTION-CHANGED",
+        "decisive_cue_id": "LIP-CUE-CHANGED",
+        "distractor_lineage_id": "LIP-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "LIP-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LIP-FEATURE-STEROID-TERPENOID-DISTINCTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "LIP-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LIP-FEATURE-STEROID-TERPENOID-DISTINCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "LIP-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "LIP-FEATURE-STEROID-TERPENOID-DISTINCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "LIP-ITEM-REPAIR-NEAR",
+        "activity_id": "LIP-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LIP-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "LIP-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "LIP-REP-RECEPTOR-LOCATION",
+        "changed_dimensions": [],
+        "learner_operation": "PREDICT_STEROID_RECEPTOR_CONSEQUENCE",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "LIP_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#LIP-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#LIP-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIP-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "LIP-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "LIP-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "LIP-ITEM-REENTRY-NEAR",
+        "activity_id": "LIP-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LIP-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "LIP-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIP-REP-RECEPTOR-LOCATION",
+        "changed_dimensions": [
+          "domain_context"
+        ],
+        "learner_operation": "PREDICT_STEROID_RECEPTOR_CONSEQUENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_REPEAT_AFTER_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LIP_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#LIP-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#LIP-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIP-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "LIP-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "LIP-DISTRACTOR-REENTRY-NEAR",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "LIP-ITEM-NEAR",
+          "stimulus_difference": "NEW_CONTEXT_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_NEW_CAUSAL_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "LIP-ITEM-REPAIR-CHANGED",
+        "activity_id": "LIP-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LIP-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "LIP-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "LIP-REP-RECEPTOR-LOCATION",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_STEROID_TERPENE_DISTINCTION",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "LIP_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#LIP-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#LIP-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIP-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "LIP-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "LIP-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "LIP-ITEM-REENTRY-CHANGED",
+        "activity_id": "LIP-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-010372",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "LIP-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "LIP-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "LIP-REP-RECEPTOR-LOCATION",
+        "changed_dimensions": [
+          "representation",
+          "domain_context"
+        ],
+        "learner_operation": "RECHECK_TERPENOID_STRUCTURE_AND_RECEPTOR_DATA",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_REPEAT_AFTER_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "LIP_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#LIP-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#LIP-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "LIP-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "LIP-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "LIP-DISTRACTOR-REENTRY-CHANGED",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "LIP-ITEM-CHANGED",
+          "stimulus_difference": "NEW_CONTEXT_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_NEW_CAUSAL_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "END-ITEM-ENTRY",
+        "activity_id": "END-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "END-FAMILY-ENTRY",
+        "stimulus_lineage_id": "END-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "END-REP-BODY-MAP",
+        "changed_dimensions": [],
+        "learner_operation": "ACTIVATE_CONTROL_LOOP_PREREQUISITE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_LOW_STAKES_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "END_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#END-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#END-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "END-SOLUTION-ENTRY",
+        "decisive_cue_id": "END-CUE-ENTRY",
+        "distractor_lineage_id": "END-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "END-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "END-FAMILY-WORKED",
+        "stimulus_lineage_id": "END-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "END-REP-BODY-MAP",
+        "changed_dimensions": [],
+        "learner_operation": "FOLLOW_EXPERT_SELECTION_AND_ELIMINATION",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:END-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "END-SOLUTION-WORKED",
+        "decisive_cue_id": "END-CUE-WORKED",
+        "distractor_lineage_id": "END-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "END-ITEM-GUIDED",
+        "activity_id": "END-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "END-FAMILY-GUIDED",
+        "stimulus_lineage_id": "END-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "END-REP-BODY-MAP",
+        "changed_dimensions": [],
+        "learner_operation": "MAP_TROPIC_HORMONE_SOURCE",
+        "hint_policy": "SELECTION_SEQUENCE_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "END_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#END-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#END-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "END-SOLUTION-GUIDED",
+        "decisive_cue_id": "END-CUE-GUIDED",
+        "distractor_lineage_id": "END-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "END-ITEM-LIGHT",
+        "activity_id": "END-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "END-FAMILY-LIGHT",
+        "stimulus_lineage_id": "END-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "END-REP-BODY-MAP",
+        "changed_dimensions": [],
+        "learner_operation": "DISTINGUISH_SYNTHESIS_AND_RELEASE",
+        "hint_policy": "BRIEF_REMINDER_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "END_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#END-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#END-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "END-SOLUTION-LIGHT",
+        "decisive_cue_id": "END-CUE-LIGHT",
+        "distractor_lineage_id": "END-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "END-ITEM-SOLO",
+        "activity_id": "END-ACT-SOLO",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "END-FAMILY-SOLO",
+        "stimulus_lineage_id": "END-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "END-REP-BODY-MAP",
+        "changed_dimensions": [],
+        "learner_operation": "MAP_GLAND_REGION_PRODUCT_AND_TYPE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "END_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#END-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#END-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "END-SOLUTION-SOLO",
+        "decisive_cue_id": "END-CUE-SOLO",
+        "distractor_lineage_id": "END-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "END-ITEM-NEAR",
+        "activity_id": "END-ACT-NEAR",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "END-FAMILY-NEAR",
+        "stimulus_lineage_id": "END-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "END-REP-BODY-MAP",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_GLAND_FROM_LOCATION_AND_PRODUCT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "END_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#END-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#END-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "END-SOLUTION-NEAR",
+        "decisive_cue_id": "END-CUE-NEAR",
+        "distractor_lineage_id": "END-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "END-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "END-FEATURE-GLAND-LOCATION-PRODUCT"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "END-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "END-FEATURE-GLAND-LOCATION-PRODUCT"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "END-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "END-FEATURE-GLAND-LOCATION-PRODUCT"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "END-ITEM-CHANGED",
+        "activity_id": "END-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "END-FAMILY-CHANGED",
+        "stimulus_lineage_id": "END-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "END-REP-NEUROENDOCRINE",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "PREDICT_NEUROENDOCRINE_CONNECTION_CONSEQUENCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "END_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#END-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#END-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "END-SOLUTION-CHANGED",
+        "decisive_cue_id": "END-CUE-CHANGED",
+        "distractor_lineage_id": "END-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "END-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "END-FEATURE-SYNTHESIS-VERSUS-RELEASE"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "END-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "END-FEATURE-SYNTHESIS-VERSUS-RELEASE"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "END-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "END-FEATURE-SYNTHESIS-VERSUS-RELEASE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "END-ITEM-REPAIR-NEAR",
+        "activity_id": "END-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "END-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "END-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "END-REP-NEUROENDOCRINE",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_LOCATION_PRODUCT_MAP",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "END_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#END-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#END-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "END-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "END-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "END-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "END-ITEM-REENTRY-NEAR",
+        "activity_id": "END-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "END-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "END-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "END-REP-NEUROENDOCRINE",
+        "changed_dimensions": [
+          "domain_context"
+        ],
+        "learner_operation": "RECHECK_LOCATION_PRODUCT_MAP",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_REPEAT_AFTER_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "END_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#END-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#END-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "END-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "END-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "END-DISTRACTOR-REENTRY-NEAR",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "END-ITEM-NEAR",
+          "stimulus_difference": "NEW_CONTEXT_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_NEW_CAUSAL_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "END-ITEM-REPAIR-CHANGED",
+        "activity_id": "END-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "END-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "END-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "END-REP-NEUROENDOCRINE",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_NEUROENDOCRINE_SOURCE_RULE",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "END_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#END-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#END-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "END-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "END-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "END-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "END-ITEM-REENTRY-CHANGED",
+        "activity_id": "END-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-376473",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "END-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "END-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "END-REP-NEUROENDOCRINE",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "RECHECK_NEUROENDOCRINE_SOURCE_RULE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_REPEAT_AFTER_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "END_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#END-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#END-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "END-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "END-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "END-DISTRACTOR-REENTRY-CHANGED",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "END-ITEM-CHANGED",
+          "stimulus_difference": "NEW_CONTEXT_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_NEW_CAUSAL_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      }
+    ],
+    "transitions": [
+      {
+        "transition_id": "SIG-TRANSITION-NEAR-PASS",
+        "from_node_id": "SIG-NODE-NEAR",
+        "to_node_id": "SIG-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "SIG-TRANSITION-NEAR-MISS",
+        "from_node_id": "SIG-NODE-NEAR",
+        "to_node_id": "SIG-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "SIG-TRANSITION-CHANGED-MISS",
+        "from_node_id": "SIG-NODE-CHANGED",
+        "to_node_id": "SIG-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "SIG-TRANSITION-REENTRY-BOUND",
+        "from_node_id": "SIG-NODE-REENTRY-CHANGED",
+        "to_node_id": "SIG-NODE-HANDOFF",
+        "predicate": "FRESH_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "LIP-TRANSITION-NEAR-PASS",
+        "from_node_id": "LIP-NODE-NEAR",
+        "to_node_id": "LIP-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "LIP-TRANSITION-NEAR-MISS",
+        "from_node_id": "LIP-NODE-NEAR",
+        "to_node_id": "LIP-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "LIP-TRANSITION-CHANGED-MISS",
+        "from_node_id": "LIP-NODE-CHANGED",
+        "to_node_id": "LIP-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "LIP-TRANSITION-REENTRY-BOUND",
+        "from_node_id": "LIP-NODE-REENTRY-CHANGED",
+        "to_node_id": "LIP-NODE-HANDOFF",
+        "predicate": "FRESH_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "END-TRANSITION-PREREQUISITE-FAIL",
+        "from_node_id": "END-NODE-ENTRY",
+        "to_node_id": "END-NODE-HANDOFF",
+        "predicate": "HARD_PREREQUISITE_CHECK_NOT_PASSED"
+      },
+      {
+        "transition_id": "END-TRANSITION-NEAR-PASS",
+        "from_node_id": "END-NODE-NEAR",
+        "to_node_id": "END-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "END-TRANSITION-NEAR-MISS",
+        "from_node_id": "END-NODE-NEAR",
+        "to_node_id": "END-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "END-TRANSITION-CHANGED-MISS",
+        "from_node_id": "END-NODE-CHANGED",
+        "to_node_id": "END-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "END-TRANSITION-REENTRY-BOUND",
+        "from_node_id": "END-NODE-REENTRY-CHANGED",
+        "to_node_id": "END-NODE-HANDOFF",
+        "predicate": "FRESH_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "SIG-TO-LIP",
+        "from_node_id": "SIG-NODE-RECAP",
+        "to_node_id": "LIP-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      },
+      {
+        "transition_id": "LIP-TO-END",
+        "from_node_id": "LIP-NODE-RECAP",
+        "to_node_id": "END-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      },
+      {
+        "transition_id": "END-TO-CAPSTONE-EXIT",
+        "from_node_id": "END-NODE-RECAP",
+        "to_node_id": "END-NODE-CAPSTONE-EXIT",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      }
+    ],
+    "attachment_bindings": [
+      {
+        "attachment_id": "V3-CAP-502257",
+        "attachment_type": "CAPSTONE",
+        "owner_lesson_id": "V3-LES-006619",
+        "host_scope": {
+          "kind": "LESSON"
+        },
+        "declared_host_core_ids": [
+          "V3-KC-937306",
+          "V3-KC-175515",
+          "V3-KC-146592",
+          "V3-KC-928546"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": false,
+        "relation_ids": [
+          "R14-CAP-502257"
+        ],
+        "relation_class": "CAPSTONE_PLACEMENT",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": true
+      },
+      {
+        "attachment_id": "V3-CAP-945802",
+        "attachment_type": "CAPSTONE",
+        "owner_lesson_id": "V3-LES-006619",
+        "host_scope": {
+          "kind": "MULTI_KC",
+          "kc_ids": [
+            "V3-KC-187351",
+            "V3-KC-010372",
+            "V3-KC-376473"
+          ]
+        },
+        "declared_host_core_ids": [
+          "V3-KC-187351",
+          "V3-KC-010372",
+          "V3-KC-376473"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": true,
+        "relation_ids": [
+          "R14-CAP-945802"
+        ],
+        "relation_class": "CAPSTONE_PLACEMENT",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": true
+      },
+      {
+        "attachment_id": "V3-EXT-007304",
+        "attachment_type": "EXTENSION",
+        "owner_lesson_id": "V3-LES-282413",
+        "host_scope": {
+          "kind": "SECONDARY_APPLICATION",
+          "primary_lesson_id": "V3-LES-282413"
+        },
+        "declared_host_core_ids": [],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": false,
+        "relation_ids": [
+          "R14-FD-282413"
+        ],
+        "relation_class": "FIRST_DELIVERY",
+        "relation_direction": "LESSON_TO_ATTACHMENT",
+        "required_delivery": false
+      },
+      {
+        "attachment_id": "V3-EXT-079778",
+        "attachment_type": "EXTENSION",
+        "owner_lesson_id": "V3-LES-416343",
+        "host_scope": {
+          "kind": "SECONDARY_APPLICATION",
+          "primary_lesson_id": "V3-LES-416343"
+        },
+        "declared_host_core_ids": [
+          "V3-KC-030718"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": false,
+        "relation_ids": [
+          "R14-FD-416343"
+        ],
+        "relation_class": "FIRST_DELIVERY",
+        "relation_direction": "LESSON_TO_ATTACHMENT",
+        "required_delivery": false
+      }
+    ]
+  }
+}

@@ -45,8 +45,17 @@ const runView = {
     itemId: 'v3-les-789208-item-1',
     kcId: 'V3-KC-399019',
     heading: 'Scaling check',
+    contentBlocks: ['Decode the scale, then commit one response.'],
     prompt: 'Express 0.0042 in scientific notation.',
-    responseType: 'single_select',
+    control: {
+      kind: 'SINGLE_SELECT',
+      choices: [
+        { choiceId: 'A', text: '4.2 × 10⁻³' },
+        { choiceId: 'B', text: '42 × 10⁻⁴' },
+        { choiceId: 'C', text: '4.2 × 10³' },
+        { choiceId: 'D', text: '0.42 × 10⁻²' },
+      ],
+    },
     choices: [
       { choiceId: 'A', text: '4.2 × 10⁻³' },
       { choiceId: 'B', text: '42 × 10⁻⁴' },

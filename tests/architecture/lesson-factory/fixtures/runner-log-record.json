@@ -1,0 +1,41 @@
+{
+  "$test_fixture": {
+    "synthetic": true,
+    "not_for_production": true,
+    "fixture_of": "lesson-factory.runner-log-record",
+    "why": "A positive control for the architecture tests. Every hash below is invented; nothing here describes a real lesson, a real screen run, or a real decision. The marker key makes this envelope fail validation against the closed production contract it is a control for, so it cannot be mistaken for a production record or loaded as one."
+  },
+  "instance": {
+    "contract_id": "lesson-factory.runner-log-record",
+    "contract_version": "4.0.0",
+    "run_id": "run-4b1c0d7e9a2f6538",
+    "emitted_at": "2026-08-03T23:41:07Z",
+    "stage": "STRUCTURAL_SCREEN",
+    "event_code": "GATE_BLOCKED",
+    "severity": "WARN",
+    "lesson_ref": "lesson:v3-les-000101@rev-000002#sha256:b47cd4298b716746a0bfc9b6a959f0c5f743c35b03082a3cf3a3b5c8be003407",
+    "route": "STANDARD",
+    "hard_gate_id": "PROTECTED_SEPARATION",
+    "evidence_class_id": "ACCESSIBILITY",
+    "blocker_code": "BLOCKER_EVIDENCE_CLASS_BLOCKED",
+    "counts": {
+      "gates_passed": 4,
+      "gates_failed": 0,
+      "gates_blocked": 1,
+      "evidence_classes_blocked": 6,
+      "artifacts_written": 3,
+      "protected_items_referenced": 12
+    },
+    "hashes": {
+      "input_manifest_sha256": "249b5cff86a25c95bd23cac04a5271be8ae2aae2837f3d50ab29d046453c734c",
+      "output_manifest_sha256": "36805250aaebb3dceb8d837950bc94ed4495991ce8404693fbee578051569adb",
+      "profile_sha256": "2efa7d66015c986b97f1accd8ba4e5ab225e998e6afb2ff4ee38f5a755b829a8",
+      "policy_sha256": null
+    },
+    "redaction": {
+      "free_text_permitted": false,
+      "protected_material_present": false,
+      "payload_transport": "CODES_HASHES_COUNTS_ONLY"
+    }
+  }
+}

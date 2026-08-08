@@ -1,0 +1,2150 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-385880",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "191ae29cad72d2ff36bb6afb3fca9e16513e647226c240a495954b638e470a2b",
+  "payload": {
+    "lesson_id": "V3-LES-385880",
+    "grouping_id": "V3-CL-385880",
+    "ordered_kc_ids": [
+      "V3-KC-127265",
+      "V3-KC-440528"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-127265",
+      "V3-KC-440528"
+    ],
+    "throughline": "Classify attitude versus action, locate the actor or institutional mechanism producing an outcome, and explain how unequal control of resources, status, and class position can amplify or stabilize discrimination.",
+    "curriculum_context": {
+      "canonical_title": "Explain discrimination and institutional power",
+      "phase_ids": [
+        "V3-PHS-462809",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-865041",
+        "V3-MOD-741509"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 108,
+          "relation_ids": [
+            "R14-PL-581402-108"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 108,
+          "relation_ids": [
+            "R14-PL-904137-108"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-315978",
+          "position": 30,
+          "relation_ids": [
+            "R14-PL-315978-030"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-385880",
+      "revisit_relation_ids": [
+        "R14-RV-385880"
+      ],
+      "hard_prerequisite_handoffs": [],
+      "helpful_context": [],
+      "route_scope_code": "STANDARD_ONLY",
+      "applicable_routes": [
+        "STANDARD"
+      ],
+      "open_holds": [
+        {
+          "hold_id": "V3-HOLD-110001",
+          "safe_interim_code": "RECORD_STALE_AUTHORITY_NONCLAIM",
+          "blocks_authoring": false
+        },
+        {
+          "hold_id": "V3-HOLD-110003",
+          "safe_interim_code": "PRESERVE_PROVISIONAL_LEARNER_VALIDATION",
+          "blocks_authoring": false
+        },
+        {
+          "hold_id": "V3-HOLD-110005",
+          "safe_interim_code": "PRESERVE_PROVISIONAL_SEQUENCE_AND_REPRESENTATION",
+          "blocks_authoring": false
+        },
+        {
+          "hold_id": "V3-HOLD-110008",
+          "safe_interim_code": "PRESERVE_CANONICAL_CLASSIFICATION_WITHOUT_VALIDATION_CLAIM",
+          "blocks_authoring": false
+        },
+        {
+          "hold_id": "V3-HOLD-110009",
+          "safe_interim_code": "DISABLE_ADAPTIVE_BYPASS_AND_NULL_THRESHOLDS",
+          "blocks_authoring": false
+        }
+      ]
+    },
+    "nodes": [
+      {
+        "node_id": "DISC-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify whether a vignette describes an attitude, an observable action, or an organizational rule."
+        ],
+        "representation_ids": [
+          "DISC-REP"
+        ],
+        "activity_ids": [
+          "DISC-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "DISC-CP-ENTRY",
+        "source_claim_refs": [
+          "DISC-CLAIM"
+        ]
+      },
+      {
+        "node_id": "DISC-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: separate prejudice from discrimination and separate individual action from institutional mechanisms.",
+          "The classification is sociological and construct-level. It does not determine legal liability, moral blame, or which policy should be adopted."
+        ],
+        "representation_ids": [
+          "DISC-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "DISC-CP-ORIENTATION",
+        "source_claim_refs": [
+          "DISC-CLAIM"
+        ]
+      },
+      {
+        "node_id": "DISC-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Prejudice is an evaluative attitude or affective orientation toward a social group. A stereotype is a generalized cognitive belief about a group. Discrimination is behavior or differential treatment tied to group membership.",
+          "Individual discrimination is enacted by a person or small set of people through their choices. Institutional discrimination is produced through an organization's rules, routines, criteria, or patterned practices that distribute treatment or opportunity unequally.",
+          "Intent and mechanism are separate questions. An institutional process can reproduce unequal treatment even when a vignette supplies no evidence that every participant holds an explicit prejudicial attitude."
+        ],
+        "representation_ids": [
+          "DISC-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "DISC-CP-EXPLANATION",
+        "source_claim_refs": [
+          "DISC-CLAIM"
+        ]
+      },
+      {
+        "node_id": "DISC-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Use a two-axis matrix. Axis 1: internal attitude/belief versus observable treatment. Axis 2, only for treatment: person-level choice versus rule/routine-level mechanism."
+        ],
+        "representation_ids": [
+          "DISC-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "DISC-CP-MODEL",
+        "source_claim_refs": [
+          "DISC-CLAIM"
+        ]
+      },
+      {
+        "node_id": "DISC-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "If a manager privately dislikes a group but applies the same procedure to every applicant, the evidence directly supports prejudice but not a discriminatory action. If the manager rejects an applicant because of group membership, that is individual discrimination. If a standardized organizational rule systematically excludes the group, the mechanism is institutional."
+        ],
+        "representation_ids": [
+          "DISC-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "DISC-CP-THINK",
+        "source_claim_refs": [
+          "DISC-CLAIM"
+        ]
+      },
+      {
+        "node_id": "DISC-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a club member expresses a negative group attitude, one interviewer denies an otherwise eligible applicant because of group identity, and an organization uses a recurring eligibility rule that screens out the same group. These map to prejudice, individual discrimination, and institutional discrimination, respectively."
+        ],
+        "representation_ids": [
+          "DISC-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "DISC-CP-WORKED",
+        "source_claim_refs": [
+          "DISC-CLAIM"
+        ]
+      },
+      {
+        "node_id": "DISC-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: underline the observed evidence, then classify attitude/action before selecting individual/institutional."
+        ],
+        "representation_ids": [
+          "DISC-REP"
+        ],
+        "activity_ids": [
+          "DISC-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "DISC-CP-GUIDED",
+        "source_claim_refs": [
+          "DISC-CLAIM"
+        ]
+      },
+      {
+        "node_id": "DISC-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: distinguish one decision-maker's choice from a standing organizational routine."
+        ],
+        "representation_ids": [
+          "DISC-REP"
+        ],
+        "activity_ids": [
+          "DISC-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "DISC-CP-LIGHT",
+        "source_claim_refs": [
+          "DISC-CLAIM"
+        ]
+      },
+      {
+        "node_id": "DISC-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: avoid inferring a stable attitude when only an institutional outcome is observed."
+        ],
+        "representation_ids": [
+          "DISC-REP"
+        ],
+        "activity_ids": [
+          "DISC-ACT-SOLO"
+        ],
+        "checkpoint_ref": "DISC-CP-SOLO",
+        "source_claim_refs": [
+          "DISC-CLAIM"
+        ]
+      },
+      {
+        "node_id": "DISC-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: an unequal group outcome alone does not identify the exact mechanism; a classification needs evidence about decisions, rules, or routines.",
+          "Non-example: labeling a private attitude as institutional discrimination skips both the action requirement and the institutional mechanism."
+        ],
+        "representation_ids": [
+          "DISC-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "DISC-CP-CONTRAST",
+        "source_claim_refs": [
+          "DISC-CLAIM"
+        ]
+      },
+      {
+        "node_id": "DISC-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: classify a fresh vignette with attitude, action, and mechanism cues separated."
+        ],
+        "representation_ids": [
+          "DISC-REP"
+        ],
+        "activity_ids": [
+          "DISC-ACT-NEAR"
+        ],
+        "checkpoint_ref": "DISC-CP-NEAR",
+        "source_claim_refs": [
+          "DISC-CLAIM"
+        ]
+      },
+      {
+        "node_id": "DISC-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: infer which additional observation would distinguish individual from institutional discrimination in an ambiguous outcome pattern."
+        ],
+        "representation_ids": [
+          "DISC-REP"
+        ],
+        "activity_ids": [
+          "DISC-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "DISC-CP-CHANGED",
+        "source_claim_refs": [
+          "DISC-CLAIM"
+        ]
+      },
+      {
+        "node_id": "DISC-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the near-use function: quote the observable in neutral terms, choose attitude or action, and only then ask who or what mechanism enacted the action."
+        ],
+        "representation_ids": [
+          "DISC-REP"
+        ],
+        "activity_ids": [
+          "DISC-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "DISC-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "DISC-CLAIM"
+        ]
+      },
+      {
+        "node_id": "DISC-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: classify a new workplace vignette with untouched actors and rule structure."
+        ],
+        "representation_ids": [
+          "DISC-REP"
+        ],
+        "activity_ids": [
+          "DISC-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "DISC-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "DISC-CLAIM"
+        ]
+      },
+      {
+        "node_id": "DISC-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the changed-task function: when outcome data are ambiguous, request mechanism evidence—one actor's choice versus a recurring formal or informal organizational practice."
+        ],
+        "representation_ids": [
+          "DISC-REP"
+        ],
+        "activity_ids": [
+          "DISC-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "DISC-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "DISC-CLAIM"
+        ]
+      },
+      {
+        "node_id": "DISC-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: select the discriminating observation in a new educational setting."
+        ],
+        "representation_ids": [
+          "DISC-REP"
+        ],
+        "activity_ids": [
+          "DISC-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "DISC-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "DISC-CLAIM"
+        ]
+      },
+      {
+        "node_id": "DISC-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: prejudice is attitude, discrimination is action, individual discrimination is person-enacted, and institutional discrimination operates through organizational rules or routines."
+        ],
+        "representation_ids": [
+          "DISC-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "DISC-CP-RECAP",
+        "source_claim_refs": [
+          "DISC-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POCL-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify whether a vignette supplies control over decisions, socially recognized status, or class-linked resource access."
+        ],
+        "representation_ids": [
+          "POCL-REP"
+        ],
+        "activity_ids": [
+          "POCL-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "POCL-CP-ENTRY",
+        "source_claim_refs": [
+          "POCL-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POCL-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: explain a mechanism linking power, prestige, or class position to the enactment or institutionalization of discrimination.",
+          "This lesson describes mechanisms. It does not prescribe policy, decide legal standards, or treat social categories as fixed traits of individuals."
+        ],
+        "representation_ids": [
+          "POCL-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "POCL-CP-ORIENTATION",
+        "source_claim_refs": [
+          "POCL-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POCL-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Power is the capacity to influence decisions, control resources, or shape consequences. It enables an attitude or preference to affect other people's opportunities when the actor controls a gate.",
+          "Prestige is socially recognized status or honor. It can make some voices more credible, amplify influence over norms, or provide access to decision-makers even without direct formal authority.",
+          "Class position is linked to material resources, networks, education, and institutional access. These resources can shape who enters decision spaces, withstands exclusion, or transmits advantage. When unequal allocation becomes a recurring rule or routine, discrimination is institutionalized."
+        ],
+        "representation_ids": [
+          "POCL-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "POCL-CP-EXPLANATION",
+        "source_claim_refs": [
+          "POCL-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POCL-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Use a causal chain: social position or status → control/access/credibility → gatekeeping decision or routine → differential treatment or opportunity. Require evidence for each arrow; do not infer the chain from outcome alone."
+        ],
+        "representation_ids": [
+          "POCL-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "POCL-CP-MODEL",
+        "source_claim_refs": [
+          "POCL-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POCL-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "If an executive controls hiring criteria, the executive's power provides a decision channel. If a high-prestige professional group's recommendations are accepted without scrutiny, prestige provides influence. If class-linked networks determine who hears about openings, class resources shape access. I still need the group-linked differential action to classify discrimination."
+        ],
+        "representation_ids": [
+          "POCL-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "POCL-CP-THINK",
+        "source_claim_refs": [
+          "POCL-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POCL-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a professional association's high-prestige members define an informal referral norm; leadership turns that norm into a recurring hiring routine; applicants outside class-linked networks receive fewer opportunities. Prestige amplifies credibility, power converts the norm into procedure, and class-linked network access distributes the consequence."
+        ],
+        "representation_ids": [
+          "POCL-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "POCL-CP-WORKED",
+        "source_claim_refs": [
+          "POCL-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POCL-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: label the enabling resource, the gate it affects, and the resulting differential action."
+        ],
+        "representation_ids": [
+          "POCL-REP"
+        ],
+        "activity_ids": [
+          "POCL-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "POCL-CP-GUIDED",
+        "source_claim_refs": [
+          "POCL-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POCL-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: distinguish prestige-based influence from formal decision power."
+        ],
+        "representation_ids": [
+          "POCL-REP"
+        ],
+        "activity_ids": [
+          "POCL-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "POCL-CP-LIGHT",
+        "source_claim_refs": [
+          "POCL-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POCL-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: avoid claiming a causal mechanism when a vignette provides only a group disparity."
+        ],
+        "representation_ids": [
+          "POCL-REP"
+        ],
+        "activity_ids": [
+          "POCL-ACT-SOLO"
+        ],
+        "checkpoint_ref": "POCL-CP-SOLO",
+        "source_claim_refs": [
+          "POCL-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POCL-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: power, prestige, and class can facilitate discrimination, but none proves discrimination without evidence of group-linked differential action or allocation.",
+          "Non-example: equating high income with prejudice mistakes a class-related resource for an attitude."
+        ],
+        "representation_ids": [
+          "POCL-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "POCL-CP-CONTRAST",
+        "source_claim_refs": [
+          "POCL-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POCL-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: trace a fresh resource-to-gate-to-action mechanism and identify the enabling dimension."
+        ],
+        "representation_ids": [
+          "POCL-REP"
+        ],
+        "activity_ids": [
+          "POCL-ACT-NEAR"
+        ],
+        "checkpoint_ref": "POCL-CP-NEAR",
+        "source_claim_refs": [
+          "POCL-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POCL-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: identify which modeled causal change removes the institutional channel while leaving an individual's private attitude unmeasured."
+        ],
+        "representation_ids": [
+          "POCL-REP"
+        ],
+        "activity_ids": [
+          "POCL-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "POCL-CP-CHANGED",
+        "source_claim_refs": [
+          "POCL-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POCL-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the near-use function: name the controlled resource or status, the decision gate, and the observable differential allocation in three separate clauses."
+        ],
+        "representation_ids": [
+          "POCL-REP"
+        ],
+        "activity_ids": [
+          "POCL-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "POCL-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "POCL-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POCL-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: explain a new prestige-and-power mechanism in a different organization."
+        ],
+        "representation_ids": [
+          "POCL-REP"
+        ],
+        "activity_ids": [
+          "POCL-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "POCL-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "POCL-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POCL-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the changed-task function: institutionalization occurs when a discretionary pattern is encoded in a repeatable rule or routine; a diagram that removes that routine changes the institutional channel without proving attitude change."
+        ],
+        "representation_ids": [
+          "POCL-REP"
+        ],
+        "activity_ids": [
+          "POCL-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "POCL-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "POCL-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POCL-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: analyze a new causal diagram with a different rule-formation step."
+        ],
+        "representation_ids": [
+          "POCL-REP"
+        ],
+        "activity_ids": [
+          "POCL-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "POCL-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "POCL-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POCL-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: power controls decisions and resources, prestige amplifies influence, class shapes resources and access, and recurring organizational routines can stabilize differential treatment."
+        ],
+        "representation_ids": [
+          "POCL-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "POCL-CP-RECAP",
+        "source_claim_refs": [
+          "POCL-CLAIM"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "DISC-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-127265",
+        "item_binding_id": "DISC-ITEM-ENTRY",
+        "learner_operation": "DISTINGUISH_PREJUDICIAL_ATTITUDE_FROM_ACTION",
+        "authorized_next_node_ids": [
+          "DISC-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "DISC-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-127265",
+        "item_binding_id": "DISC-ITEM-GUIDED",
+        "learner_operation": "CLASSIFY_INDIVIDUAL_DISCRIMINATION",
+        "authorized_next_node_ids": [
+          "DISC-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "DISC-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-127265",
+        "item_binding_id": "DISC-ITEM-LIGHT",
+        "learner_operation": "CLASSIFY_INSTITUTIONAL_DISCRIMINATION",
+        "authorized_next_node_ids": [
+          "DISC-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "DISC-ACT-SOLO",
+        "primary_kc_id": "V3-KC-127265",
+        "item_binding_id": "DISC-ITEM-SOLO",
+        "learner_operation": "BOUND_INFERENCE_ABOUT_INSTITUTIONAL_MECHANISM",
+        "authorized_next_node_ids": [
+          "DISC-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "DISC-ACT-NEAR",
+        "primary_kc_id": "V3-KC-127265",
+        "item_binding_id": "DISC-ITEM-NEAR",
+        "learner_operation": "INTEGRATE_ATTITUDE_ACTION_AND_ACTOR_LEVEL",
+        "authorized_next_node_ids": [
+          "DISC-NODE-CHANGED",
+          "DISC-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "DISC-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-127265",
+        "item_binding_id": "DISC-ITEM-CHANGED",
+        "learner_operation": "SELECT_EVIDENCE_THAT_DISTINGUISHES_INSTITUTIONAL_MECHANISM",
+        "authorized_next_node_ids": [
+          "DISC-NODE-RECAP",
+          "DISC-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "DISC-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-127265",
+        "item_binding_id": "DISC-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_DISCRIMINATION_CLASSIFICATION_SEQUENCE",
+        "authorized_next_node_ids": [
+          "DISC-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "DISC-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-127265",
+        "item_binding_id": "DISC-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_PERSON_LEVEL_CLASSIFICATION_WITH_FRESH_VIGNETTE",
+        "authorized_next_node_ids": [
+          "DISC-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "DISC-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-127265",
+        "item_binding_id": "DISC-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_INSTITUTIONAL_MECHANISM_EVIDENCE",
+        "authorized_next_node_ids": [
+          "DISC-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "DISC-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-127265",
+        "item_binding_id": "DISC-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_MECHANISM_EVIDENCE_WITH_FRESH_SETTING",
+        "authorized_next_node_ids": [
+          "DISC-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "POCL-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-440528",
+        "item_binding_id": "POCL-ITEM-ENTRY",
+        "learner_operation": "IDENTIFY_FORMAL_POWER_MECHANISM",
+        "authorized_next_node_ids": [
+          "POCL-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "POCL-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-440528",
+        "item_binding_id": "POCL-ITEM-GUIDED",
+        "learner_operation": "IDENTIFY_PRESTIGE_INFLUENCE_MECHANISM",
+        "authorized_next_node_ids": [
+          "POCL-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "POCL-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-440528",
+        "item_binding_id": "POCL-ITEM-LIGHT",
+        "learner_operation": "IDENTIFY_CLASS_RESOURCE_ACCESS_MECHANISM",
+        "authorized_next_node_ids": [
+          "POCL-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "POCL-ACT-SOLO",
+        "primary_kc_id": "V3-KC-440528",
+        "item_binding_id": "POCL-ITEM-SOLO",
+        "learner_operation": "BOUND_INFERENCE_FROM_ENABLING_CONDITION",
+        "authorized_next_node_ids": [
+          "POCL-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "POCL-ACT-NEAR",
+        "primary_kc_id": "V3-KC-440528",
+        "item_binding_id": "POCL-ITEM-NEAR",
+        "learner_operation": "INTEGRATE_POWER_PRESTIGE_CLASS_AND_ROUTINE",
+        "authorized_next_node_ids": [
+          "POCL-NODE-CHANGED",
+          "POCL-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "POCL-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-440528",
+        "item_binding_id": "POCL-ITEM-CHANGED",
+        "learner_operation": "TRANSFER_CAUSAL_MODEL_TO_MECHANISM_REMOVAL",
+        "authorized_next_node_ids": [
+          "POCL-NODE-RECAP",
+          "POCL-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "POCL-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-440528",
+        "item_binding_id": "POCL-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_STRUCTURAL_FACILITATION_CHAIN",
+        "authorized_next_node_ids": [
+          "POCL-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "POCL-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-440528",
+        "item_binding_id": "POCL-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_CAUSAL_CHAIN_WITH_FRESH_ORGANIZATION",
+        "authorized_next_node_ids": [
+          "POCL-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "POCL-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-440528",
+        "item_binding_id": "POCL-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_INSTITUTIONALIZATION_DECISION_POINT",
+        "authorized_next_node_ids": [
+          "POCL-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "POCL-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-440528",
+        "item_binding_id": "POCL-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_INSTITUTIONALIZATION_WITH_FRESH_CAUSAL_CHANGE",
+        "authorized_next_node_ids": [
+          "POCL-NODE-RECAP"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-127265",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-127265",
+        "scope_in_refs": [
+          "V3-KC-127265:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-127265:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "DISC-CLAIM"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "DISC-NODE-ENTRY",
+        "orientation_node_id": "DISC-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "DISC-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "DISC-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "DISC-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "DISC-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "DISC-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "DISC-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "DISC-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "DISC-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "DISC-NODE-NEAR",
+          "activity_ids": [
+            "DISC-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "DISC-NODE-CHANGED",
+          "activity_ids": [
+            "DISC-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "DISC-FEATURE-NEAR-FUNCTION",
+          "DISC-FEATURE-CHANGED-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "DISC-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "DISC-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "DISC-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "DISC-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "DISC-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "DISC-ACT-REENTRY-NEAR",
+            "success_next_node_id": "DISC-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "DISC-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "DISC-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "DISC-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "DISC-REP"
+        ],
+        "accessibility_equivalent_ids": [
+          "DISC-REP-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [],
+          "standard": [
+            "DISC-NODE-ENTRY",
+            "DISC-NODE-ORIENTATION",
+            "DISC-NODE-EXPLANATION",
+            "DISC-NODE-MODEL",
+            "DISC-NODE-THINK",
+            "DISC-NODE-WORKED",
+            "DISC-NODE-GUIDED",
+            "DISC-NODE-LIGHT",
+            "DISC-NODE-SOLO",
+            "DISC-NODE-CONTRAST",
+            "DISC-NODE-NEAR",
+            "DISC-NODE-CHANGED",
+            "DISC-NODE-REPAIR-NEAR",
+            "DISC-NODE-REENTRY-NEAR",
+            "DISC-NODE-REPAIR-CHANGED",
+            "DISC-NODE-REENTRY-CHANGED",
+            "DISC-NODE-RECAP"
+          ],
+          "misconception": []
+        },
+        "recap_node_id": "DISC-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-440528",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-440528",
+        "scope_in_refs": [
+          "V3-KC-440528:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-440528:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "POCL-CLAIM"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "POCL-NODE-ENTRY",
+        "orientation_node_id": "POCL-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "POCL-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "POCL-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "POCL-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "POCL-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "POCL-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "POCL-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "POCL-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "POCL-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "POCL-NODE-NEAR",
+          "activity_ids": [
+            "POCL-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "POCL-NODE-CHANGED",
+          "activity_ids": [
+            "POCL-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "POCL-FEATURE-NEAR-FUNCTION",
+          "POCL-FEATURE-CHANGED-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "POCL-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "POCL-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "POCL-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "POCL-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "POCL-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "POCL-ACT-REENTRY-NEAR",
+            "success_next_node_id": "POCL-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "POCL-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "POCL-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "POCL-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "POCL-REP"
+        ],
+        "accessibility_equivalent_ids": [
+          "POCL-REP-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [],
+          "standard": [
+            "POCL-NODE-ENTRY",
+            "POCL-NODE-ORIENTATION",
+            "POCL-NODE-EXPLANATION",
+            "POCL-NODE-MODEL",
+            "POCL-NODE-THINK",
+            "POCL-NODE-WORKED",
+            "POCL-NODE-GUIDED",
+            "POCL-NODE-LIGHT",
+            "POCL-NODE-SOLO",
+            "POCL-NODE-CONTRAST",
+            "POCL-NODE-NEAR",
+            "POCL-NODE-CHANGED",
+            "POCL-NODE-REPAIR-NEAR",
+            "POCL-NODE-REENTRY-NEAR",
+            "POCL-NODE-REPAIR-CHANGED",
+            "POCL-NODE-REENTRY-CHANGED",
+            "POCL-NODE-RECAP"
+          ],
+          "misconception": []
+        },
+        "recap_node_id": "POCL-NODE-RECAP"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "DISC-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "DISC-FAMILY-WORKED",
+        "stimulus_lineage_id": "DISC-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "DISC-REP",
+        "learner_operation": "FOLLOW_MODEL_SELECTION_AND_EXECUTION",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:DISC-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DISC-SOLUTION-WORKED",
+        "decisive_cue_id": "DISC-CUE-WORKED",
+        "distractor_lineage_id": "DISC-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "DISC-ITEM-ENTRY",
+        "activity_id": "DISC-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "DISC-FAMILY-ENTRY",
+        "stimulus_lineage_id": "DISC-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "DISC-REP",
+        "learner_operation": "DISTINGUISH_PREJUDICIAL_ATTITUDE_FROM_ACTION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_LOW_STAKES_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "DISC_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#DISC-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#DISC-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DISC-SOLUTION-ENTRY",
+        "decisive_cue_id": "DISC-CUE-ENTRY",
+        "distractor_lineage_id": "DISC-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "DISC-ITEM-GUIDED",
+        "activity_id": "DISC-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "DISC-FAMILY-GUIDED",
+        "stimulus_lineage_id": "DISC-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "DISC-REP",
+        "learner_operation": "CLASSIFY_INDIVIDUAL_DISCRIMINATION",
+        "hint_policy": "VISIBLE_SELECTION_SEQUENCE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "DISC_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#DISC-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#DISC-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DISC-SOLUTION-GUIDED",
+        "decisive_cue_id": "DISC-CUE-GUIDED",
+        "distractor_lineage_id": "DISC-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "DISC-ITEM-LIGHT",
+        "activity_id": "DISC-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "DISC-FAMILY-LIGHT",
+        "stimulus_lineage_id": "DISC-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "DISC-REP",
+        "learner_operation": "CLASSIFY_INSTITUTIONAL_DISCRIMINATION",
+        "hint_policy": "BRIEF_NON_ANSWER_BEARING_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "DISC_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#DISC-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#DISC-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DISC-SOLUTION-LIGHT",
+        "decisive_cue_id": "DISC-CUE-LIGHT",
+        "distractor_lineage_id": "DISC-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "DISC-ITEM-SOLO",
+        "activity_id": "DISC-ACT-SOLO",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "DISC-FAMILY-SOLO",
+        "stimulus_lineage_id": "DISC-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "DISC-REP",
+        "learner_operation": "BOUND_INFERENCE_ABOUT_INSTITUTIONAL_MECHANISM",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "DISC_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#DISC-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#DISC-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DISC-SOLUTION-SOLO",
+        "decisive_cue_id": "DISC-CUE-SOLO",
+        "distractor_lineage_id": "DISC-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "DISC-ITEM-NEAR",
+        "activity_id": "DISC-ACT-NEAR",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "DISC-FAMILY-NEAR",
+        "stimulus_lineage_id": "DISC-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "DISC-REP",
+        "learner_operation": "INTEGRATE_ATTITUDE_ACTION_AND_ACTOR_LEVEL",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "DISC_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#DISC-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#DISC-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DISC-SOLUTION-NEAR",
+        "decisive_cue_id": "DISC-CUE-NEAR",
+        "distractor_lineage_id": "DISC-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "DISC-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "DISC-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "DISC-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "DISC-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "DISC-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "DISC-FEATURE-NEAR-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "DISC-ITEM-CHANGED",
+        "activity_id": "DISC-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "DISC-FAMILY-CHANGED",
+        "stimulus_lineage_id": "DISC-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [
+          "required_operation",
+          "representation"
+        ],
+        "representation_id": "DISC-REP",
+        "learner_operation": "SELECT_EVIDENCE_THAT_DISTINGUISHES_INSTITUTIONAL_MECHANISM",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "DISC_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#DISC-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#DISC-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DISC-SOLUTION-CHANGED",
+        "decisive_cue_id": "DISC-CUE-CHANGED",
+        "distractor_lineage_id": "DISC-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "DISC-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "DISC-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "DISC-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "DISC-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "DISC-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "DISC-FEATURE-CHANGED-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "DISC-ITEM-REPAIR-NEAR",
+        "activity_id": "DISC-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "DISC-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "DISC-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "DISC-REP",
+        "learner_operation": "REBUILD_DISCRIMINATION_CLASSIFICATION_SEQUENCE",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "DISC_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#DISC-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#DISC-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DISC-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "DISC-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "DISC-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "DISC-ITEM-REENTRY-NEAR",
+        "activity_id": "DISC-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "DISC-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "DISC-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "DISC-REP",
+        "learner_operation": "REENTER_PERSON_LEVEL_CLASSIFICATION_WITH_FRESH_VIGNETTE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "DISC_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#DISC-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#DISC-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DISC-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "DISC-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "DISC-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "DISC-ITEM-NEAR",
+          "stimulus_difference": "NEW_CONTEXT_VALUES_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "DISC-ITEM-REPAIR-CHANGED",
+        "activity_id": "DISC-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "DISC-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "DISC-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "DISC-REP",
+        "learner_operation": "REBUILD_INSTITUTIONAL_MECHANISM_EVIDENCE",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "DISC_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#DISC-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#DISC-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DISC-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "DISC-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "DISC-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "DISC-ITEM-REENTRY-CHANGED",
+        "activity_id": "DISC-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-127265",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "DISC-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "DISC-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [
+          "required_operation",
+          "representation"
+        ],
+        "representation_id": "DISC-REP",
+        "learner_operation": "REENTER_MECHANISM_EVIDENCE_WITH_FRESH_SETTING",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "DISC_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#DISC-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#DISC-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "DISC-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "DISC-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "DISC-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "DISC-ITEM-CHANGED",
+          "stimulus_difference": "NEW_CONTEXT_VALUES_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "POCL-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "POCL-FAMILY-WORKED",
+        "stimulus_lineage_id": "POCL-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "POCL-REP",
+        "learner_operation": "FOLLOW_MODEL_SELECTION_AND_EXECUTION",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:POCL-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POCL-SOLUTION-WORKED",
+        "decisive_cue_id": "POCL-CUE-WORKED",
+        "distractor_lineage_id": "POCL-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "POCL-ITEM-ENTRY",
+        "activity_id": "POCL-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "POCL-FAMILY-ENTRY",
+        "stimulus_lineage_id": "POCL-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "POCL-REP",
+        "learner_operation": "IDENTIFY_FORMAL_POWER_MECHANISM",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_LOW_STAKES_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "POCL_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#POCL-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#POCL-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POCL-SOLUTION-ENTRY",
+        "decisive_cue_id": "POCL-CUE-ENTRY",
+        "distractor_lineage_id": "POCL-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "POCL-ITEM-GUIDED",
+        "activity_id": "POCL-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "POCL-FAMILY-GUIDED",
+        "stimulus_lineage_id": "POCL-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "POCL-REP",
+        "learner_operation": "IDENTIFY_PRESTIGE_INFLUENCE_MECHANISM",
+        "hint_policy": "VISIBLE_SELECTION_SEQUENCE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "POCL_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#POCL-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#POCL-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POCL-SOLUTION-GUIDED",
+        "decisive_cue_id": "POCL-CUE-GUIDED",
+        "distractor_lineage_id": "POCL-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "POCL-ITEM-LIGHT",
+        "activity_id": "POCL-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "POCL-FAMILY-LIGHT",
+        "stimulus_lineage_id": "POCL-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "POCL-REP",
+        "learner_operation": "IDENTIFY_CLASS_RESOURCE_ACCESS_MECHANISM",
+        "hint_policy": "BRIEF_NON_ANSWER_BEARING_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "POCL_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#POCL-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#POCL-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POCL-SOLUTION-LIGHT",
+        "decisive_cue_id": "POCL-CUE-LIGHT",
+        "distractor_lineage_id": "POCL-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "POCL-ITEM-SOLO",
+        "activity_id": "POCL-ACT-SOLO",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "POCL-FAMILY-SOLO",
+        "stimulus_lineage_id": "POCL-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "POCL-REP",
+        "learner_operation": "BOUND_INFERENCE_FROM_ENABLING_CONDITION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "POCL_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#POCL-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#POCL-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POCL-SOLUTION-SOLO",
+        "decisive_cue_id": "POCL-CUE-SOLO",
+        "distractor_lineage_id": "POCL-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "POCL-ITEM-NEAR",
+        "activity_id": "POCL-ACT-NEAR",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "POCL-FAMILY-NEAR",
+        "stimulus_lineage_id": "POCL-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "POCL-REP",
+        "learner_operation": "INTEGRATE_POWER_PRESTIGE_CLASS_AND_ROUTINE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "POCL_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#POCL-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#POCL-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POCL-SOLUTION-NEAR",
+        "decisive_cue_id": "POCL-CUE-NEAR",
+        "distractor_lineage_id": "POCL-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "POCL-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "POCL-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "POCL-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "POCL-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "POCL-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "POCL-FEATURE-NEAR-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "POCL-ITEM-CHANGED",
+        "activity_id": "POCL-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "POCL-FAMILY-CHANGED",
+        "stimulus_lineage_id": "POCL-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "representation_id": "POCL-REP",
+        "learner_operation": "TRANSFER_CAUSAL_MODEL_TO_MECHANISM_REMOVAL",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "POCL_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#POCL-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#POCL-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POCL-SOLUTION-CHANGED",
+        "decisive_cue_id": "POCL-CUE-CHANGED",
+        "distractor_lineage_id": "POCL-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "POCL-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "POCL-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "POCL-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "POCL-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "POCL-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "POCL-FEATURE-CHANGED-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "POCL-ITEM-REPAIR-NEAR",
+        "activity_id": "POCL-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "POCL-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "POCL-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "POCL-REP",
+        "learner_operation": "REBUILD_STRUCTURAL_FACILITATION_CHAIN",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "POCL_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#POCL-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#POCL-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POCL-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "POCL-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "POCL-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "POCL-ITEM-REENTRY-NEAR",
+        "activity_id": "POCL-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "POCL-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "POCL-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "POCL-REP",
+        "learner_operation": "REENTER_CAUSAL_CHAIN_WITH_FRESH_ORGANIZATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "POCL_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#POCL-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#POCL-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POCL-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "POCL-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "POCL-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "POCL-ITEM-NEAR",
+          "stimulus_difference": "NEW_CONTEXT_VALUES_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "POCL-ITEM-REPAIR-CHANGED",
+        "activity_id": "POCL-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "POCL-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "POCL-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "POCL-REP",
+        "learner_operation": "REBUILD_INSTITUTIONALIZATION_DECISION_POINT",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "POCL_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#POCL-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#POCL-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POCL-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "POCL-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "POCL-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "POCL-ITEM-REENTRY-CHANGED",
+        "activity_id": "POCL-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-440528",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "POCL-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "POCL-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "representation_id": "POCL-REP",
+        "learner_operation": "REENTER_INSTITUTIONALIZATION_WITH_FRESH_CAUSAL_CHANGE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "POCL_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#POCL-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#POCL-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POCL-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "POCL-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "POCL-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "POCL-ITEM-CHANGED",
+          "stimulus_difference": "NEW_CONTEXT_VALUES_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      }
+    ],
+    "transitions": [
+      {
+        "transition_id": "DISC-TRANSITION-TO-POCL",
+        "from_node_id": "DISC-NODE-RECAP",
+        "to_node_id": "POCL-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      }
+    ],
+    "attachment_bindings": [
+      {
+        "attachment_id": "V3-CAP-705761",
+        "attachment_type": "CAPSTONE",
+        "owner_lesson_id": "V3-LES-385880",
+        "host_scope": {
+          "kind": "MULTI_KC",
+          "kc_ids": [
+            "V3-KC-127265",
+            "V3-KC-440528"
+          ]
+        },
+        "declared_host_core_ids": [
+          "V3-KC-831624",
+          "V3-KC-365565",
+          "V3-KC-521184",
+          "V3-KC-395278",
+          "V3-KC-701797",
+          "V3-KC-827045",
+          "V3-KC-451000",
+          "V3-KC-477144",
+          "V3-KC-464758",
+          "V3-KC-300122",
+          "V3-KC-723971",
+          "V3-KC-127265",
+          "V3-KC-440528"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": true,
+        "relation_ids": [
+          "R14-CAP-705761"
+        ],
+        "relation_class": "CAPSTONE_PLACEMENT",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,2855 @@
+{
+  "artifact_type": "LESSON_PRESENTATION_PLAN",
+  "artifact_id": "V3-LPPL-416343",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "484586c18b10d35ce0ae3f2654f8301d691faea719f95739d81a9a0b727abf1f",
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-416343",
+    "lesson_script_sha256": "c0c59ba5f32b6087e40e015a2b17f78f2708e483641a9a44a5a9fe1fa39b55f6",
+    "kc_coverage_matrix_id": "V3-KCOV-416343",
+    "kc_coverage_matrix_sha256": "80193b5f15c4447411883e6442eb379c2b5bc2a8d38efb712c3ed470114e342f"
+  },
+  "payload": {
+    "lesson_id": "V3-LES-416343",
+    "lesson_script_id": "V3-LSCR-416343",
+    "lesson_script_sha256": "c0c59ba5f32b6087e40e015a2b17f78f2708e483641a9a44a5a9fe1fa39b55f6",
+    "kc_coverage_matrix_id": "V3-KCOV-416343",
+    "kc_coverage_matrix_sha256": "80193b5f15c4447411883e6442eb379c2b5bc2a8d38efb712c3ed470114e342f",
+    "learner_rhythm": [
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "RECAP",
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "RECAP",
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "RECAP",
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "RECAP"
+    ],
+    "screens": [
+      {
+        "screen_id": "FMM-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "FMM-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Fluid mosaic: Starting check",
+        "progress_label": "Starting check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "FMM-REP-CROSS-SECTION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "FMM-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "FMM-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Fluid mosaic: What this lens helps you notice",
+        "progress_label": "What this lens helps you notice",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "FMM-REP-CROSS-SECTION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "FMM-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "FMM-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Fluid mosaic: Build the selection rule",
+        "progress_label": "Build the selection rule",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "FMM-REP-CROSS-SECTION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "FMM-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "FMM-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Fluid mosaic: Keep the lens and cue together",
+        "progress_label": "Keep the lens and cue together",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "FMM-REP-CROSS-SECTION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "FMM-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "FMM-NODE-THINK"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Fluid mosaic: Watch the lens selection",
+        "progress_label": "Watch the lens selection",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "FMM-REP-CROSS-SECTION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "FMM-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "FMM-NODE-WORKED"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Fluid mosaic: Worked comparison",
+        "progress_label": "Worked comparison",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "FMM-REP-CROSS-SECTION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "FMM-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "FMM-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Fluid mosaic: Choose with support",
+        "progress_label": "Choose with support",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "FMM-REP-CROSS-SECTION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "FMM-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "FMM-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Fluid mosaic: Choose with less support",
+        "progress_label": "Choose with less support",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "FMM-REP-CROSS-SECTION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "FMM-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "FMM-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Fluid mosaic: Choose independently",
+        "progress_label": "Choose independently",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "FMM-REP-CROSS-SECTION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "FMM-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "FMM-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Fluid mosaic: Mark the boundary",
+        "progress_label": "Mark the boundary",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "FMM-REP-CROSS-SECTION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "FMM-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "FMM-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Fluid mosaic: Near-use check",
+        "progress_label": "Near-use check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "FMM-REP-CROSS-SECTION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "FMM-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "FMM-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Fluid mosaic: Changed-task check",
+        "progress_label": "Changed-task check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "FMM-REP-CROSS-SECTION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "FMM-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "FMM-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Fluid mosaic: Repair the near-use function",
+        "progress_label": "Repair the near-use function",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "FMM-REP-CROSS-SECTION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "FMM-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "FMM-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Fluid mosaic: Fresh near-use re-entry",
+        "progress_label": "Fresh near-use re-entry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "FMM-REP-CROSS-SECTION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "FMM-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "FMM-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Fluid mosaic: Repair the changed-task function",
+        "progress_label": "Repair the changed-task function",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "FMM-REP-CROSS-SECTION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "FMM-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "FMM-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Fluid mosaic: Fresh changed-task re-entry",
+        "progress_label": "Fresh changed-task re-entry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "FMM-REP-CROSS-SECTION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "FMM-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "FMM-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Fluid mosaic: Keep the decision rule",
+        "progress_label": "Keep the decision rule",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "FMM-REP-CROSS-SECTION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OSM-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "OSM-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Passive transport: Starting check",
+        "progress_label": "Starting check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OSM-REP-GRADIENT",
+          "OSM-REP-PRESSURE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OSM-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "OSM-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Passive transport: What this lens helps you notice",
+        "progress_label": "What this lens helps you notice",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OSM-REP-GRADIENT",
+          "OSM-REP-PRESSURE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OSM-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "OSM-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Passive transport: Build the selection rule",
+        "progress_label": "Build the selection rule",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OSM-REP-GRADIENT",
+          "OSM-REP-PRESSURE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OSM-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "OSM-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Passive transport: Keep the lens and cue together",
+        "progress_label": "Keep the lens and cue together",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OSM-REP-GRADIENT",
+          "OSM-REP-PRESSURE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OSM-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "OSM-NODE-THINK"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Passive transport: Watch the lens selection",
+        "progress_label": "Watch the lens selection",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OSM-REP-GRADIENT",
+          "OSM-REP-PRESSURE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OSM-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "OSM-NODE-WORKED"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Passive transport: Worked comparison",
+        "progress_label": "Worked comparison",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OSM-REP-GRADIENT",
+          "OSM-REP-PRESSURE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OSM-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "OSM-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Passive transport: Choose with support",
+        "progress_label": "Choose with support",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OSM-REP-GRADIENT",
+          "OSM-REP-PRESSURE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OSM-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "OSM-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Passive transport: Choose with less support",
+        "progress_label": "Choose with less support",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OSM-REP-GRADIENT",
+          "OSM-REP-PRESSURE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OSM-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "OSM-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Passive transport: Choose independently",
+        "progress_label": "Choose independently",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OSM-REP-GRADIENT",
+          "OSM-REP-PRESSURE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OSM-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "OSM-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Passive transport: Mark the boundary",
+        "progress_label": "Mark the boundary",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OSM-REP-GRADIENT",
+          "OSM-REP-PRESSURE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OSM-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "OSM-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Passive transport: Near-use check",
+        "progress_label": "Near-use check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OSM-REP-GRADIENT",
+          "OSM-REP-PRESSURE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OSM-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "OSM-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Passive transport: Changed-task check",
+        "progress_label": "Changed-task check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OSM-REP-GRADIENT",
+          "OSM-REP-PRESSURE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OSM-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "OSM-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Passive transport: Repair the near-use function",
+        "progress_label": "Repair the near-use function",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OSM-REP-GRADIENT",
+          "OSM-REP-PRESSURE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OSM-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "OSM-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Passive transport: Fresh near-use re-entry",
+        "progress_label": "Fresh near-use re-entry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OSM-REP-GRADIENT",
+          "OSM-REP-PRESSURE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OSM-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "OSM-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Passive transport: Repair the changed-task function",
+        "progress_label": "Repair the changed-task function",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OSM-REP-GRADIENT",
+          "OSM-REP-PRESSURE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OSM-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "OSM-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Passive transport: Fresh changed-task re-entry",
+        "progress_label": "Fresh changed-task re-entry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OSM-REP-GRADIENT",
+          "OSM-REP-PRESSURE"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "OSM-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "OSM-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Passive transport: Keep the decision rule",
+        "progress_label": "Keep the decision rule",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "OSM-REP-GRADIENT",
+          "OSM-REP-PRESSURE"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ACT-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "ACT-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Active transport: Starting check",
+        "progress_label": "Starting check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ACT-REP-ELECTROCHEMICAL"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ACT-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "ACT-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Active transport: What this lens helps you notice",
+        "progress_label": "What this lens helps you notice",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ACT-REP-ELECTROCHEMICAL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ACT-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "ACT-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Active transport: Build the selection rule",
+        "progress_label": "Build the selection rule",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ACT-REP-ELECTROCHEMICAL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ACT-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "ACT-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Active transport: Keep the lens and cue together",
+        "progress_label": "Keep the lens and cue together",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ACT-REP-ELECTROCHEMICAL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ACT-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "ACT-NODE-THINK"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Active transport: Watch the lens selection",
+        "progress_label": "Watch the lens selection",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ACT-REP-ELECTROCHEMICAL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ACT-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "ACT-NODE-WORKED"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Active transport: Worked comparison",
+        "progress_label": "Worked comparison",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ACT-REP-ELECTROCHEMICAL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ACT-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "ACT-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Active transport: Choose with support",
+        "progress_label": "Choose with support",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ACT-REP-ELECTROCHEMICAL"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ACT-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "ACT-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Active transport: Choose with less support",
+        "progress_label": "Choose with less support",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ACT-REP-ELECTROCHEMICAL"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ACT-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "ACT-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Active transport: Choose independently",
+        "progress_label": "Choose independently",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ACT-REP-ELECTROCHEMICAL"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ACT-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "ACT-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Active transport: Mark the boundary",
+        "progress_label": "Mark the boundary",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ACT-REP-ELECTROCHEMICAL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ACT-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "ACT-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Active transport: Near-use check",
+        "progress_label": "Near-use check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ACT-REP-ELECTROCHEMICAL"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ACT-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "ACT-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Active transport: Changed-task check",
+        "progress_label": "Changed-task check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ACT-REP-ELECTROCHEMICAL"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ACT-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "ACT-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Active transport: Repair the near-use function",
+        "progress_label": "Repair the near-use function",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ACT-REP-ELECTROCHEMICAL"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ACT-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "ACT-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Active transport: Fresh near-use re-entry",
+        "progress_label": "Fresh near-use re-entry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ACT-REP-ELECTROCHEMICAL"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ACT-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "ACT-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Active transport: Repair the changed-task function",
+        "progress_label": "Repair the changed-task function",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ACT-REP-ELECTROCHEMICAL"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ACT-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "ACT-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Active transport: Fresh changed-task re-entry",
+        "progress_label": "Fresh changed-task re-entry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ACT-REP-ELECTROCHEMICAL"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "ACT-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "ACT-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Active transport: Keep the decision rule",
+        "progress_label": "Keep the decision rule",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "ACT-REP-ELECTROCHEMICAL"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "COM-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "COM-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Cell coordination: Starting check",
+        "progress_label": "Starting check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "COM-REP-JUNCTIONS"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "COM-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "COM-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Cell coordination: What this lens helps you notice",
+        "progress_label": "What this lens helps you notice",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "COM-REP-JUNCTIONS"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "COM-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "COM-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Cell coordination: Build the selection rule",
+        "progress_label": "Build the selection rule",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "COM-REP-JUNCTIONS"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "COM-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "COM-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Cell coordination: Keep the lens and cue together",
+        "progress_label": "Keep the lens and cue together",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "COM-REP-JUNCTIONS"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "COM-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "COM-NODE-THINK"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Cell coordination: Watch the lens selection",
+        "progress_label": "Watch the lens selection",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "COM-REP-JUNCTIONS"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "COM-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "COM-NODE-WORKED"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Cell coordination: Worked comparison",
+        "progress_label": "Worked comparison",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "COM-REP-JUNCTIONS"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "COM-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "COM-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Cell coordination: Choose with support",
+        "progress_label": "Choose with support",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "COM-REP-JUNCTIONS"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "COM-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "COM-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Cell coordination: Choose with less support",
+        "progress_label": "Choose with less support",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "COM-REP-JUNCTIONS"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "COM-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "COM-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Cell coordination: Choose independently",
+        "progress_label": "Choose independently",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "COM-REP-JUNCTIONS"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "COM-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "COM-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Cell coordination: Mark the boundary",
+        "progress_label": "Mark the boundary",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "COM-REP-JUNCTIONS"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "COM-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "COM-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Cell coordination: Near-use check",
+        "progress_label": "Near-use check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "COM-REP-JUNCTIONS"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "COM-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "COM-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Cell coordination: Changed-task check",
+        "progress_label": "Changed-task check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "COM-REP-JUNCTIONS"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "COM-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "COM-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Cell coordination: Repair the near-use function",
+        "progress_label": "Repair the near-use function",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "COM-REP-JUNCTIONS"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "COM-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "COM-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Cell coordination: Fresh near-use re-entry",
+        "progress_label": "Fresh near-use re-entry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "COM-REP-JUNCTIONS"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "COM-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "COM-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Cell coordination: Repair the changed-task function",
+        "progress_label": "Repair the changed-task function",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "COM-REP-JUNCTIONS"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "COM-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "COM-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Cell coordination: Fresh changed-task re-entry",
+        "progress_label": "Fresh changed-task re-entry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "COM-REP-JUNCTIONS"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "COM-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "COM-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Cell coordination: Keep the decision rule",
+        "progress_label": "Keep the decision rule",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "COM-REP-JUNCTIONS"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      }
+    ],
+    "representation_plans": [
+      {
+        "representation_id": "FMM-REP-CROSS-SECTION",
+        "target_kc_id": "V3-KC-030718",
+        "representation_type": "MEMBRANE_CROSS_SECTION",
+        "learner_operation": "Relate heads, tails, core, proteins, and cholesterol to function.",
+        "text_nonvisual_equivalent": "Describe extracellular water, heads, tails, core, embedded proteins, cholesterol, and intracellular water in order."
+      },
+      {
+        "representation_id": "OSM-REP-GRADIENT",
+        "target_kc_id": "V3-KC-949593",
+        "representation_type": "MEMBRANE_GRADIENT_DIAGRAM",
+        "learner_operation": "Mark permeability and downhill direction for solute or water.",
+        "text_nonvisual_equivalent": "List each side’s concentrations, membrane permeability, and moving species without supplying direction."
+      },
+      {
+        "representation_id": "OSM-REP-PRESSURE",
+        "target_kc_id": "V3-KC-949593",
+        "representation_type": "CONCENTRATION_PRESSURE_RELATION",
+        "learner_operation": "Compare effective solute-particle concentrations.",
+        "text_nonvisual_equivalent": "State temperature and particle concentrations for each solution without ranking pressure."
+      },
+      {
+        "representation_id": "ACT-REP-ELECTROCHEMICAL",
+        "target_kc_id": "V3-KC-865898",
+        "representation_type": "ELECTROCHEMICAL_GRADIENT_MEMBRANE_DIAGRAM",
+        "learner_operation": "Track energy, ion gradient, charge sign, movement, and voltage direction.",
+        "text_nonvisual_equivalent": "State inside/outside concentration, charge, channel or pump state, energy use, and initial potential without predicting movement."
+      },
+      {
+        "representation_id": "COM-REP-JUNCTIONS",
+        "target_kc_id": "V3-KC-985282",
+        "representation_type": "MEMBRANE_CELL_JUNCTION_DIAGRAMS",
+        "learner_operation": "Match detect, traffic, communicate, seal, and anchor functions to structures.",
+        "text_nonvisual_equivalent": "Describe ligand binding, vesicle direction, direct channel, paracellular seal, and mechanical attachment as separate labeled cases."
+      }
+    ],
+    "learner_reviewer_separation": {
+      "learner_projection": "NORMALIZED_LEARNER_SAFE_ONLY",
+      "reviewer_projection": "SEPARATE_SERVER_AUTHORITY",
+      "prohibited_learner_fields": [
+        "ANSWER_KEY",
+        "CORRECT_RESPONSE",
+        "RATIONALE",
+        "RESPONSE_AUTHORITY",
+        "ROUTE_METADATA"
+      ]
+    },
+    "accessibility_acceptance": {
+      "keyboard_required": true,
+      "visible_focus_required": true,
+      "text_equivalent_required": true,
+      "human_accessibility_review_status": "BLOCKED"
+    },
+    "authoring_evidence": {
+      "route_profile": {
+        "route": "STANDARD",
+        "learner_profile": "DECLARED_PREREQUISITES_PRESENT_TARGET_KCS_NOT_YET_LEARNED",
+        "route_selection_authority": "FROZEN_RELEASE_POLICY_STANDARD_ONLY",
+        "observable_selection_state": "STANDARD_ONLY_POLICY_SCOPE"
+      },
+      "demand_inventory": [
+        {
+          "demand_id": "FMM-DEMAND-CONTAIN",
+          "kc_id": "V3-KC-030718",
+          "description": "Explain selective containment from amphipathic bilayer organization.",
+          "instruction_node_ids": [
+            "FMM-NODE-EXPLANATION",
+            "FMM-NODE-MODEL",
+            "FMM-NODE-THINK",
+            "FMM-NODE-WORKED"
+          ]
+        },
+        {
+          "demand_id": "FMM-DEMAND-COMPONENT",
+          "kc_id": "V3-KC-030718",
+          "description": "Distinguish phospholipid, protein, cholesterol, and wax roles.",
+          "instruction_node_ids": [
+            "FMM-NODE-EXPLANATION",
+            "FMM-NODE-WORKED",
+            "FMM-NODE-CONTRAST"
+          ]
+        },
+        {
+          "demand_id": "FMM-DEMAND-DYNAMIC",
+          "kc_id": "V3-KC-030718",
+          "description": "Explain lateral motion and qualitative cholesterol fluidity buffering.",
+          "instruction_node_ids": [
+            "FMM-NODE-MODEL",
+            "FMM-NODE-THINK",
+            "FMM-NODE-WORKED",
+            "FMM-NODE-CONTRAST"
+          ]
+        },
+        {
+          "demand_id": "OSM-DEMAND-PASSIVE",
+          "kc_id": "V3-KC-949593",
+          "description": "Distinguish simple and facilitated downhill transport from active transport.",
+          "instruction_node_ids": [
+            "OSM-NODE-EXPLANATION",
+            "OSM-NODE-MODEL",
+            "OSM-NODE-WORKED",
+            "OSM-NODE-CONTRAST"
+          ]
+        },
+        {
+          "demand_id": "OSM-DEMAND-PERMEABILITY",
+          "kc_id": "V3-KC-949593",
+          "description": "Use membrane permeability before predicting persistent gradients.",
+          "instruction_node_ids": [
+            "OSM-NODE-EXPLANATION",
+            "OSM-NODE-THINK",
+            "OSM-NODE-WORKED"
+          ]
+        },
+        {
+          "demand_id": "OSM-DEMAND-OSMOSIS",
+          "kc_id": "V3-KC-949593",
+          "description": "Predict water movement toward greater effective nonpenetrating solute.",
+          "instruction_node_ids": [
+            "OSM-NODE-MODEL",
+            "OSM-NODE-THINK",
+            "OSM-NODE-WORKED"
+          ]
+        },
+        {
+          "demand_id": "OSM-DEMAND-COLLIGATIVE",
+          "kc_id": "V3-KC-949593",
+          "description": "Relate particle concentration to ideal osmotic pressure.",
+          "instruction_node_ids": [
+            "OSM-NODE-EXPLANATION",
+            "OSM-NODE-WORKED",
+            "OSM-NODE-CONTRAST"
+          ]
+        },
+        {
+          "demand_id": "ACT-DEMAND-PUMP",
+          "kc_id": "V3-KC-865898",
+          "description": "Identify direct energy use for uphill ion movement and gradient maintenance.",
+          "instruction_node_ids": [
+            "ACT-NODE-EXPLANATION",
+            "ACT-NODE-MODEL",
+            "ACT-NODE-WORKED"
+          ]
+        },
+        {
+          "demand_id": "ACT-DEMAND-CHANNEL",
+          "kc_id": "V3-KC-865898",
+          "description": "Predict passive channel movement down electrochemical gradients.",
+          "instruction_node_ids": [
+            "ACT-NODE-EXPLANATION",
+            "ACT-NODE-THINK",
+            "ACT-NODE-WORKED",
+            "ACT-NODE-CONTRAST"
+          ]
+        },
+        {
+          "demand_id": "ACT-DEMAND-GRADIENT",
+          "kc_id": "V3-KC-865898",
+          "description": "Combine chemical and electrical drives qualitatively.",
+          "instruction_node_ids": [
+            "ACT-NODE-MODEL",
+            "ACT-NODE-THINK",
+            "ACT-NODE-WORKED"
+          ]
+        },
+        {
+          "demand_id": "ACT-DEMAND-POTENTIAL",
+          "kc_id": "V3-KC-865898",
+          "description": "Translate net charge movement into depolarization or hyperpolarization.",
+          "instruction_node_ids": [
+            "ACT-NODE-EXPLANATION",
+            "ACT-NODE-WORKED",
+            "ACT-NODE-CONTRAST"
+          ]
+        },
+        {
+          "demand_id": "COM-DEMAND-RECEPTOR",
+          "kc_id": "V3-KC-985282",
+          "description": "Explain surface signal detection and intracellular response.",
+          "instruction_node_ids": [
+            "COM-NODE-EXPLANATION",
+            "COM-NODE-MODEL",
+            "COM-NODE-THINK",
+            "COM-NODE-WORKED"
+          ]
+        },
+        {
+          "demand_id": "COM-DEMAND-VESICLE",
+          "kc_id": "V3-KC-985282",
+          "description": "Distinguish endocytosis inward from exocytosis outward.",
+          "instruction_node_ids": [
+            "COM-NODE-EXPLANATION",
+            "COM-NODE-WORKED",
+            "COM-NODE-CONTRAST"
+          ]
+        },
+        {
+          "demand_id": "COM-DEMAND-JUNCTION",
+          "kc_id": "V3-KC-985282",
+          "description": "Distinguish direct communication, paracellular sealing, and mechanical adhesion.",
+          "instruction_node_ids": [
+            "COM-NODE-MODEL",
+            "COM-NODE-THINK",
+            "COM-NODE-WORKED",
+            "COM-NODE-CONTRAST"
+          ]
+        }
+      ],
+      "item_to_instruction_trace": [
+        {
+          "item_binding_id": "FMM-ITEM-ENTRY",
+          "kc_id": "V3-KC-030718",
+          "demand_ids": [
+            "FMM-DEMAND-CONTAIN",
+            "FMM-DEMAND-COMPONENT"
+          ],
+          "prior_instruction_node_ids": [
+            "FMM-NODE-EXPLANATION",
+            "FMM-NODE-MODEL"
+          ]
+        },
+        {
+          "item_binding_id": "FMM-ITEM-GUIDED",
+          "kc_id": "V3-KC-030718",
+          "demand_ids": [
+            "FMM-DEMAND-COMPONENT"
+          ],
+          "prior_instruction_node_ids": [
+            "FMM-NODE-EXPLANATION",
+            "FMM-NODE-THINK",
+            "FMM-NODE-WORKED"
+          ]
+        },
+        {
+          "item_binding_id": "FMM-ITEM-LIGHT",
+          "kc_id": "V3-KC-030718",
+          "demand_ids": [
+            "FMM-DEMAND-DYNAMIC",
+            "FMM-DEMAND-COMPONENT"
+          ],
+          "prior_instruction_node_ids": [
+            "FMM-NODE-EXPLANATION",
+            "FMM-NODE-MODEL",
+            "FMM-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "FMM-ITEM-SOLO",
+          "kc_id": "V3-KC-030718",
+          "demand_ids": [
+            "FMM-DEMAND-COMPONENT"
+          ],
+          "prior_instruction_node_ids": [
+            "FMM-NODE-EXPLANATION",
+            "FMM-NODE-WORKED",
+            "FMM-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "FMM-ITEM-NEAR",
+          "kc_id": "V3-KC-030718",
+          "demand_ids": [
+            "FMM-DEMAND-CONTAIN"
+          ],
+          "prior_instruction_node_ids": [
+            "FMM-NODE-EXPLANATION",
+            "FMM-NODE-MODEL",
+            "FMM-NODE-THINK",
+            "FMM-NODE-WORKED",
+            "FMM-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "FMM-ITEM-CHANGED",
+          "kc_id": "V3-KC-030718",
+          "demand_ids": [
+            "FMM-DEMAND-DYNAMIC",
+            "FMM-DEMAND-COMPONENT"
+          ],
+          "prior_instruction_node_ids": [
+            "FMM-NODE-EXPLANATION",
+            "FMM-NODE-MODEL",
+            "FMM-NODE-THINK",
+            "FMM-NODE-WORKED",
+            "FMM-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "FMM-ITEM-REPAIR-NEAR",
+          "kc_id": "V3-KC-030718",
+          "demand_ids": [
+            "FMM-DEMAND-CONTAIN"
+          ],
+          "prior_instruction_node_ids": [
+            "FMM-NODE-EXPLANATION",
+            "FMM-NODE-MODEL",
+            "FMM-NODE-REPAIR-NEAR"
+          ]
+        },
+        {
+          "item_binding_id": "FMM-ITEM-REENTRY-NEAR",
+          "kc_id": "V3-KC-030718",
+          "demand_ids": [
+            "FMM-DEMAND-CONTAIN"
+          ],
+          "prior_instruction_node_ids": [
+            "FMM-NODE-EXPLANATION",
+            "FMM-NODE-MODEL",
+            "FMM-NODE-REPAIR-NEAR"
+          ]
+        },
+        {
+          "item_binding_id": "FMM-ITEM-REPAIR-CHANGED",
+          "kc_id": "V3-KC-030718",
+          "demand_ids": [
+            "FMM-DEMAND-DYNAMIC",
+            "FMM-DEMAND-COMPONENT"
+          ],
+          "prior_instruction_node_ids": [
+            "FMM-NODE-EXPLANATION",
+            "FMM-NODE-MODEL",
+            "FMM-NODE-REPAIR-CHANGED"
+          ]
+        },
+        {
+          "item_binding_id": "FMM-ITEM-REENTRY-CHANGED",
+          "kc_id": "V3-KC-030718",
+          "demand_ids": [
+            "FMM-DEMAND-DYNAMIC"
+          ],
+          "prior_instruction_node_ids": [
+            "FMM-NODE-EXPLANATION",
+            "FMM-NODE-MODEL",
+            "FMM-NODE-REPAIR-CHANGED"
+          ]
+        },
+        {
+          "item_binding_id": "OSM-ITEM-ENTRY",
+          "kc_id": "V3-KC-949593",
+          "demand_ids": [
+            "OSM-DEMAND-PASSIVE"
+          ],
+          "prior_instruction_node_ids": [
+            "OSM-NODE-EXPLANATION",
+            "OSM-NODE-MODEL"
+          ]
+        },
+        {
+          "item_binding_id": "OSM-ITEM-GUIDED",
+          "kc_id": "V3-KC-949593",
+          "demand_ids": [
+            "OSM-DEMAND-PASSIVE",
+            "OSM-DEMAND-PERMEABILITY"
+          ],
+          "prior_instruction_node_ids": [
+            "OSM-NODE-EXPLANATION",
+            "OSM-NODE-THINK",
+            "OSM-NODE-WORKED"
+          ]
+        },
+        {
+          "item_binding_id": "OSM-ITEM-LIGHT",
+          "kc_id": "V3-KC-949593",
+          "demand_ids": [
+            "OSM-DEMAND-OSMOSIS",
+            "OSM-DEMAND-PERMEABILITY"
+          ],
+          "prior_instruction_node_ids": [
+            "OSM-NODE-EXPLANATION",
+            "OSM-NODE-MODEL",
+            "OSM-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "OSM-ITEM-SOLO",
+          "kc_id": "V3-KC-949593",
+          "demand_ids": [
+            "OSM-DEMAND-PASSIVE"
+          ],
+          "prior_instruction_node_ids": [
+            "OSM-NODE-EXPLANATION",
+            "OSM-NODE-WORKED",
+            "OSM-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "OSM-ITEM-NEAR",
+          "kc_id": "V3-KC-949593",
+          "demand_ids": [
+            "OSM-DEMAND-OSMOSIS",
+            "OSM-DEMAND-PERMEABILITY"
+          ],
+          "prior_instruction_node_ids": [
+            "OSM-NODE-EXPLANATION",
+            "OSM-NODE-MODEL",
+            "OSM-NODE-THINK",
+            "OSM-NODE-WORKED",
+            "OSM-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "OSM-ITEM-CHANGED",
+          "kc_id": "V3-KC-949593",
+          "demand_ids": [
+            "OSM-DEMAND-COLLIGATIVE",
+            "OSM-DEMAND-OSMOSIS"
+          ],
+          "prior_instruction_node_ids": [
+            "OSM-NODE-EXPLANATION",
+            "OSM-NODE-MODEL",
+            "OSM-NODE-THINK",
+            "OSM-NODE-WORKED",
+            "OSM-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "OSM-ITEM-REPAIR-NEAR",
+          "kc_id": "V3-KC-949593",
+          "demand_ids": [
+            "OSM-DEMAND-OSMOSIS",
+            "OSM-DEMAND-PERMEABILITY"
+          ],
+          "prior_instruction_node_ids": [
+            "OSM-NODE-EXPLANATION",
+            "OSM-NODE-MODEL",
+            "OSM-NODE-REPAIR-NEAR"
+          ]
+        },
+        {
+          "item_binding_id": "OSM-ITEM-REENTRY-NEAR",
+          "kc_id": "V3-KC-949593",
+          "demand_ids": [
+            "OSM-DEMAND-OSMOSIS"
+          ],
+          "prior_instruction_node_ids": [
+            "OSM-NODE-EXPLANATION",
+            "OSM-NODE-MODEL",
+            "OSM-NODE-REPAIR-NEAR"
+          ]
+        },
+        {
+          "item_binding_id": "OSM-ITEM-REPAIR-CHANGED",
+          "kc_id": "V3-KC-949593",
+          "demand_ids": [
+            "OSM-DEMAND-COLLIGATIVE"
+          ],
+          "prior_instruction_node_ids": [
+            "OSM-NODE-EXPLANATION",
+            "OSM-NODE-MODEL",
+            "OSM-NODE-REPAIR-CHANGED"
+          ]
+        },
+        {
+          "item_binding_id": "OSM-ITEM-REENTRY-CHANGED",
+          "kc_id": "V3-KC-949593",
+          "demand_ids": [
+            "OSM-DEMAND-COLLIGATIVE"
+          ],
+          "prior_instruction_node_ids": [
+            "OSM-NODE-EXPLANATION",
+            "OSM-NODE-MODEL",
+            "OSM-NODE-REPAIR-CHANGED"
+          ]
+        },
+        {
+          "item_binding_id": "ACT-ITEM-ENTRY",
+          "kc_id": "V3-KC-865898",
+          "demand_ids": [
+            "ACT-DEMAND-PUMP"
+          ],
+          "prior_instruction_node_ids": [
+            "ACT-NODE-EXPLANATION",
+            "ACT-NODE-MODEL"
+          ]
+        },
+        {
+          "item_binding_id": "ACT-ITEM-GUIDED",
+          "kc_id": "V3-KC-865898",
+          "demand_ids": [
+            "ACT-DEMAND-CHANNEL",
+            "ACT-DEMAND-GRADIENT"
+          ],
+          "prior_instruction_node_ids": [
+            "ACT-NODE-EXPLANATION",
+            "ACT-NODE-THINK",
+            "ACT-NODE-WORKED"
+          ]
+        },
+        {
+          "item_binding_id": "ACT-ITEM-LIGHT",
+          "kc_id": "V3-KC-865898",
+          "demand_ids": [
+            "ACT-DEMAND-POTENTIAL"
+          ],
+          "prior_instruction_node_ids": [
+            "ACT-NODE-EXPLANATION",
+            "ACT-NODE-MODEL",
+            "ACT-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "ACT-ITEM-SOLO",
+          "kc_id": "V3-KC-865898",
+          "demand_ids": [
+            "ACT-DEMAND-POTENTIAL"
+          ],
+          "prior_instruction_node_ids": [
+            "ACT-NODE-EXPLANATION",
+            "ACT-NODE-WORKED",
+            "ACT-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "ACT-ITEM-NEAR",
+          "kc_id": "V3-KC-865898",
+          "demand_ids": [
+            "ACT-DEMAND-PUMP",
+            "ACT-DEMAND-GRADIENT"
+          ],
+          "prior_instruction_node_ids": [
+            "ACT-NODE-EXPLANATION",
+            "ACT-NODE-MODEL",
+            "ACT-NODE-THINK",
+            "ACT-NODE-WORKED",
+            "ACT-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "ACT-ITEM-CHANGED",
+          "kc_id": "V3-KC-865898",
+          "demand_ids": [
+            "ACT-DEMAND-CHANNEL",
+            "ACT-DEMAND-POTENTIAL"
+          ],
+          "prior_instruction_node_ids": [
+            "ACT-NODE-EXPLANATION",
+            "ACT-NODE-MODEL",
+            "ACT-NODE-THINK",
+            "ACT-NODE-WORKED",
+            "ACT-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "ACT-ITEM-REPAIR-NEAR",
+          "kc_id": "V3-KC-865898",
+          "demand_ids": [
+            "ACT-DEMAND-PUMP",
+            "ACT-DEMAND-CHANNEL"
+          ],
+          "prior_instruction_node_ids": [
+            "ACT-NODE-EXPLANATION",
+            "ACT-NODE-MODEL",
+            "ACT-NODE-REPAIR-NEAR"
+          ]
+        },
+        {
+          "item_binding_id": "ACT-ITEM-REENTRY-NEAR",
+          "kc_id": "V3-KC-865898",
+          "demand_ids": [
+            "ACT-DEMAND-PUMP",
+            "ACT-DEMAND-GRADIENT"
+          ],
+          "prior_instruction_node_ids": [
+            "ACT-NODE-EXPLANATION",
+            "ACT-NODE-MODEL",
+            "ACT-NODE-REPAIR-NEAR"
+          ]
+        },
+        {
+          "item_binding_id": "ACT-ITEM-REPAIR-CHANGED",
+          "kc_id": "V3-KC-865898",
+          "demand_ids": [
+            "ACT-DEMAND-POTENTIAL"
+          ],
+          "prior_instruction_node_ids": [
+            "ACT-NODE-EXPLANATION",
+            "ACT-NODE-MODEL",
+            "ACT-NODE-REPAIR-CHANGED"
+          ]
+        },
+        {
+          "item_binding_id": "ACT-ITEM-REENTRY-CHANGED",
+          "kc_id": "V3-KC-865898",
+          "demand_ids": [
+            "ACT-DEMAND-CHANNEL",
+            "ACT-DEMAND-POTENTIAL"
+          ],
+          "prior_instruction_node_ids": [
+            "ACT-NODE-EXPLANATION",
+            "ACT-NODE-MODEL",
+            "ACT-NODE-REPAIR-CHANGED"
+          ]
+        },
+        {
+          "item_binding_id": "COM-ITEM-ENTRY",
+          "kc_id": "V3-KC-985282",
+          "demand_ids": [
+            "COM-DEMAND-JUNCTION"
+          ],
+          "prior_instruction_node_ids": [
+            "COM-NODE-EXPLANATION",
+            "COM-NODE-MODEL"
+          ]
+        },
+        {
+          "item_binding_id": "COM-ITEM-GUIDED",
+          "kc_id": "V3-KC-985282",
+          "demand_ids": [
+            "COM-DEMAND-JUNCTION"
+          ],
+          "prior_instruction_node_ids": [
+            "COM-NODE-EXPLANATION",
+            "COM-NODE-THINK",
+            "COM-NODE-WORKED"
+          ]
+        },
+        {
+          "item_binding_id": "COM-ITEM-LIGHT",
+          "kc_id": "V3-KC-985282",
+          "demand_ids": [
+            "COM-DEMAND-JUNCTION"
+          ],
+          "prior_instruction_node_ids": [
+            "COM-NODE-EXPLANATION",
+            "COM-NODE-MODEL",
+            "COM-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "COM-ITEM-SOLO",
+          "kc_id": "V3-KC-985282",
+          "demand_ids": [
+            "COM-DEMAND-VESICLE"
+          ],
+          "prior_instruction_node_ids": [
+            "COM-NODE-EXPLANATION",
+            "COM-NODE-WORKED",
+            "COM-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "COM-ITEM-NEAR",
+          "kc_id": "V3-KC-985282",
+          "demand_ids": [
+            "COM-DEMAND-RECEPTOR"
+          ],
+          "prior_instruction_node_ids": [
+            "COM-NODE-EXPLANATION",
+            "COM-NODE-MODEL",
+            "COM-NODE-THINK",
+            "COM-NODE-WORKED",
+            "COM-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "COM-ITEM-CHANGED",
+          "kc_id": "V3-KC-985282",
+          "demand_ids": [
+            "COM-DEMAND-JUNCTION"
+          ],
+          "prior_instruction_node_ids": [
+            "COM-NODE-EXPLANATION",
+            "COM-NODE-MODEL",
+            "COM-NODE-THINK",
+            "COM-NODE-WORKED",
+            "COM-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "COM-ITEM-REPAIR-NEAR",
+          "kc_id": "V3-KC-985282",
+          "demand_ids": [
+            "COM-DEMAND-RECEPTOR"
+          ],
+          "prior_instruction_node_ids": [
+            "COM-NODE-EXPLANATION",
+            "COM-NODE-MODEL",
+            "COM-NODE-REPAIR-NEAR"
+          ]
+        },
+        {
+          "item_binding_id": "COM-ITEM-REENTRY-NEAR",
+          "kc_id": "V3-KC-985282",
+          "demand_ids": [
+            "COM-DEMAND-RECEPTOR"
+          ],
+          "prior_instruction_node_ids": [
+            "COM-NODE-EXPLANATION",
+            "COM-NODE-MODEL",
+            "COM-NODE-REPAIR-NEAR"
+          ]
+        },
+        {
+          "item_binding_id": "COM-ITEM-REPAIR-CHANGED",
+          "kc_id": "V3-KC-985282",
+          "demand_ids": [
+            "COM-DEMAND-JUNCTION"
+          ],
+          "prior_instruction_node_ids": [
+            "COM-NODE-EXPLANATION",
+            "COM-NODE-MODEL",
+            "COM-NODE-REPAIR-CHANGED"
+          ]
+        },
+        {
+          "item_binding_id": "COM-ITEM-REENTRY-CHANGED",
+          "kc_id": "V3-KC-985282",
+          "demand_ids": [
+            "COM-DEMAND-JUNCTION"
+          ],
+          "prior_instruction_node_ids": [
+            "COM-NODE-EXPLANATION",
+            "COM-NODE-MODEL",
+            "COM-NODE-REPAIR-CHANGED"
+          ]
+        }
+      ],
+      "assistance_affordance_inventory": [
+        {
+          "kc_id": "V3-KC-030718",
+          "sequence": [
+            {
+              "role": "GUIDED_PRACTICE",
+              "assistance": "VISIBLE_SELECTION_CUE"
+            },
+            {
+              "role": "LIGHT_SUPPORT_PRACTICE",
+              "assistance": "BRIEF_SELECTION_REMINDER"
+            },
+            {
+              "role": "SOLO_PRACTICE",
+              "assistance": "NONE_BEFORE_COMMIT"
+            },
+            {
+              "role": "NEAR_EXIT",
+              "assistance": "NONE_BEFORE_COMMIT"
+            },
+            {
+              "role": "CHANGED_EXIT",
+              "assistance": "NONE_BEFORE_COMMIT"
+            }
+          ],
+          "strictly_less_at_exit": true
+        },
+        {
+          "kc_id": "V3-KC-949593",
+          "sequence": [
+            {
+              "role": "GUIDED_PRACTICE",
+              "assistance": "VISIBLE_SELECTION_CUE"
+            },
+            {
+              "role": "LIGHT_SUPPORT_PRACTICE",
+              "assistance": "BRIEF_SELECTION_REMINDER"
+            },
+            {
+              "role": "SOLO_PRACTICE",
+              "assistance": "NONE_BEFORE_COMMIT"
+            },
+            {
+              "role": "NEAR_EXIT",
+              "assistance": "NONE_BEFORE_COMMIT"
+            },
+            {
+              "role": "CHANGED_EXIT",
+              "assistance": "NONE_BEFORE_COMMIT"
+            }
+          ],
+          "strictly_less_at_exit": true
+        },
+        {
+          "kc_id": "V3-KC-865898",
+          "sequence": [
+            {
+              "role": "GUIDED_PRACTICE",
+              "assistance": "VISIBLE_SELECTION_CUE"
+            },
+            {
+              "role": "LIGHT_SUPPORT_PRACTICE",
+              "assistance": "BRIEF_SELECTION_REMINDER"
+            },
+            {
+              "role": "SOLO_PRACTICE",
+              "assistance": "NONE_BEFORE_COMMIT"
+            },
+            {
+              "role": "NEAR_EXIT",
+              "assistance": "NONE_BEFORE_COMMIT"
+            },
+            {
+              "role": "CHANGED_EXIT",
+              "assistance": "NONE_BEFORE_COMMIT"
+            }
+          ],
+          "strictly_less_at_exit": true
+        },
+        {
+          "kc_id": "V3-KC-985282",
+          "sequence": [
+            {
+              "role": "GUIDED_PRACTICE",
+              "assistance": "VISIBLE_SELECTION_CUE"
+            },
+            {
+              "role": "LIGHT_SUPPORT_PRACTICE",
+              "assistance": "BRIEF_SELECTION_REMINDER"
+            },
+            {
+              "role": "SOLO_PRACTICE",
+              "assistance": "NONE_BEFORE_COMMIT"
+            },
+            {
+              "role": "NEAR_EXIT",
+              "assistance": "NONE_BEFORE_COMMIT"
+            },
+            {
+              "role": "CHANGED_EXIT",
+              "assistance": "NONE_BEFORE_COMMIT"
+            }
+          ],
+          "strictly_less_at_exit": true
+        }
+      ],
+      "changed_task_decision_points": [
+        {
+          "kc_id": "V3-KC-030718",
+          "near_item_id": "FMM-ITEM-NEAR",
+          "changed_item_id": "FMM-ITEM-CHANGED",
+          "decision_point": "Near asks for containment material; changed asks for a cholesterol-mediated dynamic effect, so the selected component must change.",
+          "near_trace": [
+            "Identify boundary function.",
+            "Locate amphipathic bilayer.",
+            "Relate hydrophobic core to containment."
+          ],
+          "changed_trace": [
+            "Identify temperature and changed component.",
+            "Use cholesterol packing role.",
+            "Predict qualitative fluidity effect."
+          ],
+          "changed_dimensions": [
+            "required_operation",
+            "domain_context"
+          ]
+        },
+        {
+          "kc_id": "V3-KC-949593",
+          "near_item_id": "OSM-ITEM-NEAR",
+          "changed_item_id": "OSM-ITEM-CHANGED",
+          "decision_point": "Near predicts water direction; changed compares osmotic pressure from particle count, requiring a pressure relation rather than a direction alone.",
+          "near_trace": [
+            "Identify water permeability.",
+            "Compare nonpenetrating solute.",
+            "Move water toward greater effective concentration."
+          ],
+          "changed_trace": [
+            "Hold temperature.",
+            "Compare effective particle concentrations.",
+            "Rank ideal osmotic pressure."
+          ],
+          "changed_dimensions": [
+            "required_operation",
+            "domain_context"
+          ]
+        },
+        {
+          "kc_id": "V3-KC-865898",
+          "near_item_id": "ACT-ITEM-NEAR",
+          "changed_item_id": "ACT-ITEM-CHANGED",
+          "decision_point": "Near classifies energy-driven uphill transport; changed converts passive charge movement into voltage direction.",
+          "near_trace": [
+            "Identify direct energy.",
+            "Compare movement with electrochemical drive.",
+            "Classify pump or channel."
+          ],
+          "changed_trace": [
+            "Identify ion sign and movement.",
+            "Determine net charge change inside.",
+            "Classify potential direction."
+          ],
+          "changed_dimensions": [
+            "required_operation",
+            "domain_context"
+          ]
+        },
+        {
+          "kc_id": "V3-KC-985282",
+          "near_item_id": "COM-ITEM-NEAR",
+          "changed_item_id": "COM-ITEM-CHANGED",
+          "decision_point": "Near selects surface signal detection; changed selects a paracellular seal, requiring a junction function rather than receptor logic.",
+          "near_trace": [
+            "Identify extracellular signal.",
+            "Locate surface detection.",
+            "Trace intracellular response."
+          ],
+          "changed_trace": [
+            "Identify between-cell leakage.",
+            "Distinguish seal from pore and anchor.",
+            "Select tight junction."
+          ],
+          "changed_dimensions": [
+            "required_operation",
+            "domain_context"
+          ]
+        }
+      ],
+      "repair_graphs": [
+        {
+          "kc_id": "V3-KC-030718",
+          "failed_function": "NEAR_USE",
+          "triggering_response_feature_ids": [
+            "FMM-FEATURE-NEAR-1",
+            "FMM-FEATURE-NEAR-2",
+            "FMM-FEATURE-NEAR-3"
+          ],
+          "repair_node_id": "FMM-NODE-REPAIR-NEAR",
+          "repair_confirmation_item_id": "FMM-ITEM-REPAIR-NEAR",
+          "fresh_reentry_item_id": "FMM-ITEM-REENTRY-NEAR",
+          "fresh_semantic_family_id": "FMM-FAMILY-REENTRY-NEAR",
+          "maximum_repair_cycles": 1,
+          "exhaustion_disposition": "RETURN_TO_PLANNER_WITHOUT_EXIT_CREDIT"
+        },
+        {
+          "kc_id": "V3-KC-030718",
+          "failed_function": "CHANGED_TASK",
+          "triggering_response_feature_ids": [
+            "FMM-FEATURE-CHANGED-0",
+            "FMM-FEATURE-CHANGED-2",
+            "FMM-FEATURE-CHANGED-3"
+          ],
+          "repair_node_id": "FMM-NODE-REPAIR-CHANGED",
+          "repair_confirmation_item_id": "FMM-ITEM-REPAIR-CHANGED",
+          "fresh_reentry_item_id": "FMM-ITEM-REENTRY-CHANGED",
+          "fresh_semantic_family_id": "FMM-FAMILY-REENTRY-CHANGED",
+          "maximum_repair_cycles": 1,
+          "exhaustion_disposition": "RETURN_TO_PLANNER_WITHOUT_EXIT_CREDIT"
+        },
+        {
+          "kc_id": "V3-KC-949593",
+          "failed_function": "NEAR_USE",
+          "triggering_response_feature_ids": [
+            "OSM-FEATURE-NEAR-0",
+            "OSM-FEATURE-NEAR-1",
+            "OSM-FEATURE-NEAR-3"
+          ],
+          "repair_node_id": "OSM-NODE-REPAIR-NEAR",
+          "repair_confirmation_item_id": "OSM-ITEM-REPAIR-NEAR",
+          "fresh_reentry_item_id": "OSM-ITEM-REENTRY-NEAR",
+          "fresh_semantic_family_id": "OSM-FAMILY-REENTRY-NEAR",
+          "maximum_repair_cycles": 1,
+          "exhaustion_disposition": "RETURN_TO_PLANNER_WITHOUT_EXIT_CREDIT"
+        },
+        {
+          "kc_id": "V3-KC-949593",
+          "failed_function": "CHANGED_TASK",
+          "triggering_response_feature_ids": [
+            "OSM-FEATURE-CHANGED-0",
+            "OSM-FEATURE-CHANGED-1",
+            "OSM-FEATURE-CHANGED-2"
+          ],
+          "repair_node_id": "OSM-NODE-REPAIR-CHANGED",
+          "repair_confirmation_item_id": "OSM-ITEM-REPAIR-CHANGED",
+          "fresh_reentry_item_id": "OSM-ITEM-REENTRY-CHANGED",
+          "fresh_semantic_family_id": "OSM-FAMILY-REENTRY-CHANGED",
+          "maximum_repair_cycles": 1,
+          "exhaustion_disposition": "RETURN_TO_PLANNER_WITHOUT_EXIT_CREDIT"
+        },
+        {
+          "kc_id": "V3-KC-865898",
+          "failed_function": "NEAR_USE",
+          "triggering_response_feature_ids": [
+            "ACT-FEATURE-NEAR-1",
+            "ACT-FEATURE-NEAR-2",
+            "ACT-FEATURE-NEAR-3"
+          ],
+          "repair_node_id": "ACT-NODE-REPAIR-NEAR",
+          "repair_confirmation_item_id": "ACT-ITEM-REPAIR-NEAR",
+          "fresh_reentry_item_id": "ACT-ITEM-REENTRY-NEAR",
+          "fresh_semantic_family_id": "ACT-FAMILY-REENTRY-NEAR",
+          "maximum_repair_cycles": 1,
+          "exhaustion_disposition": "RETURN_TO_PLANNER_WITHOUT_EXIT_CREDIT"
+        },
+        {
+          "kc_id": "V3-KC-865898",
+          "failed_function": "CHANGED_TASK",
+          "triggering_response_feature_ids": [
+            "ACT-FEATURE-CHANGED-0",
+            "ACT-FEATURE-CHANGED-2",
+            "ACT-FEATURE-CHANGED-3"
+          ],
+          "repair_node_id": "ACT-NODE-REPAIR-CHANGED",
+          "repair_confirmation_item_id": "ACT-ITEM-REPAIR-CHANGED",
+          "fresh_reentry_item_id": "ACT-ITEM-REENTRY-CHANGED",
+          "fresh_semantic_family_id": "ACT-FAMILY-REENTRY-CHANGED",
+          "maximum_repair_cycles": 1,
+          "exhaustion_disposition": "RETURN_TO_PLANNER_WITHOUT_EXIT_CREDIT"
+        },
+        {
+          "kc_id": "V3-KC-985282",
+          "failed_function": "NEAR_USE",
+          "triggering_response_feature_ids": [
+            "COM-FEATURE-NEAR-0",
+            "COM-FEATURE-NEAR-1",
+            "COM-FEATURE-NEAR-3"
+          ],
+          "repair_node_id": "COM-NODE-REPAIR-NEAR",
+          "repair_confirmation_item_id": "COM-ITEM-REPAIR-NEAR",
+          "fresh_reentry_item_id": "COM-ITEM-REENTRY-NEAR",
+          "fresh_semantic_family_id": "COM-FAMILY-REENTRY-NEAR",
+          "maximum_repair_cycles": 1,
+          "exhaustion_disposition": "RETURN_TO_PLANNER_WITHOUT_EXIT_CREDIT"
+        },
+        {
+          "kc_id": "V3-KC-985282",
+          "failed_function": "CHANGED_TASK",
+          "triggering_response_feature_ids": [
+            "COM-FEATURE-CHANGED-0",
+            "COM-FEATURE-CHANGED-1",
+            "COM-FEATURE-CHANGED-2"
+          ],
+          "repair_node_id": "COM-NODE-REPAIR-CHANGED",
+          "repair_confirmation_item_id": "COM-ITEM-REPAIR-CHANGED",
+          "fresh_reentry_item_id": "COM-ITEM-REENTRY-CHANGED",
+          "fresh_semantic_family_id": "COM-FAMILY-REENTRY-CHANGED",
+          "maximum_repair_cycles": 1,
+          "exhaustion_disposition": "RETURN_TO_PLANNER_WITHOUT_EXIT_CREDIT"
+        }
+      ],
+      "prerequisite_handoffs": [],
+      "hard_prerequisite_relation_ids": [],
+      "item_level_dok_labels_authored": false,
+      "item_dok_claims_made": false
+    },
+    "presentation_status": "CONTENT_CANDIDATE_RUNTIME_AND_BROWSER_QA_PENDING"
+  }
+}

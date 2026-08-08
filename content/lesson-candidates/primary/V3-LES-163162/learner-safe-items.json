@@ -1,0 +1,268 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.2",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Omission is available and is not scored as a selected misconception.",
+  "items": [
+    {
+      "prompt_key": "RSF_ENTRY",
+      "title": "Starting check: gonadal function",
+      "prompt": "Which paired function is most directly associated with the testes?",
+      "response_type": "single_select",
+      "options": [
+        "Sperm production and androgen secretion",
+        "Sperm maturation and long-term uterine support",
+        "Oocyte transport and implantation support",
+        "Semen delivery and ovarian hormone secretion"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "RSF_GUIDED",
+      "title": "Guided practice: maturation before transport",
+      "prompt": "Which statement correctly distinguishes epididymis and vas deferens?",
+      "response_type": "single_select",
+      "options": [
+        "The vas deferens produces sperm; the epididymis produces testosterone",
+        "The epididymis supports sperm maturation; the vas deferens transports sperm",
+        "The epididymis supports implantation; the vas deferens transports oocytes",
+        "Both structures are ovarian hormone-producing gonads"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "RSF_LIGHT",
+      "title": "Less help: fertilization site",
+      "prompt": "Which structure most commonly transports the oocyte and provides the usual site of fertilization?",
+      "response_type": "single_select",
+      "options": [
+        "Uterus",
+        "Cervix",
+        "Oviduct",
+        "Vagina"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "RSF_SOLO",
+      "title": "On your own: implantation support",
+      "prompt": "Which structure directly provides the site for implantation and supports prenatal development?",
+      "response_type": "single_select",
+      "options": [
+        "Epididymis",
+        "Vas deferens",
+        "Oviduct",
+        "Uterus"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "RSF_NEAR",
+      "title": "Near exit: compare gonads",
+      "prompt": "Which comparison of ovaries and testes is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Both produce gametes and secrete reproductive hormones",
+        "Both serve primarily as ducts for mature gametes",
+        "Ovaries support implantation while testes support fertilization",
+        "Testes produce oocytes while ovaries produce sperm"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "RSF_CHANGED",
+      "title": "Changed exit: separate transport and secretion",
+      "prompt": "A vas deferens is experimentally blocked while testicular tissue remains functional. Which direct outcome is most likely?",
+      "response_type": "single_select",
+      "options": [
+        "Sperm production stops completely while androgen secretion rises sharply",
+        "Sperm transport into the ejaculate falls while androgen secretion can continue",
+        "Oocyte transport through an oviduct stops while uterine support continues",
+        "Implantation stops because the uterine lining and cervix are both absent"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "RSF_REPAIR_NEAR",
+      "title": "Repair shared gonadal functions",
+      "prompt": "Which description correctly identifies the two shared functions of ovaries and testes?",
+      "response_type": "single_select",
+      "options": [
+        "Both are primarily transport ducts and neither secretes hormones",
+        "Both support implantation and serve as the usual fertilization site",
+        "Both produce gametes and secrete reproductive hormones",
+        "Both mature sperm and store oocytes after ovulation"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "RSF_REENTRY_NEAR",
+      "title": "Fresh re-entry: separate gonadal roles",
+      "prompt": "A research model preserves hormone-secreting cells in both ovaries and testes but disables gamete-forming cells. Which shared gonadal function is directly lost?",
+      "response_type": "single_select",
+      "options": [
+        "Transport through the oviduct and vas deferens",
+        "Support of implantation by both gonads",
+        "Secretion of every reproductive hormone by both gonads",
+        "Production of oocytes or sperm, respectively"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "RSF_REPAIR_CHANGED",
+      "title": "Repair disruption tracing",
+      "prompt": "How should a localized duct blockage be analyzed?",
+      "response_type": "single_select",
+      "options": [
+        "Locate the duct step, then preserve unaffected upstream functions",
+        "Assume every reproductive production, transport, and endocrine function stops",
+        "Convert the obstructed transport duct into a hormone-producing gonad",
+        "Infer a specific clinical diagnosis solely from the structure's name"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "RSF_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: oviduct transport",
+      "prompt": "An oviduct is blocked while ovarian cycling remains intact. Which direct prediction is strongest?",
+      "response_type": "single_select",
+      "options": [
+        "Ovarian hormone secretion and follicular cycling must immediately stop",
+        "Gamete meeting is impaired while ovarian endocrine cycling can continue",
+        "The vas deferens begins transporting the oocyte toward the uterus",
+        "The uterus becomes the usual fertilization site after oviduct blockage"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HRC_ENTRY",
+      "title": "Starting check: axis direction",
+      "prompt": "Which sequence correctly represents the initial hypothalamic–pituitary–gonadal signal path?",
+      "response_type": "single_select",
+      "options": [
+        "LH → posterior pituitary → gonadal hormones",
+        "FSH → hypothalamus → GnRH and insulin",
+        "GnRH → anterior pituitary → FSH and LH",
+        "Progesterone → thyroid → GnRH and FSH"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HRC_GUIDED",
+      "title": "Guided practice: male gonadal targets",
+      "prompt": "Which pairing correctly describes major LH and FSH functions in the testes?",
+      "response_type": "single_select",
+      "options": [
+        "LH supports Sertoli cells; FSH produces adrenal cortisol",
+        "LH transports sperm; FSH stores sperm in the epididymis",
+        "LH triggers menstruation; FSH supports uterine implantation",
+        "LH stimulates Leydig testosterone; FSH supports Sertoli function"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HRC_LIGHT",
+      "title": "Less help: follicular development",
+      "prompt": "During the follicular phase, which change most directly follows increased FSH action?",
+      "response_type": "single_select",
+      "options": [
+        "Follicular development with increasing estrogen production",
+        "Immediate uterine implantation of an embryo",
+        "Corpus-luteum regression and progesterone withdrawal",
+        "Permanent suppression of all ovarian activity"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HRC_SOLO",
+      "title": "On your own: ovulatory trigger",
+      "prompt": "Which hormonal event most directly triggers ovulation?",
+      "response_type": "single_select",
+      "options": [
+        "A sustained fall in all gonadotropins",
+        "A midcycle LH surge",
+        "A progesterone drop before follicle growth",
+        "A gradual decline in follicular estrogen"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HRC_NEAR",
+      "title": "Near exit: hormone withdrawal",
+      "prompt": "Without pregnancy-maintaining signals, the corpus luteum regresses. Which sequence is expected?",
+      "response_type": "single_select",
+      "options": [
+        "FSH and LH disappear permanently from circulation",
+        "Progesterone rises continuously and menstruation stops",
+        "Progesterone and estrogen fall, then menstruation follows",
+        "Testosterone rises and directly maintains the endometrium"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HRC_CHANGED",
+      "title": "Changed exit: switch the feedback sign",
+      "prompt": "Estrogen remains high for a sustained interval near midcycle. Which response is most likely?",
+      "response_type": "single_select",
+      "options": [
+        "Negative feedback eliminates LH and prevents ovulation",
+        "FSH permanently suppresses all follicular development",
+        "Progesterone withdrawal immediately causes menstruation",
+        "Positive feedback produces an LH surge and promotes ovulation"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HRC_REPAIR_NEAR",
+      "title": "Repair the luteal transition",
+      "prompt": "After corpus-luteum regression without a pregnancy-maintaining signal, which causal sequence should be used?",
+      "response_type": "single_select",
+      "options": [
+        "Progesterone and estrogen fall → endometrial support decreases → menstruation follows",
+        "Progesterone rises → the endometrium is maintained indefinitely → menstruation follows",
+        "LH disappears permanently → the corpus luteum enlarges → ovulation repeats",
+        "Testosterone rises → endometrial support increases → menstruation stops"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HRC_REENTRY_NEAR",
+      "title": "Fresh re-entry: end-of-cycle withdrawal",
+      "prompt": "At the end of a nonpregnant cycle, luteal tissue loses support and progesterone falls. Which transition is expected next?",
+      "response_type": "single_select",
+      "options": [
+        "A new LH surge immediately triggers a second ovulation",
+        "Endometrial support decreases and menstruation begins",
+        "The corpus luteum enlarges and progesterone rises again",
+        "Testosterone replaces progesterone as the endometrial signal"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HRC_REPAIR_CHANGED",
+      "title": "Repair feedback-sign selection",
+      "prompt": "Which cue marks the positive-feedback exception in the ovarian cycle?",
+      "response_type": "single_select",
+      "options": [
+        "Progesterone withdrawal after luteal regression",
+        "Low estrogen during early follicular recruitment",
+        "Sustained high estrogen near midcycle",
+        "Ordinary gonadal negative feedback outside midcycle"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "HRC_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: late-follicular feedback",
+      "prompt": "During the late follicular phase, an experiment sustains high estradiol while progesterone remains low. Which phase-specific response is expected?",
+      "response_type": "single_select",
+      "options": [
+        "Negative feedback suppresses LH completely and prevents any ovulatory signal",
+        "Progesterone withdrawal immediately initiates menstruation",
+        "FSH permanently shuts down all follicular development",
+        "Positive feedback promotes an LH surge that supports ovulation"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    }
+  ]
+}

@@ -1,0 +1,163 @@
+{
+  "artifact_type": "LESSON_QUALITY_REPORT",
+  "artifact_id": "V3-LQRP-315313",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "c8d90061e94710aed8807d32124d83d2ec7ef5e733f3a5aa327e13d6d66d0373",
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-315313",
+    "lesson_script_sha256": "11016052350a56a73a0121c7addc85e54890cc273f849d4504010751cee1a550",
+    "kc_coverage_matrix_id": "V3-KCOV-315313",
+    "kc_coverage_matrix_sha256": "ffda777f61db4f38517a65b19693a5d76b736576f499c3cba6cfe429b3c78b39",
+    "lesson_presentation_plan_id": "V3-LPPL-315313",
+    "lesson_presentation_plan_sha256": "fd3be6e16cba1deee0f7b3457db121feb5ad24ab28797d71dc20cc1a9a8e3a69"
+  },
+  "payload": {
+    "lesson_id": "V3-LES-315313",
+    "review_scope": "STANDARD_ROUTE_PRIMARY_CANDIDATE",
+    "rubric_identity": {
+      "rubric_path": "key-docs/lesson-quality-rubric.md",
+      "rubric_version": "0.9.1",
+      "rubric_sha256": "21f0cf751b752158b5c8f71fd762fcc956b9ba694c8f5ee8d50158b8972557b0"
+    },
+    "check_results": [
+      {
+        "check_id": "CANONICAL-PACKET-IDENTITY",
+        "status": "PASS",
+        "evidence_refs": [
+          "inputs/task-source-packet.json"
+        ]
+      },
+      {
+        "check_id": "STANDARD-ROUTE-SCOPE",
+        "status": "PASS",
+        "evidence_refs": [
+          "inputs/task-source-packet.json#/route_proofs"
+        ]
+      },
+      {
+        "check_id": "FIFTY-MEASURABLE-ACTIVITIES",
+        "status": "PASS",
+        "evidence_refs": [
+          "lesson-script.json#/payload/activities"
+        ]
+      },
+      {
+        "check_id": "TEN-BOUNDED-REPAIR-REENTRY-PATHS",
+        "status": "PASS",
+        "evidence_refs": [
+          "lesson-script.json#/payload/kc_scripts"
+        ]
+      },
+      {
+        "check_id": "PACKET-KC-SCOPE-COVERAGE",
+        "status": "PASS",
+        "evidence_refs": [
+          "kc-coverage-matrix.json#/payload/rows",
+          "source-claim-ledger.json#/source_claims"
+        ]
+      },
+      {
+        "check_id": "DISTRACTOR-AND-ERROR-MAP-AUTHORED",
+        "status": "PASS",
+        "evidence_refs": [
+          "protected-items.json#/records/*/option_feedback",
+          "lesson-script.json#/payload/question_evidence_plan"
+        ]
+      },
+      {
+        "check_id": "NO-ITEM-DOK-CLAIMS-AUTHORIZED",
+        "status": "PASS",
+        "evidence_refs": [
+          "inputs/task-source-packet.json#/dok_authoring"
+        ]
+      },
+      {
+        "check_id": "R1-R15-STRUCTURAL",
+        "status": "PASS",
+        "evidence_refs": [
+          "validation/lesson-validate.json"
+        ]
+      },
+      {
+        "check_id": "CANONICAL-NORMALIZATION",
+        "status": "PASS",
+        "evidence_refs": [
+          "validation/normalization-smoke.json"
+        ]
+      },
+      {
+        "check_id": "PROTECTED-BOUNDARY",
+        "status": "FAILED",
+        "blocker_code": "OPTION_LENGTH_CLUEING_UNRESOLVED",
+        "reason": "The protected gate found one residual answer-length clue after the two permitted targeted revision cycles.",
+        "evidence_refs": [
+          "validation/protected-scan.json"
+        ]
+      },
+      {
+        "check_id": "INDEPENDENT-JUDGE-PRE-SCREEN",
+        "status": "BLOCKED",
+        "blocker_code": "JUDGE_PRE_SCREEN_REQUIRED",
+        "reason": "No independent judge record was authored or claimed."
+      },
+      {
+        "check_id": "KIT-VALIDATE-ONE-WRAPPER",
+        "status": "BLOCKED",
+        "blocker_code": "KIT_MANIFEST_MISSING",
+        "reason": "The repository source-kit directory has no generated KIT-MANIFEST.json; direct pinned content-cli gates are retained separately."
+      },
+      {
+        "check_id": "RENDERED-ACCESSIBILITY-RELIABILITY-EVIDENCE",
+        "status": "BLOCKED",
+        "blocker_code": "HUMAN_AND_RENDERED_EVIDENCE_REQUIRED",
+        "reason": "No revision-bound browser, assistive-technology, novice, domain, or reliability evidence is claimed."
+      }
+    ],
+    "findings": [
+      {
+        "finding_id": "LQRP-315313-001",
+        "severity": "P2",
+        "status": "BLOCKED",
+        "required_correction": "Obtain an independent judge pre-screen for the current hashes."
+      },
+      {
+        "finding_id": "LQRP-315313-002",
+        "severity": "P2",
+        "status": "BLOCKED",
+        "required_correction": "Provide the generated primary-team KIT-MANIFEST.json before rerunning commands/validate-one.txt."
+      },
+      {
+        "finding_id": "LQRP-315313-003",
+        "severity": "P2",
+        "status": "BLOCKED",
+        "required_correction": "Obtain required independent domain, blind-solve, accessibility, novice, reliability, rights, and product decisions."
+      },
+      {
+        "finding_id": "LQRP-315313-004",
+        "severity": "P1",
+        "status": "FAILED",
+        "required_correction": "After human authorization of a new finite revision budget, remove the residual CAT-ITEM-GUIDED option-length clue and rerun every invalidated gate."
+      }
+    ],
+    "evidence_refs": [
+      "source-claim-ledger.json",
+      "validation/lesson-validate.json",
+      "validation/computed-quality.json",
+      "validation/normalization-smoke.json",
+      "validation/protected-scan.json",
+      "reviews/author-self-audit.json"
+    ],
+    "claim_limits": {
+      "learner_validated": false,
+      "efficacy_established": false,
+      "mastery_calibrated": false,
+      "readiness_validated": false,
+      "production_published": false,
+      "calibrated_thresholds_available": false
+    },
+    "final_gate_status": "BLOCKED",
+    "release_eligibility": "INTERNAL_DRAFT_ONLY",
+    "production_golden_status": "BLOCKED"
+  }
+}

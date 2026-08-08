@@ -1,0 +1,398 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Starting checks may be left blank and are recorded as nonconsequential abstentions.",
+  "items": [
+    {
+      "prompt_key": "MAP_ENTRY",
+      "title": "Starting check",
+      "prompt": "Movement from nephron lumen into nearby capillary blood is called what?",
+      "response_type": "single_select",
+      "options": [
+        "Reabsorption",
+        "Secretion",
+        "Filtration",
+        "Elimination"
+      ],
+      "directions": "Choose one answer, or leave the item blank to record an abstention. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "MAP_GUIDED",
+      "title": "Guided practice",
+      "prompt": "Which structure receives filtrate directly from the glomerulus?",
+      "response_type": "single_select",
+      "options": [
+        "Proximal tubule",
+        "Bowman’s capsule",
+        "Collecting duct",
+        "Ureter"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "MAP_LIGHT",
+      "title": "Practice with less support",
+      "prompt": "Which structure extends prominently into the renal medulla?",
+      "response_type": "single_select",
+      "options": [
+        "Glomerulus",
+        "Bowman’s capsule",
+        "Loop of Henle",
+        "Proximal tubule"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "MAP_SOLO",
+      "title": "Practice independently",
+      "prompt": "Let U = ureter, B = bladder, and H = urethra. Which sequence carries urine after kidney exit?",
+      "response_type": "single_select",
+      "options": [
+        "B→U→H",
+        "H→B→U",
+        "U→H→B",
+        "U→B→H"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "MAP_NEAR",
+      "title": "Near-use exit",
+      "prompt": "Which pair completes Bowman’s → proximal → ___ → distal → ___?",
+      "response_type": "single_select",
+      "options": [
+        "Distal; loop",
+        "Loop; collecting",
+        "Collecting; loop",
+        "Loop; proximal"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "MAP_CHANGED",
+      "title": "Changed-task exit",
+      "prompt": "A tracer appears in collecting ducts but never reaches the bladder. Which structure between them is most likely blocked?",
+      "response_type": "single_select",
+      "options": [
+        "Proximal tubule",
+        "Loop of Henle",
+        "Ureter",
+        "Urethra"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "MAP_REPAIR_NEAR",
+      "title": "Repair the near-use function",
+      "prompt": "Let B = Bowman’s capsule, P = proximal tubule, and L = loop. Which route is correct?",
+      "response_type": "single_select",
+      "options": [
+        "B→P→L",
+        "L→B→P",
+        "P→B→L",
+        "L→P→B"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "MAP_REENTRY_NEAR",
+      "title": "Fresh near-use re-entry",
+      "prompt": "Let D = distal tubule, C = collecting duct, and U = ureter. Which sequence begins after the loop?",
+      "response_type": "single_select",
+      "options": [
+        "C→D→U",
+        "U→D→C",
+        "D→U→C",
+        "D→C→U"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "MAP_REPAIR_CHANGED",
+      "title": "Repair the changed-task function",
+      "prompt": "A tracer reaches the bladder but cannot leave the body. Which structure is the next localization?",
+      "response_type": "single_select",
+      "options": [
+        "Ureter",
+        "Urethra",
+        "Collecting duct",
+        "Proximal tubule"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "MAP_REENTRY_CHANGED",
+      "title": "Fresh changed-task re-entry",
+      "prompt": "A marker enters Bowman’s capsule but never appears in the proximal tubule. Which boundary is disrupted?",
+      "response_type": "single_select",
+      "options": [
+        "Loop entry",
+        "Distal entry",
+        "Collecting entry",
+        "Capsule→proximal"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "URN_ENTRY",
+      "title": "Starting check",
+      "prompt": "A small solute moves from glomerular blood into Bowman’s capsule. Which process is this?",
+      "response_type": "single_select",
+      "options": [
+        "Elimination",
+        "Filtration",
+        "Reabsorption",
+        "Secretion"
+      ],
+      "directions": "Choose one answer, or leave the item blank to record an abstention. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "URN_GUIDED",
+      "title": "Guided practice",
+      "prompt": "Glucose moves from proximal tubular fluid into capillary blood. Which process is this?",
+      "response_type": "single_select",
+      "options": [
+        "Excretion",
+        "Filtration",
+        "Reabsorption",
+        "Secretion"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "URN_LIGHT",
+      "title": "Practice with less support",
+      "prompt": "A substance moves from peritubular blood into distal tubular fluid. Which process is this?",
+      "response_type": "single_select",
+      "options": [
+        "Storage",
+        "Filtration",
+        "Reabsorption",
+        "Secretion"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "URN_SOLO",
+      "title": "Practice independently",
+      "prompt": "Which loop property supports the medullary gradient?",
+      "response_type": "single_select",
+      "options": [
+        "Salt exits; no water",
+        "Both limbs pass water equally",
+        "Both limbs retain all salt",
+        "Ascending limb passes water freely"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "URN_NEAR",
+      "title": "Near-use exit",
+      "prompt": "Which movement is reabsorption?",
+      "response_type": "single_select",
+      "options": [
+        "Bladder → urethra",
+        "Blood → Bowman’s space",
+        "Tubule→blood",
+        "Capillary blood → distal tubule"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "URN_CHANGED",
+      "title": "Changed-task exit",
+      "prompt": "A defect prevents salt from leaving the ascending limb. What is the most direct downstream effect?",
+      "response_type": "single_select",
+      "options": [
+        "More bladder storage",
+        "Stronger medullary gradient",
+        "More glomerular filtration",
+        "Weaker gradient"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "URN_REPAIR_NEAR",
+      "title": "Repair the near-use function",
+      "prompt": "Which direction-label pairing is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Urine→outside: filtration",
+        "Tubule→blood: reabsorb",
+        "Blood→tubule: reabsorb",
+        "Blood→Bowman’s: secretion"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "URN_REENTRY_NEAR",
+      "title": "Fresh near-use re-entry",
+      "prompt": "A drug moves from capillary blood into proximal tubular fluid after filtration. What is the process?",
+      "response_type": "single_select",
+      "options": [
+        "Secretion",
+        "Reabsorption",
+        "Filtration",
+        "Elimination"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "URN_REPAIR_CHANGED",
+      "title": "Repair the changed-task function",
+      "prompt": "What does ascending-limb salt removal primarily help create?",
+      "response_type": "single_select",
+      "options": [
+        "Bladder volume",
+        "Dilute cortex",
+        "Hyperosmotic medulla",
+        "Glomerular pressure"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "URN_REENTRY_CHANGED",
+      "title": "Fresh changed-task re-entry",
+      "prompt": "The descending limb becomes impermeable to water. Which outcome is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "Less water leaves",
+        "More water leaves descending fluid",
+        "A stronger gradient automatically forms",
+        "Filtrate concentrates more in descent"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "HOM_ENTRY",
+      "title": "Starting check",
+      "prompt": "If nephron water reabsorption decreases, which urine change is most direct?",
+      "response_type": "single_select",
+      "options": [
+        "No urine formation",
+        "More glucose recovery",
+        "Higher urine volume",
+        "Lower urine volume"
+      ],
+      "directions": "Choose one answer, or leave the item blank to record an abstention. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "HOM_GUIDED",
+      "title": "Guided practice",
+      "prompt": "Which movement conserves filtered amino acids?",
+      "response_type": "single_select",
+      "options": [
+        "Storage in bladder",
+        "Flow through urethra",
+        "Secretion into tubule",
+        "Reabsorption to blood"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "HOM_LIGHT",
+      "title": "Practice with less support",
+      "prompt": "Reduced acid secretion by nephron tubules most directly impairs which role?",
+      "response_type": "single_select",
+      "options": [
+        "Acid–base balance",
+        "Ureter transport",
+        "Urine storage",
+        "Glucose filtration"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "HOM_SOLO",
+      "title": "Practice independently",
+      "prompt": "Which structure stores urine before elimination?",
+      "response_type": "single_select",
+      "options": [
+        "Urethra",
+        "Bladder",
+        "Ureter",
+        "Collecting duct"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "HOM_NEAR",
+      "title": "Near-use exit",
+      "prompt": "Glucose reabsorption decreases. Which direction pair follows for (urine glucose; blood recovery)?",
+      "response_type": "single_select",
+      "options": [
+        "Down; down",
+        "Unchanged; up",
+        "Down; up",
+        "Up; down"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "HOM_CHANGED",
+      "title": "Changed-task exit",
+      "prompt": "Urine composition is normal, but urine reaches the bladder and cannot be released despite bladder contraction. Which site is most directly implicated?",
+      "response_type": "single_select",
+      "options": [
+        "Urethral sphincter",
+        "Loop of Henle",
+        "Glomerulus",
+        "Proximal tubule"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "HOM_REPAIR_NEAR",
+      "title": "Repair the near-use function",
+      "prompt": "When reabsorption of a substance falls, where does more of it remain?",
+      "response_type": "single_select",
+      "options": [
+        "Renal artery only",
+        "Inside the glomerulus",
+        "Tubular fluid",
+        "Capillary blood"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "HOM_REENTRY_NEAR",
+      "title": "Fresh near-use re-entry",
+      "prompt": "Ion reabsorption decreases. Which immediate pattern best follows?",
+      "response_type": "single_select",
+      "options": [
+        "More bladder contraction",
+        "More ion in urine",
+        "More blood recovery",
+        "No urine flow"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "HOM_REPAIR_CHANGED",
+      "title": "Repair the changed-task function",
+      "prompt": "Which observation points most strongly to an outflow rather than nephron-processing defect?",
+      "response_type": "single_select",
+      "options": [
+        "Reduced glomerular filtration",
+        "Abnormal urine solute pattern",
+        "Weak medullary gradient",
+        "Normal urine trapped"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    },
+    {
+      "prompt_key": "HOM_REENTRY_CHANGED",
+      "title": "Fresh changed-task re-entry",
+      "prompt": "Urine leaves the kidney but never reaches the bladder. Which structure is most directly affected?",
+      "response_type": "single_select",
+      "options": [
+        "Collecting duct",
+        "Ureter",
+        "Urethra",
+        "Bladder sphincter"
+      ],
+      "directions": "Choose one answer. Feedback appears only after commitment."
+    }
+  ]
+}

@@ -1,0 +1,1159 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "author_option_presentation_audit": {
+    "review_status": "AUTHOR_CHECK_COMPLETED_INDEPENDENT_REVIEW_PENDING",
+    "correct_position_counts": {
+      "0": 7,
+      "1": 8,
+      "2": 7,
+      "3": 8
+    },
+    "longest_repeated_correct_position_run": 1,
+    "item_count": 30
+  },
+  "records": [
+    {
+      "answer_record_id": "GEO-ITEM-ENTRY",
+      "learner_prompt_key": "GEO_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "At fixed separation and material, capacitance is directly proportional to overlap area.",
+      "post_commitment_feedback": "At fixed separation and material, capacitance is directly proportional to overlap area.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "GEO-FEATURE-ENTRY-1",
+          "observation_language": "This response is consistent with selecting “Decrease overlap area” for the stated evidence.",
+          "rejection_rationale": "Decreasing overlap area decreases capacitance.",
+          "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "GEO-FEATURE-ENTRY-2",
+          "observation_language": "This response is consistent with selecting “Add stored charge only” for the stated evidence.",
+          "rejection_rationale": "Changing charge on fixed geometry changes voltage, not capacitance.",
+          "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "GEO-FEATURE-ENTRY-3",
+          "observation_language": "This response is consistent with selecting “Remove stored charge only” for the stated evidence.",
+          "rejection_rationale": "Removing charge from fixed geometry changes voltage, not capacitance.",
+          "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for predict area effect.",
+        "Apply the taught model before inspecting option presentation.",
+        "At fixed separation and material, capacitance is directly proportional to overlap area."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "GEO-ITEM-GUIDED",
+      "learner_prompt_key": "GEO_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "With separation and material fixed, doubling area doubles capacitance.",
+      "post_commitment_feedback": "With separation and material fixed, doubling area doubles capacitance.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "GEO-FEATURE-GUIDED-0",
+          "observation_language": "This response is consistent with selecting “1/2” for the stated evidence.",
+          "rejection_rationale": "This reverses the direct area proportionality.",
+          "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "GEO-FEATURE-GUIDED-2",
+          "observation_language": "This response is consistent with selecting “1” for the stated evidence.",
+          "rejection_rationale": "This ignores the doubled overlap area.",
+          "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "GEO-FEATURE-GUIDED-3",
+          "observation_language": "This response is consistent with selecting “4” for the stated evidence.",
+          "rejection_rationale": "This squares a factor that enters linearly.",
+          "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for calculate area ratio.",
+        "Apply the taught model before inspecting option presentation.",
+        "With separation and material fixed, doubling area doubles capacitance."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "GEO-ITEM-LIGHT",
+      "learner_prompt_key": "GEO_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "Because capacitance is inversely proportional to separation, doubling d halves C.",
+      "post_commitment_feedback": "Because capacitance is inversely proportional to separation, doubling d halves C.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "GEO-FEATURE-LIGHT-0",
+          "observation_language": "This response is consistent with selecting “It doubles” for the stated evidence.",
+          "rejection_rationale": "This treats separation as a numerator factor.",
+          "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "GEO-FEATURE-LIGHT-1",
+          "observation_language": "This response is consistent with selecting “It stays fixed” for the stated evidence.",
+          "rejection_rationale": "This omits the geometry change.",
+          "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "GEO-FEATURE-LIGHT-3",
+          "observation_language": "This response is consistent with selecting “It quadruples” for the stated evidence.",
+          "rejection_rationale": "This incorrectly squares the separation factor.",
+          "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for predict separation effect.",
+        "Apply the taught model before inspecting option presentation.",
+        "Because capacitance is inversely proportional to separation, doubling d halves C."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "GEO-ITEM-SOLO",
+      "learner_prompt_key": "GEO_SOLO",
+      "correct_option_index": 3,
+      "rationale": "The area factor of 3 and inverse separation factor of 1/3 cancel.",
+      "post_commitment_feedback": "The area factor of 3 and inverse separation factor of 1/3 cancel.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "GEO-FEATURE-SOLO-0",
+          "observation_language": "This response is consistent with selecting “It triples” for the stated evidence.",
+          "rejection_rationale": "This uses the area factor but ignores separation.",
+          "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "GEO-FEATURE-SOLO-1",
+          "observation_language": "This response is consistent with selecting “It becomes one-third” for the stated evidence.",
+          "rejection_rationale": "This uses separation but ignores area.",
+          "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "GEO-FEATURE-SOLO-2",
+          "observation_language": "This response is consistent with selecting “It becomes ninefold” for the stated evidence.",
+          "rejection_rationale": "This multiplies both changes in the same direction.",
+          "repair_feature_id": "GEO-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for combine geometry factors.",
+        "Apply the taught model before inspecting option presentation.",
+        "The area factor of 3 and inverse separation factor of 1/3 cancel."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "GEO-ITEM-NEAR",
+      "learner_prompt_key": "GEO_NEAR",
+      "correct_option_index": 1,
+      "rationale": "The ratio is (4A/A)(d/2d) = 2.",
+      "post_commitment_feedback": "The ratio is (4A/A)(d/2d) = 2.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "GEO-FEATURE-NEAR-0",
+          "observation_language": "This response is consistent with selecting “1/2” for the stated evidence.",
+          "rejection_rationale": "This applies only the inverse separation factor.",
+          "repair_feature_id": "GEO-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "GEO-FEATURE-NEAR-2",
+          "observation_language": "This response is consistent with selecting “4” for the stated evidence.",
+          "rejection_rationale": "This applies only the area factor.",
+          "repair_feature_id": "GEO-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "GEO-FEATURE-NEAR-3",
+          "observation_language": "This response is consistent with selecting “8” for the stated evidence.",
+          "rejection_rationale": "This multiplies by separation instead of dividing by it.",
+          "repair_feature_id": "GEO-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for calculate parallel plate ratio.",
+        "Apply the taught model before inspecting option presentation.",
+        "The ratio is (4A/A)(d/2d) = 2."
+      ],
+      "decision_point": "Place the area factor above the line and the separation factor below it.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "GEO-ITEM-CHANGED",
+      "learner_prompt_key": "GEO_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "At equal voltage, twice the charge means twice the capacitance; with equal separation, that requires twice the area.",
+      "post_commitment_feedback": "At equal voltage, twice the charge means twice the capacitance; with equal separation, that requires twice the area.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "GEO-FEATURE-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “Half the area” for the stated evidence.",
+          "rejection_rationale": "Half the area would halve capacitance and stored charge at fixed voltage.",
+          "repair_feature_id": "GEO-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "GEO-FEATURE-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “The same area” for the stated evidence.",
+          "rejection_rationale": "The same area would give the same capacitance and charge.",
+          "repair_feature_id": "GEO-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "GEO-FEATURE-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “Four times the area” for the stated evidence.",
+          "rejection_rationale": "Four times the area would store four times the charge at fixed voltage.",
+          "repair_feature_id": "GEO-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for infer area from charge at fixed voltage.",
+        "Apply the taught model before inspecting option presentation.",
+        "At equal voltage, twice the charge means twice the capacitance; with equal separation, that requires twice the area."
+      ],
+      "decision_point": "Convert the charge ratio to a capacitance ratio before inferring geometry.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "GEO-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "GEO_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Area follows the same direction as C, while separation appears as old divided by new.",
+      "post_commitment_feedback": "Area follows the same direction as C, while separation appears as old divided by new.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "GEO-FEATURE-REPAIR-NEAR-1",
+          "observation_language": "This response is consistent with selecting “1/(a·s)” for the stated evidence.",
+          "rejection_rationale": "This reverses the area factor.",
+          "repair_feature_id": "GEO-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "GEO-FEATURE-REPAIR-NEAR-2",
+          "observation_language": "This response is consistent with selecting “a·s” for the stated evidence.",
+          "rejection_rationale": "This reverses the separation factor.",
+          "repair_feature_id": "GEO-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "GEO-FEATURE-REPAIR-NEAR-3",
+          "observation_language": "This response is consistent with selecting “s/a” for the stated evidence.",
+          "rejection_rationale": "This reverses both geometry factors.",
+          "repair_feature_id": "GEO-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild geometry ratio.",
+        "Apply the taught model before inspecting option presentation.",
+        "Area follows the same direction as C, while separation appears as old divided by new."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "GEO-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "GEO_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "Tripling area and halving separation multiply capacitance by 3 × 2 = 6.",
+      "post_commitment_feedback": "Tripling area and halving separation multiply capacitance by 3 × 2 = 6.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "GEO-FEATURE-REENTRY-NEAR-0",
+          "observation_language": "This response is consistent with selecting “2/3” for the stated evidence.",
+          "rejection_rationale": "This reverses both contributing factors.",
+          "repair_feature_id": "GEO-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "GEO-FEATURE-REENTRY-NEAR-1",
+          "observation_language": "This response is consistent with selecting “3/2” for the stated evidence.",
+          "rejection_rationale": "This divides the area factor by the separation gain.",
+          "repair_feature_id": "GEO-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "GEO-FEATURE-REENTRY-NEAR-2",
+          "observation_language": "This response is consistent with selecting “3” for the stated evidence.",
+          "rejection_rationale": "This uses only the area factor.",
+          "repair_feature_id": "GEO-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter geometry ratio.",
+        "Apply the taught model before inspecting option presentation.",
+        "Tripling area and halving separation multiply capacitance by 3 × 2 = 6."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "GEO-ITEM-NEAR"
+    },
+    {
+      "answer_record_id": "GEO-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "GEO_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "At equal voltage, Q = CV makes the charge ratio equal the capacitance ratio.",
+      "post_commitment_feedback": "At equal voltage, Q = CV makes the charge ratio equal the capacitance ratio.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "GEO-FEATURE-REPAIR-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “CB = CA/3” for the stated evidence.",
+          "rejection_rationale": "This reverses the charge-to-capacitance ratio.",
+          "repair_feature_id": "GEO-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "GEO-FEATURE-REPAIR-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “CB = CA” for the stated evidence.",
+          "rejection_rationale": "Equal voltage does not force equal capacitance.",
+          "repair_feature_id": "GEO-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "GEO-FEATURE-REPAIR-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “CB = 9CA” for the stated evidence.",
+          "rejection_rationale": "This squares a linear relation.",
+          "repair_feature_id": "GEO-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild fixed voltage inference.",
+        "Apply the taught model before inspecting option presentation.",
+        "At equal voltage, Q = CV makes the charge ratio equal the capacitance ratio."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "GEO-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "GEO_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Half the charge at equal voltage means half the capacitance; with equal area, doubling separation gives C/2.",
+      "post_commitment_feedback": "Half the charge at equal voltage means half the capacitance; with equal area, doubling separation gives C/2.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "GEO-FEATURE-REENTRY-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “d/4” for the stated evidence.",
+          "rejection_rationale": "Quartering separation would quadruple capacitance.",
+          "repair_feature_id": "GEO-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "GEO-FEATURE-REENTRY-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “d/2” for the stated evidence.",
+          "rejection_rationale": "Halving separation would double capacitance.",
+          "repair_feature_id": "GEO-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "GEO-FEATURE-REENTRY-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “d” for the stated evidence.",
+          "rejection_rationale": "Equal separation would preserve capacitance.",
+          "repair_feature_id": "GEO-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter geometry from fixed voltage data.",
+        "Apply the taught model before inspecting option presentation.",
+        "Half the charge at equal voltage means half the capacitance; with equal area, doubling separation gives C/2."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "GEO-ITEM-CHANGED"
+    },
+    {
+      "answer_record_id": "ENG-ITEM-ENTRY",
+      "learner_prompt_key": "ENG_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "With C fixed, Q = CV makes charge directly proportional to voltage.",
+      "post_commitment_feedback": "With C fixed, Q = CV makes charge directly proportional to voltage.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "ENG-FEATURE-ENTRY-0",
+          "observation_language": "This response is consistent with selecting “It quadruples” for the stated evidence.",
+          "rejection_rationale": "This incorrectly squares the charge factor.",
+          "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "ENG-FEATURE-ENTRY-2",
+          "observation_language": "This response is consistent with selecting “It halves” for the stated evidence.",
+          "rejection_rationale": "This reverses the direct Q–V relation.",
+          "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "ENG-FEATURE-ENTRY-3",
+          "observation_language": "This response is consistent with selecting “It stays fixed” for the stated evidence.",
+          "rejection_rationale": "This ignores the voltage change.",
+          "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for predict charge from voltage.",
+        "Apply the taught model before inspecting option presentation.",
+        "With C fixed, Q = CV makes charge directly proportional to voltage."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "ENG-ITEM-GUIDED",
+      "learner_prompt_key": "ENG_GUIDED",
+      "correct_option_index": 2,
+      "rationale": "Q = CV = (3 μF)(2 V) = 6 μC.",
+      "post_commitment_feedback": "Q = CV = (3 μF)(2 V) = 6 μC.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "ENG-FEATURE-GUIDED-0",
+          "observation_language": "This response is consistent with selecting “12 μC” for the stated evidence.",
+          "rejection_rationale": "This introduces an extra factor of two.",
+          "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "ENG-FEATURE-GUIDED-1",
+          "observation_language": "This response is consistent with selecting “1.5 μC” for the stated evidence.",
+          "rejection_rationale": "This divides capacitance by voltage.",
+          "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "ENG-FEATURE-GUIDED-3",
+          "observation_language": "This response is consistent with selecting “5 μC” for the stated evidence.",
+          "rejection_rationale": "This adds the numerical values instead of multiplying.",
+          "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for calculate stored charge.",
+        "Apply the taught model before inspecting option presentation.",
+        "Q = CV = (3 μF)(2 V) = 6 μC."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "ENG-ITEM-LIGHT",
+      "learner_prompt_key": "ENG_LIGHT",
+      "correct_option_index": 3,
+      "rationale": "At fixed C, U = 1/2 CV², so tripling V multiplies energy by 3² = 9.",
+      "post_commitment_feedback": "At fixed C, U = 1/2 CV², so tripling V multiplies energy by 3² = 9.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "ENG-FEATURE-LIGHT-0",
+          "observation_language": "This response is consistent with selecting “1/9” for the stated evidence.",
+          "rejection_rationale": "This reverses the direction of the voltage change.",
+          "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "ENG-FEATURE-LIGHT-1",
+          "observation_language": "This response is consistent with selecting “3” for the stated evidence.",
+          "rejection_rationale": "This uses the linear charge factor for energy.",
+          "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "ENG-FEATURE-LIGHT-2",
+          "observation_language": "This response is consistent with selecting “6” for the stated evidence.",
+          "rejection_rationale": "This multiplies by two instead of squaring three.",
+          "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for predict energy from voltage.",
+        "Apply the taught model before inspecting option presentation.",
+        "At fixed C, U = 1/2 CV², so tripling V multiplies energy by 3² = 9."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "ENG-ITEM-SOLO",
+      "learner_prompt_key": "ENG_SOLO",
+      "correct_option_index": 0,
+      "rationale": "At equal voltage, U = 1/2 CV² makes energy directly proportional to capacitance.",
+      "post_commitment_feedback": "At equal voltage, U = 1/2 CV² makes energy directly proportional to capacitance.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "ENG-FEATURE-SOLO-1",
+          "observation_language": "This response is consistent with selecting “1/4” for the stated evidence.",
+          "rejection_rationale": "This reverses the capacitance ratio.",
+          "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "ENG-FEATURE-SOLO-2",
+          "observation_language": "This response is consistent with selecting “1” for the stated evidence.",
+          "rejection_rationale": "This ignores the capacitance difference.",
+          "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "ENG-FEATURE-SOLO-3",
+          "observation_language": "This response is consistent with selecting “2” for the stated evidence.",
+          "rejection_rationale": "This takes an unsupported square root.",
+          "repair_feature_id": "ENG-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for compare energy at fixed voltage.",
+        "Apply the taught model before inspecting option presentation.",
+        "At equal voltage, U = 1/2 CV² makes energy directly proportional to capacitance."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "ENG-ITEM-NEAR",
+      "learner_prompt_key": "ENG_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Charge doubles because Q ∝ V, while energy quadruples because U ∝ V².",
+      "post_commitment_feedback": "Charge doubles because Q ∝ V, while energy quadruples because U ∝ V².",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "ENG-FEATURE-NEAR-0",
+          "observation_language": "This response is consistent with selecting “(2, 2)” for the stated evidence.",
+          "rejection_rationale": "This treats energy as linear in voltage.",
+          "repair_feature_id": "ENG-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "ENG-FEATURE-NEAR-1",
+          "observation_language": "This response is consistent with selecting “(1/2, 1/4)” for the stated evidence.",
+          "rejection_rationale": "This reverses both increases.",
+          "repair_feature_id": "ENG-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "ENG-FEATURE-NEAR-3",
+          "observation_language": "This response is consistent with selecting “(4, 2)” for the stated evidence.",
+          "rejection_rationale": "This swaps the linear and squared factors.",
+          "repair_feature_id": "ENG-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for compare charge and energy factors.",
+        "Apply the taught model before inspecting option presentation.",
+        "Charge doubles because Q ∝ V, while energy quadruples because U ∝ V²."
+      ],
+      "decision_point": "Apply the voltage factor linearly to Q and quadratically to U.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "ENG-ITEM-CHANGED",
+      "learner_prompt_key": "ENG_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "At fixed C, U ∝ V²; the square root of 16 gives a voltage factor of 4.",
+      "post_commitment_feedback": "At fixed C, U ∝ V²; the square root of 16 gives a voltage factor of 4.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "ENG-FEATURE-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “8” for the stated evidence.",
+          "rejection_rationale": "A factor of 8 would produce 64 times the energy.",
+          "repair_feature_id": "ENG-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "ENG-FEATURE-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “2” for the stated evidence.",
+          "rejection_rationale": "A factor of 2 would produce four times the energy.",
+          "repair_feature_id": "ENG-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "ENG-FEATURE-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “16” for the stated evidence.",
+          "rejection_rationale": "This treats energy as linear in voltage.",
+          "repair_feature_id": "ENG-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for infer voltage from energy ratio.",
+        "Apply the taught model before inspecting option presentation.",
+        "At fixed C, U ∝ V²; the square root of 16 gives a voltage factor of 4."
+      ],
+      "decision_point": "Invert the squared energy relation by taking a square root.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "ENG-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "ENG_REPAIR_NEAR",
+      "correct_option_index": 1,
+      "rationale": "At fixed C, Q is linear in V and U is quadratic in V.",
+      "post_commitment_feedback": "At fixed C, Q is linear in V and U is quadratic in V.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "ENG-FEATURE-REPAIR-NEAR-0",
+          "observation_language": "This response is consistent with selecting “Q×r; U×r” for the stated evidence.",
+          "rejection_rationale": "Energy does not remain linear in voltage.",
+          "repair_feature_id": "ENG-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "ENG-FEATURE-REPAIR-NEAR-2",
+          "observation_language": "This response is consistent with selecting “Q×r²; U×r” for the stated evidence.",
+          "rejection_rationale": "This swaps the charge and energy dependencies.",
+          "repair_feature_id": "ENG-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "ENG-FEATURE-REPAIR-NEAR-3",
+          "observation_language": "This response is consistent with selecting “Q×r²; U×r²” for the stated evidence.",
+          "rejection_rationale": "Charge does not acquire the squared factor.",
+          "repair_feature_id": "ENG-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild q and u scaling.",
+        "Apply the taught model before inspecting option presentation.",
+        "At fixed C, Q is linear in V and U is quadratic in V."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "ENG-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "ENG_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Charge falls by 1/3 and energy falls by (1/3)² = 1/9.",
+      "post_commitment_feedback": "Charge falls by 1/3 and energy falls by (1/3)² = 1/9.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "ENG-FEATURE-REENTRY-NEAR-1",
+          "observation_language": "This response is consistent with selecting “(1/9, 1/3)” for the stated evidence.",
+          "rejection_rationale": "This swaps the linear and squared decreases.",
+          "repair_feature_id": "ENG-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "ENG-FEATURE-REENTRY-NEAR-2",
+          "observation_language": "This response is consistent with selecting “(3, 9)” for the stated evidence.",
+          "rejection_rationale": "This changes both quantities in the wrong direction.",
+          "repair_feature_id": "ENG-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "ENG-FEATURE-REENTRY-NEAR-3",
+          "observation_language": "This response is consistent with selecting “(1/3, 1/3)” for the stated evidence.",
+          "rejection_rationale": "This treats energy as linear in voltage.",
+          "repair_feature_id": "ENG-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter charge energy scaling.",
+        "Apply the taught model before inspecting option presentation.",
+        "Charge falls by 1/3 and energy falls by (1/3)² = 1/9."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "ENG-ITEM-NEAR"
+    },
+    {
+      "answer_record_id": "ENG-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "ENG_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Because the energy factor equals the voltage factor squared, take its square root.",
+      "post_commitment_feedback": "Because the energy factor equals the voltage factor squared, take its square root.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "ENG-FEATURE-REPAIR-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “Take the reciprocal” for the stated evidence.",
+          "rejection_rationale": "A reciprocal reverses direction but does not undo the square.",
+          "repair_feature_id": "ENG-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "ENG-FEATURE-REPAIR-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “Multiply by 2” for the stated evidence.",
+          "rejection_rationale": "The one-half coefficient cancels in a ratio and does not require multiplying by two.",
+          "repair_feature_id": "ENG-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "ENG-FEATURE-REPAIR-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “Square the factor” for the stated evidence.",
+          "rejection_rationale": "Squaring moves in the forward direction rather than inverting it.",
+          "repair_feature_id": "ENG-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild inverse energy inference.",
+        "Apply the taught model before inspecting option presentation.",
+        "Because the energy factor equals the voltage factor squared, take its square root."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "ENG-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "ENG_REENTRY_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "At fixed capacitance, energy scales with the square of voltage, so a 25-fold energy increase requires a 5-fold voltage increase.",
+      "post_commitment_feedback": "At fixed capacitance, energy scales with the square of voltage, so a 25-fold energy increase requires a 5-fold voltage increase.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "ENG-FEATURE-REENTRY-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “25” for the stated evidence.",
+          "rejection_rationale": "This treats the energy factor as the voltage factor instead of taking its square root.",
+          "repair_feature_id": "ENG-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "ENG-FEATURE-REENTRY-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “√5” for the stated evidence.",
+          "rejection_rationale": "A voltage factor of √5 would produce a 5-fold, not a 25-fold, energy increase.",
+          "repair_feature_id": "ENG-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "ENG-FEATURE-REENTRY-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “1/5” for the stated evidence.",
+          "rejection_rationale": "Reducing voltage to one-fifth would reduce energy to one twenty-fifth.",
+          "repair_feature_id": "ENG-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Hold capacitance fixed and express the comparison with U proportional to V squared.",
+        "Recover the voltage factor by taking the square root of the energy factor.",
+        "At fixed capacitance, energy scales with the square of voltage, so a 25-fold energy increase requires a 5-fold voltage increase."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "ENG-ITEM-CHANGED"
+    },
+    {
+      "answer_record_id": "NET-ITEM-ENTRY",
+      "learner_prompt_key": "NET_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "Sharing both endpoint nodes defines a parallel connection.",
+      "post_commitment_feedback": "Sharing both endpoint nodes defines a parallel connection.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "NET-FEATURE-ENTRY-0",
+          "observation_language": "This response is consistent with selecting “As an open circuit” for the stated evidence.",
+          "rejection_rationale": "An open circuit describes connectivity failure, not the stated shared nodes.",
+          "repair_feature_id": "NET-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "NET-FEATURE-ENTRY-1",
+          "observation_language": "This response is consistent with selecting “As one dielectric” for the stated evidence.",
+          "rejection_rationale": "A dielectric is a material, not a network topology.",
+          "repair_feature_id": "NET-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "NET-FEATURE-ENTRY-3",
+          "observation_language": "This response is consistent with selecting “In series” for the stated evidence.",
+          "rejection_rationale": "Series capacitors form one path and do not share both endpoint nodes.",
+          "repair_feature_id": "NET-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for classify parallel topology.",
+        "Apply the taught model before inspecting option presentation.",
+        "Sharing both endpoint nodes defines a parallel connection."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "NET-ITEM-GUIDED",
+      "learner_prompt_key": "NET_GUIDED",
+      "correct_option_index": 3,
+      "rationale": "Parallel capacitances add directly: C + 2C = 3C.",
+      "post_commitment_feedback": "Parallel capacitances add directly: C + 2C = 3C.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "NET-FEATURE-GUIDED-0",
+          "observation_language": "This response is consistent with selecting “C/2” for the stated evidence.",
+          "rejection_rationale": "C/2 is the series result for two equal capacitors.",
+          "repair_feature_id": "NET-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "NET-FEATURE-GUIDED-1",
+          "observation_language": "This response is consistent with selecting “2C” for the stated evidence.",
+          "rejection_rationale": "This omits the smaller branch.",
+          "repair_feature_id": "NET-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "NET-FEATURE-GUIDED-2",
+          "observation_language": "This response is consistent with selecting “2C/3” for the stated evidence.",
+          "rejection_rationale": "2C/3 is the series equivalent of C and 2C.",
+          "repair_feature_id": "NET-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for calculate parallel equivalent.",
+        "Apply the taught model before inspecting option presentation.",
+        "Parallel capacitances add directly: C + 2C = 3C."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "NET-ITEM-LIGHT",
+      "learner_prompt_key": "NET_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "For two equal capacitors in series, 1/Ceq = 2/C, so Ceq = C/2.",
+      "post_commitment_feedback": "For two equal capacitors in series, 1/Ceq = 2/C, so Ceq = C/2.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "NET-FEATURE-LIGHT-1",
+          "observation_language": "This response is consistent with selecting “C/4” for the stated evidence.",
+          "rejection_rationale": "This applies the halving factor twice.",
+          "repair_feature_id": "NET-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "NET-FEATURE-LIGHT-2",
+          "observation_language": "This response is consistent with selecting “2C” for the stated evidence.",
+          "rejection_rationale": "2C is the parallel equivalent.",
+          "repair_feature_id": "NET-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "NET-FEATURE-LIGHT-3",
+          "observation_language": "This response is consistent with selecting “C” for the stated evidence.",
+          "rejection_rationale": "This ignores the series combination.",
+          "repair_feature_id": "NET-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for calculate equal series equivalent.",
+        "Apply the taught model before inspecting option presentation.",
+        "For two equal capacitors in series, 1/Ceq = 2/C, so Ceq = C/2."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "NET-ITEM-SOLO",
+      "learner_prompt_key": "NET_SOLO",
+      "correct_option_index": 1,
+      "rationale": "A series equivalent capacitance is smaller than either member capacitance.",
+      "post_commitment_feedback": "A series equivalent capacitance is smaller than either member capacitance.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "NET-FEATURE-SOLO-0",
+          "observation_language": "This response is consistent with selecting “Ceq lies between them” for the stated evidence.",
+          "rejection_rationale": "The series result falls below the smaller member, not between them.",
+          "repair_feature_id": "NET-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "NET-FEATURE-SOLO-2",
+          "observation_language": "This response is consistent with selecting “Ceq exceeds both” for the stated evidence.",
+          "rejection_rationale": "Exceeding both is the parallel pattern.",
+          "repair_feature_id": "NET-FEATURE-FOUNDATION"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "NET-FEATURE-SOLO-3",
+          "observation_language": "This response is consistent with selecting “Ceq equals the larger” for the stated evidence.",
+          "rejection_rationale": "Series reduction cannot equal the larger member for finite positive values.",
+          "repair_feature_id": "NET-FEATURE-FOUNDATION"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for check series bound.",
+        "Apply the taught model before inspecting option presentation.",
+        "A series equivalent capacitance is smaller than either member capacitance."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "NET-ITEM-NEAR",
+      "learner_prompt_key": "NET_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The series equivalent is C/2 and the parallel equivalent is 2C, a factor of 4 increase.",
+      "post_commitment_feedback": "The series equivalent is C/2 and the parallel equivalent is 2C, a factor of 4 increase.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "NET-FEATURE-NEAR-0",
+          "observation_language": "This response is consistent with selecting “1/2” for the stated evidence.",
+          "rejection_rationale": "This reverses the direction of rearrangement.",
+          "repair_feature_id": "NET-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "NET-FEATURE-NEAR-1",
+          "observation_language": "This response is consistent with selecting “8” for the stated evidence.",
+          "rejection_rationale": "This overcounts the topology change.",
+          "repair_feature_id": "NET-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "NET-FEATURE-NEAR-2",
+          "observation_language": "This response is consistent with selecting “2” for the stated evidence.",
+          "rejection_rationale": "A factor of 2 compares one member with the parallel pair, not series with parallel.",
+          "repair_feature_id": "NET-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for compare series and parallel equivalents.",
+        "Apply the taught model before inspecting option presentation.",
+        "The series equivalent is C/2 and the parallel equivalent is 2C, a factor of 4 increase."
+      ],
+      "decision_point": "Compute each topology separately before taking their ratio.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "NET-ITEM-CHANGED",
+      "learner_prompt_key": "NET_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "The dielectric triples C; with V fixed by the battery, both Q = CV and U = 1/2 CV² triple.",
+      "post_commitment_feedback": "The dielectric triples C; with V fixed by the battery, both Q = CV and U = 1/2 CV² triple.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 1,
+          "response_feature_id": "NET-FEATURE-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “(3, 1/3)” for the stated evidence.",
+          "rejection_rationale": "Energy does not decrease at fixed voltage when capacitance rises.",
+          "repair_feature_id": "NET-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "NET-FEATURE-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “(1/3, 1/3)” for the stated evidence.",
+          "rejection_rationale": "This applies isolated-capacitor decreases even though voltage is fixed.",
+          "repair_feature_id": "NET-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "NET-FEATURE-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “(1, 1/3)” for the stated evidence.",
+          "rejection_rationale": "Charge is not fixed while the battery remains connected.",
+          "repair_feature_id": "NET-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for predict connected dielectric effect.",
+        "Apply the taught model before inspecting option presentation.",
+        "The dielectric triples C; with V fixed by the battery, both Q = CV and U = 1/2 CV² triple."
+      ],
+      "decision_point": "Use the battery connection to hold V fixed before propagating the C factor.",
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "NET-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "NET_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Capacitances add directly in parallel and through reciprocals in series.",
+      "post_commitment_feedback": "Capacitances add directly in parallel and through reciprocals in series.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "NET-FEATURE-REPAIR-NEAR-0",
+          "observation_language": "This response is consistent with selecting “C; C” for the stated evidence.",
+          "rejection_rationale": "Direct addition is not the series rule.",
+          "repair_feature_id": "NET-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "NET-FEATURE-REPAIR-NEAR-1",
+          "observation_language": "This response is consistent with selecting “1/C; 1/C” for the stated evidence.",
+          "rejection_rationale": "Reciprocal addition is not the parallel rule.",
+          "repair_feature_id": "NET-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "NET-FEATURE-REPAIR-NEAR-3",
+          "observation_language": "This response is consistent with selecting “1/C; C” for the stated evidence.",
+          "rejection_rationale": "This swaps the topology rules.",
+          "repair_feature_id": "NET-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild network rules.",
+        "Apply the taught model before inspecting option presentation.",
+        "Capacitances add directly in parallel and through reciprocals in series."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "NET-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "NET_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "For two series capacitors, Ceq = (2C·3C)/(2C + 3C) = 6C/5.",
+      "post_commitment_feedback": "For two series capacitors, Ceq = (2C·3C)/(2C + 3C) = 6C/5.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "NET-FEATURE-REENTRY-NEAR-0",
+          "observation_language": "This response is consistent with selecting “6C” for the stated evidence.",
+          "rejection_rationale": "6C omits division by the sum.",
+          "repair_feature_id": "NET-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "NET-FEATURE-REENTRY-NEAR-2",
+          "observation_language": "This response is consistent with selecting “5C” for the stated evidence.",
+          "rejection_rationale": "5C is the direct sum used for parallel.",
+          "repair_feature_id": "NET-FEATURE-NEAR_USE"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "NET-FEATURE-REENTRY-NEAR-3",
+          "observation_language": "This response is consistent with selecting “C/5” for the stated evidence.",
+          "rejection_rationale": "C/5 does not follow from reciprocal addition.",
+          "repair_feature_id": "NET-FEATURE-NEAR_USE"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter series equivalent.",
+        "Apply the taught model before inspecting option presentation.",
+        "For two series capacitors, Ceq = (2C·3C)/(2C + 3C) = 6C/5."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "NET-ITEM-NEAR"
+    },
+    {
+      "answer_record_id": "NET-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "NET_REPAIR_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "An attached ideal battery maintains the capacitor voltage.",
+      "post_commitment_feedback": "An attached ideal battery maintains the capacitor voltage.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "NET-FEATURE-REPAIR-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “Energy U” for the stated evidence.",
+          "rejection_rationale": "Stored energy changes when capacitance changes at fixed voltage.",
+          "repair_feature_id": "NET-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 1,
+          "response_feature_id": "NET-FEATURE-REPAIR-CHANGED-1",
+          "observation_language": "This response is consistent with selecting “Capacitance C” for the stated evidence.",
+          "rejection_rationale": "The dielectric changes capacitance, so C is not fixed.",
+          "repair_feature_id": "NET-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "NET-FEATURE-REPAIR-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “Charge Q” for the stated evidence.",
+          "rejection_rationale": "Charge can flow to or from a connected battery, so Q is not fixed.",
+          "repair_feature_id": "NET-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for rebuild dielectric boundary condition.",
+        "Apply the taught model before inspecting option presentation.",
+        "An attached ideal battery maintains the capacitor voltage."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": null
+    },
+    {
+      "answer_record_id": "NET-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "NET_REENTRY_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "The isolated capacitor keeps Q fixed while C quadruples, so both V = Q/C and U = Q²/(2C) fall to one-fourth.",
+      "post_commitment_feedback": "The isolated capacitor keeps Q fixed while C quadruples, so both V = Q/C and U = Q²/(2C) fall to one-fourth.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "observable_error_model": [
+        {
+          "response_option_index": 0,
+          "response_feature_id": "NET-FEATURE-REENTRY-CHANGED-0",
+          "observation_language": "This response is consistent with selecting “(1/4, 4)” for the stated evidence.",
+          "rejection_rationale": "Voltage decreases, but energy does not increase at fixed charge.",
+          "repair_feature_id": "NET-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 2,
+          "response_feature_id": "NET-FEATURE-REENTRY-CHANGED-2",
+          "observation_language": "This response is consistent with selecting “(4, 4)” for the stated evidence.",
+          "rejection_rationale": "This treats voltage and energy as increasing at fixed charge.",
+          "repair_feature_id": "NET-FEATURE-CHANGED_TASK"
+        },
+        {
+          "response_option_index": 3,
+          "response_feature_id": "NET-FEATURE-REENTRY-CHANGED-3",
+          "observation_language": "This response is consistent with selecting “(1, 4)” for the stated evidence.",
+          "rejection_rationale": "Neither voltage nor energy stays fixed after C changes.",
+          "repair_feature_id": "NET-FEATURE-CHANGED_TASK"
+        }
+      ],
+      "keyless_solution_trace": [
+        "Identify the decisive evidence for reenter isolated dielectric effect.",
+        "Apply the taught model before inspecting option presentation.",
+        "The isolated capacitor keeps Q fixed while C quadruples, so both V = Q/C and U = Q²/(2C) fall to one-fourth."
+      ],
+      "decision_point": null,
+      "freshness_source_item_id": "NET-ITEM-CHANGED"
+    }
+  ]
+}

@@ -1,0 +1,2316 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-217547",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "8aefbb7f56e281cbe0d7f260347ca254f36923c5de2dc010d774651b5b54bc56",
+  "payload": {
+    "lesson_id": "V3-LES-217547",
+    "grouping_id": "V3-CL-217547",
+    "ordered_kc_ids": [
+      "V3-KC-543225",
+      "V3-KC-614766"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-543225",
+      "V3-KC-614766"
+    ],
+    "throughline": "Use only passage-supplied cues to evaluate a source, then determine how stance-bearing language changes the reliability of a claim.",
+    "curriculum_context": {
+      "canonical_title": "Evaluate Passage Sources and Stance Effects",
+      "phase_ids": [
+        "V3-PHS-935127",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-326514",
+        "V3-MOD-138674"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 89,
+          "relation_ids": [
+            "R14-PL-581402-089"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 89,
+          "relation_ids": [
+            "R14-PL-904137-089"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-862541",
+          "position": 7,
+          "relation_ids": [
+            "R14-PL-862541-007"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-217547",
+      "revisit_relation_ids": [
+        "R14-RV-217547"
+      ],
+      "hard_prerequisites": [],
+      "helpful_context": [],
+      "route_scope_code": "STANDARD_ONLY",
+      "applicable_routes": [
+        "STANDARD"
+      ]
+    },
+    "nodes": [
+      {
+        "node_id": "SRC-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify one detail that bears directly on whether a represented speaker can know the specific fact claimed. This is low stakes and does not select a route or establish mastery."
+        ],
+        "representation_ids": [
+          "SRC-REP-CUE-GRID"
+        ],
+        "activity_ids": [
+          "SRC-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "SRC-CP-ENTRY",
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ]
+      },
+      {
+        "node_id": "SRC-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: evaluate a source only from cues supplied in the passage. You will connect a claim to the source's access, relevant expertise, incentives, and support, then state how strongly those cues warrant confidence.",
+          "No outside reputation check is needed here. The task is to reason within the text, not to investigate whether the person or institution is reputable in the world."
+        ],
+        "representation_ids": [
+          "SRC-REP-CUE-GRID"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SRC-CP-ORIENTATION",
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ]
+      },
+      {
+        "node_id": "SRC-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Start with the exact claim. Direct access asks whether the source observed, measured, created, or handled what the claim concerns. Relevant expertise asks whether the source's knowledge fits that claim, not whether the source merely has an impressive title.",
+          "Objectivity cues include interests, obligations, or commitments that may shape presentation. A stake can weaken confidence, but it does not make a statement automatically false.",
+          "Support asks whether the passage supplies records, methods, corroborating observations, or other reasons that make the source's statement more than an unsupported assertion. Weigh all four cue types before making a calibrated judgment."
+        ],
+        "representation_ids": [
+          "SRC-REP-CUE-GRID"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SRC-CP-EXPLANATION",
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ]
+      },
+      {
+        "node_id": "SRC-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — Claim → source → access and relevant expertise → incentives → support → calibrated confidence. Evaluate the source for this claim, not as a permanently credible or incredible person."
+        ],
+        "representation_ids": [
+          "SRC-REP-CUE-GRID"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SRC-CP-MODEL",
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ]
+      },
+      {
+        "node_id": "SRC-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Expert selection: if the claim concerns what happened during an inspection, I first look for who actually inspected the object. I then ask whether that person's role is relevant, whether the passage shows a stake, and whether records or independent observations support the report. I rule out rank alone because broad authority can be unrelated to the fact at issue."
+        ],
+        "representation_ids": [
+          "SRC-REP-CUE-GRID"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SRC-CP-THINK",
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ]
+      },
+      {
+        "node_id": "SRC-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a town notice says a bridge engineer examined three support joints and recorded widening cracks. A tourism official, who did not attend the inspection, says the bridge looks safe from the riverbank. For the claim about joint damage, the engineer has direct access and relevant expertise, and the recorded measurements supply support. The official has status but no passage-supplied access to the joints. The bounded conclusion is that the engineer is more credible for this specific claim; it is not an outside verification of the bridge's condition."
+        ],
+        "representation_ids": [
+          "SRC-REP-CUE-GRID"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SRC-CP-WORKED",
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ]
+      },
+      {
+        "node_id": "SRC-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: name the claim first. Then compare each source's access and relevant expertise before considering incentive and support."
+        ],
+        "representation_ids": [
+          "SRC-REP-CUE-GRID"
+        ],
+        "activity_ids": [
+          "SRC-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "SRC-CP-GUIDED",
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ]
+      },
+      {
+        "node_id": "SRC-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: use the four cue categories on a fresh source comparison, but decide for yourself which cue matters most for the stated claim."
+        ],
+        "representation_ids": [
+          "SRC-REP-CUE-GRID"
+        ],
+        "activity_ids": [
+          "SRC-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "SRC-CP-LIGHT",
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ]
+      },
+      {
+        "node_id": "SRC-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: weigh a disclosed interest against passage-supplied measurements and corroboration. Choose a calibrated conclusion rather than an all-or-nothing label."
+        ],
+        "representation_ids": [
+          "SRC-REP-CUE-GRID"
+        ],
+        "activity_ids": [
+          "SRC-ACT-SOLO"
+        ],
+        "checkpoint_ref": "SRC-CP-SOLO",
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ]
+      },
+      {
+        "node_id": "SRC-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: a prestigious title is not automatically relevant expertise, vivid detail is not automatically direct access, and a personal stake is not automatic falsity. Outside reputation and independent source verification are beyond this lesson's passage-bounded task."
+        ],
+        "representation_ids": [
+          "SRC-REP-CUE-GRID"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SRC-CP-CONTRAST",
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ]
+      },
+      {
+        "node_id": "SRC-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: evaluate which represented source is better positioned to support a specific factual claim using access, relevant expertise, and supplied records."
+        ],
+        "representation_ids": [
+          "SRC-REP-CUE-GRID"
+        ],
+        "activity_ids": [
+          "SRC-ACT-NEAR"
+        ],
+        "checkpoint_ref": "SRC-CP-NEAR",
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ]
+      },
+      {
+        "node_id": "SRC-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: a source now has both direct access and a financial stake, while a separate count partially corroborates the report. Weigh conflicting cues instead of applying one cue mechanically."
+        ],
+        "representation_ids": [
+          "SRC-REP-MIXED-CUES"
+        ],
+        "activity_ids": [
+          "SRC-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "SRC-CP-CHANGED",
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ]
+      },
+      {
+        "node_id": "SRC-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed near-use function: match expertise and access to the exact claim. Ask who could directly observe or measure this fact and whose role specifically prepares them to interpret it; do not substitute rank, tone, or placement in the passage."
+        ],
+        "representation_ids": [
+          "SRC-REP-CUE-GRID"
+        ],
+        "activity_ids": [
+          "SRC-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "SRC-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ]
+      },
+      {
+        "node_id": "SRC-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near-use re-entry: evaluate access and relevant expertise in a new records-based setting. No answer or source family from the failed item is reused."
+        ],
+        "representation_ids": [
+          "SRC-REP-CUE-GRID"
+        ],
+        "activity_ids": [
+          "SRC-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "SRC-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ]
+      },
+      {
+        "node_id": "SRC-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed changed-task function: treat an incentive as one credibility cue, then compare it with method, records, and corroboration. State how confidence changes; do not convert possible bias into automatic truth or falsity."
+        ],
+        "representation_ids": [
+          "SRC-REP-MIXED-CUES"
+        ],
+        "activity_ids": [
+          "SRC-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "SRC-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ]
+      },
+      {
+        "node_id": "SRC-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: weigh advocacy against dated documentary support in a new setting, then choose the most bounded credibility judgment."
+        ],
+        "representation_ids": [
+          "SRC-REP-MIXED-CUES"
+        ],
+        "activity_ids": [
+          "SRC-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "SRC-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ]
+      },
+      {
+        "node_id": "SRC-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: evaluate the source for the exact claim. Use passage-supplied access, relevant expertise, incentive, and support, and express a calibrated confidence judgment without importing outside reputation or verification."
+        ],
+        "representation_ids": [
+          "SRC-REP-CUE-GRID"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SRC-CP-RECAP",
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ]
+      },
+      {
+        "node_id": "SRC-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "If one fresh re-entry remains unresolved, stop this lesson path and return to the planner without exit credit. Review can resume from the exact failed function later."
+        ],
+        "representation_ids": [
+          "SRC-REP-CUE-GRID"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "SRC-CP-HANDOFF",
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ]
+      },
+      {
+        "node_id": "STN-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: locate one word that signals approval, condemnation, certainty, or dismissal. This is low stakes and does not select a route or establish mastery."
+        ],
+        "representation_ids": [
+          "STN-REP-LANGUAGE-EFFECT"
+        ],
+        "activity_ids": [
+          "STN-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "STN-CP-ENTRY",
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ]
+      },
+      {
+        "node_id": "STN-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: explain how language and stance affect reliability. First identify the wording, then state what it does to framing or certainty, and finally compare that treatment with the evidence supplied.",
+          "The target is the passage's language treatment and reliability consequence, not the writer's identity and not whether you personally like the stance."
+        ],
+        "representation_ids": [
+          "STN-REP-LANGUAGE-EFFECT"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "STN-CP-ORIENTATION",
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ]
+      },
+      {
+        "node_id": "STN-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Loaded labels can praise or condemn before evidence is assessed. Absolute terms such as always, only, and undeniably can overstate support. Dismissive descriptions can narrow which alternatives appear worthy of consideration.",
+          "Hedges such as may or likely can accurately match limited evidence, though vague hedging can also avoid commitment. The key question is whether the wording's strength and framing fit the support the passage provides.",
+          "A detectable stance can lower confidence when it exaggerates, selectively frames, or ignores contrary evidence. It does not make every associated factual claim false."
+        ],
+        "representation_ids": [
+          "STN-REP-LANGUAGE-EFFECT"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "STN-CP-EXPLANATION",
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ]
+      },
+      {
+        "node_id": "STN-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — Mark the stance signal → name its framing or certainty effect → compare the effect with the evidence → state a calibrated reliability consequence."
+        ],
+        "representation_ids": [
+          "STN-REP-LANGUAGE-EFFECT"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "STN-CP-MODEL",
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ]
+      },
+      {
+        "node_id": "STN-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Expert selection: I do not stop at 'the tone is negative.' I quote the operative word, explain whether it intensifies certainty or dismisses an alternative, and check whether the supplied evidence warrants that move. I rule out personal reaction because reliability turns on the language-evidence fit."
+        ],
+        "representation_ids": [
+          "STN-REP-LANGUAGE-EFFECT"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "STN-CP-THINK",
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ]
+      },
+      {
+        "node_id": "STN-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: one account says a committee 'wisely eliminated a reckless proposal,' while the only supplied fact is that the vote was 5–4. The words wisely and reckless evaluate the decision before reasons are presented, and the close vote alone does not support that certainty. The language therefore weakens reliability as a neutral account of why the proposal was rejected; it does not prove the vote count false."
+        ],
+        "representation_ids": [
+          "STN-REP-LANGUAGE-EFFECT"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "STN-CP-WORKED",
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ]
+      },
+      {
+        "node_id": "STN-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: identify the exact stance-bearing phrase, classify what it does to the framing, and compare its force with the passage's evidence."
+        ],
+        "representation_ids": [
+          "STN-REP-LANGUAGE-EFFECT"
+        ],
+        "activity_ids": [
+          "STN-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "STN-CP-GUIDED",
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ]
+      },
+      {
+        "node_id": "STN-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: decide whether a hedge responsibly calibrates a claim or merely avoids a clear commitment."
+        ],
+        "representation_ids": [
+          "STN-REP-LANGUAGE-EFFECT"
+        ],
+        "activity_ids": [
+          "STN-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "STN-CP-LIGHT",
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ]
+      },
+      {
+        "node_id": "STN-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: evaluate whether absolute wording extends beyond the limits of a small data set."
+        ],
+        "representation_ids": [
+          "STN-REP-LANGUAGE-EFFECT"
+        ],
+        "activity_ids": [
+          "STN-ACT-SOLO"
+        ],
+        "checkpoint_ref": "STN-CP-SOLO",
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ]
+      },
+      {
+        "node_id": "STN-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: stance is not the author's identity, your agreement is not a reliability test, and biased framing is not automatic falsity. A neutral-sounding sentence can still be unsupported, while an openly committed source can still provide accurate facts."
+        ],
+        "representation_ids": [
+          "STN-REP-LANGUAGE-EFFECT"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "STN-CP-CONTRAST",
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ]
+      },
+      {
+        "node_id": "STN-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: connect a dismissive phrase to the way it excludes an alternative before evidence is considered."
+        ],
+        "representation_ids": [
+          "STN-REP-LANGUAGE-EFFECT"
+        ],
+        "activity_ids": [
+          "STN-ACT-NEAR"
+        ],
+        "checkpoint_ref": "STN-CP-NEAR",
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ]
+      },
+      {
+        "node_id": "STN-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: compare two accounts that report the same event but differ in concession, certainty, and omission. Judge the reliability effect without deciding that stance alone makes either account false."
+        ],
+        "representation_ids": [
+          "STN-REP-PAIRED-FRAMING"
+        ],
+        "activity_ids": [
+          "STN-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "STN-CP-CHANGED",
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ]
+      },
+      {
+        "node_id": "STN-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed near-use function: point to the exact word or phrase, replace it with neutral wording, and name what changed in framing or certainty. A mood label without a language effect is incomplete."
+        ],
+        "representation_ids": [
+          "STN-REP-LANGUAGE-EFFECT"
+        ],
+        "activity_ids": [
+          "STN-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "STN-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ]
+      },
+      {
+        "node_id": "STN-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near-use re-entry: locate evaluative wording in a new public-safety sentence and state its effect on the account's reliability."
+        ],
+        "representation_ids": [
+          "STN-REP-LANGUAGE-EFFECT"
+        ],
+        "activity_ids": [
+          "STN-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "STN-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ]
+      },
+      {
+        "node_id": "STN-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed changed-task function: separate two questions—does the passage show selective or loaded framing, and does the supplied evidence independently support the factual claim? Bias answers the first, not automatically the second."
+        ],
+        "representation_ids": [
+          "STN-REP-PAIRED-FRAMING"
+        ],
+        "activity_ids": [
+          "STN-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "STN-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ]
+      },
+      {
+        "node_id": "STN-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: evaluate an advocacy report that supplies exact counts but omits a limiting comparison. State both the framing concern and the surviving support."
+        ],
+        "representation_ids": [
+          "STN-REP-PAIRED-FRAMING"
+        ],
+        "activity_ids": [
+          "STN-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "STN-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ]
+      },
+      {
+        "node_id": "STN-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: locate the language, name its effect, compare wording strength with evidence, and state a calibrated reliability consequence. Do not infer from identity, personal reaction, or bias alone that a claim is false."
+        ],
+        "representation_ids": [
+          "STN-REP-LANGUAGE-EFFECT"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "STN-CP-RECAP",
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ]
+      },
+      {
+        "node_id": "STN-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "If one fresh re-entry remains unresolved, stop this lesson path and return to the planner without exit credit. Review can resume from the exact failed function later."
+        ],
+        "representation_ids": [
+          "STN-REP-LANGUAGE-EFFECT"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "STN-CP-HANDOFF",
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "SRC-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-543225",
+        "item_binding_id": "SRC-ITEM-ENTRY",
+        "learner_operation": "IDENTIFY_DIRECT_ACCESS_CUE",
+        "authorized_next_node_ids": [
+          "SRC-NODE-ORIENTATION",
+          "SRC-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "SRC-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-543225",
+        "item_binding_id": "SRC-ITEM-GUIDED",
+        "learner_operation": "MATCH_RELEVANT_EXPERTISE_AND_RECORDS",
+        "authorized_next_node_ids": [
+          "SRC-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "SRC-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-543225",
+        "item_binding_id": "SRC-ITEM-LIGHT",
+        "learner_operation": "SELECT_SOURCE_FOR_SPECIFIC_CLAIM",
+        "authorized_next_node_ids": [
+          "SRC-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "SRC-ACT-SOLO",
+        "primary_kc_id": "V3-KC-543225",
+        "item_binding_id": "SRC-ITEM-SOLO",
+        "learner_operation": "WEIGH_INTEREST_AGAINST_CORROBORATION",
+        "authorized_next_node_ids": [
+          "SRC-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "SRC-ACT-NEAR",
+        "primary_kc_id": "V3-KC-543225",
+        "item_binding_id": "SRC-ITEM-NEAR",
+        "learner_operation": "EVALUATE_RECORDS_BASED_SOURCE_CREDIBILITY",
+        "authorized_next_node_ids": [
+          "SRC-NODE-CHANGED",
+          "SRC-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "SRC-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-543225",
+        "item_binding_id": "SRC-ITEM-CHANGED",
+        "learner_operation": "CALIBRATE_MIXED_CREDIBILITY_CUES",
+        "authorized_next_node_ids": [
+          "SRC-NODE-RECAP",
+          "SRC-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "SRC-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-543225",
+        "item_binding_id": "SRC-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_RELEVANT_ACCESS_TEST",
+        "authorized_next_node_ids": [
+          "SRC-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "SRC-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-543225",
+        "item_binding_id": "SRC-ITEM-REENTRY-NEAR",
+        "learner_operation": "REEVALUATE_ACCESS_IN_FRESH_RECORDS_CASE",
+        "authorized_next_node_ids": [
+          "SRC-NODE-CHANGED",
+          "SRC-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "SRC-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-543225",
+        "item_binding_id": "SRC-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_CALIBRATED_STAKE_RULE",
+        "authorized_next_node_ids": [
+          "SRC-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "SRC-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-543225",
+        "item_binding_id": "SRC-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REEVALUATE_ADVOCACY_WITH_DOCUMENTARY_SUPPORT",
+        "authorized_next_node_ids": [
+          "SRC-NODE-RECAP",
+          "SRC-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "STN-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-614766",
+        "item_binding_id": "STN-ITEM-ENTRY",
+        "learner_operation": "LOCATE_STANCE_BEARING_WORD",
+        "authorized_next_node_ids": [
+          "STN-NODE-ORIENTATION",
+          "STN-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "STN-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-614766",
+        "item_binding_id": "STN-ITEM-GUIDED",
+        "learner_operation": "LINK_EVALUATIVE_WORD_TO_EVIDENCE_LIMIT",
+        "authorized_next_node_ids": [
+          "STN-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "STN-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-614766",
+        "item_binding_id": "STN-ITEM-LIGHT",
+        "learner_operation": "EVALUATE_HEDGE_AGAINST_EVIDENCE",
+        "authorized_next_node_ids": [
+          "STN-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "STN-ACT-SOLO",
+        "primary_kc_id": "V3-KC-614766",
+        "item_binding_id": "STN-ITEM-SOLO",
+        "learner_operation": "COMPARE_ABSOLUTE_WORDING_WITH_SAMPLE_LIMIT",
+        "authorized_next_node_ids": [
+          "STN-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "STN-ACT-NEAR",
+        "primary_kc_id": "V3-KC-614766",
+        "item_binding_id": "STN-ITEM-NEAR",
+        "learner_operation": "EVALUATE_DISMISSIVE_LABEL_EFFECT",
+        "authorized_next_node_ids": [
+          "STN-NODE-CHANGED",
+          "STN-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "STN-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-614766",
+        "item_binding_id": "STN-ITEM-CHANGED",
+        "learner_operation": "COMPARE_FRAMING_CERTAINTY_AND_OMISSION",
+        "authorized_next_node_ids": [
+          "STN-NODE-RECAP",
+          "STN-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "STN-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-614766",
+        "item_binding_id": "STN-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_PHRASE_ACTION_CONSEQUENCE_METHOD",
+        "authorized_next_node_ids": [
+          "STN-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "STN-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-614766",
+        "item_binding_id": "STN-ITEM-REENTRY-NEAR",
+        "learner_operation": "REEVALUATE_DISMISSIVE_PHRASE_EFFECT",
+        "authorized_next_node_ids": [
+          "STN-NODE-CHANGED",
+          "STN-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "STN-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-614766",
+        "item_binding_id": "STN-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_BIAS_VERSUS_FALSITY_DISTINCTION",
+        "authorized_next_node_ids": [
+          "STN-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "STN-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-614766",
+        "item_binding_id": "STN-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REEVALUATE_SUPPORTED_COUNT_WITH_SELECTIVE_FRAMING",
+        "authorized_next_node_ids": [
+          "STN-NODE-RECAP",
+          "STN-NODE-HANDOFF"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-543225",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-543225",
+        "scope_in_refs": [
+          "V3-KC-543225:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-543225:SCOPE_OUT:0",
+          "V3-KC-543225:SCOPE_OUT:1"
+        ],
+        "source_claim_refs": [
+          "SRC-CLAIM-PASSAGE-BOUND",
+          "SRC-CLAIM-CALIBRATE"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "SRC-NODE-ENTRY",
+        "orientation_node_id": "SRC-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "SRC-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "SRC-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "SRC-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "SRC-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "SRC-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "SRC-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "SRC-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "SRC-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "SRC-NODE-NEAR",
+          "activity_ids": [
+            "SRC-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "SRC-NODE-CHANGED",
+          "activity_ids": [
+            "SRC-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "SRC-FEATURE-RELEVANT-ACCESS-EXPERTISE",
+          "SRC-FEATURE-CALIBRATE-STAKE-AND-SUPPORT"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "SRC-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "SRC-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "SRC-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "SRC-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "SRC-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "SRC-ACT-REENTRY-NEAR",
+            "success_next_node_id": "SRC-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "SRC-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "SRC-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "SRC-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "SRC-REP-CUE-GRID",
+          "SRC-REP-MIXED-CUES"
+        ],
+        "accessibility_equivalent_ids": [
+          "SRC-REP-TEXT-EQUIVALENT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "SRC-NODE-ENTRY",
+            "SRC-NODE-RECAP"
+          ],
+          "standard": [
+            "SRC-NODE-ENTRY",
+            "SRC-NODE-ORIENTATION",
+            "SRC-NODE-EXPLANATION",
+            "SRC-NODE-MODEL",
+            "SRC-NODE-THINK",
+            "SRC-NODE-WORKED",
+            "SRC-NODE-GUIDED",
+            "SRC-NODE-LIGHT",
+            "SRC-NODE-SOLO",
+            "SRC-NODE-CONTRAST",
+            "SRC-NODE-NEAR",
+            "SRC-NODE-CHANGED",
+            "SRC-NODE-REPAIR-NEAR",
+            "SRC-NODE-REENTRY-NEAR",
+            "SRC-NODE-REPAIR-CHANGED",
+            "SRC-NODE-REENTRY-CHANGED",
+            "SRC-NODE-RECAP",
+            "SRC-NODE-HANDOFF"
+          ],
+          "misconception": [
+            "SRC-NODE-ENTRY",
+            "SRC-NODE-REPAIR-NEAR",
+            "SRC-NODE-REPAIR-CHANGED",
+            "SRC-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "SRC-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-614766",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-614766",
+        "scope_in_refs": [
+          "V3-KC-614766:SCOPE_IN:0",
+          "V3-KC-614766:SCOPE_IN:1",
+          "V3-KC-614766:SCOPE_IN:2"
+        ],
+        "scope_out_refs": [
+          "V3-KC-614766:SCOPE_OUT:0",
+          "V3-KC-614766:SCOPE_OUT:1",
+          "V3-KC-614766:SCOPE_OUT:2"
+        ],
+        "source_claim_refs": [
+          "STN-CLAIM-LANGUAGE-EFFECT",
+          "STN-CLAIM-NOT-AUTOMATIC-FALSE"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "STN-NODE-ENTRY",
+        "orientation_node_id": "STN-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "STN-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "STN-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "STN-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "STN-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "STN-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "STN-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "STN-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "STN-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "STN-NODE-NEAR",
+          "activity_ids": [
+            "STN-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "STN-NODE-CHANGED",
+          "activity_ids": [
+            "STN-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "STN-FEATURE-LOCATE-STANCE-AND-EFFECT",
+          "STN-FEATURE-SEPARATE-BIAS-FROM-FALSITY"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "STN-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "STN-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "STN-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "STN-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "STN-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "STN-ACT-REENTRY-NEAR",
+            "success_next_node_id": "STN-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "STN-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "STN-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "STN-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "STN-REP-LANGUAGE-EFFECT",
+          "STN-REP-PAIRED-FRAMING"
+        ],
+        "accessibility_equivalent_ids": [
+          "STN-REP-TEXT-EQUIVALENT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "STN-NODE-ENTRY",
+            "STN-NODE-RECAP"
+          ],
+          "standard": [
+            "STN-NODE-ENTRY",
+            "STN-NODE-ORIENTATION",
+            "STN-NODE-EXPLANATION",
+            "STN-NODE-MODEL",
+            "STN-NODE-THINK",
+            "STN-NODE-WORKED",
+            "STN-NODE-GUIDED",
+            "STN-NODE-LIGHT",
+            "STN-NODE-SOLO",
+            "STN-NODE-CONTRAST",
+            "STN-NODE-NEAR",
+            "STN-NODE-CHANGED",
+            "STN-NODE-REPAIR-NEAR",
+            "STN-NODE-REENTRY-NEAR",
+            "STN-NODE-REPAIR-CHANGED",
+            "STN-NODE-REENTRY-CHANGED",
+            "STN-NODE-RECAP",
+            "STN-NODE-HANDOFF"
+          ],
+          "misconception": [
+            "STN-NODE-ENTRY",
+            "STN-NODE-REPAIR-NEAR",
+            "STN-NODE-REPAIR-CHANGED",
+            "STN-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "STN-NODE-RECAP"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "SRC-ITEM-ENTRY",
+        "activity_id": "SRC-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "SRC-FAMILY-ENTRY",
+        "stimulus_lineage_id": "SRC-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SRC-REP-CUE-GRID",
+        "changed_dimensions": [],
+        "learner_operation": "IDENTIFY_DIRECT_ACCESS_CUE",
+        "hint_policy": "NO_ANSWER_BEARING_HINT_BEFORE_COMMITMENT",
+        "feedback_release": "AFTER_COMMIT_NONCONSEQUENTIAL",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_OBSERVATION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "SRC_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#SRC-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#SRC-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SRC-SOLUTION-ENTRY",
+        "decisive_cue_id": "SRC-CUE-ENTRY",
+        "distractor_lineage_id": "SRC-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "SRC-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "SRC-FAMILY-WORKED",
+        "stimulus_lineage_id": "SRC-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SRC-REP-CUE-GRID",
+        "changed_dimensions": [],
+        "learner_operation": "FOLLOW_EXPERT_SELECTION_AND_ELIMINATION",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:SRC-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SRC-SOLUTION-WORKED",
+        "decisive_cue_id": "SRC-CUE-WORKED",
+        "distractor_lineage_id": "SRC-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "SRC-ITEM-GUIDED",
+        "activity_id": "SRC-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "SRC-FAMILY-GUIDED",
+        "stimulus_lineage_id": "SRC-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_DECISION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SRC-REP-CUE-GRID",
+        "changed_dimensions": [],
+        "learner_operation": "MATCH_RELEVANT_EXPERTISE_AND_RECORDS",
+        "hint_policy": "DECISION_SEQUENCE_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "SRC_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#SRC-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#SRC-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SRC-SOLUTION-GUIDED",
+        "decisive_cue_id": "SRC-CUE-GUIDED",
+        "distractor_lineage_id": "SRC-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "SRC-ITEM-LIGHT",
+        "activity_id": "SRC-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "SRC-FAMILY-LIGHT",
+        "stimulus_lineage_id": "SRC-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_DECISION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SRC-REP-CUE-GRID",
+        "changed_dimensions": [],
+        "learner_operation": "SELECT_SOURCE_FOR_SPECIFIC_CLAIM",
+        "hint_policy": "BRIEF_NONANSWER_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "SRC_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#SRC-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#SRC-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SRC-SOLUTION-LIGHT",
+        "decisive_cue_id": "SRC-CUE-LIGHT",
+        "distractor_lineage_id": "SRC-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "SRC-ITEM-SOLO",
+        "activity_id": "SRC-ACT-SOLO",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "SRC-FAMILY-SOLO",
+        "stimulus_lineage_id": "SRC-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SRC-REP-MIXED-CUES",
+        "changed_dimensions": [],
+        "learner_operation": "WEIGH_INTEREST_AGAINST_CORROBORATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "SRC_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#SRC-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#SRC-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SRC-SOLUTION-SOLO",
+        "decisive_cue_id": "SRC-CUE-SOLO",
+        "distractor_lineage_id": "SRC-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "SRC-ITEM-NEAR",
+        "activity_id": "SRC-ACT-NEAR",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "SRC-FAMILY-NEAR",
+        "stimulus_lineage_id": "SRC-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SRC-REP-CUE-GRID",
+        "changed_dimensions": [],
+        "learner_operation": "EVALUATE_RECORDS_BASED_SOURCE_CREDIBILITY",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SRC_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#SRC-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#SRC-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SRC-SOLUTION-NEAR",
+        "decisive_cue_id": "SRC-CUE-NEAR",
+        "distractor_lineage_id": "SRC-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "SRC-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SRC-FEATURE-RELEVANT-ACCESS-EXPERTISE"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "SRC-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SRC-FEATURE-RELEVANT-ACCESS-EXPERTISE"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "SRC-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SRC-FEATURE-RELEVANT-ACCESS-EXPERTISE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "SRC-ITEM-CHANGED",
+        "activity_id": "SRC-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "SRC-FAMILY-CHANGED",
+        "stimulus_lineage_id": "SRC-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SRC-REP-MIXED-CUES",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "CALIBRATE_MIXED_CREDIBILITY_CUES",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SRC_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#SRC-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#SRC-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SRC-SOLUTION-CHANGED",
+        "decisive_cue_id": "SRC-CUE-CHANGED",
+        "distractor_lineage_id": "SRC-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "SRC-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SRC-FEATURE-CALIBRATE-STAKE-AND-SUPPORT"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "SRC-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SRC-FEATURE-CALIBRATE-STAKE-AND-SUPPORT"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "SRC-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "SRC-FEATURE-CALIBRATE-STAKE-AND-SUPPORT"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "SRC-ITEM-REPAIR-NEAR",
+        "activity_id": "SRC-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SRC-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "SRC-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "SRC-REP-CUE-GRID",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_RELEVANT_ACCESS_TEST",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SRC_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#SRC-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#SRC-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SRC-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "SRC-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "SRC-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "SRC-ITEM-REENTRY-NEAR",
+        "activity_id": "SRC-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SRC-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "SRC-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SRC-REP-CUE-GRID",
+        "changed_dimensions": [],
+        "learner_operation": "REEVALUATE_ACCESS_IN_FRESH_RECORDS_CASE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SRC_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#SRC-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#SRC-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SRC-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "SRC-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "SRC-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "SRC-ITEM-REPAIR-CHANGED",
+        "activity_id": "SRC-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SRC-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "SRC-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "SRC-REP-MIXED-CUES",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_CALIBRATED_STAKE_RULE",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SRC_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#SRC-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#SRC-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SRC-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "SRC-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "SRC-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "SRC-ITEM-REENTRY-CHANGED",
+        "activity_id": "SRC-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-543225",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "SRC-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "SRC-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "SRC-REP-MIXED-CUES",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "REEVALUATE_ADVOCACY_WITH_DOCUMENTARY_SUPPORT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "SRC_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#SRC-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#SRC-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "SRC-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "SRC-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "SRC-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "STN-ITEM-ENTRY",
+        "activity_id": "STN-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "STN-FAMILY-ENTRY",
+        "stimulus_lineage_id": "STN-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STN-REP-LANGUAGE-EFFECT",
+        "changed_dimensions": [],
+        "learner_operation": "LOCATE_STANCE_BEARING_WORD",
+        "hint_policy": "NO_ANSWER_BEARING_HINT_BEFORE_COMMITMENT",
+        "feedback_release": "AFTER_COMMIT_NONCONSEQUENTIAL",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_OBSERVATION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "STN_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#STN-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#STN-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STN-SOLUTION-ENTRY",
+        "decisive_cue_id": "STN-CUE-ENTRY",
+        "distractor_lineage_id": "STN-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "STN-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "STN-FAMILY-WORKED",
+        "stimulus_lineage_id": "STN-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STN-REP-LANGUAGE-EFFECT",
+        "changed_dimensions": [],
+        "learner_operation": "FOLLOW_EXPERT_SELECTION_AND_ELIMINATION",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:STN-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STN-SOLUTION-WORKED",
+        "decisive_cue_id": "STN-CUE-WORKED",
+        "distractor_lineage_id": "STN-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "STN-ITEM-GUIDED",
+        "activity_id": "STN-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "STN-FAMILY-GUIDED",
+        "stimulus_lineage_id": "STN-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_DECISION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STN-REP-LANGUAGE-EFFECT",
+        "changed_dimensions": [],
+        "learner_operation": "LINK_EVALUATIVE_WORD_TO_EVIDENCE_LIMIT",
+        "hint_policy": "DECISION_SEQUENCE_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "STN_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#STN-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#STN-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STN-SOLUTION-GUIDED",
+        "decisive_cue_id": "STN-CUE-GUIDED",
+        "distractor_lineage_id": "STN-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "STN-ITEM-LIGHT",
+        "activity_id": "STN-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "STN-FAMILY-LIGHT",
+        "stimulus_lineage_id": "STN-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_DECISION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STN-REP-LANGUAGE-EFFECT",
+        "changed_dimensions": [],
+        "learner_operation": "EVALUATE_HEDGE_AGAINST_EVIDENCE",
+        "hint_policy": "BRIEF_NONANSWER_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "STN_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#STN-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#STN-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STN-SOLUTION-LIGHT",
+        "decisive_cue_id": "STN-CUE-LIGHT",
+        "distractor_lineage_id": "STN-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "STN-ITEM-SOLO",
+        "activity_id": "STN-ACT-SOLO",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "STN-FAMILY-SOLO",
+        "stimulus_lineage_id": "STN-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STN-REP-LANGUAGE-EFFECT",
+        "changed_dimensions": [],
+        "learner_operation": "COMPARE_ABSOLUTE_WORDING_WITH_SAMPLE_LIMIT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "STN_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#STN-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#STN-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STN-SOLUTION-SOLO",
+        "decisive_cue_id": "STN-CUE-SOLO",
+        "distractor_lineage_id": "STN-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "STN-ITEM-NEAR",
+        "activity_id": "STN-ACT-NEAR",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "STN-FAMILY-NEAR",
+        "stimulus_lineage_id": "STN-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STN-REP-LANGUAGE-EFFECT",
+        "changed_dimensions": [],
+        "learner_operation": "EVALUATE_DISMISSIVE_LABEL_EFFECT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "STN_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#STN-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#STN-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STN-SOLUTION-NEAR",
+        "decisive_cue_id": "STN-CUE-NEAR",
+        "distractor_lineage_id": "STN-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "STN-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "STN-FEATURE-LOCATE-STANCE-AND-EFFECT"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "STN-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "STN-FEATURE-LOCATE-STANCE-AND-EFFECT"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "STN-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "STN-FEATURE-LOCATE-STANCE-AND-EFFECT"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "STN-ITEM-CHANGED",
+        "activity_id": "STN-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "STN-FAMILY-CHANGED",
+        "stimulus_lineage_id": "STN-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STN-REP-PAIRED-FRAMING",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "COMPARE_FRAMING_CERTAINTY_AND_OMISSION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "STN_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#STN-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#STN-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STN-SOLUTION-CHANGED",
+        "decisive_cue_id": "STN-CUE-CHANGED",
+        "distractor_lineage_id": "STN-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "STN-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "STN-FEATURE-SEPARATE-BIAS-FROM-FALSITY"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "STN-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "STN-FEATURE-SEPARATE-BIAS-FROM-FALSITY"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "STN-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "STN-FEATURE-SEPARATE-BIAS-FROM-FALSITY"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "STN-ITEM-REPAIR-NEAR",
+        "activity_id": "STN-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "STN-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "STN-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "STN-REP-LANGUAGE-EFFECT",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_PHRASE_ACTION_CONSEQUENCE_METHOD",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "STN_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#STN-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#STN-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STN-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "STN-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "STN-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "STN-ITEM-REENTRY-NEAR",
+        "activity_id": "STN-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "STN-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "STN-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STN-REP-LANGUAGE-EFFECT",
+        "changed_dimensions": [],
+        "learner_operation": "REEVALUATE_DISMISSIVE_PHRASE_EFFECT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "STN_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#STN-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#STN-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STN-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "STN-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "STN-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "STN-ITEM-REPAIR-CHANGED",
+        "activity_id": "STN-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "STN-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "STN-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "STN-REP-PAIRED-FRAMING",
+        "changed_dimensions": [],
+        "learner_operation": "REBUILD_BIAS_VERSUS_FALSITY_DISTINCTION",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "STN_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#STN-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#STN-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STN-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "STN-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "STN-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "STN-ITEM-REENTRY-CHANGED",
+        "activity_id": "STN-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-614766",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "STN-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "STN-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "STN-REP-PAIRED-FRAMING",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "REEVALUATE_SUPPORTED_COUNT_WITH_SELECTIVE_FRAMING",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "STN_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#STN-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#STN-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "STN-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "STN-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "STN-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT"
+      }
+    ],
+    "transitions": [
+      {
+        "transition_id": "SRC-TRANSITION-NEAR-PASS",
+        "from_node_id": "SRC-NODE-NEAR",
+        "to_node_id": "SRC-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "SRC-TRANSITION-NEAR-MISS",
+        "from_node_id": "SRC-NODE-NEAR",
+        "to_node_id": "SRC-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "SRC-TRANSITION-CHANGED-PASS",
+        "from_node_id": "SRC-NODE-CHANGED",
+        "to_node_id": "SRC-NODE-RECAP",
+        "predicate": "CHANGED_TASK_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "SRC-TRANSITION-CHANGED-MISS",
+        "from_node_id": "SRC-NODE-CHANGED",
+        "to_node_id": "SRC-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "SRC-TRANSITION-REENTRY-NEAR-PASS",
+        "from_node_id": "SRC-NODE-REENTRY-NEAR",
+        "to_node_id": "SRC-NODE-CHANGED",
+        "predicate": "FRESH_NEAR_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "SRC-TRANSITION-REENTRY-NEAR-BOUND",
+        "from_node_id": "SRC-NODE-REENTRY-NEAR",
+        "to_node_id": "SRC-NODE-HANDOFF",
+        "predicate": "FRESH_NEAR_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "SRC-TRANSITION-REENTRY-CHANGED-PASS",
+        "from_node_id": "SRC-NODE-REENTRY-CHANGED",
+        "to_node_id": "SRC-NODE-RECAP",
+        "predicate": "FRESH_CHANGED_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "SRC-TRANSITION-REENTRY-CHANGED-BOUND",
+        "from_node_id": "SRC-NODE-REENTRY-CHANGED",
+        "to_node_id": "SRC-NODE-HANDOFF",
+        "predicate": "FRESH_CHANGED_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "STN-TRANSITION-NEAR-PASS",
+        "from_node_id": "STN-NODE-NEAR",
+        "to_node_id": "STN-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "STN-TRANSITION-NEAR-MISS",
+        "from_node_id": "STN-NODE-NEAR",
+        "to_node_id": "STN-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "STN-TRANSITION-CHANGED-PASS",
+        "from_node_id": "STN-NODE-CHANGED",
+        "to_node_id": "STN-NODE-RECAP",
+        "predicate": "CHANGED_TASK_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "STN-TRANSITION-CHANGED-MISS",
+        "from_node_id": "STN-NODE-CHANGED",
+        "to_node_id": "STN-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "STN-TRANSITION-REENTRY-NEAR-PASS",
+        "from_node_id": "STN-NODE-REENTRY-NEAR",
+        "to_node_id": "STN-NODE-CHANGED",
+        "predicate": "FRESH_NEAR_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "STN-TRANSITION-REENTRY-NEAR-BOUND",
+        "from_node_id": "STN-NODE-REENTRY-NEAR",
+        "to_node_id": "STN-NODE-HANDOFF",
+        "predicate": "FRESH_NEAR_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "STN-TRANSITION-REENTRY-CHANGED-PASS",
+        "from_node_id": "STN-NODE-REENTRY-CHANGED",
+        "to_node_id": "STN-NODE-RECAP",
+        "predicate": "FRESH_CHANGED_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "STN-TRANSITION-REENTRY-CHANGED-BOUND",
+        "from_node_id": "STN-NODE-REENTRY-CHANGED",
+        "to_node_id": "STN-NODE-HANDOFF",
+        "predicate": "FRESH_CHANGED_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "SRC-TO-STN",
+        "from_node_id": "SRC-NODE-RECAP",
+        "to_node_id": "STN-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      }
+    ],
+    "attachment_bindings": [
+      {
+        "attachment_id": "V3-CAP-027756",
+        "attachment_type": "CAPSTONE",
+        "owner_lesson_id": "V3-LES-269427",
+        "host_scope": {
+          "kind": "SECONDARY_APPLICATION",
+          "primary_lesson_id": "V3-LES-269427"
+        },
+        "declared_host_core_ids": [
+          "V3-KC-189442",
+          "V3-KC-730249",
+          "V3-KC-072322",
+          "V3-KC-717751",
+          "V3-KC-795113",
+          "V3-KC-521064",
+          "V3-KC-188841",
+          "V3-KC-543225",
+          "V3-KC-614766"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": false,
+        "relation_ids": [
+          "R14-CAP-027756"
+        ],
+        "relation_class": "CAPSTONE_PLACEMENT",
+        "relation_direction": "LESSON_TO_ATTACHMENT",
+        "required_delivery": true
+      },
+      {
+        "attachment_id": "V3-EXT-489792",
+        "attachment_type": "EXTENSION",
+        "owner_lesson_id": "V3-LES-631070",
+        "host_scope": {
+          "kind": "SECONDARY_APPLICATION",
+          "primary_lesson_id": "V3-LES-631070"
+        },
+        "declared_host_core_ids": [
+          "V3-KC-135464",
+          "V3-KC-614766"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": false,
+        "relation_ids": [
+          "R14-FD-631070"
+        ],
+        "relation_class": "FIRST_DELIVERY",
+        "relation_direction": "LESSON_TO_ATTACHMENT",
+        "required_delivery": false
+      }
+    ]
+  }
+}

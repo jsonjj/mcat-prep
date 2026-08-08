@@ -1,0 +1,42 @@
+{
+  "$test_fixture": {
+    "synthetic": true,
+    "not_for_production": true,
+    "fixture_of": "lesson-factory.import-index",
+    "why": "A positive control for the architecture tests. Every hash below is invented; nothing here describes a real lesson, a real screen run, or a real decision. The marker key makes this envelope fail validation against the closed production contract it is a control for, so it cannot be mistaken for a production record or loaded as one."
+  },
+  "instance": {
+    "contract_id": "lesson-factory.import-index",
+    "contract_version": "3.0.0",
+    "index_id": "lesson-factory-deadline-2026-08-03-import-index-01",
+    "generated_at": "2026-08-03T22:35:00Z",
+    "kit_ref": "kit:lesson-factory-deadline-2026-08-03/kit-01#sha256:88ea88810327244911936230e33f5334f77a4633748a1fb46133f2fcf56e1163",
+    "entries": [
+      {
+        "lesson_id": "V3-LES-000101",
+        "lesson_revision_id": "rev-000002",
+        "bundle_ref": "bundle:kit-01/v3-les-000101#sha256:c3da9788e4f4e3567173332549acc2fa690299f07944e6bfa8b6e4ecd65bce1c",
+        "lesson_handoff_ref": "handoff:lane-01/v3-les-000101#sha256:a3f26dd5e01f6d3b167f5991ae08eb7411164b5bd79073a116092973e2f5a431",
+        "content_sha256": "c3da9788e4f4e3567173332549acc2fa690299f07944e6bfa8b6e4ecd65bce1c",
+        "readiness_status": "READY_FOR_CANDIDATE_IMPORT"
+      }
+    ],
+    "import_target": {
+      "namespace": "CANDIDATE_DRAFT_IMPORT",
+      "serves_learners": false,
+      "catalog_registration": false
+    },
+    "identity_reconstruction_allowed": false,
+    "nonclaims": {
+      "official_rubric_pass": false,
+      "human_approved": false,
+      "release_approved": false,
+      "efficacy_established": false,
+      "mastery_calibrated": false,
+      "readiness_validated": false,
+      "learner_validated": false,
+      "publication_safe": false,
+      "production_published": false
+    }
+  }
+}

@@ -1,0 +1,4219 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-338400",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "d2311077c1288e29de9542bc1bbbe9eea849b6167aa08a0e3e36464a8413bde7",
+  "payload": {
+    "lesson_id": "V3-LES-338400",
+    "grouping_id": "V3-CL-338400",
+    "ordered_kc_ids": [
+      "V3-KC-273349",
+      "V3-KC-803469",
+      "V3-KC-554697",
+      "V3-KC-076684"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-273349",
+      "V3-KC-803469",
+      "V3-KC-554697",
+      "V3-KC-076684"
+    ],
+    "throughline": "Project force onto displacement, use net work to update kinetic energy, track mechanical-energy stores, and compare the same work delivered through different times and machine tradeoffs.",
+    "curriculum_context": {
+      "canonical_title": "Work, energy, and power",
+      "phase_ids": [
+        "V3-PHS-714203",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-451762",
+        "V3-MOD-273816"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 15,
+          "relation_ids": [
+            "R14-PL-581402-015"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 15,
+          "relation_ids": [
+            "R14-PL-904137-015"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-749320",
+          "position": 15,
+          "relation_ids": [
+            "R14-PL-749320-015"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-338400",
+      "revisit_relation_ids": [
+        "R14-RV-338400"
+      ],
+      "hard_prerequisite_handoffs": [
+        {
+          "lesson_id": "V3-LES-130923",
+          "relation_ids": [
+            "V3-EDG-139699",
+            "R14-SM-005"
+          ],
+          "source_kc_ids": [
+            "V3-KC-866848",
+            "V3-KC-700208",
+            "V3-KC-159529"
+          ],
+          "taught_at_sequence_position": 1,
+          "checked_at_activity_id": "WORK-ACT-ENTRY",
+          "unresolved_handoff_lesson_id": "V3-LES-130923",
+          "failed_check_handoff_node_id": "WORK-NODE-HANDOFF-1",
+          "failed_check_predicate": "HARD_PREREQUISITE_CHECK_NOT_PASSED",
+          "planner_behavior": "BLOCK_CURRENT_PROGRESSION_AND_RETURN_TO_CANONICAL_PREREQUISITE",
+          "prerequisite_support_route_authored": false
+        }
+      ],
+      "helpful_context": [],
+      "route_scope_code": "STANDARD_ONLY",
+      "applicable_routes": [
+        "STANDARD"
+      ],
+      "open_holds": [
+        {
+          "hold_id": "V3-HOLD-110001",
+          "safe_interim_code": "RECORD_STALE_AUTHORITY_NONCLAIM",
+          "blocks_authoring": false
+        },
+        {
+          "hold_id": "V3-HOLD-110003",
+          "safe_interim_code": "PRESERVE_PROVISIONAL_LEARNER_VALIDATION",
+          "blocks_authoring": false
+        },
+        {
+          "hold_id": "V3-HOLD-110005",
+          "safe_interim_code": "PRESERVE_PROVISIONAL_SEQUENCE_AND_REPRESENTATION",
+          "blocks_authoring": false
+        },
+        {
+          "hold_id": "V3-HOLD-110008",
+          "safe_interim_code": "PRESERVE_CANONICAL_CLASSIFICATION_WITHOUT_VALIDATION_CLAIM",
+          "blocks_authoring": false
+        },
+        {
+          "hold_id": "V3-HOLD-110009",
+          "safe_interim_code": "DISABLE_ADAPTIVE_BYPASS_AND_NULL_THRESHOLDS",
+          "blocks_authoring": false
+        }
+      ]
+    },
+    "nodes": [
+      {
+        "node_id": "WORK-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify the angle between force and displacement. If vector components or basic trigonometry are not secure, use the exact prerequisite handoff."
+        ],
+        "representation_ids": [
+          "WORK-REP"
+        ],
+        "activity_ids": [
+          "WORK-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "WORK-CP-ENTRY",
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WORK-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: calculate work as a scalar energy transfer from the force component parallel to displacement.",
+          "Bridge: the prerequisite lesson supplies vector direction and cosine as a component ratio; no formal dot-product notation is required here."
+        ],
+        "representation_ids": [
+          "WORK-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "WORK-CP-ORIENTATION",
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WORK-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "For a constant force over a straight displacement, W = Fd cosθ, where θ is the angle between the force and displacement vectors.",
+          "A parallel force does positive work; an antiparallel force does negative work; a perpendicular force does zero work. Only the parallel component changes the work value.",
+          "Work is a scalar measured in joules: 1 J = 1 N·m. The sign describes energy transfer by that force, not whether the force or displacement is physically absent."
+        ],
+        "representation_ids": [
+          "WORK-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "WORK-CP-EXPLANATION",
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WORK-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Cast a shadow of the force onto the displacement direction. Multiply that signed parallel component by distance; ignore the perpendicular component for this work calculation."
+        ],
+        "representation_ids": [
+          "WORK-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "WORK-CP-MODEL",
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WORK-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "A 20 N pull acts 60° above a 5 m horizontal displacement. I select θ = 60° because it is between force and displacement, calculate Fparallel = 20 cos60° = 10 N, and obtain W = 50 J. I do not use the 20 N vertical component."
+        ],
+        "representation_ids": [
+          "WORK-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "WORK-CP-THINK",
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WORK-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a 12 N friction force opposes a 3 m displacement. The angle is 180°, so Wfriction = 12(3)cos180° = −36 J. A 50 N normal force perpendicular to that displacement does zero work."
+        ],
+        "representation_ids": [
+          "WORK-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "WORK-CP-WORKED",
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WORK-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: draw the displacement arrow, mark θ from displacement to force, and select the parallel component."
+        ],
+        "representation_ids": [
+          "WORK-REP"
+        ],
+        "activity_ids": [
+          "WORK-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "WORK-CP-GUIDED",
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WORK-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: calculate signed work for a new oblique force."
+        ],
+        "representation_ids": [
+          "WORK-REP"
+        ],
+        "activity_ids": [
+          "WORK-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "WORK-CP-LIGHT",
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WORK-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: distinguish zero work from negative work using angle."
+        ],
+        "representation_ids": [
+          "WORK-REP"
+        ],
+        "activity_ids": [
+          "WORK-ACT-SOLO"
+        ],
+        "checkpoint_ref": "WORK-CP-SOLO",
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WORK-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: a large perpendicular force can do zero work on a horizontal displacement.",
+          "Non-example: using the angle from the force to the vertical when the displacement is horizontal substitutes the wrong projection angle."
+        ],
+        "representation_ids": [
+          "WORK-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "WORK-CP-CONTRAST",
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WORK-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: calculate signed work from a fresh force-displacement diagram."
+        ],
+        "representation_ids": [
+          "WORK-REP"
+        ],
+        "activity_ids": [
+          "WORK-ACT-NEAR"
+        ],
+        "checkpoint_ref": "WORK-CP-NEAR",
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WORK-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: infer the required force angle from a stated work, force magnitude, and displacement."
+        ],
+        "representation_ids": [
+          "WORK-REP"
+        ],
+        "activity_ids": [
+          "WORK-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "WORK-CP-CHANGED",
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WORK-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the near-use function: mark the angle between the two vectors, write one of cos0°, cos60°, cos90°, or cos180°, then assign the sign."
+        ],
+        "representation_ids": [
+          "WORK-REP"
+        ],
+        "activity_ids": [
+          "WORK-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "WORK-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WORK-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: calculate a different oblique-force work value with untouched numbers."
+        ],
+        "representation_ids": [
+          "WORK-REP"
+        ],
+        "activity_ids": [
+          "WORK-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "WORK-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WORK-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the changed-task function: rearrange cosθ = W/(Fd), check that the ratio lies from −1 to 1, then match the basic angle."
+        ],
+        "representation_ids": [
+          "WORK-REP"
+        ],
+        "activity_ids": [
+          "WORK-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "WORK-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WORK-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: infer a new angle from a different work ratio."
+        ],
+        "representation_ids": [
+          "WORK-REP"
+        ],
+        "activity_ids": [
+          "WORK-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "WORK-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WORK-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: work uses the signed parallel force component—positive with motion, negative against motion, zero when perpendicular."
+        ],
+        "representation_ids": [
+          "WORK-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "WORK-CP-RECAP",
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WKET-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: distinguish work by one force from net work by all forces."
+        ],
+        "representation_ids": [
+          "WKET-REP"
+        ],
+        "activity_ids": [
+          "WKET-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "WKET-CP-ENTRY",
+        "source_claim_refs": [
+          "WKET-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WKET-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: predict speed-state change from net work and decide when potential-energy bookkeeping is available for a conservative force.",
+          "Bridge: the first microcycle supplies signed work for each constant force."
+        ],
+        "representation_ids": [
+          "WKET-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "WKET-CP-ORIENTATION",
+        "source_claim_refs": [
+          "WKET-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WKET-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "The work–kinetic-energy theorem is Wnet = ΔK = Kf − Ki. Positive net work raises kinetic energy; negative net work lowers it.",
+          "Net work is the sum of work by all forces. Positive work by one force does not guarantee acceleration if other forces do more negative work.",
+          "For a conservative force, work depends only on endpoints and Wcons = −ΔU. With nonconservative work such as kinetic friction, mechanical energy K + U can change: Wnoncons = Δ(K + U) for the chosen system model."
+        ],
+        "representation_ids": [
+          "WKET-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "WKET-CP-EXPLANATION",
+        "source_claim_refs": [
+          "WKET-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WKET-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Use two ledgers: sum each force's signed work to update K; when a conservative interaction is represented by U, move energy between K and U and reserve nonconservative work for net mechanical-energy change."
+        ],
+        "representation_ids": [
+          "WKET-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "WKET-CP-MODEL",
+        "source_claim_refs": [
+          "WKET-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WKET-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "If an applied force does +70 J and friction does −30 J, net work is +40 J, so kinetic energy rises by 40 J. I do not set ΔK = +70 J because the theorem uses net work."
+        ],
+        "representation_ids": [
+          "WKET-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "WKET-CP-THINK",
+        "source_claim_refs": [
+          "WKET-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WKET-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a 2 kg object starts at 3 m/s, so Ki = 9 J. Net work of −5 J leaves Kf = 4 J, giving speed 2 m/s. The negative net work reduces but does not reverse velocity by itself."
+        ],
+        "representation_ids": [
+          "WKET-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "WKET-CP-WORKED",
+        "source_claim_refs": [
+          "WKET-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WKET-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: list each force's work, sum to Wnet, then add that result to Ki."
+        ],
+        "representation_ids": [
+          "WKET-REP"
+        ],
+        "activity_ids": [
+          "WKET-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "WKET-CP-GUIDED",
+        "source_claim_refs": [
+          "WKET-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WKET-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: infer final kinetic energy from mixed positive and negative work."
+        ],
+        "representation_ids": [
+          "WKET-REP"
+        ],
+        "activity_ids": [
+          "WKET-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "WKET-CP-LIGHT",
+        "source_claim_refs": [
+          "WKET-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WKET-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: distinguish path-independent conservative work from frictional mechanical-energy loss."
+        ],
+        "representation_ids": [
+          "WKET-REP"
+        ],
+        "activity_ids": [
+          "WKET-ACT-SOLO"
+        ],
+        "checkpoint_ref": "WKET-CP-SOLO",
+        "source_claim_refs": [
+          "WKET-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WKET-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: zero net work means kinetic energy is unchanged; it does not mean every force did zero work.",
+          "Non-example: assigning a potential energy to arbitrary kinetic friction as if its work depended only on endpoints erases path dependence."
+        ],
+        "representation_ids": [
+          "WKET-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "WKET-CP-CONTRAST",
+        "source_claim_refs": [
+          "WKET-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WKET-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: combine initial kinetic energy and fresh force-work values to find final speed."
+        ],
+        "representation_ids": [
+          "WKET-REP"
+        ],
+        "activity_ids": [
+          "WKET-ACT-NEAR"
+        ],
+        "checkpoint_ref": "WKET-CP-NEAR",
+        "source_claim_refs": [
+          "WKET-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WKET-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: compare two paths with equal endpoints and identify which work contribution changes with path length."
+        ],
+        "representation_ids": [
+          "WKET-REP"
+        ],
+        "activity_ids": [
+          "WKET-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "WKET-CP-CHANGED",
+        "source_claim_refs": [
+          "WKET-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WKET-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the near-use function: write W1 + W2 + … = Wnet before using ΔK; then enforce Kf ≥ 0 in the physical interpretation."
+        ],
+        "representation_ids": [
+          "WKET-REP"
+        ],
+        "activity_ids": [
+          "WKET-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "WKET-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "WKET-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WKET-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: solve a different net-work and speed problem."
+        ],
+        "representation_ids": [
+          "WKET-REP"
+        ],
+        "activity_ids": [
+          "WKET-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "WKET-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "WKET-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WKET-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the changed-task function: endpoint-only work identifies the conservative contribution; path-length dependence identifies nonconservative friction."
+        ],
+        "representation_ids": [
+          "WKET-REP"
+        ],
+        "activity_ids": [
+          "WKET-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "WKET-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "WKET-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WKET-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: compare a new pair of paths with the same height change and different lengths."
+        ],
+        "representation_ids": [
+          "WKET-REP"
+        ],
+        "activity_ids": [
+          "WKET-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "WKET-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "WKET-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WKET-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: sum all work to update kinetic energy; conservative work trades with potential energy, while nonconservative work changes mechanical energy and can depend on path."
+        ],
+        "representation_ids": [
+          "WKET-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "WKET-CP-RECAP",
+        "source_claim_refs": [
+          "WKET-CLAIM"
+        ]
+      },
+      {
+        "node_id": "MENG-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify which energy store changes between two mechanical states."
+        ],
+        "representation_ids": [
+          "MENG-REP"
+        ],
+        "activity_ids": [
+          "MENG-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "MENG-CP-ENTRY",
+        "source_claim_refs": [
+          "MENG-CLAIM"
+        ]
+      },
+      {
+        "node_id": "MENG-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: relate speed, local height, and spring compression through KE = 1/2 mv², Ug = mgh, and Us = 1/2 kx².",
+          "Bridge: the work–kinetic-energy theorem explains transfer; this microcycle uses potential-energy stores for conservative interactions."
+        ],
+        "representation_ids": [
+          "MENG-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MENG-CP-ORIENTATION",
+        "source_claim_refs": [
+          "MENG-CLAIM"
+        ]
+      },
+      {
+        "node_id": "MENG-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Kinetic energy is 1/2 mv². Near a chosen local reference in uniform gravity, Ug = mgh. An ideal spring stores Us = 1/2 kx² relative to its relaxed length.",
+          "When only modeled conservative forces do work, K + Ug + Us is conserved between states. The zero of potential energy is arbitrary; only changes enter predictions.",
+          "If nonconservative work is supplied, include it explicitly: Ki + Ui + Wnoncons = Kf + Uf."
+        ],
+        "representation_ids": [
+          "MENG-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MENG-CP-EXPLANATION",
+        "source_claim_refs": [
+          "MENG-CLAIM"
+        ]
+      },
+      {
+        "node_id": "MENG-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Draw energy bars for each state. Transfer energy among K, gravitational U, and spring U; add or remove a separate nonconservative-work bar only when the prompt supplies it."
+        ],
+        "representation_ids": [
+          "MENG-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MENG-CP-MODEL",
+        "source_claim_refs": [
+          "MENG-CLAIM"
+        ]
+      },
+      {
+        "node_id": "MENG-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "For an object released from rest at height h with no losses, I set mgh = 1/2 mv² and see mass cancel. If friction removes 20 J, I subtract it from the initial mechanical-energy budget before solving the final state."
+        ],
+        "representation_ids": [
+          "MENG-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MENG-CP-THINK",
+        "source_claim_refs": [
+          "MENG-CLAIM"
+        ]
+      },
+      {
+        "node_id": "MENG-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a 2 kg object falls 5 m with g = 10 m/s² from rest. It loses 100 J of Ug and gains 100 J of K, reaching 10 m/s. If 20 J were dissipated, final K would be 80 J instead."
+        ],
+        "representation_ids": [
+          "MENG-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MENG-CP-WORKED",
+        "source_claim_refs": [
+          "MENG-CLAIM"
+        ]
+      },
+      {
+        "node_id": "MENG-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: label initial and final K, Ug, and Us before writing one energy equation."
+        ],
+        "representation_ids": [
+          "MENG-REP"
+        ],
+        "activity_ids": [
+          "MENG-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "MENG-CP-GUIDED",
+        "source_claim_refs": [
+          "MENG-CLAIM"
+        ]
+      },
+      {
+        "node_id": "MENG-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: calculate spring energy from compression and transfer it to kinetic energy."
+        ],
+        "representation_ids": [
+          "MENG-REP"
+        ],
+        "activity_ids": [
+          "MENG-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "MENG-CP-LIGHT",
+        "source_claim_refs": [
+          "MENG-CLAIM"
+        ]
+      },
+      {
+        "node_id": "MENG-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: include a stated frictional-energy loss without changing the conservative formulas."
+        ],
+        "representation_ids": [
+          "MENG-REP"
+        ],
+        "activity_ids": [
+          "MENG-ACT-SOLO"
+        ],
+        "checkpoint_ref": "MENG-CP-SOLO",
+        "source_claim_refs": [
+          "MENG-CLAIM"
+        ]
+      },
+      {
+        "node_id": "MENG-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: changing the arbitrary zero of Ug changes both state labels by the same offset, not predicted energy differences.",
+          "Non-example: using kx² instead of 1/2 kx² doubles spring energy."
+        ],
+        "representation_ids": [
+          "MENG-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MENG-CP-CONTRAST",
+        "source_claim_refs": [
+          "MENG-CLAIM"
+        ]
+      },
+      {
+        "node_id": "MENG-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: solve a fresh gravity-to-kinetic state change."
+        ],
+        "representation_ids": [
+          "MENG-REP"
+        ],
+        "activity_ids": [
+          "MENG-ACT-NEAR"
+        ],
+        "checkpoint_ref": "MENG-CP-NEAR",
+        "source_claim_refs": [
+          "MENG-CLAIM"
+        ]
+      },
+      {
+        "node_id": "MENG-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: combine spring and gravitational stores with a stated nonconservative loss."
+        ],
+        "representation_ids": [
+          "MENG-REP"
+        ],
+        "activity_ids": [
+          "MENG-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "MENG-CP-CHANGED",
+        "source_claim_refs": [
+          "MENG-CLAIM"
+        ]
+      },
+      {
+        "node_id": "MENG-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the near-use function: inventory stores at each endpoint, cancel absent terms, and conserve total mechanical energy only when no loss term is supplied."
+        ],
+        "representation_ids": [
+          "MENG-REP"
+        ],
+        "activity_ids": [
+          "MENG-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "MENG-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "MENG-CLAIM"
+        ]
+      },
+      {
+        "node_id": "MENG-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: solve a different height and speed relation."
+        ],
+        "representation_ids": [
+          "MENG-REP"
+        ],
+        "activity_ids": [
+          "MENG-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "MENG-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "MENG-CLAIM"
+        ]
+      },
+      {
+        "node_id": "MENG-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the changed-task function: place Wnoncons between initial and final mechanical totals with its signed value."
+        ],
+        "representation_ids": [
+          "MENG-REP"
+        ],
+        "activity_ids": [
+          "MENG-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "MENG-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "MENG-CLAIM"
+        ]
+      },
+      {
+        "node_id": "MENG-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: combine a new spring release, height change, and loss amount."
+        ],
+        "representation_ids": [
+          "MENG-REP"
+        ],
+        "activity_ids": [
+          "MENG-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "MENG-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "MENG-CLAIM"
+        ]
+      },
+      {
+        "node_id": "MENG-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: use state-based K, local mgh, and 1/2kx²; conserve their sum for conservative motion and add stated nonconservative work explicitly."
+        ],
+        "representation_ids": [
+          "MENG-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "MENG-CP-RECAP",
+        "source_claim_refs": [
+          "MENG-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POWR-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: distinguish total work from the rate at which work is done."
+        ],
+        "representation_ids": [
+          "POWR-REP"
+        ],
+        "activity_ids": [
+          "POWR-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "POWR-CP-ENTRY",
+        "source_claim_refs": [
+          "POWR-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POWR-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: calculate average power and analyze mechanical advantage through conserved or efficiency-limited work.",
+          "Bridge: preceding microcycles provide work and energy amounts; this microcycle adds time and machine geometry."
+        ],
+        "representation_ids": [
+          "POWR-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "POWR-CP-ORIENTATION",
+        "source_claim_refs": [
+          "POWR-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POWR-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Average power is P = W/Δt, measured in watts, where 1 W = 1 J/s. Equal work in less time requires greater average power.",
+          "An ideal machine trades force against distance while preserving work: Fin din = Fout dout. Mechanical advantage MA = Fout/Fin = din/dout for the stated ideal setup.",
+          "A real machine has efficiency η = Wout/Win less than or equal to one. Mechanical advantage does not create energy; reduced input force generally requires increased input distance."
+        ],
+        "representation_ids": [
+          "POWR-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "POWR-CP-EXPLANATION",
+        "source_claim_refs": [
+          "POWR-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POWR-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Use a work rectangle F×d for the machine and a time divider for power. A wider distance can compensate for a smaller force; delivering the rectangle faster raises power."
+        ],
+        "representation_ids": [
+          "POWR-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "POWR-CP-MODEL",
+        "source_claim_refs": [
+          "POWR-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POWR-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "To raise a 600 N load 1 m with an ideal machine using 200 N input, output work is 600 J, so input distance must be 3 m. If that happens in 2 s, average output power is 300 W. The force reduction came with extra distance, not free work."
+        ],
+        "representation_ids": [
+          "POWR-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "POWR-CP-THINK",
+        "source_claim_refs": [
+          "POWR-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POWR-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a machine receives 500 J and delivers 400 J, so efficiency is 0.80. If it delivers the 400 J in 5 s, average output power is 80 W. Efficiency compares energies; power additionally requires time."
+        ],
+        "representation_ids": [
+          "POWR-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "POWR-CP-WORKED",
+        "source_claim_refs": [
+          "POWR-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POWR-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: calculate work first, then divide by time for power."
+        ],
+        "representation_ids": [
+          "POWR-REP"
+        ],
+        "activity_ids": [
+          "POWR-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "POWR-CP-GUIDED",
+        "source_claim_refs": [
+          "POWR-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POWR-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: use ideal work equality to infer input distance."
+        ],
+        "representation_ids": [
+          "POWR-REP"
+        ],
+        "activity_ids": [
+          "POWR-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "POWR-CP-LIGHT",
+        "source_claim_refs": [
+          "POWR-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POWR-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: distinguish high mechanical advantage from high efficiency."
+        ],
+        "representation_ids": [
+          "POWR-REP"
+        ],
+        "activity_ids": [
+          "POWR-ACT-SOLO"
+        ],
+        "checkpoint_ref": "POWR-CP-SOLO",
+        "source_claim_refs": [
+          "POWR-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POWR-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: a machine can have large force mechanical advantage and still be inefficient; the quantities answer different questions.",
+          "Non-example: claiming output work exceeds input work in an unpowered ideal machine violates the stated energy balance."
+        ],
+        "representation_ids": [
+          "POWR-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "POWR-CP-CONTRAST",
+        "source_claim_refs": [
+          "POWR-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POWR-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: calculate work, power, and ideal input-distance tradeoff in a fresh machine."
+        ],
+        "representation_ids": [
+          "POWR-REP"
+        ],
+        "activity_ids": [
+          "POWR-ACT-NEAR"
+        ],
+        "checkpoint_ref": "POWR-CP-NEAR",
+        "source_claim_refs": [
+          "POWR-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POWR-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: compare two devices that perform equal work with different efficiency and completion time."
+        ],
+        "representation_ids": [
+          "POWR-REP"
+        ],
+        "activity_ids": [
+          "POWR-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "POWR-CP-CHANGED",
+        "source_claim_refs": [
+          "POWR-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POWR-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the near-use function: separate three ratios—work Fd, power W/t, and efficiency Wout/Win—before substituting."
+        ],
+        "representation_ids": [
+          "POWR-REP"
+        ],
+        "activity_ids": [
+          "POWR-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "POWR-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "POWR-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POWR-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: solve a different ideal machine and power calculation."
+        ],
+        "representation_ids": [
+          "POWR-REP"
+        ],
+        "activity_ids": [
+          "POWR-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "POWR-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "POWR-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POWR-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the changed-task function: compute input energy from efficiency and power from time independently; do not use force advantage as an efficiency value."
+        ],
+        "representation_ids": [
+          "POWR-REP"
+        ],
+        "activity_ids": [
+          "POWR-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "POWR-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "POWR-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POWR-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh re-entry: compare a new pair of devices with untouched work, time, and efficiency values."
+        ],
+        "representation_ids": [
+          "POWR-REP"
+        ],
+        "activity_ids": [
+          "POWR-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "POWR-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "POWR-CLAIM"
+        ]
+      },
+      {
+        "node_id": "POWR-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: work is energy transferred, power is its rate, ideal mechanical advantage trades force for distance, and real efficiency limits output work."
+        ],
+        "representation_ids": [
+          "POWR-REP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "POWR-CP-RECAP",
+        "source_claim_refs": [
+          "POWR-CLAIM"
+        ]
+      },
+      {
+        "node_id": "WORK-NODE-HANDOFF-1",
+        "node_kind": "PREREQUISITE_HANDOFF",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Pause this lesson when the prerequisite check is not secure. Return to the canonical prerequisite lesson, rebuild the required skill, and then begin this lesson again with a fresh entry check."
+        ],
+        "representation_ids": [],
+        "activity_ids": [],
+        "checkpoint_ref": "WORK-CP-HANDOFF-1",
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "WORK-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-273349",
+        "item_binding_id": "WORK-ITEM-ENTRY",
+        "learner_operation": "IDENTIFY_ZERO_WORK_PERPENDICULAR_FORCE",
+        "authorized_next_node_ids": [
+          "WORK-NODE-ORIENTATION",
+          "WORK-NODE-HANDOFF-1"
+        ]
+      },
+      {
+        "activity_id": "WORK-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-273349",
+        "item_binding_id": "WORK-ITEM-GUIDED",
+        "learner_operation": "CALCULATE_PARALLEL_POSITIVE_WORK",
+        "authorized_next_node_ids": [
+          "WORK-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "WORK-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-273349",
+        "item_binding_id": "WORK-ITEM-LIGHT",
+        "learner_operation": "CALCULATE_OBLIQUE_POSITIVE_WORK",
+        "authorized_next_node_ids": [
+          "WORK-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "WORK-ACT-SOLO",
+        "primary_kc_id": "V3-KC-273349",
+        "item_binding_id": "WORK-ITEM-SOLO",
+        "learner_operation": "CALCULATE_ANTIPARALLEL_NEGATIVE_WORK",
+        "authorized_next_node_ids": [
+          "WORK-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "WORK-ACT-NEAR",
+        "primary_kc_id": "V3-KC-273349",
+        "item_binding_id": "WORK-ITEM-NEAR",
+        "learner_operation": "INTEGRATE_FORCE_PROJECTION_AND_WORK",
+        "authorized_next_node_ids": [
+          "WORK-NODE-CHANGED",
+          "WORK-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "WORK-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-273349",
+        "item_binding_id": "WORK-ITEM-CHANGED",
+        "learner_operation": "INFER_FORCE_DISPLACEMENT_ANGLE_FROM_WORK",
+        "authorized_next_node_ids": [
+          "WORK-NODE-RECAP",
+          "WORK-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "WORK-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-273349",
+        "item_binding_id": "WORK-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_INCLUDED_ANGLE_SELECTION",
+        "authorized_next_node_ids": [
+          "WORK-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "WORK-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-273349",
+        "item_binding_id": "WORK-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_OBLIQUE_WORK_WITH_FRESH_VALUES",
+        "authorized_next_node_ids": [
+          "WORK-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "WORK-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-273349",
+        "item_binding_id": "WORK-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_WORK_ANGLE_REARRANGEMENT",
+        "authorized_next_node_ids": [
+          "WORK-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "WORK-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-273349",
+        "item_binding_id": "WORK-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_ANGLE_INFERENCE_WITH_FRESH_SIGN",
+        "authorized_next_node_ids": [
+          "WORK-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "WKET-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-803469",
+        "item_binding_id": "WKET-ITEM-ENTRY",
+        "learner_operation": "SUM_SIGNED_FORCE_WORK",
+        "authorized_next_node_ids": [
+          "WKET-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "WKET-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-803469",
+        "item_binding_id": "WKET-ITEM-GUIDED",
+        "learner_operation": "UPDATE_KINETIC_ENERGY_FROM_NET_WORK",
+        "authorized_next_node_ids": [
+          "WKET-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "WKET-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-803469",
+        "item_binding_id": "WKET-ITEM-LIGHT",
+        "learner_operation": "INTERPRET_NET_WORK_AS_KINETIC_CHANGE",
+        "authorized_next_node_ids": [
+          "WKET-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "WKET-ACT-SOLO",
+        "primary_kc_id": "V3-KC-803469",
+        "item_binding_id": "WKET-ITEM-SOLO",
+        "learner_operation": "CLASSIFY_CONSERVATIVE_WORK",
+        "authorized_next_node_ids": [
+          "WKET-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "WKET-ACT-NEAR",
+        "primary_kc_id": "V3-KC-803469",
+        "item_binding_id": "WKET-ITEM-NEAR",
+        "learner_operation": "INTEGRATE_NET_WORK_KINETIC_ENERGY_AND_SPEED",
+        "authorized_next_node_ids": [
+          "WKET-NODE-CHANGED",
+          "WKET-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "WKET-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-803469",
+        "item_binding_id": "WKET-ITEM-CHANGED",
+        "learner_operation": "TRANSFER_WORK_REASONING_TO_PATH_COMPARISON",
+        "authorized_next_node_ids": [
+          "WKET-NODE-RECAP",
+          "WKET-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "WKET-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-803469",
+        "item_binding_id": "WKET-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_WORK_KINETIC_ENERGY_EQUATION",
+        "authorized_next_node_ids": [
+          "WKET-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "WKET-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-803469",
+        "item_binding_id": "WKET-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_FINAL_SPEED_WITH_FRESH_ENERGY_STATE",
+        "authorized_next_node_ids": [
+          "WKET-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "WKET-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-803469",
+        "item_binding_id": "WKET-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_CONSERVATIVE_PATH_DISTINCTION",
+        "authorized_next_node_ids": [
+          "WKET-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "WKET-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-803469",
+        "item_binding_id": "WKET-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_PATH_COMPARISON_WITH_FRESH_GEOMETRY",
+        "authorized_next_node_ids": [
+          "WKET-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "MENG-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-554697",
+        "item_binding_id": "MENG-ITEM-ENTRY",
+        "learner_operation": "CALCULATE_KINETIC_ENERGY",
+        "authorized_next_node_ids": [
+          "MENG-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "MENG-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-554697",
+        "item_binding_id": "MENG-ITEM-GUIDED",
+        "learner_operation": "CALCULATE_GRAVITATIONAL_POTENTIAL_CHANGE",
+        "authorized_next_node_ids": [
+          "MENG-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "MENG-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-554697",
+        "item_binding_id": "MENG-ITEM-LIGHT",
+        "learner_operation": "CALCULATE_SPRING_POTENTIAL_ENERGY",
+        "authorized_next_node_ids": [
+          "MENG-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "MENG-ACT-SOLO",
+        "primary_kc_id": "V3-KC-554697",
+        "item_binding_id": "MENG-ITEM-SOLO",
+        "learner_operation": "INTERPRET_POTENTIAL_REFERENCE_CHOICE",
+        "authorized_next_node_ids": [
+          "MENG-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "MENG-ACT-NEAR",
+        "primary_kc_id": "V3-KC-554697",
+        "item_binding_id": "MENG-ITEM-NEAR",
+        "learner_operation": "INTEGRATE_GRAVITATIONAL_AND_KINETIC_ENERGY",
+        "authorized_next_node_ids": [
+          "MENG-NODE-CHANGED",
+          "MENG-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "MENG-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-554697",
+        "item_binding_id": "MENG-ITEM-CHANGED",
+        "learner_operation": "TRANSFER_TO_COMBINED_STORES_AND_NONCONSERVATIVE_LOSS",
+        "authorized_next_node_ids": [
+          "MENG-NODE-RECAP",
+          "MENG-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "MENG-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-554697",
+        "item_binding_id": "MENG-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_GRAVITY_KINETIC_BALANCE",
+        "authorized_next_node_ids": [
+          "MENG-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "MENG-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-554697",
+        "item_binding_id": "MENG-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_GRAVITY_SPEED_WITH_FRESH_HEIGHT",
+        "authorized_next_node_ids": [
+          "MENG-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "MENG-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-554697",
+        "item_binding_id": "MENG-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_MECHANICAL_ENERGY_WITH_WORK_CHANNEL",
+        "authorized_next_node_ids": [
+          "MENG-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "MENG-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-554697",
+        "item_binding_id": "MENG-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_COMBINED_ENERGY_BALANCE_WITH_FRESH_VALUES",
+        "authorized_next_node_ids": [
+          "MENG-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "POWR-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-076684",
+        "item_binding_id": "POWR-ITEM-ENTRY",
+        "learner_operation": "CALCULATE_AVERAGE_POWER",
+        "authorized_next_node_ids": [
+          "POWR-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "POWR-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-076684",
+        "item_binding_id": "POWR-ITEM-GUIDED",
+        "learner_operation": "COMPARE_POWER_FOR_EQUAL_WORK",
+        "authorized_next_node_ids": [
+          "POWR-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "POWR-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-076684",
+        "item_binding_id": "POWR-ITEM-LIGHT",
+        "learner_operation": "CALCULATE_IDEAL_MACHINE_INPUT_DISTANCE",
+        "authorized_next_node_ids": [
+          "POWR-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "POWR-ACT-SOLO",
+        "primary_kc_id": "V3-KC-076684",
+        "item_binding_id": "POWR-ITEM-SOLO",
+        "learner_operation": "CALCULATE_MACHINE_EFFICIENCY",
+        "authorized_next_node_ids": [
+          "POWR-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "POWR-ACT-NEAR",
+        "primary_kc_id": "V3-KC-076684",
+        "item_binding_id": "POWR-ITEM-NEAR",
+        "learner_operation": "INTEGRATE_MECHANICAL_ADVANTAGE_AND_POWER",
+        "authorized_next_node_ids": [
+          "POWR-NODE-CHANGED",
+          "POWR-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "POWR-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-076684",
+        "item_binding_id": "POWR-ITEM-CHANGED",
+        "learner_operation": "TRANSFER_TO_POWER_EFFICIENCY_COMPARISON",
+        "authorized_next_node_ids": [
+          "POWR-NODE-RECAP",
+          "POWR-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "POWR-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-076684",
+        "item_binding_id": "POWR-ITEM-REPAIR-NEAR",
+        "learner_operation": "REBUILD_POWER_AND_EFFICIENCY_DEFINITIONS",
+        "authorized_next_node_ids": [
+          "POWR-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "POWR-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-076684",
+        "item_binding_id": "POWR-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_MACHINE_POWER_WITH_FRESH_VALUES",
+        "authorized_next_node_ids": [
+          "POWR-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "POWR-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-076684",
+        "item_binding_id": "POWR-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REBUILD_INPUT_WORK_FROM_EFFICIENCY",
+        "authorized_next_node_ids": [
+          "POWR-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "POWR-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-076684",
+        "item_binding_id": "POWR-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_DEVICE_COMPARISON_WITH_FRESH_VALUES",
+        "authorized_next_node_ids": [
+          "POWR-NODE-RECAP"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-273349",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-273349",
+        "scope_in_refs": [
+          "V3-KC-273349:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-273349:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "WORK-CLAIM"
+        ],
+        "prerequisite_point_refs": [
+          "V3-EDG-139699",
+          "R14-SM-005"
+        ],
+        "entry_check_boundary_id": "WORK-NODE-ENTRY",
+        "orientation_node_id": "WORK-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "WORK-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "WORK-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "WORK-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "WORK-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "WORK-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "WORK-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "WORK-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "WORK-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "WORK-NODE-NEAR",
+          "activity_ids": [
+            "WORK-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "WORK-NODE-CHANGED",
+          "activity_ids": [
+            "WORK-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "WORK-FEATURE-NEAR-FUNCTION",
+          "WORK-FEATURE-CHANGED-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "WORK-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "WORK-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "WORK-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "WORK-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "WORK-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "WORK-ACT-REENTRY-NEAR",
+            "success_next_node_id": "WORK-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "WORK-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "WORK-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "WORK-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "WORK-REP"
+        ],
+        "accessibility_equivalent_ids": [
+          "WORK-REP-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [],
+          "standard": [
+            "WORK-NODE-ENTRY",
+            "WORK-NODE-ORIENTATION",
+            "WORK-NODE-EXPLANATION",
+            "WORK-NODE-MODEL",
+            "WORK-NODE-THINK",
+            "WORK-NODE-WORKED",
+            "WORK-NODE-GUIDED",
+            "WORK-NODE-LIGHT",
+            "WORK-NODE-SOLO",
+            "WORK-NODE-CONTRAST",
+            "WORK-NODE-NEAR",
+            "WORK-NODE-CHANGED",
+            "WORK-NODE-REPAIR-NEAR",
+            "WORK-NODE-REENTRY-NEAR",
+            "WORK-NODE-REPAIR-CHANGED",
+            "WORK-NODE-REENTRY-CHANGED",
+            "WORK-NODE-RECAP"
+          ],
+          "misconception": []
+        },
+        "recap_node_id": "WORK-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-803469",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-803469",
+        "scope_in_refs": [
+          "V3-KC-803469:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-803469:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "WKET-CLAIM"
+        ],
+        "prerequisite_point_refs": [
+          "V3-EDG-139699",
+          "R14-SM-005"
+        ],
+        "entry_check_boundary_id": "WKET-NODE-ENTRY",
+        "orientation_node_id": "WKET-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "WKET-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "WKET-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "WKET-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "WKET-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "WKET-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "WKET-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "WKET-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "WKET-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "WKET-NODE-NEAR",
+          "activity_ids": [
+            "WKET-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "WKET-NODE-CHANGED",
+          "activity_ids": [
+            "WKET-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "WKET-FEATURE-NEAR-FUNCTION",
+          "WKET-FEATURE-CHANGED-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "WKET-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "WKET-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "WKET-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "WKET-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "WKET-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "WKET-ACT-REENTRY-NEAR",
+            "success_next_node_id": "WKET-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "WKET-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "WKET-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "WKET-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "WKET-REP"
+        ],
+        "accessibility_equivalent_ids": [
+          "WKET-REP-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [],
+          "standard": [
+            "WKET-NODE-ENTRY",
+            "WKET-NODE-ORIENTATION",
+            "WKET-NODE-EXPLANATION",
+            "WKET-NODE-MODEL",
+            "WKET-NODE-THINK",
+            "WKET-NODE-WORKED",
+            "WKET-NODE-GUIDED",
+            "WKET-NODE-LIGHT",
+            "WKET-NODE-SOLO",
+            "WKET-NODE-CONTRAST",
+            "WKET-NODE-NEAR",
+            "WKET-NODE-CHANGED",
+            "WKET-NODE-REPAIR-NEAR",
+            "WKET-NODE-REENTRY-NEAR",
+            "WKET-NODE-REPAIR-CHANGED",
+            "WKET-NODE-REENTRY-CHANGED",
+            "WKET-NODE-RECAP"
+          ],
+          "misconception": []
+        },
+        "recap_node_id": "WKET-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-554697",
+        "canonical_ordinal": 3,
+        "objective_ref": "objective:V3-KC-554697",
+        "scope_in_refs": [
+          "V3-KC-554697:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-554697:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "MENG-CLAIM"
+        ],
+        "prerequisite_point_refs": [
+          "V3-EDG-139699",
+          "R14-SM-005"
+        ],
+        "entry_check_boundary_id": "MENG-NODE-ENTRY",
+        "orientation_node_id": "MENG-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "MENG-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "MENG-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "MENG-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "MENG-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "MENG-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "MENG-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "MENG-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "MENG-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "MENG-NODE-NEAR",
+          "activity_ids": [
+            "MENG-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "MENG-NODE-CHANGED",
+          "activity_ids": [
+            "MENG-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "MENG-FEATURE-NEAR-FUNCTION",
+          "MENG-FEATURE-CHANGED-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "MENG-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "MENG-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "MENG-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "MENG-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "MENG-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "MENG-ACT-REENTRY-NEAR",
+            "success_next_node_id": "MENG-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "MENG-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "MENG-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "MENG-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "MENG-REP"
+        ],
+        "accessibility_equivalent_ids": [
+          "MENG-REP-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [],
+          "standard": [
+            "MENG-NODE-ENTRY",
+            "MENG-NODE-ORIENTATION",
+            "MENG-NODE-EXPLANATION",
+            "MENG-NODE-MODEL",
+            "MENG-NODE-THINK",
+            "MENG-NODE-WORKED",
+            "MENG-NODE-GUIDED",
+            "MENG-NODE-LIGHT",
+            "MENG-NODE-SOLO",
+            "MENG-NODE-CONTRAST",
+            "MENG-NODE-NEAR",
+            "MENG-NODE-CHANGED",
+            "MENG-NODE-REPAIR-NEAR",
+            "MENG-NODE-REENTRY-NEAR",
+            "MENG-NODE-REPAIR-CHANGED",
+            "MENG-NODE-REENTRY-CHANGED",
+            "MENG-NODE-RECAP"
+          ],
+          "misconception": []
+        },
+        "recap_node_id": "MENG-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-076684",
+        "canonical_ordinal": 4,
+        "objective_ref": "objective:V3-KC-076684",
+        "scope_in_refs": [
+          "V3-KC-076684:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-076684:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "POWR-CLAIM"
+        ],
+        "prerequisite_point_refs": [
+          "V3-EDG-139699",
+          "R14-SM-005"
+        ],
+        "entry_check_boundary_id": "POWR-NODE-ENTRY",
+        "orientation_node_id": "POWR-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "POWR-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "POWR-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "POWR-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "POWR-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "POWR-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "POWR-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "POWR-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "POWR-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "POWR-NODE-NEAR",
+          "activity_ids": [
+            "POWR-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "POWR-NODE-CHANGED",
+          "activity_ids": [
+            "POWR-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "POWR-FEATURE-NEAR-FUNCTION",
+          "POWR-FEATURE-CHANGED-FUNCTION"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "POWR-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "POWR-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "POWR-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "POWR-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "POWR-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "POWR-ACT-REENTRY-NEAR",
+            "success_next_node_id": "POWR-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "POWR-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "POWR-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "POWR-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "POWR-REP"
+        ],
+        "accessibility_equivalent_ids": [
+          "POWR-REP-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [],
+          "standard": [
+            "POWR-NODE-ENTRY",
+            "POWR-NODE-ORIENTATION",
+            "POWR-NODE-EXPLANATION",
+            "POWR-NODE-MODEL",
+            "POWR-NODE-THINK",
+            "POWR-NODE-WORKED",
+            "POWR-NODE-GUIDED",
+            "POWR-NODE-LIGHT",
+            "POWR-NODE-SOLO",
+            "POWR-NODE-CONTRAST",
+            "POWR-NODE-NEAR",
+            "POWR-NODE-CHANGED",
+            "POWR-NODE-REPAIR-NEAR",
+            "POWR-NODE-REENTRY-NEAR",
+            "POWR-NODE-REPAIR-CHANGED",
+            "POWR-NODE-REENTRY-CHANGED",
+            "POWR-NODE-RECAP"
+          ],
+          "misconception": []
+        },
+        "recap_node_id": "POWR-NODE-RECAP"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "WORK-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "WORK-FAMILY-WORKED",
+        "stimulus_lineage_id": "WORK-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "WORK-REP",
+        "learner_operation": "FOLLOW_MODEL_SELECTION_AND_EXECUTION",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:WORK-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WORK-SOLUTION-WORKED",
+        "decisive_cue_id": "WORK-CUE-WORKED",
+        "distractor_lineage_id": "WORK-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "WORK-ITEM-ENTRY",
+        "activity_id": "WORK-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "WORK-FAMILY-ENTRY",
+        "stimulus_lineage_id": "WORK-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "WORK-REP",
+        "learner_operation": "IDENTIFY_ZERO_WORK_PERPENDICULAR_FORCE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_LOW_STAKES_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "WORK_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#WORK-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#WORK-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WORK-SOLUTION-ENTRY",
+        "decisive_cue_id": "WORK-CUE-ENTRY",
+        "distractor_lineage_id": "WORK-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "WORK-ITEM-GUIDED",
+        "activity_id": "WORK-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "WORK-FAMILY-GUIDED",
+        "stimulus_lineage_id": "WORK-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "WORK-REP",
+        "learner_operation": "CALCULATE_PARALLEL_POSITIVE_WORK",
+        "hint_policy": "VISIBLE_SELECTION_SEQUENCE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "WORK_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#WORK-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#WORK-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WORK-SOLUTION-GUIDED",
+        "decisive_cue_id": "WORK-CUE-GUIDED",
+        "distractor_lineage_id": "WORK-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "WORK-ITEM-LIGHT",
+        "activity_id": "WORK-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "WORK-FAMILY-LIGHT",
+        "stimulus_lineage_id": "WORK-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "WORK-REP",
+        "learner_operation": "CALCULATE_OBLIQUE_POSITIVE_WORK",
+        "hint_policy": "BRIEF_NON_ANSWER_BEARING_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "WORK_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#WORK-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#WORK-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WORK-SOLUTION-LIGHT",
+        "decisive_cue_id": "WORK-CUE-LIGHT",
+        "distractor_lineage_id": "WORK-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "WORK-ITEM-SOLO",
+        "activity_id": "WORK-ACT-SOLO",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "WORK-FAMILY-SOLO",
+        "stimulus_lineage_id": "WORK-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "WORK-REP",
+        "learner_operation": "CALCULATE_ANTIPARALLEL_NEGATIVE_WORK",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "WORK_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#WORK-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#WORK-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WORK-SOLUTION-SOLO",
+        "decisive_cue_id": "WORK-CUE-SOLO",
+        "distractor_lineage_id": "WORK-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "WORK-ITEM-NEAR",
+        "activity_id": "WORK-ACT-NEAR",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "WORK-FAMILY-NEAR",
+        "stimulus_lineage_id": "WORK-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "WORK-REP",
+        "learner_operation": "INTEGRATE_FORCE_PROJECTION_AND_WORK",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "WORK_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#WORK-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#WORK-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WORK-SOLUTION-NEAR",
+        "decisive_cue_id": "WORK-CUE-NEAR",
+        "distractor_lineage_id": "WORK-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "WORK-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "WORK-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "WORK-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "WORK-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "WORK-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "WORK-FEATURE-NEAR-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "WORK-ITEM-CHANGED",
+        "activity_id": "WORK-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "WORK-FAMILY-CHANGED",
+        "stimulus_lineage_id": "WORK-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [
+          "required_operation",
+          "representation"
+        ],
+        "representation_id": "WORK-REP",
+        "learner_operation": "INFER_FORCE_DISPLACEMENT_ANGLE_FROM_WORK",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "WORK_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#WORK-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#WORK-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WORK-SOLUTION-CHANGED",
+        "decisive_cue_id": "WORK-CUE-CHANGED",
+        "distractor_lineage_id": "WORK-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "WORK-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "WORK-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "WORK-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "WORK-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "WORK-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "WORK-FEATURE-CHANGED-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "WORK-ITEM-REPAIR-NEAR",
+        "activity_id": "WORK-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "WORK-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "WORK-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "WORK-REP",
+        "learner_operation": "REBUILD_INCLUDED_ANGLE_SELECTION",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "WORK_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#WORK-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#WORK-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WORK-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "WORK-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "WORK-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "WORK-ITEM-REENTRY-NEAR",
+        "activity_id": "WORK-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "WORK-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "WORK-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "WORK-REP",
+        "learner_operation": "REENTER_OBLIQUE_WORK_WITH_FRESH_VALUES",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "WORK_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#WORK-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#WORK-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WORK-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "WORK-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "WORK-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "WORK-ITEM-NEAR",
+          "stimulus_difference": "NEW_CONTEXT_VALUES_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "WORK-ITEM-REPAIR-CHANGED",
+        "activity_id": "WORK-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "WORK-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "WORK-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "WORK-REP",
+        "learner_operation": "REBUILD_WORK_ANGLE_REARRANGEMENT",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "WORK_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#WORK-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#WORK-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WORK-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "WORK-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "WORK-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "WORK-ITEM-REENTRY-CHANGED",
+        "activity_id": "WORK-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-273349",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "WORK-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "WORK-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [
+          "required_operation",
+          "representation"
+        ],
+        "representation_id": "WORK-REP",
+        "learner_operation": "REENTER_ANGLE_INFERENCE_WITH_FRESH_SIGN",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "WORK_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#WORK-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#WORK-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WORK-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "WORK-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "WORK-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "WORK-ITEM-CHANGED",
+          "stimulus_difference": "NEW_CONTEXT_VALUES_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "WKET-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "WKET-FAMILY-WORKED",
+        "stimulus_lineage_id": "WKET-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "WKET-REP",
+        "learner_operation": "FOLLOW_MODEL_SELECTION_AND_EXECUTION",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:WKET-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WKET-SOLUTION-WORKED",
+        "decisive_cue_id": "WKET-CUE-WORKED",
+        "distractor_lineage_id": "WKET-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "WKET-ITEM-ENTRY",
+        "activity_id": "WKET-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "WKET-FAMILY-ENTRY",
+        "stimulus_lineage_id": "WKET-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "WKET-REP",
+        "learner_operation": "SUM_SIGNED_FORCE_WORK",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_LOW_STAKES_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "WKET_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#WKET-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#WKET-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WKET-SOLUTION-ENTRY",
+        "decisive_cue_id": "WKET-CUE-ENTRY",
+        "distractor_lineage_id": "WKET-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "WKET-ITEM-GUIDED",
+        "activity_id": "WKET-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "WKET-FAMILY-GUIDED",
+        "stimulus_lineage_id": "WKET-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "WKET-REP",
+        "learner_operation": "UPDATE_KINETIC_ENERGY_FROM_NET_WORK",
+        "hint_policy": "VISIBLE_SELECTION_SEQUENCE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "WKET_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#WKET-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#WKET-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WKET-SOLUTION-GUIDED",
+        "decisive_cue_id": "WKET-CUE-GUIDED",
+        "distractor_lineage_id": "WKET-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "WKET-ITEM-LIGHT",
+        "activity_id": "WKET-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "WKET-FAMILY-LIGHT",
+        "stimulus_lineage_id": "WKET-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "WKET-REP",
+        "learner_operation": "INTERPRET_NET_WORK_AS_KINETIC_CHANGE",
+        "hint_policy": "BRIEF_NON_ANSWER_BEARING_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "WKET_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#WKET-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#WKET-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WKET-SOLUTION-LIGHT",
+        "decisive_cue_id": "WKET-CUE-LIGHT",
+        "distractor_lineage_id": "WKET-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "WKET-ITEM-SOLO",
+        "activity_id": "WKET-ACT-SOLO",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "WKET-FAMILY-SOLO",
+        "stimulus_lineage_id": "WKET-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "WKET-REP",
+        "learner_operation": "CLASSIFY_CONSERVATIVE_WORK",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "WKET_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#WKET-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#WKET-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WKET-SOLUTION-SOLO",
+        "decisive_cue_id": "WKET-CUE-SOLO",
+        "distractor_lineage_id": "WKET-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "WKET-ITEM-NEAR",
+        "activity_id": "WKET-ACT-NEAR",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "WKET-FAMILY-NEAR",
+        "stimulus_lineage_id": "WKET-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "WKET-REP",
+        "learner_operation": "INTEGRATE_NET_WORK_KINETIC_ENERGY_AND_SPEED",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "WKET_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#WKET-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#WKET-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WKET-SOLUTION-NEAR",
+        "decisive_cue_id": "WKET-CUE-NEAR",
+        "distractor_lineage_id": "WKET-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "WKET-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "WKET-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "WKET-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "WKET-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "WKET-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "WKET-FEATURE-NEAR-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "WKET-ITEM-CHANGED",
+        "activity_id": "WKET-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "WKET-FAMILY-CHANGED",
+        "stimulus_lineage_id": "WKET-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "representation_id": "WKET-REP",
+        "learner_operation": "TRANSFER_WORK_REASONING_TO_PATH_COMPARISON",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "WKET_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#WKET-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#WKET-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WKET-SOLUTION-CHANGED",
+        "decisive_cue_id": "WKET-CUE-CHANGED",
+        "distractor_lineage_id": "WKET-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "WKET-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "WKET-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "WKET-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "WKET-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "WKET-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "WKET-FEATURE-CHANGED-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "WKET-ITEM-REPAIR-NEAR",
+        "activity_id": "WKET-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "WKET-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "WKET-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "WKET-REP",
+        "learner_operation": "REBUILD_WORK_KINETIC_ENERGY_EQUATION",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "WKET_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#WKET-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#WKET-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WKET-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "WKET-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "WKET-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "WKET-ITEM-REENTRY-NEAR",
+        "activity_id": "WKET-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "WKET-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "WKET-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "WKET-REP",
+        "learner_operation": "REENTER_FINAL_SPEED_WITH_FRESH_ENERGY_STATE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "WKET_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#WKET-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#WKET-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WKET-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "WKET-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "WKET-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "WKET-ITEM-NEAR",
+          "stimulus_difference": "NEW_CONTEXT_VALUES_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "WKET-ITEM-REPAIR-CHANGED",
+        "activity_id": "WKET-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "WKET-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "WKET-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "WKET-REP",
+        "learner_operation": "REBUILD_CONSERVATIVE_PATH_DISTINCTION",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "WKET_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#WKET-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#WKET-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WKET-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "WKET-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "WKET-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "WKET-ITEM-REENTRY-CHANGED",
+        "activity_id": "WKET-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-803469",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "WKET-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "WKET-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "representation_id": "WKET-REP",
+        "learner_operation": "REENTER_PATH_COMPARISON_WITH_FRESH_GEOMETRY",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "WKET_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#WKET-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#WKET-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "WKET-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "WKET-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "WKET-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "WKET-ITEM-CHANGED",
+          "stimulus_difference": "NEW_CONTEXT_VALUES_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "MENG-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "MENG-FAMILY-WORKED",
+        "stimulus_lineage_id": "MENG-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "MENG-REP",
+        "learner_operation": "FOLLOW_MODEL_SELECTION_AND_EXECUTION",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:MENG-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MENG-SOLUTION-WORKED",
+        "decisive_cue_id": "MENG-CUE-WORKED",
+        "distractor_lineage_id": "MENG-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "MENG-ITEM-ENTRY",
+        "activity_id": "MENG-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "MENG-FAMILY-ENTRY",
+        "stimulus_lineage_id": "MENG-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "MENG-REP",
+        "learner_operation": "CALCULATE_KINETIC_ENERGY",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_LOW_STAKES_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "MENG_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#MENG-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#MENG-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MENG-SOLUTION-ENTRY",
+        "decisive_cue_id": "MENG-CUE-ENTRY",
+        "distractor_lineage_id": "MENG-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "MENG-ITEM-GUIDED",
+        "activity_id": "MENG-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "MENG-FAMILY-GUIDED",
+        "stimulus_lineage_id": "MENG-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "MENG-REP",
+        "learner_operation": "CALCULATE_GRAVITATIONAL_POTENTIAL_CHANGE",
+        "hint_policy": "VISIBLE_SELECTION_SEQUENCE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "MENG_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#MENG-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#MENG-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MENG-SOLUTION-GUIDED",
+        "decisive_cue_id": "MENG-CUE-GUIDED",
+        "distractor_lineage_id": "MENG-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "MENG-ITEM-LIGHT",
+        "activity_id": "MENG-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "MENG-FAMILY-LIGHT",
+        "stimulus_lineage_id": "MENG-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "MENG-REP",
+        "learner_operation": "CALCULATE_SPRING_POTENTIAL_ENERGY",
+        "hint_policy": "BRIEF_NON_ANSWER_BEARING_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "MENG_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#MENG-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#MENG-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MENG-SOLUTION-LIGHT",
+        "decisive_cue_id": "MENG-CUE-LIGHT",
+        "distractor_lineage_id": "MENG-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "MENG-ITEM-SOLO",
+        "activity_id": "MENG-ACT-SOLO",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "MENG-FAMILY-SOLO",
+        "stimulus_lineage_id": "MENG-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "MENG-REP",
+        "learner_operation": "INTERPRET_POTENTIAL_REFERENCE_CHOICE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "MENG_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#MENG-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#MENG-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MENG-SOLUTION-SOLO",
+        "decisive_cue_id": "MENG-CUE-SOLO",
+        "distractor_lineage_id": "MENG-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "MENG-ITEM-NEAR",
+        "activity_id": "MENG-ACT-NEAR",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "MENG-FAMILY-NEAR",
+        "stimulus_lineage_id": "MENG-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "MENG-REP",
+        "learner_operation": "INTEGRATE_GRAVITATIONAL_AND_KINETIC_ENERGY",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MENG_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#MENG-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#MENG-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MENG-SOLUTION-NEAR",
+        "decisive_cue_id": "MENG-CUE-NEAR",
+        "distractor_lineage_id": "MENG-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "MENG-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "MENG-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "MENG-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "MENG-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "MENG-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "MENG-FEATURE-NEAR-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "MENG-ITEM-CHANGED",
+        "activity_id": "MENG-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "MENG-FAMILY-CHANGED",
+        "stimulus_lineage_id": "MENG-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "representation_id": "MENG-REP",
+        "learner_operation": "TRANSFER_TO_COMBINED_STORES_AND_NONCONSERVATIVE_LOSS",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MENG_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#MENG-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#MENG-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MENG-SOLUTION-CHANGED",
+        "decisive_cue_id": "MENG-CUE-CHANGED",
+        "distractor_lineage_id": "MENG-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "MENG-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "MENG-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "MENG-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "MENG-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "MENG-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "MENG-FEATURE-CHANGED-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "MENG-ITEM-REPAIR-NEAR",
+        "activity_id": "MENG-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "MENG-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "MENG-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "MENG-REP",
+        "learner_operation": "REBUILD_GRAVITY_KINETIC_BALANCE",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "MENG_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#MENG-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#MENG-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MENG-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "MENG-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "MENG-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "MENG-ITEM-REENTRY-NEAR",
+        "activity_id": "MENG-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "MENG-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "MENG-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "MENG-REP",
+        "learner_operation": "REENTER_GRAVITY_SPEED_WITH_FRESH_HEIGHT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MENG_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#MENG-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#MENG-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MENG-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "MENG-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "MENG-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "MENG-ITEM-NEAR",
+          "stimulus_difference": "NEW_CONTEXT_VALUES_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "MENG-ITEM-REPAIR-CHANGED",
+        "activity_id": "MENG-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "MENG-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "MENG-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "MENG-REP",
+        "learner_operation": "REBUILD_MECHANICAL_ENERGY_WITH_WORK_CHANNEL",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "MENG_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#MENG-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#MENG-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MENG-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "MENG-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "MENG-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "MENG-ITEM-REENTRY-CHANGED",
+        "activity_id": "MENG-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-554697",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "MENG-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "MENG-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "representation_id": "MENG-REP",
+        "learner_operation": "REENTER_COMBINED_ENERGY_BALANCE_WITH_FRESH_VALUES",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "MENG_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#MENG-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#MENG-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "MENG-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "MENG-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "MENG-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "MENG-ITEM-CHANGED",
+          "stimulus_difference": "NEW_CONTEXT_VALUES_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "POWR-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "POWR-FAMILY-WORKED",
+        "stimulus_lineage_id": "POWR-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "POWR-REP",
+        "learner_operation": "FOLLOW_MODEL_SELECTION_AND_EXECUTION",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:POWR-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POWR-SOLUTION-WORKED",
+        "decisive_cue_id": "POWR-CUE-WORKED",
+        "distractor_lineage_id": "POWR-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "POWR-ITEM-ENTRY",
+        "activity_id": "POWR-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "POWR-FAMILY-ENTRY",
+        "stimulus_lineage_id": "POWR-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "POWR-REP",
+        "learner_operation": "CALCULATE_AVERAGE_POWER",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AS_LOW_STAKES_ABSTENTION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "POWR_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#POWR-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#POWR-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POWR-SOLUTION-ENTRY",
+        "decisive_cue_id": "POWR-CUE-ENTRY",
+        "distractor_lineage_id": "POWR-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "POWR-ITEM-GUIDED",
+        "activity_id": "POWR-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "POWR-FAMILY-GUIDED",
+        "stimulus_lineage_id": "POWR-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "POWR-REP",
+        "learner_operation": "COMPARE_POWER_FOR_EQUAL_WORK",
+        "hint_policy": "VISIBLE_SELECTION_SEQUENCE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "POWR_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#POWR-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#POWR-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POWR-SOLUTION-GUIDED",
+        "decisive_cue_id": "POWR-CUE-GUIDED",
+        "distractor_lineage_id": "POWR-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "POWR-ITEM-LIGHT",
+        "activity_id": "POWR-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "POWR-FAMILY-LIGHT",
+        "stimulus_lineage_id": "POWR-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "POWR-REP",
+        "learner_operation": "CALCULATE_IDEAL_MACHINE_INPUT_DISTANCE",
+        "hint_policy": "BRIEF_NON_ANSWER_BEARING_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "POWR_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#POWR-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#POWR-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POWR-SOLUTION-LIGHT",
+        "decisive_cue_id": "POWR-CUE-LIGHT",
+        "distractor_lineage_id": "POWR-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "POWR-ITEM-SOLO",
+        "activity_id": "POWR-ACT-SOLO",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "POWR-FAMILY-SOLO",
+        "stimulus_lineage_id": "POWR-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "POWR-REP",
+        "learner_operation": "CALCULATE_MACHINE_EFFICIENCY",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "POWR_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#POWR-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#POWR-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POWR-SOLUTION-SOLO",
+        "decisive_cue_id": "POWR-CUE-SOLO",
+        "distractor_lineage_id": "POWR-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "POWR-ITEM-NEAR",
+        "activity_id": "POWR-ACT-NEAR",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "POWR-FAMILY-NEAR",
+        "stimulus_lineage_id": "POWR-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "POWR-REP",
+        "learner_operation": "INTEGRATE_MECHANICAL_ADVANTAGE_AND_POWER",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "POWR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#POWR-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#POWR-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POWR-SOLUTION-NEAR",
+        "decisive_cue_id": "POWR-CUE-NEAR",
+        "distractor_lineage_id": "POWR-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "POWR-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "POWR-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "POWR-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "POWR-FEATURE-NEAR-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "POWR-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "POWR-FEATURE-NEAR-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "POWR-ITEM-CHANGED",
+        "activity_id": "POWR-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "POWR-FAMILY-CHANGED",
+        "stimulus_lineage_id": "POWR-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [
+          "required_operation",
+          "representation"
+        ],
+        "representation_id": "POWR-REP",
+        "learner_operation": "TRANSFER_TO_POWER_EFFICIENCY_COMPARISON",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "POWR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#POWR-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#POWR-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POWR-SOLUTION-CHANGED",
+        "decisive_cue_id": "POWR-CUE-CHANGED",
+        "distractor_lineage_id": "POWR-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "POWR-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "POWR-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "POWR-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "POWR-FEATURE-CHANGED-FUNCTION"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "POWR-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "POWR-FEATURE-CHANGED-FUNCTION"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "POWR-ITEM-REPAIR-NEAR",
+        "activity_id": "POWR-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "POWR-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "POWR-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "POWR-REP",
+        "learner_operation": "REBUILD_POWER_AND_EFFICIENCY_DEFINITIONS",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "POWR_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#POWR-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#POWR-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POWR-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "POWR-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "POWR-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "POWR-ITEM-REENTRY-NEAR",
+        "activity_id": "POWR-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "POWR-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "POWR-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "POWR-REP",
+        "learner_operation": "REENTER_MACHINE_POWER_WITH_FRESH_VALUES",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "POWR_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#POWR-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#POWR-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POWR-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "POWR-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "POWR-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "POWR-ITEM-NEAR",
+          "stimulus_difference": "NEW_CONTEXT_VALUES_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      },
+      {
+        "item_binding_id": "POWR-ITEM-REPAIR-CHANGED",
+        "activity_id": "POWR-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "POWR-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "POWR-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [],
+        "representation_id": "POWR-REP",
+        "learner_operation": "REBUILD_INPUT_WORK_FROM_EFFICIENCY",
+        "hint_policy": "TARGETED_FUNCTION_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "POWR_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#POWR-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#POWR-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POWR-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "POWR-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "POWR-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "POWR-ITEM-REENTRY-CHANGED",
+        "activity_id": "POWR-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-076684",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "POWR-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "POWR-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "changed_dimensions": [
+          "required_operation",
+          "representation"
+        ],
+        "representation_id": "POWR-REP",
+        "learner_operation": "REENTER_DEVICE_COMPARISON_WITH_FRESH_VALUES",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "POWR_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#POWR-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#POWR-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "POWR-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "POWR-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "POWR-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT",
+        "freshness_divergence": {
+          "changed_from_item_binding_id": "POWR-ITEM-CHANGED",
+          "stimulus_difference": "NEW_CONTEXT_VALUES_AND_ENTITY_SET",
+          "solution_path_difference": "SAME_FAILED_FUNCTION_WITH_FRESH_TRACE",
+          "distractor_difference": "NEW_OBSERVABLE_DIVERGENCES"
+        }
+      }
+    ],
+    "transitions": [
+      {
+        "transition_id": "WORK-TRANSITION-TO-WKET",
+        "from_node_id": "WORK-NODE-RECAP",
+        "to_node_id": "WKET-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      },
+      {
+        "transition_id": "WKET-TRANSITION-TO-MENG",
+        "from_node_id": "WKET-NODE-RECAP",
+        "to_node_id": "MENG-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      },
+      {
+        "transition_id": "MENG-TRANSITION-TO-POWR",
+        "from_node_id": "MENG-NODE-RECAP",
+        "to_node_id": "POWR-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      }
+    ],
+    "attachment_bindings": [
+      {
+        "attachment_id": "V3-CAP-412981",
+        "attachment_type": "CAPSTONE",
+        "owner_lesson_id": "V3-LES-811780",
+        "host_scope": {
+          "kind": "SECONDARY_APPLICATION",
+          "primary_lesson_id": "V3-LES-811780"
+        },
+        "declared_host_core_ids": [
+          "V3-KC-825303",
+          "V3-KC-953167",
+          "V3-KC-495929",
+          "V3-KC-367203",
+          "V3-KC-062182",
+          "V3-KC-667695",
+          "V3-KC-556659",
+          "V3-KC-181279",
+          "V3-KC-273349",
+          "V3-KC-803469",
+          "V3-KC-554697",
+          "V3-KC-076684"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": false,
+        "relation_ids": [
+          "R14-CAP-412981"
+        ],
+        "relation_class": "CAPSTONE_PLACEMENT",
+        "relation_direction": "LESSON_TO_ATTACHMENT",
+        "required_delivery": true
+      }
+    ]
+  }
+}

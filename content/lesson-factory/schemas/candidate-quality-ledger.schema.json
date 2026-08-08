@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcat-mastery.internal/lesson-factory/schemas/v1/candidate-quality-ledger.schema.json",
+  "x_contract_id": "lesson-factory.candidate-quality-ledger",
+  "x_contract_version": "4.0.0",
+  "title": "Candidate quality ledger",
+  "description": "The machine-screen record for one lesson revision on one route. It records which hard gates passed and which evidence classes are still BLOCKED. It records no rubric verdict, and CANDIDATE_RUBRIC_SCREENED means only that every hard machine screen passed — never that a human, a browser, an accessibility reviewer, or a domain expert has looked at the lesson.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "contract_version",
+    "ledger_id",
+    "screened_at",
+    "lesson_identity",
+    "rubric_identity",
+    "deadline_profile_ref",
+    "route",
+    "lifecycle_status",
+    "status_kind",
+    "hard_gate_results",
+    "evidence_class_results",
+    "official_quality_result",
+    "author_diagnostics",
+    "final_gate_status",
+    "release_eligibility",
+    "nonclaims"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "lesson-factory.candidate-quality-ledger"
+    },
+    "contract_version": {
+      "const": "4.0.0",
+      "description": "The one contract version this schema describes. An instance that claims another version was validated against a contract that is not this one."
+    },
+    "ledger_id": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/LedgerId"
+    },
+    "screened_at": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/IsoTimestamp"
+    },
+    "lesson_identity": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/LessonIdentity"
+    },
+    "rubric_identity": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RubricIdentity"
+    },
+    "deadline_profile_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/ProfileRef"
+    },
+    "route": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/Route"
+    },
+    "lifecycle_status": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/LifecycleState"
+    },
+    "status_kind": {
+      "const": "LIFECYCLE_ONLY"
+    },
+    "hard_gate_results": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/HardGateResults"
+    },
+    "evidence_class_results": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/EvidenceClassResults"
+    },
+    "official_quality_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The official quality namespace, kept separate from author diagnostics and pinned empty: no rubric evaluation has run, so approval is withheld and the blockers are named.",
+      "required": [
+        "evaluation_available",
+        "evaluation_ref",
+        "human_gate_status",
+        "approval_withheld",
+        "approval_blocker_codes"
+      ],
+      "properties": {
+        "evaluation_available": {
+          "const": false
+        },
+        "evaluation_ref": {
+          "const": null
+        },
+        "human_gate_status": {
+          "const": "PENDING"
+        },
+        "approval_withheld": {
+          "const": true
+        },
+        "approval_blocker_codes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/ApprovalBlockerCode"
+          },
+          "description": "Why approval is withheld, as codes. In prose this is the natural place to write `everything passed, just waiting on sign-off`, which reads to a hurried reader as an approval."
+        }
+      }
+    },
+    "author_diagnostics": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/AuthorDiagnostics"
+    },
+    "final_gate_status": {
+      "const": "BLOCKED"
+    },
+    "release_eligibility": {
+      "const": "INTERNAL_DRAFT_ONLY"
+    },
+    "nonclaims": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/Nonclaims"
+    }
+  },
+  "allOf": [
+    {
+      "$comment": "CANDIDATE_RUBRIC_SCREENED is reachable only when every hard gate passed. A failing or blocked gate must be recorded under a lifecycle status that says so.",
+      "if": {
+        "properties": {
+          "lifecycle_status": {
+            "const": "CANDIDATE_RUBRIC_SCREENED"
+          }
+        },
+        "required": ["lifecycle_status"]
+      },
+      "then": {
+        "properties": {
+          "hard_gate_results": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "const": "PASS"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,4857 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-489818",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "875365929e5c8467598544d1cc1d5be44fe0299ccb76a858687cab97031b151f",
+  "payload": {
+    "lesson_id": "V3-LES-489818",
+    "grouping_id": "V3-CL-489818",
+    "ordered_kc_ids": [
+      "V3-KC-587275",
+      "V3-KC-323080",
+      "V3-KC-859570",
+      "V3-KC-248153",
+      "V3-KC-175515"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-587275",
+      "V3-KC-323080",
+      "V3-KC-859570",
+      "V3-KC-248153",
+      "V3-KC-175515"
+    ],
+    "throughline": "Trace route, driving pressure, exchange surface, circulating component, and carriage form before predicting where material moves.",
+    "nodes": [
+      {
+        "node_id": "CAR-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Low-stakes check: trace one chamber-to-vessel transition. It neither selects a route nor awards exit credit."
+        ],
+        "representation_ids": [
+          "CAR-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CAR-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "CAR-CP-ENTRY",
+        "source_claim_refs": [
+          "CAR-CLAIM-1",
+          "CAR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CAR-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Right heart sends blood to lungs; left heart sends blood to systemic tissues. Arteries go away and veins return."
+        ],
+        "representation_ids": [
+          "CAR-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CAR-CP-ORIENTATION",
+        "source_claim_refs": [
+          "CAR-CLAIM-1",
+          "CAR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CAR-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Systemic veins → right atrium → right ventricle → pulmonary arteries → lungs.",
+          "Pulmonary veins → left atrium → left ventricle → aorta; systole is contraction peak and diastole relaxation low."
+        ],
+        "representation_ids": [
+          "CAR-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CAR-CP-EXPLANATION",
+        "source_claim_refs": [
+          "CAR-CLAIM-1",
+          "CAR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CAR-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Use two loops joined in series through a four-chamber pump."
+        ],
+        "representation_ids": [
+          "CAR-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CAR-CP-MODEL",
+        "source_claim_refs": [
+          "CAR-CLAIM-1",
+          "CAR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CAR-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "I name vessels by direction, not oxygen shortcut, then map contraction or relaxation to pressure."
+        ],
+        "representation_ids": [
+          "CAR-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CAR-CP-THINK",
+        "source_claim_refs": [
+          "CAR-CLAIM-1",
+          "CAR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CAR-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Pulmonary arteries carry deoxygenated blood away from heart.",
+          "Diastolic pressure corresponds to ventricular relaxation."
+        ],
+        "representation_ids": [
+          "CAR-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CAR-CP-WORKED",
+        "source_claim_refs": [
+          "CAR-CLAIM-1",
+          "CAR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CAR-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Trace arrows before naming oxygen state."
+        ],
+        "representation_ids": [
+          "CAR-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CAR-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "CAR-CP-GUIDED",
+        "source_claim_refs": [
+          "CAR-CLAIM-1",
+          "CAR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CAR-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Use away versus toward."
+        ],
+        "representation_ids": [
+          "CAR-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CAR-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "CAR-CP-LIGHT",
+        "source_claim_refs": [
+          "CAR-CLAIM-1",
+          "CAR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CAR-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Relate cardiac state to pressure."
+        ],
+        "representation_ids": [
+          "CAR-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CAR-ACT-SOLO"
+        ],
+        "checkpoint_ref": "CAR-CP-SOLO",
+        "source_claim_refs": [
+          "CAR-CLAIM-1",
+          "CAR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CAR-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Pulmonary vessels break the artery-equals-oxygen shortcut."
+        ],
+        "representation_ids": [
+          "CAR-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CAR-CP-CONTRAST",
+        "source_claim_refs": [
+          "CAR-CLAIM-1",
+          "CAR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CAR-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: classify a pulmonary vessel."
+        ],
+        "representation_ids": [
+          "CAR-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CAR-ACT-NEAR"
+        ],
+        "checkpoint_ref": "CAR-CP-NEAR",
+        "source_claim_refs": [
+          "CAR-CLAIM-1",
+          "CAR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CAR-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: map relaxation to pressure."
+        ],
+        "representation_ids": [
+          "CAR-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CAR-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "CAR-CP-CHANGED",
+        "source_claim_refs": [
+          "CAR-CLAIM-1",
+          "CAR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CAR-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair vessel naming by direction."
+        ],
+        "representation_ids": [
+          "CAR-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CAR-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "CAR-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "CAR-CLAIM-1",
+          "CAR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CAR-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly classify a pulmonary vessel."
+        ],
+        "representation_ids": [
+          "CAR-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CAR-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "CAR-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "CAR-CLAIM-1",
+          "CAR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CAR-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair systole/diastole mapping."
+        ],
+        "representation_ids": [
+          "CAR-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CAR-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "CAR-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "CAR-CLAIM-1",
+          "CAR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CAR-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly map relaxation."
+        ],
+        "representation_ids": [
+          "CAR-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CAR-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "CAR-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "CAR-CLAIM-1",
+          "CAR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CAR-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Trace two loops; name vessels by direction and pressure by cardiac state."
+        ],
+        "representation_ids": [
+          "CAR-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CAR-CP-RECAP",
+        "source_claim_refs": [
+          "CAR-CLAIM-1",
+          "CAR-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "VSL-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Low-stakes check: match vessel structure to pressure, flow, or exchange. It neither selects a route nor awards exit credit."
+        ],
+        "representation_ids": [
+          "VSL-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "VSL-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "VSL-CP-ENTRY",
+        "source_claim_refs": [
+          "VSL-CLAIM-1",
+          "VSL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "VSL-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Arteries handle higher pressure, veins return and store volume, and capillaries exchange across thin endothelium."
+        ],
+        "representation_ids": [
+          "VSL-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "VSL-CP-ORIENTATION",
+        "source_claim_refs": [
+          "VSL-CLAIM-1",
+          "VSL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "VSL-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Flow rises with pressure difference and falls with resistance; smaller radius strongly raises resistance.",
+          "Cutaneous dilation raises skin flow and heat loss; constriction conserves heat."
+        ],
+        "representation_ids": [
+          "VSL-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "VSL-CP-EXPLANATION",
+        "source_claim_refs": [
+          "VSL-CLAIM-1",
+          "VSL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "VSL-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Use pump conduit, return reservoir, and exchange sheet."
+        ],
+        "representation_ids": [
+          "VSL-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "VSL-CP-MODEL",
+        "source_claim_refs": [
+          "VSL-CLAIM-1",
+          "VSL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "VSL-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "I hold pressure or resistance constant before predicting flow."
+        ],
+        "representation_ids": [
+          "VSL-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "VSL-CP-THINK",
+        "source_claim_refs": [
+          "VSL-CLAIM-1",
+          "VSL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "VSL-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Narrower arteriole raises resistance.",
+          "Thin capillary endothelium shortens diffusion distance."
+        ],
+        "representation_ids": [
+          "VSL-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "VSL-CP-WORKED",
+        "source_claim_refs": [
+          "VSL-CLAIM-1",
+          "VSL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "VSL-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Name pressure role or exchange role."
+        ],
+        "representation_ids": [
+          "VSL-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "VSL-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "VSL-CP-GUIDED",
+        "source_claim_refs": [
+          "VSL-CLAIM-1",
+          "VSL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "VSL-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Change one flow variable."
+        ],
+        "representation_ids": [
+          "VSL-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "VSL-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "VSL-CP-LIGHT",
+        "source_claim_refs": [
+          "VSL-CLAIM-1",
+          "VSL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "VSL-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Select a vessel feature."
+        ],
+        "representation_ids": [
+          "VSL-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "VSL-ACT-SOLO"
+        ],
+        "checkpoint_ref": "VSL-CP-SOLO",
+        "source_claim_refs": [
+          "VSL-CLAIM-1",
+          "VSL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "VSL-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Capillary exchange area is collective; one capillary is narrow."
+        ],
+        "representation_ids": [
+          "VSL-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "VSL-CP-CONTRAST",
+        "source_claim_refs": [
+          "VSL-CLAIM-1",
+          "VSL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "VSL-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: predict pressure-driven flow."
+        ],
+        "representation_ids": [
+          "VSL-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "VSL-ACT-NEAR"
+        ],
+        "checkpoint_ref": "VSL-CP-NEAR",
+        "source_claim_refs": [
+          "VSL-CLAIM-1",
+          "VSL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "VSL-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: relate skin caliber to heat."
+        ],
+        "representation_ids": [
+          "VSL-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "VSL-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "VSL-CP-CHANGED",
+        "source_claim_refs": [
+          "VSL-CLAIM-1",
+          "VSL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "VSL-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair resistance direction."
+        ],
+        "representation_ids": [
+          "VSL-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "VSL-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "VSL-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "VSL-CLAIM-1",
+          "VSL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "VSL-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly predict narrowing."
+        ],
+        "representation_ids": [
+          "VSL-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "VSL-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "VSL-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "VSL-CLAIM-1",
+          "VSL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "VSL-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair skin-flow response."
+        ],
+        "representation_ids": [
+          "VSL-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "VSL-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "VSL-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "VSL-CLAIM-1",
+          "VSL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "VSL-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly predict cold constriction."
+        ],
+        "representation_ids": [
+          "VSL-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "VSL-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "VSL-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "VSL-CLAIM-1",
+          "VSL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "VSL-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Structure sets pressure tolerance, return, exchange, resistance, and thermal flow."
+        ],
+        "representation_ids": [
+          "VSL-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "VSL-CP-RECAP",
+        "source_claim_refs": [
+          "VSL-CLAIM-1",
+          "VSL-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "BLD-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Low-stakes check: separate plasma from formed elements. It neither selects a route nor awards exit credit."
+        ],
+        "representation_ids": [
+          "BLD-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "BLD-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "BLD-CP-ENTRY",
+        "source_claim_refs": [
+          "BLD-CLAIM-1",
+          "BLD-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "BLD-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Whole blood combines plasma, erythrocytes, leukocytes, and platelets in a regulated circulating volume."
+        ],
+        "representation_ids": [
+          "BLD-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "BLD-CP-ORIENTATION",
+        "source_claim_refs": [
+          "BLD-CLAIM-1",
+          "BLD-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "BLD-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Plasma carries dissolved chemicals; erythrocytes carry hemoglobin; leukocytes defend; platelets support hemostasis.",
+          "Marrow production and removal of aged cells including in spleen maintain erythrocyte turnover; water/solute balance regulates plasma volume."
+        ],
+        "representation_ids": [
+          "BLD-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "BLD-CP-EXPLANATION",
+        "source_claim_refs": [
+          "BLD-CLAIM-1",
+          "BLD-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "BLD-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Use liquid medium, formed elements, life-cycle turnover, and volume control."
+        ],
+        "representation_ids": [
+          "BLD-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "BLD-CP-MODEL",
+        "source_claim_refs": [
+          "BLD-CLAIM-1",
+          "BLD-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "BLD-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "I distinguish cell count from plasma volume and production from removal."
+        ],
+        "representation_ids": [
+          "BLD-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "BLD-CP-THINK",
+        "source_claim_refs": [
+          "BLD-CLAIM-1",
+          "BLD-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "BLD-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Cell-free upper liquid is plasma.",
+          "Marrow-to-spleen tracing shows erythrocyte turnover."
+        ],
+        "representation_ids": [
+          "BLD-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "BLD-CP-WORKED",
+        "source_claim_refs": [
+          "BLD-CLAIM-1",
+          "BLD-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "BLD-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Match component to function."
+        ],
+        "representation_ids": [
+          "BLD-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "BLD-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "BLD-CP-GUIDED",
+        "source_claim_refs": [
+          "BLD-CLAIM-1",
+          "BLD-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "BLD-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Trace both turnover directions."
+        ],
+        "representation_ids": [
+          "BLD-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "BLD-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "BLD-CP-LIGHT",
+        "source_claim_refs": [
+          "BLD-CLAIM-1",
+          "BLD-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "BLD-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Define whole blood."
+        ],
+        "representation_ids": [
+          "BLD-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "BLD-ACT-SOLO"
+        ],
+        "checkpoint_ref": "BLD-CP-SOLO",
+        "source_claim_refs": [
+          "BLD-CLAIM-1",
+          "BLD-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "BLD-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Do not replace the bounded model with a disease catalog."
+        ],
+        "representation_ids": [
+          "BLD-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "BLD-CP-CONTRAST",
+        "source_claim_refs": [
+          "BLD-CLAIM-1",
+          "BLD-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "BLD-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: predict plasma-volume change."
+        ],
+        "representation_ids": [
+          "BLD-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "BLD-ACT-NEAR"
+        ],
+        "checkpoint_ref": "BLD-CP-NEAR",
+        "source_claim_refs": [
+          "BLD-CLAIM-1",
+          "BLD-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "BLD-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: trace cell turnover."
+        ],
+        "representation_ids": [
+          "BLD-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "BLD-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "BLD-CP-CHANGED",
+        "source_claim_refs": [
+          "BLD-CLAIM-1",
+          "BLD-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "BLD-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair liquid-versus-cell distinction."
+        ],
+        "representation_ids": [
+          "BLD-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "BLD-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "BLD-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "BLD-CLAIM-1",
+          "BLD-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "BLD-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly identify plasma."
+        ],
+        "representation_ids": [
+          "BLD-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "BLD-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "BLD-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "BLD-CLAIM-1",
+          "BLD-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "BLD-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair both turnover directions."
+        ],
+        "representation_ids": [
+          "BLD-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "BLD-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "BLD-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "BLD-CLAIM-1",
+          "BLD-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "BLD-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly trace turnover."
+        ],
+        "representation_ids": [
+          "BLD-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "BLD-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "BLD-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "BLD-CLAIM-1",
+          "BLD-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "BLD-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Plasma carries, cells specialize, marrow and spleen turn over erythrocytes, and water balance sets volume."
+        ],
+        "representation_ids": [
+          "BLD-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "BLD-CP-RECAP",
+        "source_claim_refs": [
+          "BLD-CLAIM-1",
+          "BLD-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CLT-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Low-stakes check: order platelet plug and fibrin stabilization. It neither selects a route nor awards exit credit."
+        ],
+        "representation_ids": [
+          "CLT-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CLT-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "CLT-CP-ENTRY",
+        "source_claim_refs": [
+          "CLT-CLAIM-1",
+          "CLT-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CLT-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Coagulation is a local bounded protective response that limits blood loss without a full factor catalog."
+        ],
+        "representation_ids": [
+          "CLT-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CLT-CP-ORIENTATION",
+        "source_claim_refs": [
+          "CLT-CLAIM-1",
+          "CLT-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CLT-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Platelets adhere and aggregate at injury.",
+          "Plasma coagulation reactions generate fibrin that stabilizes the plug; localization and later resolution preserve flow."
+        ],
+        "representation_ids": [
+          "CLT-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CLT-CP-EXPLANATION",
+        "source_claim_refs": [
+          "CLT-CLAIM-1",
+          "CLT-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CLT-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Patch first, reinforce second, contain the repair, then restore the route."
+        ],
+        "representation_ids": [
+          "CLT-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CLT-CP-MODEL",
+        "source_claim_refs": [
+          "CLT-CLAIM-1",
+          "CLT-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CLT-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "I separate initiating platelets from later fibrin and trapped erythrocytes."
+        ],
+        "representation_ids": [
+          "CLT-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CLT-CP-THINK",
+        "source_claim_refs": [
+          "CLT-CLAIM-1",
+          "CLT-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CLT-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Adhesion failure impairs initial plug.",
+          "Fibrin failure leaves a weak plug."
+        ],
+        "representation_ids": [
+          "CLT-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CLT-CP-WORKED",
+        "source_claim_refs": [
+          "CLT-CLAIM-1",
+          "CLT-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CLT-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Order stages."
+        ],
+        "representation_ids": [
+          "CLT-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CLT-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "CLT-CP-GUIDED",
+        "source_claim_refs": [
+          "CLT-CLAIM-1",
+          "CLT-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CLT-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "State why the response is bounded."
+        ],
+        "representation_ids": [
+          "CLT-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CLT-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "CLT-CP-LIGHT",
+        "source_claim_refs": [
+          "CLT-CLAIM-1",
+          "CLT-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CLT-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Distinguish trapped cells."
+        ],
+        "representation_ids": [
+          "CLT-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CLT-ACT-SOLO"
+        ],
+        "checkpoint_ref": "CLT-CP-SOLO",
+        "source_claim_refs": [
+          "CLT-CLAIM-1",
+          "CLT-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CLT-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Global clot spread is not protective hemostasis."
+        ],
+        "representation_ids": [
+          "CLT-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CLT-CP-CONTRAST",
+        "source_claim_refs": [
+          "CLT-CLAIM-1",
+          "CLT-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CLT-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: predict platelet failure."
+        ],
+        "representation_ids": [
+          "CLT-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CLT-ACT-NEAR"
+        ],
+        "checkpoint_ref": "CLT-CP-NEAR",
+        "source_claim_refs": [
+          "CLT-CLAIM-1",
+          "CLT-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CLT-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: predict fibrin failure."
+        ],
+        "representation_ids": [
+          "CLT-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CLT-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "CLT-CP-CHANGED",
+        "source_claim_refs": [
+          "CLT-CLAIM-1",
+          "CLT-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CLT-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair stage order."
+        ],
+        "representation_ids": [
+          "CLT-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CLT-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "CLT-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "CLT-CLAIM-1",
+          "CLT-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CLT-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly identify platelet stage."
+        ],
+        "representation_ids": [
+          "CLT-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CLT-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "CLT-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "CLT-CLAIM-1",
+          "CLT-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CLT-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair localization and resolution."
+        ],
+        "representation_ids": [
+          "CLT-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CLT-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "CLT-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "CLT-CLAIM-1",
+          "CLT-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CLT-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly identify bounded repair."
+        ],
+        "representation_ids": [
+          "CLT-REP-CIRCULATION"
+        ],
+        "activity_ids": [
+          "CLT-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "CLT-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "CLT-CLAIM-1",
+          "CLT-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "CLT-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Platelets plug, fibrin stabilizes, and bounded resolution preserves circulation."
+        ],
+        "representation_ids": [
+          "CLT-REP-CIRCULATION"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CLT-CP-RECAP",
+        "source_claim_refs": [
+          "CLT-CLAIM-1",
+          "CLT-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAS-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Low-stakes check: separate content, partial pressure, affinity, and carriage form. It neither selects a route nor awards exit credit."
+        ],
+        "representation_ids": [
+          "GAS-REP-CURVE",
+          "GAS-REP-TABLE",
+          "GAS-REP-ROUTE"
+        ],
+        "activity_ids": [
+          "GAS-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "GAS-CP-ENTRY",
+        "source_claim_refs": [
+          "GAS-CLAIM-1",
+          "GAS-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAS-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Most oxygen is hemoglobin-bound; most carbon dioxide is bicarbonate; dissolved oxygen sets partial pressure."
+        ],
+        "representation_ids": [
+          "GAS-REP-CURVE",
+          "GAS-REP-TABLE",
+          "GAS-REP-ROUTE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GAS-CP-ORIENTATION",
+        "source_claim_refs": [
+          "GAS-CLAIM-1",
+          "GAS-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAS-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Hematocrit and hemoglobin affect oxygen capacity at a given saturation.",
+          "Higher tissue CO2/acidity favors unloading; lungs load oxygen and unload carbon dioxide."
+        ],
+        "representation_ids": [
+          "GAS-REP-CURVE",
+          "GAS-REP-TABLE",
+          "GAS-REP-ROUTE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GAS-CP-EXPLANATION",
+        "source_claim_refs": [
+          "GAS-CLAIM-1",
+          "GAS-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAS-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Track gas, carriage form, compartment, and tissue-versus-lung direction."
+        ],
+        "representation_ids": [
+          "GAS-REP-CURVE",
+          "GAS-REP-TABLE",
+          "GAS-REP-ROUTE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GAS-CP-MODEL",
+        "source_claim_refs": [
+          "GAS-CLAIM-1",
+          "GAS-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAS-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "I do not equate dissolved oxygen pressure with total hemoglobin-bound content."
+        ],
+        "representation_ids": [
+          "GAS-REP-CURVE",
+          "GAS-REP-TABLE",
+          "GAS-REP-ROUTE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GAS-CP-THINK",
+        "source_claim_refs": [
+          "GAS-CLAIM-1",
+          "GAS-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAS-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less hemoglobin lowers content at unchanged dissolved oxygen.",
+          "Bicarbonate is the largest CO2 pool."
+        ],
+        "representation_ids": [
+          "GAS-REP-CURVE",
+          "GAS-REP-TABLE",
+          "GAS-REP-ROUTE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GAS-CP-WORKED",
+        "source_claim_refs": [
+          "GAS-CLAIM-1",
+          "GAS-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAS-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Rank carriage forms."
+        ],
+        "representation_ids": [
+          "GAS-REP-CURVE",
+          "GAS-REP-TABLE",
+          "GAS-REP-ROUTE"
+        ],
+        "activity_ids": [
+          "GAS-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "GAS-CP-GUIDED",
+        "source_claim_refs": [
+          "GAS-CLAIM-1",
+          "GAS-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAS-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Relate hematocrit to capacity."
+        ],
+        "representation_ids": [
+          "GAS-REP-CURVE",
+          "GAS-REP-TABLE",
+          "GAS-REP-ROUTE"
+        ],
+        "activity_ids": [
+          "GAS-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "GAS-CP-LIGHT",
+        "source_claim_refs": [
+          "GAS-CLAIM-1",
+          "GAS-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAS-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Predict affinity change."
+        ],
+        "representation_ids": [
+          "GAS-REP-CURVE",
+          "GAS-REP-TABLE",
+          "GAS-REP-ROUTE"
+        ],
+        "activity_ids": [
+          "GAS-ACT-SOLO"
+        ],
+        "checkpoint_ref": "GAS-CP-SOLO",
+        "source_claim_refs": [
+          "GAS-CLAIM-1",
+          "GAS-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAS-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Detailed neural/endocrine control and clinical blood-gas management remain bounded external parameters."
+        ],
+        "representation_ids": [
+          "GAS-REP-CURVE",
+          "GAS-REP-TABLE",
+          "GAS-REP-ROUTE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GAS-CP-CONTRAST",
+        "source_claim_refs": [
+          "GAS-CLAIM-1",
+          "GAS-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAS-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: separate partial pressure from content."
+        ],
+        "representation_ids": [
+          "GAS-REP-CURVE",
+          "GAS-REP-TABLE",
+          "GAS-REP-ROUTE"
+        ],
+        "activity_ids": [
+          "GAS-ACT-NEAR"
+        ],
+        "checkpoint_ref": "GAS-CP-NEAR",
+        "source_claim_refs": [
+          "GAS-CLAIM-1",
+          "GAS-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAS-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed exit: track both gases in lungs."
+        ],
+        "representation_ids": [
+          "GAS-REP-CURVE",
+          "GAS-REP-TABLE",
+          "GAS-REP-ROUTE"
+        ],
+        "activity_ids": [
+          "GAS-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "GAS-CP-CHANGED",
+        "source_claim_refs": [
+          "GAS-CLAIM-1",
+          "GAS-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAS-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair dissolved-versus-bound oxygen."
+        ],
+        "representation_ids": [
+          "GAS-REP-CURVE",
+          "GAS-REP-TABLE",
+          "GAS-REP-ROUTE"
+        ],
+        "activity_ids": [
+          "GAS-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "GAS-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "GAS-CLAIM-1",
+          "GAS-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAS-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly predict lower hemoglobin content."
+        ],
+        "representation_ids": [
+          "GAS-REP-CURVE",
+          "GAS-REP-TABLE",
+          "GAS-REP-ROUTE"
+        ],
+        "activity_ids": [
+          "GAS-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "GAS-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "GAS-CLAIM-1",
+          "GAS-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAS-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair CO2 form ranking."
+        ],
+        "representation_ids": [
+          "GAS-REP-CURVE",
+          "GAS-REP-TABLE",
+          "GAS-REP-ROUTE"
+        ],
+        "activity_ids": [
+          "GAS-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "GAS-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "GAS-CLAIM-1",
+          "GAS-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAS-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Freshly predict tissue unloading."
+        ],
+        "representation_ids": [
+          "GAS-REP-CURVE",
+          "GAS-REP-TABLE",
+          "GAS-REP-ROUTE"
+        ],
+        "activity_ids": [
+          "GAS-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "GAS-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "GAS-CLAIM-1",
+          "GAS-CLAIM-2"
+        ]
+      },
+      {
+        "node_id": "GAS-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Hemoglobin carries oxygen, bicarbonate carries most CO2, and local conditions tune affinity."
+        ],
+        "representation_ids": [
+          "GAS-REP-CURVE",
+          "GAS-REP-TABLE",
+          "GAS-REP-ROUTE"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "GAS-CP-RECAP",
+        "source_claim_refs": [
+          "GAS-CLAIM-1",
+          "GAS-CLAIM-2"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "CAR-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-587275",
+        "item_binding_id": "CAR-ITEM-ENTRY",
+        "learner_operation": "TRACE_PULMONARY_ROUTE",
+        "authorized_next_node_ids": [
+          "CAR-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "CAR-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-587275",
+        "item_binding_id": "CAR-ITEM-GUIDED",
+        "learner_operation": "TRACE_SYSTEMIC_ROUTE",
+        "authorized_next_node_ids": [
+          "CAR-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "CAR-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-587275",
+        "item_binding_id": "CAR-ITEM-LIGHT",
+        "learner_operation": "CLASSIFY_ARTERY_VEIN",
+        "authorized_next_node_ids": [
+          "CAR-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "CAR-ACT-SOLO",
+        "primary_kc_id": "V3-KC-587275",
+        "item_binding_id": "CAR-ITEM-SOLO",
+        "learner_operation": "RELATE_SYSTOLE_PRESSURE",
+        "authorized_next_node_ids": [
+          "CAR-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "CAR-ACT-NEAR",
+        "primary_kc_id": "V3-KC-587275",
+        "item_binding_id": "CAR-ITEM-NEAR",
+        "learner_operation": "APPLY_VESSEL_DIRECTION",
+        "authorized_next_node_ids": [
+          "CAR-NODE-CHANGED",
+          "CAR-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "CAR-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-587275",
+        "item_binding_id": "CAR-ITEM-CHANGED",
+        "learner_operation": "RELATE_DIASTOLE_PRESSURE",
+        "authorized_next_node_ids": [
+          "CAR-NODE-RECAP",
+          "CAR-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "CAR-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-587275",
+        "item_binding_id": "CAR-ITEM-REPAIR-NEAR",
+        "learner_operation": "REPAIR_VESSEL_NAMING",
+        "authorized_next_node_ids": [
+          "CAR-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "CAR-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-587275",
+        "item_binding_id": "CAR-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_VESSEL_CLASSIFICATION",
+        "authorized_next_node_ids": [
+          "CAR-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "CAR-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-587275",
+        "item_binding_id": "CAR-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REPAIR_CARDIAC_PRESSURE",
+        "authorized_next_node_ids": [
+          "CAR-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "CAR-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-587275",
+        "item_binding_id": "CAR-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_PRESSURE_STATE",
+        "authorized_next_node_ids": [
+          "CAR-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "VSL-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-323080",
+        "item_binding_id": "VSL-ITEM-ENTRY",
+        "learner_operation": "RELATE_ARTERY_STRUCTURE",
+        "authorized_next_node_ids": [
+          "VSL-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "VSL-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-323080",
+        "item_binding_id": "VSL-ITEM-GUIDED",
+        "learner_operation": "RELATE_CAPILLARY_EXCHANGE",
+        "authorized_next_node_ids": [
+          "VSL-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "VSL-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-323080",
+        "item_binding_id": "VSL-ITEM-LIGHT",
+        "learner_operation": "PREDICT_RADIUS_RESISTANCE",
+        "authorized_next_node_ids": [
+          "VSL-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "VSL-ACT-SOLO",
+        "primary_kc_id": "V3-KC-323080",
+        "item_binding_id": "VSL-ITEM-SOLO",
+        "learner_operation": "RELATE_VEIN_VALVES",
+        "authorized_next_node_ids": [
+          "VSL-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "VSL-ACT-NEAR",
+        "primary_kc_id": "V3-KC-323080",
+        "item_binding_id": "VSL-ITEM-NEAR",
+        "learner_operation": "PREDICT_PRESSURE_FLOW",
+        "authorized_next_node_ids": [
+          "VSL-NODE-CHANGED",
+          "VSL-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "VSL-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-323080",
+        "item_binding_id": "VSL-ITEM-CHANGED",
+        "learner_operation": "PREDICT_THERMOREGULATION",
+        "authorized_next_node_ids": [
+          "VSL-NODE-RECAP",
+          "VSL-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "VSL-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-323080",
+        "item_binding_id": "VSL-ITEM-REPAIR-NEAR",
+        "learner_operation": "REPAIR_FLOW_RESISTANCE",
+        "authorized_next_node_ids": [
+          "VSL-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "VSL-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-323080",
+        "item_binding_id": "VSL-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_RESISTANCE_PREDICTION",
+        "authorized_next_node_ids": [
+          "VSL-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "VSL-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-323080",
+        "item_binding_id": "VSL-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REPAIR_THERMOREGULATION",
+        "authorized_next_node_ids": [
+          "VSL-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "VSL-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-323080",
+        "item_binding_id": "VSL-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_THERMOREGULATION",
+        "authorized_next_node_ids": [
+          "VSL-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "BLD-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-859570",
+        "item_binding_id": "BLD-ITEM-ENTRY",
+        "learner_operation": "IDENTIFY_PLASMA",
+        "authorized_next_node_ids": [
+          "BLD-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "BLD-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-859570",
+        "item_binding_id": "BLD-ITEM-GUIDED",
+        "learner_operation": "IDENTIFY_ERYTHROCYTE",
+        "authorized_next_node_ids": [
+          "BLD-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "BLD-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-859570",
+        "item_binding_id": "BLD-ITEM-LIGHT",
+        "learner_operation": "TRACE_RBC_TURNOVER",
+        "authorized_next_node_ids": [
+          "BLD-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "BLD-ACT-SOLO",
+        "primary_kc_id": "V3-KC-859570",
+        "item_binding_id": "BLD-ITEM-SOLO",
+        "learner_operation": "CLASSIFY_WHOLE_BLOOD",
+        "authorized_next_node_ids": [
+          "BLD-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "BLD-ACT-NEAR",
+        "primary_kc_id": "V3-KC-859570",
+        "item_binding_id": "BLD-ITEM-NEAR",
+        "learner_operation": "PREDICT_PLASMA_VOLUME",
+        "authorized_next_node_ids": [
+          "BLD-NODE-CHANGED",
+          "BLD-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "BLD-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-859570",
+        "item_binding_id": "BLD-ITEM-CHANGED",
+        "learner_operation": "EXPLAIN_ERYTHROCYTE_TURNOVER",
+        "authorized_next_node_ids": [
+          "BLD-NODE-RECAP",
+          "BLD-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "BLD-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-859570",
+        "item_binding_id": "BLD-ITEM-REPAIR-NEAR",
+        "learner_operation": "REPAIR_BLOOD_COMPONENTS",
+        "authorized_next_node_ids": [
+          "BLD-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "BLD-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-859570",
+        "item_binding_id": "BLD-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_PLASMA_IDENTIFICATION",
+        "authorized_next_node_ids": [
+          "BLD-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "BLD-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-859570",
+        "item_binding_id": "BLD-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REPAIR_RBC_TURNOVER",
+        "authorized_next_node_ids": [
+          "BLD-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "BLD-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-859570",
+        "item_binding_id": "BLD-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_RBC_TURNOVER",
+        "authorized_next_node_ids": [
+          "BLD-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "CLT-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-248153",
+        "item_binding_id": "CLT-ITEM-ENTRY",
+        "learner_operation": "IDENTIFY_PLATELET_PLUG",
+        "authorized_next_node_ids": [
+          "CLT-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "CLT-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-248153",
+        "item_binding_id": "CLT-ITEM-GUIDED",
+        "learner_operation": "RELATE_FIBRIN_STABILIZATION",
+        "authorized_next_node_ids": [
+          "CLT-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "CLT-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-248153",
+        "item_binding_id": "CLT-ITEM-LIGHT",
+        "learner_operation": "EXPLAIN_BOUNDED_HEMOSTASIS",
+        "authorized_next_node_ids": [
+          "CLT-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "CLT-ACT-SOLO",
+        "primary_kc_id": "V3-KC-248153",
+        "item_binding_id": "CLT-ITEM-SOLO",
+        "learner_operation": "DISTINGUISH_RBC_PLATELET",
+        "authorized_next_node_ids": [
+          "CLT-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "CLT-ACT-NEAR",
+        "primary_kc_id": "V3-KC-248153",
+        "item_binding_id": "CLT-ITEM-NEAR",
+        "learner_operation": "PREDICT_PLATELET_DEFECT",
+        "authorized_next_node_ids": [
+          "CLT-NODE-CHANGED",
+          "CLT-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "CLT-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-248153",
+        "item_binding_id": "CLT-ITEM-CHANGED",
+        "learner_operation": "PREDICT_FIBRIN_DEFECT",
+        "authorized_next_node_ids": [
+          "CLT-NODE-RECAP",
+          "CLT-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "CLT-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-248153",
+        "item_binding_id": "CLT-ITEM-REPAIR-NEAR",
+        "learner_operation": "REPAIR_HEMOSTASIS_ORDER",
+        "authorized_next_node_ids": [
+          "CLT-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "CLT-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-248153",
+        "item_binding_id": "CLT-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_PLATELET_STAGE",
+        "authorized_next_node_ids": [
+          "CLT-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "CLT-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-248153",
+        "item_binding_id": "CLT-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REPAIR_BOUNDED_CLOTTING",
+        "authorized_next_node_ids": [
+          "CLT-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "CLT-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-248153",
+        "item_binding_id": "CLT-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_BOUNDED_HEMOSTASIS",
+        "authorized_next_node_ids": [
+          "CLT-NODE-RECAP"
+        ]
+      },
+      {
+        "activity_id": "GAS-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-175515",
+        "item_binding_id": "GAS-ITEM-ENTRY",
+        "learner_operation": "IDENTIFY_OXYGEN_CARRIAGE",
+        "authorized_next_node_ids": [
+          "GAS-NODE-ORIENTATION"
+        ]
+      },
+      {
+        "activity_id": "GAS-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-175515",
+        "item_binding_id": "GAS-ITEM-GUIDED",
+        "learner_operation": "IDENTIFY_CO2_CARRIAGE",
+        "authorized_next_node_ids": [
+          "GAS-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "GAS-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-175515",
+        "item_binding_id": "GAS-ITEM-LIGHT",
+        "learner_operation": "RELATE_HEMATOCRIT_O2_CONTENT",
+        "authorized_next_node_ids": [
+          "GAS-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "GAS-ACT-SOLO",
+        "primary_kc_id": "V3-KC-175515",
+        "item_binding_id": "GAS-ITEM-SOLO",
+        "learner_operation": "PREDICT_OXYGEN_UNLOADING",
+        "authorized_next_node_ids": [
+          "GAS-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "GAS-ACT-NEAR",
+        "primary_kc_id": "V3-KC-175515",
+        "item_binding_id": "GAS-ITEM-NEAR",
+        "learner_operation": "DISTINGUISH_PO2_CONTENT",
+        "authorized_next_node_ids": [
+          "GAS-NODE-CHANGED",
+          "GAS-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "GAS-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-175515",
+        "item_binding_id": "GAS-ITEM-CHANGED",
+        "learner_operation": "PREDICT_PULMONARY_GAS_EXCHANGE",
+        "authorized_next_node_ids": [
+          "GAS-NODE-RECAP",
+          "GAS-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "GAS-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-175515",
+        "item_binding_id": "GAS-ITEM-REPAIR-NEAR",
+        "learner_operation": "REPAIR_PO2_CONTENT_DISTINCTION",
+        "authorized_next_node_ids": [
+          "GAS-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "GAS-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-175515",
+        "item_binding_id": "GAS-ITEM-REENTRY-NEAR",
+        "learner_operation": "REENTER_OXYGEN_CONTENT",
+        "authorized_next_node_ids": [
+          "GAS-NODE-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "GAS-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-175515",
+        "item_binding_id": "GAS-ITEM-REPAIR-CHANGED",
+        "learner_operation": "REPAIR_CO2_CARRIAGE",
+        "authorized_next_node_ids": [
+          "GAS-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "GAS-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-175515",
+        "item_binding_id": "GAS-ITEM-REENTRY-CHANGED",
+        "learner_operation": "REENTER_AFFINITY_PREDICTION",
+        "authorized_next_node_ids": [
+          "GAS-NODE-RECAP"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-587275",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-587275",
+        "scope_in_refs": [
+          "V3-KC-587275:SCOPE_IN:0",
+          "V3-KC-587275:SCOPE_IN:1",
+          "V3-KC-587275:SCOPE_IN:2",
+          "V3-KC-587275:SCOPE_IN:3"
+        ],
+        "scope_out_refs": [
+          "V3-KC-587275:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "CAR-CLAIM-1",
+          "CAR-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "CAR-NODE-ENTRY",
+        "orientation_node_id": "CAR-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "CAR-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "CAR-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "CAR-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "CAR-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "CAR-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "CAR-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "CAR-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "CAR-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "CAR-NODE-NEAR",
+          "activity_ids": [
+            "CAR-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "CAR-NODE-CHANGED",
+          "activity_ids": [
+            "CAR-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "CAR-FEATURE-NEAR-1",
+          "CAR-FEATURE-NEAR-2",
+          "CAR-FEATURE-NEAR-3",
+          "CAR-FEATURE-CHANGED-0",
+          "CAR-FEATURE-CHANGED-2",
+          "CAR-FEATURE-CHANGED-3"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "CAR-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "CAR-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "CAR-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "CAR-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "CAR-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "CAR-ACT-REENTRY-NEAR",
+            "success_next_node_id": "CAR-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "CAR-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "CAR-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "CAR-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "CAR-REP-CIRCULATION"
+        ],
+        "accessibility_equivalent_ids": [
+          "CAR-REP-CIRCULATION-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "CAR-NODE-ENTRY",
+            "CAR-NODE-RECAP"
+          ],
+          "standard": [
+            "CAR-NODE-ENTRY",
+            "CAR-NODE-ORIENTATION",
+            "CAR-NODE-EXPLANATION",
+            "CAR-NODE-MODEL",
+            "CAR-NODE-THINK",
+            "CAR-NODE-WORKED",
+            "CAR-NODE-GUIDED",
+            "CAR-NODE-LIGHT",
+            "CAR-NODE-SOLO",
+            "CAR-NODE-CONTRAST",
+            "CAR-NODE-NEAR",
+            "CAR-NODE-CHANGED",
+            "CAR-NODE-REPAIR-NEAR",
+            "CAR-NODE-REENTRY-NEAR",
+            "CAR-NODE-REPAIR-CHANGED",
+            "CAR-NODE-REENTRY-CHANGED",
+            "CAR-NODE-RECAP"
+          ],
+          "misconception": [
+            "CAR-NODE-ENTRY",
+            "CAR-NODE-REPAIR-NEAR",
+            "CAR-NODE-REPAIR-CHANGED",
+            "CAR-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "CAR-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-323080",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-323080",
+        "scope_in_refs": [
+          "V3-KC-323080:SCOPE_IN:0",
+          "V3-KC-323080:SCOPE_IN:1",
+          "V3-KC-323080:SCOPE_IN:2",
+          "V3-KC-323080:SCOPE_IN:3",
+          "V3-KC-323080:SCOPE_IN:4"
+        ],
+        "scope_out_refs": [
+          "V3-KC-323080:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "VSL-CLAIM-1",
+          "VSL-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "VSL-NODE-ENTRY",
+        "orientation_node_id": "VSL-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "VSL-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "VSL-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "VSL-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "VSL-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "VSL-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "VSL-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "VSL-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "VSL-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "VSL-NODE-NEAR",
+          "activity_ids": [
+            "VSL-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "VSL-NODE-CHANGED",
+          "activity_ids": [
+            "VSL-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "VSL-FEATURE-NEAR-0",
+          "VSL-FEATURE-NEAR-1",
+          "VSL-FEATURE-NEAR-3",
+          "VSL-FEATURE-CHANGED-0",
+          "VSL-FEATURE-CHANGED-1",
+          "VSL-FEATURE-CHANGED-2"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "VSL-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "VSL-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "VSL-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "VSL-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "VSL-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "VSL-ACT-REENTRY-NEAR",
+            "success_next_node_id": "VSL-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "VSL-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "VSL-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "VSL-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "VSL-REP-CIRCULATION"
+        ],
+        "accessibility_equivalent_ids": [
+          "VSL-REP-CIRCULATION-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "VSL-NODE-ENTRY",
+            "VSL-NODE-RECAP"
+          ],
+          "standard": [
+            "VSL-NODE-ENTRY",
+            "VSL-NODE-ORIENTATION",
+            "VSL-NODE-EXPLANATION",
+            "VSL-NODE-MODEL",
+            "VSL-NODE-THINK",
+            "VSL-NODE-WORKED",
+            "VSL-NODE-GUIDED",
+            "VSL-NODE-LIGHT",
+            "VSL-NODE-SOLO",
+            "VSL-NODE-CONTRAST",
+            "VSL-NODE-NEAR",
+            "VSL-NODE-CHANGED",
+            "VSL-NODE-REPAIR-NEAR",
+            "VSL-NODE-REENTRY-NEAR",
+            "VSL-NODE-REPAIR-CHANGED",
+            "VSL-NODE-REENTRY-CHANGED",
+            "VSL-NODE-RECAP"
+          ],
+          "misconception": [
+            "VSL-NODE-ENTRY",
+            "VSL-NODE-REPAIR-NEAR",
+            "VSL-NODE-REPAIR-CHANGED",
+            "VSL-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "VSL-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-859570",
+        "canonical_ordinal": 3,
+        "objective_ref": "objective:V3-KC-859570",
+        "scope_in_refs": [
+          "V3-KC-859570:SCOPE_IN:0",
+          "V3-KC-859570:SCOPE_IN:1",
+          "V3-KC-859570:SCOPE_IN:2",
+          "V3-KC-859570:SCOPE_IN:3"
+        ],
+        "scope_out_refs": [
+          "V3-KC-859570:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "BLD-CLAIM-1",
+          "BLD-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "BLD-NODE-ENTRY",
+        "orientation_node_id": "BLD-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "BLD-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "BLD-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "BLD-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "BLD-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "BLD-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "BLD-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "BLD-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "BLD-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "BLD-NODE-NEAR",
+          "activity_ids": [
+            "BLD-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "BLD-NODE-CHANGED",
+          "activity_ids": [
+            "BLD-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "BLD-FEATURE-NEAR-1",
+          "BLD-FEATURE-NEAR-2",
+          "BLD-FEATURE-NEAR-3",
+          "BLD-FEATURE-CHANGED-0",
+          "BLD-FEATURE-CHANGED-2",
+          "BLD-FEATURE-CHANGED-3"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "BLD-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "BLD-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "BLD-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "BLD-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "BLD-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "BLD-ACT-REENTRY-NEAR",
+            "success_next_node_id": "BLD-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "BLD-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "BLD-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "BLD-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "BLD-REP-CIRCULATION"
+        ],
+        "accessibility_equivalent_ids": [
+          "BLD-REP-CIRCULATION-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "BLD-NODE-ENTRY",
+            "BLD-NODE-RECAP"
+          ],
+          "standard": [
+            "BLD-NODE-ENTRY",
+            "BLD-NODE-ORIENTATION",
+            "BLD-NODE-EXPLANATION",
+            "BLD-NODE-MODEL",
+            "BLD-NODE-THINK",
+            "BLD-NODE-WORKED",
+            "BLD-NODE-GUIDED",
+            "BLD-NODE-LIGHT",
+            "BLD-NODE-SOLO",
+            "BLD-NODE-CONTRAST",
+            "BLD-NODE-NEAR",
+            "BLD-NODE-CHANGED",
+            "BLD-NODE-REPAIR-NEAR",
+            "BLD-NODE-REENTRY-NEAR",
+            "BLD-NODE-REPAIR-CHANGED",
+            "BLD-NODE-REENTRY-CHANGED",
+            "BLD-NODE-RECAP"
+          ],
+          "misconception": [
+            "BLD-NODE-ENTRY",
+            "BLD-NODE-REPAIR-NEAR",
+            "BLD-NODE-REPAIR-CHANGED",
+            "BLD-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "BLD-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-248153",
+        "canonical_ordinal": 4,
+        "objective_ref": "objective:V3-KC-248153",
+        "scope_in_refs": [
+          "V3-KC-248153:SCOPE_IN:0",
+          "V3-KC-248153:SCOPE_IN:1",
+          "V3-KC-248153:SCOPE_IN:2",
+          "V3-KC-248153:SCOPE_IN:3"
+        ],
+        "scope_out_refs": [
+          "V3-KC-248153:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "CLT-CLAIM-1",
+          "CLT-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "CLT-NODE-ENTRY",
+        "orientation_node_id": "CLT-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "CLT-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "CLT-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "CLT-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "CLT-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "CLT-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "CLT-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "CLT-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "CLT-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "CLT-NODE-NEAR",
+          "activity_ids": [
+            "CLT-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "CLT-NODE-CHANGED",
+          "activity_ids": [
+            "CLT-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "CLT-FEATURE-NEAR-0",
+          "CLT-FEATURE-NEAR-1",
+          "CLT-FEATURE-NEAR-3",
+          "CLT-FEATURE-CHANGED-0",
+          "CLT-FEATURE-CHANGED-1",
+          "CLT-FEATURE-CHANGED-2"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "CLT-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "CLT-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "CLT-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "CLT-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "CLT-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "CLT-ACT-REENTRY-NEAR",
+            "success_next_node_id": "CLT-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "CLT-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "CLT-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "CLT-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "CLT-REP-CIRCULATION"
+        ],
+        "accessibility_equivalent_ids": [
+          "CLT-REP-CIRCULATION-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "CLT-NODE-ENTRY",
+            "CLT-NODE-RECAP"
+          ],
+          "standard": [
+            "CLT-NODE-ENTRY",
+            "CLT-NODE-ORIENTATION",
+            "CLT-NODE-EXPLANATION",
+            "CLT-NODE-MODEL",
+            "CLT-NODE-THINK",
+            "CLT-NODE-WORKED",
+            "CLT-NODE-GUIDED",
+            "CLT-NODE-LIGHT",
+            "CLT-NODE-SOLO",
+            "CLT-NODE-CONTRAST",
+            "CLT-NODE-NEAR",
+            "CLT-NODE-CHANGED",
+            "CLT-NODE-REPAIR-NEAR",
+            "CLT-NODE-REENTRY-NEAR",
+            "CLT-NODE-REPAIR-CHANGED",
+            "CLT-NODE-REENTRY-CHANGED",
+            "CLT-NODE-RECAP"
+          ],
+          "misconception": [
+            "CLT-NODE-ENTRY",
+            "CLT-NODE-REPAIR-NEAR",
+            "CLT-NODE-REPAIR-CHANGED",
+            "CLT-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "CLT-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-175515",
+        "canonical_ordinal": 5,
+        "objective_ref": "objective:V3-KC-175515",
+        "scope_in_refs": [
+          "V3-KC-175515:SCOPE_IN:0",
+          "V3-KC-175515:SCOPE_IN:1",
+          "V3-KC-175515:SCOPE_IN:2",
+          "V3-KC-175515:SCOPE_IN:3"
+        ],
+        "scope_out_refs": [
+          "V3-KC-175515:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "GAS-CLAIM-1",
+          "GAS-CLAIM-2"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "GAS-NODE-ENTRY",
+        "orientation_node_id": "GAS-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "GAS-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "GAS-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "GAS-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "GAS-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "GAS-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "GAS-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "GAS-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "GAS-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "GAS-NODE-NEAR",
+          "activity_ids": [
+            "GAS-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "GAS-NODE-CHANGED",
+          "activity_ids": [
+            "GAS-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "GAS-FEATURE-NEAR-1",
+          "GAS-FEATURE-NEAR-2",
+          "GAS-FEATURE-NEAR-3",
+          "GAS-FEATURE-CHANGED-0",
+          "GAS-FEATURE-CHANGED-2",
+          "GAS-FEATURE-CHANGED-3"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "GAS-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "GAS-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "GAS-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "GAS-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "GAS-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "GAS-ACT-REENTRY-NEAR",
+            "success_next_node_id": "GAS-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "GAS-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "GAS-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "GAS-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "GAS-REP-CURVE",
+          "GAS-REP-TABLE",
+          "GAS-REP-ROUTE"
+        ],
+        "accessibility_equivalent_ids": [
+          "GAS-REP-CURVE-TEXT",
+          "GAS-REP-TABLE-TEXT",
+          "GAS-REP-ROUTE-TEXT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "GAS-NODE-ENTRY",
+            "GAS-NODE-RECAP"
+          ],
+          "standard": [
+            "GAS-NODE-ENTRY",
+            "GAS-NODE-ORIENTATION",
+            "GAS-NODE-EXPLANATION",
+            "GAS-NODE-MODEL",
+            "GAS-NODE-THINK",
+            "GAS-NODE-WORKED",
+            "GAS-NODE-GUIDED",
+            "GAS-NODE-LIGHT",
+            "GAS-NODE-SOLO",
+            "GAS-NODE-CONTRAST",
+            "GAS-NODE-NEAR",
+            "GAS-NODE-CHANGED",
+            "GAS-NODE-REPAIR-NEAR",
+            "GAS-NODE-REENTRY-NEAR",
+            "GAS-NODE-REPAIR-CHANGED",
+            "GAS-NODE-REENTRY-CHANGED",
+            "GAS-NODE-RECAP"
+          ],
+          "misconception": [
+            "GAS-NODE-ENTRY",
+            "GAS-NODE-REPAIR-NEAR",
+            "GAS-NODE-REPAIR-CHANGED",
+            "GAS-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "GAS-NODE-RECAP"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "CAR-ITEM-ENTRY",
+        "activity_id": "CAR-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "CAR-FAMILY-ENTRY",
+        "stimulus_lineage_id": "CAR-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "CAR-REP-CIRCULATION",
+        "learner_operation": "TRACE_PULMONARY_ROUTE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CAR_ITEM_ENTRY",
+        "answer_authority_ref": "protected-items.json#CAR-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#CAR-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CAR-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "CAR-FAMILY-WORKED",
+        "stimulus_lineage_id": "CAR-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CAR-REP-CIRCULATION",
+        "learner_operation": "FOLLOW_EXPERT_SELECTION_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:CAR-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CAR-ITEM-GUIDED",
+        "activity_id": "CAR-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "CAR-FAMILY-GUIDED",
+        "stimulus_lineage_id": "CAR-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CAR-REP-CIRCULATION",
+        "learner_operation": "TRACE_SYSTEMIC_ROUTE",
+        "hint_policy": "VISIBLE_SELECTION_CUE",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CAR_ITEM_GUIDED",
+        "answer_authority_ref": "protected-items.json#CAR-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#CAR-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CAR-ITEM-LIGHT",
+        "activity_id": "CAR-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "CAR-FAMILY-LIGHT",
+        "stimulus_lineage_id": "CAR-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CAR-REP-CIRCULATION",
+        "learner_operation": "CLASSIFY_ARTERY_VEIN",
+        "hint_policy": "BRIEF_REMINDER",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CAR_ITEM_LIGHT",
+        "answer_authority_ref": "protected-items.json#CAR-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#CAR-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CAR-ITEM-SOLO",
+        "activity_id": "CAR-ACT-SOLO",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "CAR-FAMILY-SOLO",
+        "stimulus_lineage_id": "CAR-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CAR-REP-CIRCULATION",
+        "learner_operation": "RELATE_SYSTOLE_PRESSURE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CAR_ITEM_SOLO",
+        "answer_authority_ref": "protected-items.json#CAR-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#CAR-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CAR-ITEM-NEAR",
+        "activity_id": "CAR-ACT-NEAR",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "CAR-FAMILY-NEAR",
+        "stimulus_lineage_id": "CAR-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CAR-REP-CIRCULATION",
+        "learner_operation": "APPLY_VESSEL_DIRECTION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CAR_ITEM_NEAR",
+        "answer_authority_ref": "protected-items.json#CAR-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#CAR-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CAR-ITEM-CHANGED",
+        "activity_id": "CAR-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "CAR-FAMILY-CHANGED",
+        "stimulus_lineage_id": "CAR-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CAR-REP-CIRCULATION",
+        "learner_operation": "RELATE_DIASTOLE_PRESSURE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CAR_ITEM_CHANGED",
+        "answer_authority_ref": "protected-items.json#CAR-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#CAR-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "changed_dimension_detail": "Changes from route tracing to cardiac-state pressure interpretation."
+      },
+      {
+        "item_binding_id": "CAR-ITEM-REPAIR-NEAR",
+        "activity_id": "CAR-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CAR-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "CAR-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "CAR-REP-CIRCULATION",
+        "learner_operation": "REPAIR_VESSEL_NAMING",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CAR_ITEM_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#CAR-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#CAR-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CAR-ITEM-REENTRY-NEAR",
+        "activity_id": "CAR-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CAR-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "CAR-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CAR-REP-CIRCULATION",
+        "learner_operation": "REENTER_VESSEL_CLASSIFICATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CAR_ITEM_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#CAR-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#CAR-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "CAR-ITEM-REPAIR-CHANGED",
+        "activity_id": "CAR-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CAR-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "CAR-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "CAR-REP-CIRCULATION",
+        "learner_operation": "REPAIR_CARDIAC_PRESSURE",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CAR_ITEM_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#CAR-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#CAR-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CAR-ITEM-REENTRY-CHANGED",
+        "activity_id": "CAR-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-587275",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CAR-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "CAR-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CAR-REP-CIRCULATION",
+        "learner_operation": "REENTER_PRESSURE_STATE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CAR_ITEM_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#CAR-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#CAR-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "domain_context",
+          "representation"
+        ],
+        "changed_dimension_detail": "Uses a fresh relaxation trace while preserving pressure-state mapping.",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "VSL-ITEM-ENTRY",
+        "activity_id": "VSL-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "VSL-FAMILY-ENTRY",
+        "stimulus_lineage_id": "VSL-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "VSL-REP-CIRCULATION",
+        "learner_operation": "RELATE_ARTERY_STRUCTURE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "VSL_ITEM_ENTRY",
+        "answer_authority_ref": "protected-items.json#VSL-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#VSL-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "VSL-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "VSL-FAMILY-WORKED",
+        "stimulus_lineage_id": "VSL-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "VSL-REP-CIRCULATION",
+        "learner_operation": "FOLLOW_EXPERT_SELECTION_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:VSL-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "VSL-ITEM-GUIDED",
+        "activity_id": "VSL-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "VSL-FAMILY-GUIDED",
+        "stimulus_lineage_id": "VSL-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "VSL-REP-CIRCULATION",
+        "learner_operation": "RELATE_CAPILLARY_EXCHANGE",
+        "hint_policy": "VISIBLE_SELECTION_CUE",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "VSL_ITEM_GUIDED",
+        "answer_authority_ref": "protected-items.json#VSL-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#VSL-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "VSL-ITEM-LIGHT",
+        "activity_id": "VSL-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "VSL-FAMILY-LIGHT",
+        "stimulus_lineage_id": "VSL-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "VSL-REP-CIRCULATION",
+        "learner_operation": "PREDICT_RADIUS_RESISTANCE",
+        "hint_policy": "BRIEF_REMINDER",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "VSL_ITEM_LIGHT",
+        "answer_authority_ref": "protected-items.json#VSL-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#VSL-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "VSL-ITEM-SOLO",
+        "activity_id": "VSL-ACT-SOLO",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "VSL-FAMILY-SOLO",
+        "stimulus_lineage_id": "VSL-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "VSL-REP-CIRCULATION",
+        "learner_operation": "RELATE_VEIN_VALVES",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "VSL_ITEM_SOLO",
+        "answer_authority_ref": "protected-items.json#VSL-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#VSL-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "VSL-ITEM-NEAR",
+        "activity_id": "VSL-ACT-NEAR",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "VSL-FAMILY-NEAR",
+        "stimulus_lineage_id": "VSL-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "VSL-REP-CIRCULATION",
+        "learner_operation": "PREDICT_PRESSURE_FLOW",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "VSL_ITEM_NEAR",
+        "answer_authority_ref": "protected-items.json#VSL-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#VSL-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "VSL-ITEM-CHANGED",
+        "activity_id": "VSL-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "VSL-FAMILY-CHANGED",
+        "stimulus_lineage_id": "VSL-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "VSL-REP-CIRCULATION",
+        "learner_operation": "PREDICT_THERMOREGULATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "VSL_ITEM_CHANGED",
+        "answer_authority_ref": "protected-items.json#VSL-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#VSL-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "changed_dimension_detail": "Changes from hemodynamic flow relation to thermoregulatory skin flow."
+      },
+      {
+        "item_binding_id": "VSL-ITEM-REPAIR-NEAR",
+        "activity_id": "VSL-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "VSL-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "VSL-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "VSL-REP-CIRCULATION",
+        "learner_operation": "REPAIR_FLOW_RESISTANCE",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "VSL_ITEM_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#VSL-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#VSL-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "VSL-ITEM-REENTRY-NEAR",
+        "activity_id": "VSL-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "VSL-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "VSL-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "VSL-REP-CIRCULATION",
+        "learner_operation": "REENTER_RESISTANCE_PREDICTION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "VSL_ITEM_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#VSL-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#VSL-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "VSL-ITEM-REPAIR-CHANGED",
+        "activity_id": "VSL-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "VSL-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "VSL-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "VSL-REP-CIRCULATION",
+        "learner_operation": "REPAIR_THERMOREGULATION",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "VSL_ITEM_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#VSL-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#VSL-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "VSL-ITEM-REENTRY-CHANGED",
+        "activity_id": "VSL-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-323080",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "VSL-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "VSL-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "VSL-REP-CIRCULATION",
+        "learner_operation": "REENTER_THERMOREGULATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "VSL_ITEM_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#VSL-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#VSL-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "domain_context",
+          "representation"
+        ],
+        "changed_dimension_detail": "Changes heat condition while preserving caliber-to-heat reasoning.",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "BLD-ITEM-ENTRY",
+        "activity_id": "BLD-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "BLD-FAMILY-ENTRY",
+        "stimulus_lineage_id": "BLD-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "BLD-REP-CIRCULATION",
+        "learner_operation": "IDENTIFY_PLASMA",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "BLD_ITEM_ENTRY",
+        "answer_authority_ref": "protected-items.json#BLD-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#BLD-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "BLD-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "BLD-FAMILY-WORKED",
+        "stimulus_lineage_id": "BLD-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "BLD-REP-CIRCULATION",
+        "learner_operation": "FOLLOW_EXPERT_SELECTION_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:BLD-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "BLD-ITEM-GUIDED",
+        "activity_id": "BLD-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "BLD-FAMILY-GUIDED",
+        "stimulus_lineage_id": "BLD-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "BLD-REP-CIRCULATION",
+        "learner_operation": "IDENTIFY_ERYTHROCYTE",
+        "hint_policy": "VISIBLE_SELECTION_CUE",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "BLD_ITEM_GUIDED",
+        "answer_authority_ref": "protected-items.json#BLD-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#BLD-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "BLD-ITEM-LIGHT",
+        "activity_id": "BLD-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "BLD-FAMILY-LIGHT",
+        "stimulus_lineage_id": "BLD-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "BLD-REP-CIRCULATION",
+        "learner_operation": "TRACE_RBC_TURNOVER",
+        "hint_policy": "BRIEF_REMINDER",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "BLD_ITEM_LIGHT",
+        "answer_authority_ref": "protected-items.json#BLD-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#BLD-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "BLD-ITEM-SOLO",
+        "activity_id": "BLD-ACT-SOLO",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "BLD-FAMILY-SOLO",
+        "stimulus_lineage_id": "BLD-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "BLD-REP-CIRCULATION",
+        "learner_operation": "CLASSIFY_WHOLE_BLOOD",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "BLD_ITEM_SOLO",
+        "answer_authority_ref": "protected-items.json#BLD-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#BLD-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "BLD-ITEM-NEAR",
+        "activity_id": "BLD-ACT-NEAR",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "BLD-FAMILY-NEAR",
+        "stimulus_lineage_id": "BLD-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "BLD-REP-CIRCULATION",
+        "learner_operation": "PREDICT_PLASMA_VOLUME",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "BLD_ITEM_NEAR",
+        "answer_authority_ref": "protected-items.json#BLD-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#BLD-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "BLD-ITEM-CHANGED",
+        "activity_id": "BLD-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "BLD-FAMILY-CHANGED",
+        "stimulus_lineage_id": "BLD-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "BLD-REP-CIRCULATION",
+        "learner_operation": "EXPLAIN_ERYTHROCYTE_TURNOVER",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "BLD_ITEM_CHANGED",
+        "answer_authority_ref": "protected-items.json#BLD-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#BLD-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "changed_dimension_detail": "Changes from component/volume classification to erythrocyte turnover tracing."
+      },
+      {
+        "item_binding_id": "BLD-ITEM-REPAIR-NEAR",
+        "activity_id": "BLD-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "BLD-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "BLD-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "BLD-REP-CIRCULATION",
+        "learner_operation": "REPAIR_BLOOD_COMPONENTS",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "BLD_ITEM_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#BLD-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#BLD-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "BLD-ITEM-REENTRY-NEAR",
+        "activity_id": "BLD-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "BLD-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "BLD-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "BLD-REP-CIRCULATION",
+        "learner_operation": "REENTER_PLASMA_IDENTIFICATION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "BLD_ITEM_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#BLD-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#BLD-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "BLD-ITEM-REPAIR-CHANGED",
+        "activity_id": "BLD-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "BLD-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "BLD-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "BLD-REP-CIRCULATION",
+        "learner_operation": "REPAIR_RBC_TURNOVER",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "BLD_ITEM_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#BLD-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#BLD-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "BLD-ITEM-REENTRY-CHANGED",
+        "activity_id": "BLD-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-859570",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "BLD-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "BLD-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "BLD-REP-CIRCULATION",
+        "learner_operation": "REENTER_RBC_TURNOVER",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "BLD_ITEM_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#BLD-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#BLD-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "domain_context",
+          "representation"
+        ],
+        "changed_dimension_detail": "Uses a new balanced production/removal trace.",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "CLT-ITEM-ENTRY",
+        "activity_id": "CLT-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "CLT-FAMILY-ENTRY",
+        "stimulus_lineage_id": "CLT-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "CLT-REP-CIRCULATION",
+        "learner_operation": "IDENTIFY_PLATELET_PLUG",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CLT_ITEM_ENTRY",
+        "answer_authority_ref": "protected-items.json#CLT-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#CLT-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CLT-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "CLT-FAMILY-WORKED",
+        "stimulus_lineage_id": "CLT-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CLT-REP-CIRCULATION",
+        "learner_operation": "FOLLOW_EXPERT_SELECTION_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:CLT-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CLT-ITEM-GUIDED",
+        "activity_id": "CLT-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "CLT-FAMILY-GUIDED",
+        "stimulus_lineage_id": "CLT-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CLT-REP-CIRCULATION",
+        "learner_operation": "RELATE_FIBRIN_STABILIZATION",
+        "hint_policy": "VISIBLE_SELECTION_CUE",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CLT_ITEM_GUIDED",
+        "answer_authority_ref": "protected-items.json#CLT-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#CLT-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CLT-ITEM-LIGHT",
+        "activity_id": "CLT-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "CLT-FAMILY-LIGHT",
+        "stimulus_lineage_id": "CLT-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CLT-REP-CIRCULATION",
+        "learner_operation": "EXPLAIN_BOUNDED_HEMOSTASIS",
+        "hint_policy": "BRIEF_REMINDER",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CLT_ITEM_LIGHT",
+        "answer_authority_ref": "protected-items.json#CLT-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#CLT-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CLT-ITEM-SOLO",
+        "activity_id": "CLT-ACT-SOLO",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "CLT-FAMILY-SOLO",
+        "stimulus_lineage_id": "CLT-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CLT-REP-CIRCULATION",
+        "learner_operation": "DISTINGUISH_RBC_PLATELET",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CLT_ITEM_SOLO",
+        "answer_authority_ref": "protected-items.json#CLT-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#CLT-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CLT-ITEM-NEAR",
+        "activity_id": "CLT-ACT-NEAR",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "CLT-FAMILY-NEAR",
+        "stimulus_lineage_id": "CLT-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CLT-REP-CIRCULATION",
+        "learner_operation": "PREDICT_PLATELET_DEFECT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CLT_ITEM_NEAR",
+        "answer_authority_ref": "protected-items.json#CLT-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#CLT-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CLT-ITEM-CHANGED",
+        "activity_id": "CLT-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "CLT-FAMILY-CHANGED",
+        "stimulus_lineage_id": "CLT-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CLT-REP-CIRCULATION",
+        "learner_operation": "PREDICT_FIBRIN_DEFECT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CLT_ITEM_CHANGED",
+        "answer_authority_ref": "protected-items.json#CLT-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#CLT-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "changed_dimension_detail": "Changes from initial plug formation to later fibrin stabilization."
+      },
+      {
+        "item_binding_id": "CLT-ITEM-REPAIR-NEAR",
+        "activity_id": "CLT-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CLT-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "CLT-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "CLT-REP-CIRCULATION",
+        "learner_operation": "REPAIR_HEMOSTASIS_ORDER",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CLT_ITEM_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#CLT-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#CLT-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CLT-ITEM-REENTRY-NEAR",
+        "activity_id": "CLT-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CLT-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "CLT-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CLT-REP-CIRCULATION",
+        "learner_operation": "REENTER_PLATELET_STAGE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CLT_ITEM_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#CLT-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#CLT-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "CLT-ITEM-REPAIR-CHANGED",
+        "activity_id": "CLT-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CLT-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "CLT-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "CLT-REP-CIRCULATION",
+        "learner_operation": "REPAIR_BOUNDED_CLOTTING",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CLT_ITEM_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#CLT-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#CLT-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "CLT-ITEM-REENTRY-CHANGED",
+        "activity_id": "CLT-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-248153",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CLT-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "CLT-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CLT-REP-CIRCULATION",
+        "learner_operation": "REENTER_BOUNDED_HEMOSTASIS",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CLT_ITEM_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#CLT-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#CLT-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "domain_context",
+          "representation"
+        ],
+        "changed_dimension_detail": "Uses a new localized resolving clot while preserving bounded-response logic.",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "GAS-ITEM-ENTRY",
+        "activity_id": "GAS-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "GAS-FAMILY-ENTRY",
+        "stimulus_lineage_id": "GAS-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "ENTRY"
+        ],
+        "representation_id": "GAS-REP-CURVE",
+        "learner_operation": "IDENTIFY_OXYGEN_CARRIAGE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAS_ITEM_ENTRY",
+        "answer_authority_ref": "protected-items.json#GAS-ITEM-ENTRY",
+        "rationale_authority_ref": "protected-items.json#GAS-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "GAS-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "GAS-FAMILY-WORKED",
+        "stimulus_lineage_id": "GAS-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAS-REP-CURVE",
+        "learner_operation": "FOLLOW_EXPERT_SELECTION_REASONING",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:GAS-NODE-WORKED",
+        "answer_authority_ref": null,
+        "rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "GAS-ITEM-GUIDED",
+        "activity_id": "GAS-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "GAS-FAMILY-GUIDED",
+        "stimulus_lineage_id": "GAS-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_SELECTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAS-REP-CURVE",
+        "learner_operation": "IDENTIFY_CO2_CARRIAGE",
+        "hint_policy": "VISIBLE_SELECTION_CUE",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAS_ITEM_GUIDED",
+        "answer_authority_ref": "protected-items.json#GAS-ITEM-GUIDED",
+        "rationale_authority_ref": "protected-items.json#GAS-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "GAS-ITEM-LIGHT",
+        "activity_id": "GAS-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "GAS-FAMILY-LIGHT",
+        "stimulus_lineage_id": "GAS-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_SELECTION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAS-REP-CURVE",
+        "learner_operation": "RELATE_HEMATOCRIT_O2_CONTENT",
+        "hint_policy": "BRIEF_REMINDER",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAS_ITEM_LIGHT",
+        "answer_authority_ref": "protected-items.json#GAS-ITEM-LIGHT",
+        "rationale_authority_ref": "protected-items.json#GAS-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "GAS-ITEM-SOLO",
+        "activity_id": "GAS-ACT-SOLO",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "GAS-FAMILY-SOLO",
+        "stimulus_lineage_id": "GAS-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAS-REP-CURVE",
+        "learner_operation": "PREDICT_OXYGEN_UNLOADING",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAS_ITEM_SOLO",
+        "answer_authority_ref": "protected-items.json#GAS-ITEM-SOLO",
+        "rationale_authority_ref": "protected-items.json#GAS-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "GAS-ITEM-NEAR",
+        "activity_id": "GAS-ACT-NEAR",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "GAS-FAMILY-NEAR",
+        "stimulus_lineage_id": "GAS-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAS-REP-CURVE",
+        "learner_operation": "DISTINGUISH_PO2_CONTENT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAS_ITEM_NEAR",
+        "answer_authority_ref": "protected-items.json#GAS-ITEM-NEAR",
+        "rationale_authority_ref": "protected-items.json#GAS-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "GAS-ITEM-CHANGED",
+        "activity_id": "GAS-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "GAS-FAMILY-CHANGED",
+        "stimulus_lineage_id": "GAS-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAS-REP-CURVE",
+        "learner_operation": "PREDICT_PULMONARY_GAS_EXCHANGE",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAS_ITEM_CHANGED",
+        "answer_authority_ref": "protected-items.json#GAS-ITEM-CHANGED",
+        "rationale_authority_ref": "protected-items.json#GAS-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "required_operation",
+          "domain_context"
+        ],
+        "changed_dimension_detail": "Changes from one oxygen representation to bidirectional pulmonary gas transport."
+      },
+      {
+        "item_binding_id": "GAS-ITEM-REPAIR-NEAR",
+        "activity_id": "GAS-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GAS-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "GAS-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "GAS-REP-CURVE",
+        "learner_operation": "REPAIR_PO2_CONTENT_DISTINCTION",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAS_ITEM_REPAIR_NEAR",
+        "answer_authority_ref": "protected-items.json#GAS-ITEM-REPAIR-NEAR",
+        "rationale_authority_ref": "protected-items.json#GAS-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "GAS-ITEM-REENTRY-NEAR",
+        "activity_id": "GAS-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GAS-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "GAS-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAS-REP-CURVE",
+        "learner_operation": "REENTER_OXYGEN_CONTENT",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAS_ITEM_REENTRY_NEAR",
+        "answer_authority_ref": "protected-items.json#GAS-ITEM-REENTRY-NEAR",
+        "rationale_authority_ref": "protected-items.json#GAS-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "GAS-ITEM-REPAIR-CHANGED",
+        "activity_id": "GAS-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GAS-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "GAS-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_FUNCTION_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "GAS-REP-CURVE",
+        "learner_operation": "REPAIR_CO2_CARRIAGE",
+        "hint_policy": "TARGETED_NON_ANSWER_BEARING_CUE_AFTER_MISS",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAS_ITEM_REPAIR_CHANGED",
+        "answer_authority_ref": "protected-items.json#GAS-ITEM-REPAIR-CHANGED",
+        "rationale_authority_ref": "protected-items.json#GAS-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY"
+      },
+      {
+        "item_binding_id": "GAS-ITEM-REENTRY-CHANGED",
+        "activity_id": "GAS-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-175515",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "GAS-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "GAS-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "GAS-REP-CURVE",
+        "learner_operation": "REENTER_AFFINITY_PREDICTION",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMITMENT_ONLY",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "GAS_ITEM_REENTRY_CHANGED",
+        "answer_authority_ref": "protected-items.json#GAS-ITEM-REENTRY-CHANGED",
+        "rationale_authority_ref": "protected-items.json#GAS-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "changed_dimensions": [
+          "domain_context",
+          "representation"
+        ],
+        "changed_dimension_detail": "Uses active systemic tissue while preserving affinity-based unloading.",
+        "exact_reentry_for": "CHANGED_EXIT"
+      }
+    ],
+    "transitions": [],
+    "attachment_bindings": [
+      {
+        "attachment_id": "V3-CAP-578295",
+        "attachment_type": "CAPSTONE",
+        "owner_lesson_id": "V3-LES-489818",
+        "host_scope": {
+          "kind": "MULTI_KC",
+          "kc_ids": [
+            "V3-KC-587275",
+            "V3-KC-323080",
+            "V3-KC-175515"
+          ]
+        },
+        "declared_host_core_ids": [
+          "V3-KC-891581",
+          "V3-KC-236851",
+          "V3-KC-702595",
+          "V3-KC-587275",
+          "V3-KC-323080",
+          "V3-KC-175515"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": true,
+        "relation_ids": [
+          "R14-CAP-578295"
+        ],
+        "relation_class": "CAPSTONE_PLACEMENT",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": true
+      },
+      {
+        "attachment_id": "V3-EXT-007304",
+        "attachment_type": "EXTENSION",
+        "owner_lesson_id": "V3-LES-282413",
+        "host_scope": {
+          "kind": "SECONDARY_APPLICATION",
+          "primary_lesson_id": "V3-LES-282413"
+        },
+        "declared_host_core_ids": [],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": false,
+        "relation_ids": [
+          "R14-FD-282413"
+        ],
+        "relation_class": "FIRST_DELIVERY",
+        "relation_direction": "LESSON_TO_ATTACHMENT",
+        "required_delivery": false
+      },
+      {
+        "attachment_id": "V3-EXT-925466",
+        "attachment_type": "EXTENSION",
+        "owner_lesson_id": "V3-LES-489818",
+        "host_scope": {
+          "kind": "MULTI_KC",
+          "kc_ids": [
+            "V3-KC-587275",
+            "V3-KC-323080"
+          ]
+        },
+        "declared_host_core_ids": [
+          "V3-KC-587275",
+          "V3-KC-323080"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": true,
+        "relation_ids": [
+          "R14-FD-489818"
+        ],
+        "relation_class": "FIRST_DELIVERY",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": false
+      }
+    ]
+  }
+}

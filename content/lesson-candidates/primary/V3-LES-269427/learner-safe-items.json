@@ -1,0 +1,528 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes, and unresolved prerequisite mapping returns to V3-LES-386478.",
+  "items": [
+    {
+      "prompt_key": "LOG_ENTRY",
+      "title": "Starting check: locate the conclusion",
+      "prompt": "Passage: “The community archive extended weekend hours last spring. Weekend visits then increased. The archive director therefore argues that the added hours improved access for people unavailable on weekdays.” Which statement is the conclusion?",
+      "response_type": "single_select",
+      "options": [
+        "The archive changed its schedule last spring",
+        "The added hours improved access beyond weekdays",
+        "Weekend visits increased after the schedule changed",
+        "The archive records visits during each weekend"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LOG_GUIDED",
+      "title": "Guided practice: test a direct inference",
+      "prompt": "Passage: “Every proposal accepted in this round included a cost estimate. Proposal K was accepted in this round. Therefore Proposal K included a cost estimate.” How should the reasoning be evaluated using only the passage?",
+      "response_type": "single_select",
+      "options": [
+        "Unsupported because acceptance never relates to estimates",
+        "Merely plausible because the passage discusses one proposal",
+        "Supported by the passage’s universal premise",
+        "Unsound because outside facts about Proposal K are missing"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LOG_LIGHT",
+      "title": "Less help: preserve a qualifier",
+      "prompt": "Passage: “In several surveyed workshops, shorter meetings were associated with higher attendance. The author concludes that shortening any meeting will always increase attendance.” What is the central logic problem?",
+      "response_type": "single_select",
+      "options": [
+        "It turns a limited association into an absolute rule",
+        "The conclusion is too cautious about the surveyed workshops",
+        "The passage proves that meeting length never matters",
+        "The author supplies too many definitions of attendance"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LOG_SOLO",
+      "title": "On your own: find a missing bridge",
+      "prompt": "Passage: “Reviewers praised the plan’s clear organization. The author concludes that the plan will receive the largest grant.” Which evaluation best fits?",
+      "response_type": "single_select",
+      "options": [
+        "The conclusion follows because clarity guarantees the largest award",
+        "The conclusion contradicts the statement that reviewers praised clarity",
+        "The conclusion is outside the passage because grants do not exist",
+        "The conclusion needs an unstated bridge from clarity to award size"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LOG_NEAR",
+      "title": "Near exit: judge conclusion fit",
+      "prompt": "Passage: “The town’s two pilot kiosks reduced average permit wait time. Both kiosks used the same simplified form. The council concludes that adopting the simplified form at offices with the same paperwork bottleneck is likely to reduce waits.” Which evaluation is strongest?",
+      "response_type": "single_select",
+      "options": [
+        "Unreasonable because a conclusion may never use “likely”",
+        "Reasonable because it keeps the condition and uncertainty",
+        "Certain because two pilots prove every office will improve",
+        "Irrelevant because wait time cannot support a claim about wait time"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LOG_CHANGED",
+      "title": "Changed exit: select a warranted revision",
+      "prompt": "Passage: “A critic argues that public murals always unify neighborhoods. The critic later notes that one mural prompted prolonged disagreement about whose history it represented.” Which revised conclusion best fits the passage?",
+      "response_type": "single_select",
+      "options": [
+        "Public murals never influence neighborhood identity",
+        "Disagreement proves that the mural had no public meaning",
+        "Murals can prompt discussion without always creating unity",
+        "Every neighborhood must remove murals that prompt disagreement"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LOG_REPAIR_NEAR",
+      "title": "Repair: compare support and conclusion",
+      "prompt": "Which question most directly tests whether a conclusion fits its passage support?",
+      "response_type": "single_select",
+      "options": [
+        "Does the conclusion exceed the support’s scope or certainty?",
+        "Do I personally agree with the conclusion’s topic?",
+        "Can I recall an outside example that uses similar words?",
+        "Is the conclusion the longest sentence in the passage?"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LOG_REENTRY_NEAR",
+      "title": "Fresh re-entry: evaluate a new qualified claim",
+      "prompt": "Passage: “Three branches that added a text reminder saw fewer missed appointments. The author concludes that branches serving similar clients may reduce missed appointments by adding the same reminder.” Which evaluation fits?",
+      "response_type": "single_select",
+      "options": [
+        "Unsupported because the conclusion mentions branches",
+        "Reasonable because it keeps similarity and possibility",
+        "Certain because three observations establish a universal law",
+        "Contradictory because reminders and appointments are unrelated in the passage"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LOG_REPAIR_CHANGED",
+      "title": "Repair: use a counterexample correctly",
+      "prompt": "An argument claims that an action “always” has one result, and the passage supplies one clear case where it does not. What follows?",
+      "response_type": "single_select",
+      "options": [
+        "The action must always have the opposite result",
+        "The entire passage becomes meaningless",
+        "The absolute “always” claim is not sustained as written",
+        "The counterexample proves every qualified version false"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "LOG_REENTRY_CHANGED",
+      "title": "Fresh re-entry: revise another absolute claim",
+      "prompt": "Passage: “The essay claims that digital maps always reduce exploration. It also describes hikers who used a digital map to locate an unfamiliar trail and then explored beyond it.” Which conclusion best fits?",
+      "response_type": "single_select",
+      "options": [
+        "Digital maps can never affect exploration",
+        "The hikers did not use a digital map",
+        "All hikers explore more when using digital maps",
+        "Digital maps do not invariably reduce exploration"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EVD_ENTRY",
+      "title": "Starting check: identify relevant evidence",
+      "prompt": "Claim: “The speaker values firsthand observation.” Which passage detail is most relevant?",
+      "response_type": "single_select",
+      "options": [
+        "The speech was delivered in a large hall",
+        "The speaker’s notebook has a blue cover",
+        "The speaker contrasts observations with rumors",
+        "The audience entered through two doors"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EVD_GUIDED",
+      "title": "Guided practice: separate relevance from sufficiency",
+      "prompt": "Passage: “One reader praised the novel’s ending.” Claim: “All readers found the ending satisfying.” How should the quoted evidence be evaluated?",
+      "response_type": "single_select",
+      "options": [
+        "Relevant but insufficient for a claim about all readers",
+        "Irrelevant because praise can never indicate satisfaction",
+        "Sufficient because one reader represents every reader",
+        "Absent because the passage contains no reader response"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EVD_LIGHT",
+      "title": "Less help: find an irrelevant detail",
+      "prompt": "Claim: “The committee opposed the proposed closing date.” Which detail is least relevant?",
+      "response_type": "single_select",
+      "options": [
+        "Members called the deadline unworkable",
+        "The final vote rejected the date",
+        "Several members requested a later date",
+        "The meeting room had twelve windows"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EVD_SOLO",
+      "title": "On your own: evaluate silence",
+      "prompt": "A short passage describes three paintings selected for an exhibit but never claims to list the full exhibit. The passage does not mention sculpture. What can be concluded from that silence?",
+      "response_type": "single_select",
+      "options": [
+        "The exhibit certainly prohibited sculpture",
+        "Silence alone does not show sculpture was absent",
+        "Sculpture was the exhibit’s main focus",
+        "The three paintings were not actually selected"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EVD_NEAR",
+      "title": "Near exit: judge an evidence set",
+      "prompt": "Claim: “The revised signs made the route easier to follow.” Passage evidence: visitors made fewer wrong turns after the revision and several explicitly credited the new arrows. Which evaluation best fits?",
+      "response_type": "single_select",
+      "options": [
+        "Irrelevant because signs cannot be discussed in route evidence",
+        "Absent because no visitor is named",
+        "Relevant and sufficient for this bounded claim",
+        "Sufficient to prove every route everywhere is easy"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EVD_CHANGED",
+      "title": "Changed exit: choose evidence that closes a gap",
+      "prompt": "Passage claim: “The editor rejected the essay because its evidence was incomplete.” The passage currently reports only that the essay was rejected. Which added detail would most directly support the stated reason?",
+      "response_type": "single_select",
+      "options": [
+        "The editor says the central claim lacks support",
+        "The essay was submitted on a Tuesday morning",
+        "The editor has worked at the journal for six years",
+        "The journal’s cover uses a geometric design"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EVD_REPAIR_NEAR",
+      "title": "Repair: run the two-link evidence test",
+      "prompt": "Which pair of questions best evaluates a passage detail offered for a claim?",
+      "response_type": "single_select",
+      "options": [
+        "Is the detail memorable, and is it written first?",
+        "Is the detail outside the passage, and do I agree with it?",
+        "Is the sentence long, and does it use a vivid image?",
+        "Does it bear on the claim, and is it enough?"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EVD_REENTRY_NEAR",
+      "title": "Fresh re-entry: evaluate converging details",
+      "prompt": "Claim: “The new index helped readers locate topics.” Passage evidence: search time fell after the index was added, and readers described using its cross-references. Which evaluation fits?",
+      "response_type": "single_select",
+      "options": [
+        "Irrelevant because an index is not a topic",
+        "Relevant and sufficient for these readers",
+        "Absent because the index entries are not reproduced",
+        "Sufficient to prove every index helps every reader"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EVD_REPAIR_CHANGED",
+      "title": "Repair: identify the missing warrant",
+      "prompt": "A passage reports an outcome and then assigns a specific reason for it. What evidence is most needed?",
+      "response_type": "single_select",
+      "options": [
+        "A decorative detail from the same paragraph",
+        "A fact that the outcome occurred at some time",
+        "A passage link from the proposed reason to the outcome",
+        "An outside fact unrelated to the author’s account"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "EVD_REENTRY_CHANGED",
+      "title": "Fresh re-entry: choose a direct supporting detail",
+      "prompt": "Claim: “The curator moved the sculpture to improve visibility.” Which added passage sentence most directly supports the stated purpose?",
+      "response_type": "single_select",
+      "options": [
+        "The curator says the old corner hid the work",
+        "The sculpture was made several decades earlier",
+        "The gallery floor was polished on the same day",
+        "Visitors entered through a wooden door"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "GEN_ENTRY",
+      "title": "Starting check: preserve the observed group",
+      "prompt": "Passage: “Four coastal libraries surveyed this summer reported more evening visitors after extending hours.” Which conclusion stays within the stated basis?",
+      "response_type": "single_select",
+      "options": [
+        "The surveyed libraries reported more evening visitors",
+        "Every library gains visitors whenever it extends hours",
+        "All coastal institutions should remain open at night",
+        "Libraries in every season respond identically"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "GEN_GUIDED",
+      "title": "Guided practice: detect population drift",
+      "prompt": "Passage: “Two first-year seminars used weekly peer review, and their enrolled students submitted more revisions.” Which claim goes beyond the basis?",
+      "response_type": "single_select",
+      "options": [
+        "Students in the two seminars submitted more revisions",
+        "The pattern occurred in the observed first-year seminars",
+        "Weekly peer review accompanied more revisions in those groups",
+        "Weekly peer review makes every university student revise more"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "GEN_LIGHT",
+      "title": "Less help: track a condition",
+      "prompt": "Passage: “When the trail was dry, the lighter boots reduced travel time for the tested hikers.” Which conclusion best preserves the condition?",
+      "response_type": "single_select",
+      "options": [
+        "Lighter boots always reduce travel time under every weather condition",
+        "Tested hikers were faster in lighter boots on the dry trail",
+        "Every hiker on every trail should avoid all heavier boots",
+        "Wet trails necessarily produce the same travel-time difference"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "GEN_SOLO",
+      "title": "On your own: compare time scope",
+      "prompt": "Passage: “During one festival week, buses on Route 7 carried more passengers after service was added.” Which claim is least warranted?",
+      "response_type": "single_select",
+      "options": [
+        "Route 7 carried more passengers during the observed festival week",
+        "The added service coincided with more Route 7 passengers that week",
+        "Route 7 will carry more passengers every week of every year",
+        "The observation concerns a festival-week service change"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "GEN_NEAR",
+      "title": "Near exit: evaluate a generalization",
+      "prompt": "Passage: “Three small museums in one city added free Friday entry, and Friday attendance rose at each.” The author concludes: “Free Friday entry may raise Friday attendance at similar small museums in that city.” Which evaluation fits?",
+      "response_type": "single_select",
+      "options": [
+        "Unwarranted because no conclusion may extend beyond identical buildings",
+        "Certain because three cases establish a universal rule",
+        "Irrelevant because museums cannot be compared",
+        "Reasonable because it preserves the stated limits"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "GEN_CHANGED",
+      "title": "Changed exit: revise an overgeneralization",
+      "prompt": "Passage: “Five residents of one apartment building preferred the new courtyard seating.” Which revision is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "The interviewed residents preferred the new seating",
+        "All city residents prefer courtyard seating",
+        "Every apartment building should copy the design",
+        "No resident could dislike the new seating"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "GEN_REPAIR_NEAR",
+      "title": "Repair: build the scope box",
+      "prompt": "Which inventory most directly checks a passage generalization?",
+      "response_type": "single_select",
+      "options": [
+        "Population, setting, time, conditions, and quantifier",
+        "Sentence length, punctuation, font, and paragraph count",
+        "Outside examples, personal experience, and topic familiarity",
+        "Author biography, publication date, and cover design"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "GEN_REENTRY_NEAR",
+      "title": "Fresh re-entry: evaluate a bounded extension",
+      "prompt": "Passage: “Two neighborhood clinics using the same reminder system reported fewer missed morning visits.” Claim: “Similar clinics using that system may see fewer missed morning visits.” How should it be evaluated?",
+      "response_type": "single_select",
+      "options": [
+        "Unsupported because “clinics” appears in both evidence and claim",
+        "Reasonable for explicitly similar clinics",
+        "Certain for every clinic and every appointment type",
+        "Contradicted because the passage mentions mornings"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "GEN_REPAIR_CHANGED",
+      "title": "Repair: correct a quantifier shift",
+      "prompt": "Evidence concerns “some members of the selected group.” Which conclusion keeps the same quantifier strength?",
+      "response_type": "single_select",
+      "options": [
+        "No member of the group has the feature",
+        "Every member of every group has the feature",
+        "Some members of the selected group have the feature",
+        "Most people everywhere must have the feature"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "GEN_REENTRY_CHANGED",
+      "title": "Fresh re-entry: revise a seasonal claim",
+      "prompt": "Passage: “Six farms in the valley reported lower water use during a cool spring after installing timers.” Which conclusion is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "Timers always lower water use in every climate",
+        "All farms should expect the same annual result",
+        "Cool springs eliminate the need for irrigation",
+        "The six farms used less water that cool spring"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAU_ENTRY",
+      "title": "Starting check: identify causal language",
+      "prompt": "Which sentence makes a causal claim rather than reporting sequence or association?",
+      "response_type": "single_select",
+      "options": [
+        "Attendance rose after the schedule changed",
+        "Attendance and later hours appeared together",
+        "Later hours were associated with attendance",
+        "The schedule change produced the rise in attendance"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAU_GUIDED",
+      "title": "Guided practice: test sequence alone",
+      "prompt": "Passage: “Complaints declined after a new form appeared.” The author concludes that the form caused the decline. No other link is supplied. Which evaluation fits?",
+      "response_type": "single_select",
+      "options": [
+        "The claim is certain because the form appeared first",
+        "Relevant sequence, but insufficient for causation",
+        "The claim is impossible because forms never affect complaints",
+        "The passage proves complaints caused the form"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAU_LIGHT",
+      "title": "Less help: use a passage-supplied alternative",
+      "prompt": "Passage: “Waits shortened after online booking began, but the office also doubled staffing that morning.” Which conclusion is best supported?",
+      "response_type": "single_select",
+      "options": [
+        "Online booking alone certainly caused the shorter waits",
+        "Staffing cannot affect waits because booking is mentioned first",
+        "The passage does not isolate booking from added staffing",
+        "Shorter waits caused both booking and staffing"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAU_SOLO",
+      "title": "On your own: recognize direct linkage",
+      "prompt": "Passage: “A lamp flickers whenever connector C is loosened, stops flickering when C is tightened, and flickers again when C is loosened.” Which claim is best warranted?",
+      "response_type": "single_select",
+      "options": [
+        "Loosening connector C causes this lamp to flicker",
+        "Every lamp flicker everywhere is caused by connector C",
+        "The flicker causes connector C to loosen",
+        "Connector C has no relation to the flicker"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAU_NEAR",
+      "title": "Near exit: evaluate a causal conclusion",
+      "prompt": "Passage: “Errors fell after a checklist was introduced. The same week, workers received extra training, which the passage says addressed the most common error.” The author claims the checklist alone caused the decline. Which evaluation is strongest?",
+      "response_type": "single_select",
+      "options": [
+        "Supported because the checklist is named before training",
+        "Supported because every later event is caused by the first event",
+        "Contradicted because checklists can never help",
+        "Not warranted because training is a passage-supported alternative"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAU_CHANGED",
+      "title": "Changed exit: interpret intervention reversal",
+      "prompt": "Passage sequence: a display is clear; a tinted cover is added and the display becomes dim; the cover is removed and clarity returns; the same cover is replaced and dimness returns. Which conclusion best fits?",
+      "response_type": "single_select",
+      "options": [
+        "The display became dim only because time passed",
+        "The cover causes the described dimness",
+        "Dimness caused the cover to be installed",
+        "Every tinted object dims every display"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAU_REPAIR_NEAR",
+      "title": "Repair: separate timing from linkage",
+      "prompt": "What must a passage add to “B happened after A” before a causal conclusion is warranted?",
+      "response_type": "single_select",
+      "options": [
+        "A longer description of B’s appearance",
+        "A statement that A was mentioned first",
+        "A passage link from changed A to changed B",
+        "An unrelated outside example"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAU_REENTRY_NEAR",
+      "title": "Fresh re-entry: test another simultaneous change",
+      "prompt": "Passage: “Sales rose after the store changed its window display, but prices were also reduced that day and the passage notes many buyers mentioned the discounts.” Can the display-alone causal claim be sustained?",
+      "response_type": "single_select",
+      "options": [
+        "No; the price reduction is a supported alternative",
+        "Yes; the display is mentioned before prices",
+        "Yes; any event before an outcome is its only cause",
+        "No; sales can never respond to displays"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAU_REPAIR_CHANGED",
+      "title": "Repair: recognize an intervention pattern",
+      "prompt": "Which passage pattern most directly strengthens a bounded causal link?",
+      "response_type": "single_select",
+      "options": [
+        "The outcome is described with vivid language",
+        "The factor and outcome are mentioned in one paragraph",
+        "The outcome occurs once long after the factor",
+        "The outcome tracks the factor’s removal and return"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CAU_REENTRY_CHANGED",
+      "title": "Fresh re-entry: evaluate a restored condition",
+      "prompt": "Passage: “A tone sounds when switch S is pressed, stops when S is released, and sounds again when S is pressed while all described settings stay fixed.” Which conclusion is warranted?",
+      "response_type": "single_select",
+      "options": [
+        "The tone causes the switch to move",
+        "Pressing S causes the tone in this setup",
+        "Every switch produces the same tone",
+        "Time alone causes alternating sound and silence"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    }
+  ]
+}

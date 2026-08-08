@@ -1,0 +1,450 @@
+{
+  "artifact_type": "KC_COVERAGE_MATRIX",
+  "artifact_id": "V3-KCOV-228369",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "e269f8f2a336dabc6af36cfa8d05526493b0f2e4953d6442449d781868138cef",
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-228369",
+    "lesson_script_sha256": "a7157debba5461a21a329e474843aee9ea8ac6606182e461e2c6883085bae6a9"
+  },
+  "payload": {
+    "lesson_id": "V3-LES-228369",
+    "ordered_required_kc_ids": [
+      "V3-KC-701797",
+      "V3-KC-827045",
+      "V3-KC-451000"
+    ],
+    "lesson_script_id": "V3-LSCR-228369",
+    "lesson_script_sha256": "a7157debba5461a21a329e474843aee9ea8ac6606182e461e2c6883085bae6a9",
+    "rows": [
+      {
+        "kc_id": "V3-KC-701797",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-701797",
+        "entry_check_boundary_id": "IMP-NODE-ENTRY",
+        "orientation_node_id": "IMP-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "IMP-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "IMP-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "IMP-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "IMP-NODE-WORKED"
+        ],
+        "practice_item_ids": [
+          "IMP-ITEM-GUIDED",
+          "IMP-ITEM-LIGHT",
+          "IMP-ITEM-SOLO"
+        ],
+        "near_exit_item_ids": [
+          "IMP-ITEM-NEAR"
+        ],
+        "changed_exit_item_ids": [
+          "IMP-ITEM-CHANGED"
+        ],
+        "repair_node_ids": [
+          "IMP-NODE-REPAIR-NEAR",
+          "IMP-NODE-REPAIR-CHANGED"
+        ],
+        "fresh_confirmation_item_ids": [
+          "IMP-ITEM-REPAIR-NEAR",
+          "IMP-ITEM-REPAIR-CHANGED"
+        ],
+        "exact_reentry_refs": [
+          "IMP-NODE-REENTRY-NEAR",
+          "IMP-NODE-REENTRY-CHANGED"
+        ],
+        "recap_node_id": "IMP-NODE-RECAP",
+        "route_coverage": {
+          "concise": {
+            "teaching_ids": [
+              "IMP-NODE-ORIENTATION",
+              "IMP-NODE-EXPLANATION",
+              "IMP-NODE-MODEL",
+              "IMP-NODE-THINK",
+              "IMP-NODE-WORKED",
+              "IMP-NODE-CONTRAST"
+            ],
+            "practice_ids": [
+              "IMP-ITEM-GUIDED",
+              "IMP-ITEM-LIGHT",
+              "IMP-ITEM-SOLO"
+            ],
+            "exit_ids": [
+              "IMP-ITEM-NEAR",
+              "IMP-ITEM-CHANGED"
+            ],
+            "repair_ids": [
+              "IMP-NODE-REPAIR-NEAR",
+              "IMP-NODE-REENTRY-NEAR",
+              "IMP-NODE-REPAIR-CHANGED",
+              "IMP-NODE-REENTRY-CHANGED",
+              "IMP-NODE-HANDOFF"
+            ],
+            "recap_ids": [
+              "IMP-NODE-RECAP"
+            ],
+            "coverage_status": "STRUCTURAL_BASELINE_NOT_APPLICABLE_BY_RELEASE_POLICY"
+          },
+          "standard": {
+            "teaching_ids": [
+              "IMP-NODE-ORIENTATION",
+              "IMP-NODE-EXPLANATION",
+              "IMP-NODE-MODEL",
+              "IMP-NODE-THINK",
+              "IMP-NODE-WORKED",
+              "IMP-NODE-CONTRAST"
+            ],
+            "practice_ids": [
+              "IMP-ITEM-GUIDED",
+              "IMP-ITEM-LIGHT",
+              "IMP-ITEM-SOLO"
+            ],
+            "exit_ids": [
+              "IMP-ITEM-NEAR",
+              "IMP-ITEM-CHANGED"
+            ],
+            "repair_ids": [
+              "IMP-NODE-REPAIR-NEAR",
+              "IMP-NODE-REENTRY-NEAR",
+              "IMP-NODE-REPAIR-CHANGED",
+              "IMP-NODE-REENTRY-CHANGED",
+              "IMP-NODE-HANDOFF"
+            ],
+            "recap_ids": [
+              "IMP-NODE-RECAP"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "misconception": {
+            "teaching_ids": [
+              "IMP-NODE-ORIENTATION",
+              "IMP-NODE-EXPLANATION",
+              "IMP-NODE-MODEL",
+              "IMP-NODE-THINK",
+              "IMP-NODE-WORKED",
+              "IMP-NODE-CONTRAST"
+            ],
+            "practice_ids": [
+              "IMP-ITEM-GUIDED",
+              "IMP-ITEM-LIGHT",
+              "IMP-ITEM-SOLO"
+            ],
+            "exit_ids": [
+              "IMP-ITEM-NEAR",
+              "IMP-ITEM-CHANGED"
+            ],
+            "repair_ids": [
+              "IMP-NODE-REPAIR-NEAR",
+              "IMP-NODE-REENTRY-NEAR",
+              "IMP-NODE-REPAIR-CHANGED",
+              "IMP-NODE-REENTRY-CHANGED",
+              "IMP-NODE-HANDOFF"
+            ],
+            "recap_ids": [
+              "IMP-NODE-RECAP"
+            ],
+            "coverage_status": "STRUCTURAL_BASELINE_NOT_APPLICABLE_BY_RELEASE_POLICY"
+          }
+        },
+        "bounded_failure_handoff": {
+          "terminal_node_id": "IMP-NODE-HANDOFF",
+          "attempt_bound": 1,
+          "exit_credit_on_handoff": false,
+          "runtime_terminal_disposition": "PLANNER_HANDOFF_WITHOUT_EXIT_CREDIT"
+        },
+        "row_status": "CONTENT_AUTHORED_RUNTIME_PENDING"
+      },
+      {
+        "kc_id": "V3-KC-827045",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-827045",
+        "entry_check_boundary_id": "HUM-NODE-ENTRY",
+        "orientation_node_id": "HUM-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "HUM-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "HUM-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "HUM-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "HUM-NODE-WORKED"
+        ],
+        "practice_item_ids": [
+          "HUM-ITEM-GUIDED",
+          "HUM-ITEM-LIGHT",
+          "HUM-ITEM-SOLO"
+        ],
+        "near_exit_item_ids": [
+          "HUM-ITEM-NEAR"
+        ],
+        "changed_exit_item_ids": [
+          "HUM-ITEM-CHANGED"
+        ],
+        "repair_node_ids": [
+          "HUM-NODE-REPAIR-NEAR",
+          "HUM-NODE-REPAIR-CHANGED"
+        ],
+        "fresh_confirmation_item_ids": [
+          "HUM-ITEM-REPAIR-NEAR",
+          "HUM-ITEM-REPAIR-CHANGED"
+        ],
+        "exact_reentry_refs": [
+          "HUM-NODE-REENTRY-NEAR",
+          "HUM-NODE-REENTRY-CHANGED"
+        ],
+        "recap_node_id": "HUM-NODE-RECAP",
+        "route_coverage": {
+          "concise": {
+            "teaching_ids": [
+              "HUM-NODE-ORIENTATION",
+              "HUM-NODE-EXPLANATION",
+              "HUM-NODE-MODEL",
+              "HUM-NODE-THINK",
+              "HUM-NODE-WORKED",
+              "HUM-NODE-CONTRAST"
+            ],
+            "practice_ids": [
+              "HUM-ITEM-GUIDED",
+              "HUM-ITEM-LIGHT",
+              "HUM-ITEM-SOLO"
+            ],
+            "exit_ids": [
+              "HUM-ITEM-NEAR",
+              "HUM-ITEM-CHANGED"
+            ],
+            "repair_ids": [
+              "HUM-NODE-REPAIR-NEAR",
+              "HUM-NODE-REENTRY-NEAR",
+              "HUM-NODE-REPAIR-CHANGED",
+              "HUM-NODE-REENTRY-CHANGED",
+              "HUM-NODE-HANDOFF"
+            ],
+            "recap_ids": [
+              "HUM-NODE-RECAP"
+            ],
+            "coverage_status": "STRUCTURAL_BASELINE_NOT_APPLICABLE_BY_RELEASE_POLICY"
+          },
+          "standard": {
+            "teaching_ids": [
+              "HUM-NODE-ORIENTATION",
+              "HUM-NODE-EXPLANATION",
+              "HUM-NODE-MODEL",
+              "HUM-NODE-THINK",
+              "HUM-NODE-WORKED",
+              "HUM-NODE-CONTRAST"
+            ],
+            "practice_ids": [
+              "HUM-ITEM-GUIDED",
+              "HUM-ITEM-LIGHT",
+              "HUM-ITEM-SOLO"
+            ],
+            "exit_ids": [
+              "HUM-ITEM-NEAR",
+              "HUM-ITEM-CHANGED"
+            ],
+            "repair_ids": [
+              "HUM-NODE-REPAIR-NEAR",
+              "HUM-NODE-REENTRY-NEAR",
+              "HUM-NODE-REPAIR-CHANGED",
+              "HUM-NODE-REENTRY-CHANGED",
+              "HUM-NODE-HANDOFF"
+            ],
+            "recap_ids": [
+              "HUM-NODE-RECAP"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "misconception": {
+            "teaching_ids": [
+              "HUM-NODE-ORIENTATION",
+              "HUM-NODE-EXPLANATION",
+              "HUM-NODE-MODEL",
+              "HUM-NODE-THINK",
+              "HUM-NODE-WORKED",
+              "HUM-NODE-CONTRAST"
+            ],
+            "practice_ids": [
+              "HUM-ITEM-GUIDED",
+              "HUM-ITEM-LIGHT",
+              "HUM-ITEM-SOLO"
+            ],
+            "exit_ids": [
+              "HUM-ITEM-NEAR",
+              "HUM-ITEM-CHANGED"
+            ],
+            "repair_ids": [
+              "HUM-NODE-REPAIR-NEAR",
+              "HUM-NODE-REENTRY-NEAR",
+              "HUM-NODE-REPAIR-CHANGED",
+              "HUM-NODE-REENTRY-CHANGED",
+              "HUM-NODE-HANDOFF"
+            ],
+            "recap_ids": [
+              "HUM-NODE-RECAP"
+            ],
+            "coverage_status": "STRUCTURAL_BASELINE_NOT_APPLICABLE_BY_RELEASE_POLICY"
+          }
+        },
+        "bounded_failure_handoff": {
+          "terminal_node_id": "HUM-NODE-HANDOFF",
+          "attempt_bound": 1,
+          "exit_credit_on_handoff": false,
+          "runtime_terminal_disposition": "PLANNER_HANDOFF_WITHOUT_EXIT_CREDIT"
+        },
+        "row_status": "CONTENT_AUTHORED_RUNTIME_PENDING"
+      },
+      {
+        "kc_id": "V3-KC-451000",
+        "canonical_ordinal": 3,
+        "objective_ref": "objective:V3-KC-451000",
+        "entry_check_boundary_id": "ANI-NODE-ENTRY",
+        "orientation_node_id": "ANI-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "ANI-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "ANI-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "ANI-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "ANI-NODE-WORKED"
+        ],
+        "practice_item_ids": [
+          "ANI-ITEM-GUIDED",
+          "ANI-ITEM-LIGHT",
+          "ANI-ITEM-SOLO"
+        ],
+        "near_exit_item_ids": [
+          "ANI-ITEM-NEAR"
+        ],
+        "changed_exit_item_ids": [
+          "ANI-ITEM-CHANGED"
+        ],
+        "repair_node_ids": [
+          "ANI-NODE-REPAIR-NEAR",
+          "ANI-NODE-REPAIR-CHANGED"
+        ],
+        "fresh_confirmation_item_ids": [
+          "ANI-ITEM-REPAIR-NEAR",
+          "ANI-ITEM-REPAIR-CHANGED"
+        ],
+        "exact_reentry_refs": [
+          "ANI-NODE-REENTRY-NEAR",
+          "ANI-NODE-REENTRY-CHANGED"
+        ],
+        "recap_node_id": "ANI-NODE-RECAP",
+        "route_coverage": {
+          "concise": {
+            "teaching_ids": [
+              "ANI-NODE-ORIENTATION",
+              "ANI-NODE-EXPLANATION",
+              "ANI-NODE-MODEL",
+              "ANI-NODE-THINK",
+              "ANI-NODE-WORKED",
+              "ANI-NODE-CONTRAST"
+            ],
+            "practice_ids": [
+              "ANI-ITEM-GUIDED",
+              "ANI-ITEM-LIGHT",
+              "ANI-ITEM-SOLO"
+            ],
+            "exit_ids": [
+              "ANI-ITEM-NEAR",
+              "ANI-ITEM-CHANGED"
+            ],
+            "repair_ids": [
+              "ANI-NODE-REPAIR-NEAR",
+              "ANI-NODE-REENTRY-NEAR",
+              "ANI-NODE-REPAIR-CHANGED",
+              "ANI-NODE-REENTRY-CHANGED",
+              "ANI-NODE-HANDOFF"
+            ],
+            "recap_ids": [
+              "ANI-NODE-RECAP"
+            ],
+            "coverage_status": "STRUCTURAL_BASELINE_NOT_APPLICABLE_BY_RELEASE_POLICY"
+          },
+          "standard": {
+            "teaching_ids": [
+              "ANI-NODE-ORIENTATION",
+              "ANI-NODE-EXPLANATION",
+              "ANI-NODE-MODEL",
+              "ANI-NODE-THINK",
+              "ANI-NODE-WORKED",
+              "ANI-NODE-CONTRAST"
+            ],
+            "practice_ids": [
+              "ANI-ITEM-GUIDED",
+              "ANI-ITEM-LIGHT",
+              "ANI-ITEM-SOLO"
+            ],
+            "exit_ids": [
+              "ANI-ITEM-NEAR",
+              "ANI-ITEM-CHANGED"
+            ],
+            "repair_ids": [
+              "ANI-NODE-REPAIR-NEAR",
+              "ANI-NODE-REENTRY-NEAR",
+              "ANI-NODE-REPAIR-CHANGED",
+              "ANI-NODE-REENTRY-CHANGED",
+              "ANI-NODE-HANDOFF"
+            ],
+            "recap_ids": [
+              "ANI-NODE-RECAP"
+            ],
+            "coverage_status": "CONTENT_AUTHORED"
+          },
+          "misconception": {
+            "teaching_ids": [
+              "ANI-NODE-ORIENTATION",
+              "ANI-NODE-EXPLANATION",
+              "ANI-NODE-MODEL",
+              "ANI-NODE-THINK",
+              "ANI-NODE-WORKED",
+              "ANI-NODE-CONTRAST"
+            ],
+            "practice_ids": [
+              "ANI-ITEM-GUIDED",
+              "ANI-ITEM-LIGHT",
+              "ANI-ITEM-SOLO"
+            ],
+            "exit_ids": [
+              "ANI-ITEM-NEAR",
+              "ANI-ITEM-CHANGED"
+            ],
+            "repair_ids": [
+              "ANI-NODE-REPAIR-NEAR",
+              "ANI-NODE-REENTRY-NEAR",
+              "ANI-NODE-REPAIR-CHANGED",
+              "ANI-NODE-REENTRY-CHANGED",
+              "ANI-NODE-HANDOFF"
+            ],
+            "recap_ids": [
+              "ANI-NODE-RECAP"
+            ],
+            "coverage_status": "STRUCTURAL_BASELINE_NOT_APPLICABLE_BY_RELEASE_POLICY"
+          }
+        },
+        "bounded_failure_handoff": {
+          "terminal_node_id": "ANI-NODE-HANDOFF",
+          "attempt_bound": 1,
+          "exit_credit_on_handoff": false,
+          "runtime_terminal_disposition": "PLANNER_HANDOFF_WITHOUT_EXIT_CREDIT"
+        },
+        "row_status": "CONTENT_AUTHORED_RUNTIME_PENDING"
+      }
+    ],
+    "matrix_status": "CANDIDATE"
+  }
+}

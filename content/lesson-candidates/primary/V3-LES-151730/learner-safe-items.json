@@ -1,0 +1,658 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.2",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Omission is available and is not scored as a selected misconception.",
+  "items": [
+    {
+      "prompt_key": "AQS_ENTRY",
+      "title": "Starting check: formula units to ions",
+      "prompt": "A solution contains 0.25 mol NaCl in 0.50 L. Assuming complete dissociation, which concentrations are present?",
+      "response_type": "single_select",
+      "options": [
+        "0.50 M Na⁺ and 0.50 M Cl⁻",
+        "0.25 M Na⁺ and 0.25 M Cl⁻",
+        "1.00 M Na⁺ and 1.00 M Cl⁻",
+        "0.50 M Na²⁺ and 0.50 M Cl²⁻"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AQS_GUIDED",
+      "title": "Guided practice: include the subscript",
+      "prompt": "A 0.75 L solution contains 0.15 mol CaCl₂. What are the ion concentrations after complete dissociation?",
+      "response_type": "single_select",
+      "options": [
+        "0.40 M Ca²⁺ and 0.20 M Cl⁻",
+        "0.20 M Ca²⁺ and 0.40 M Cl⁻",
+        "0.20 M Ca⁺ and 0.20 M Cl₂⁻",
+        "0.15 M Ca²⁺ and 0.30 M Cl⁻"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AQS_LIGHT",
+      "title": "Less help: count nitrate ions",
+      "prompt": "A 0.30 L solution contains 0.060 mol Al(NO₃)₃. What is the nitrate concentration after complete dissociation?",
+      "response_type": "single_select",
+      "options": [
+        "0.20 M",
+        "0.40 M",
+        "0.60 M",
+        "1.80 M"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AQS_SOLO",
+      "title": "On your own: separate charge from count",
+      "prompt": "A 0.20 L solution contains 0.040 mol MgBr₂. Which pair is correct after complete dissociation?",
+      "response_type": "single_select",
+      "options": [
+        "0.40 M Mg²⁺ and 0.20 M Br⁻",
+        "0.20 M Mg⁺ and 0.40 M Br²⁻",
+        "0.20 M Mg²⁺ and 0.20 M Br⁻",
+        "0.20 M Mg²⁺ and 0.40 M Br⁻"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AQS_NEAR",
+      "title": "Near exit: a fresh sulfate solution",
+      "prompt": "A 0.30 L solution contains 0.090 mol K₂SO₄. Which concentrations follow from complete dissociation?",
+      "response_type": "single_select",
+      "options": [
+        "0.60 M K⁺ and 0.30 M SO₄²⁻",
+        "0.30 M K²⁺ and 0.30 M SO₄⁻",
+        "0.30 M K⁺ and 0.60 M SO₄²⁻",
+        "0.90 M K⁺ and 0.30 M SO₄²⁻"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AQS_CHANGED",
+      "title": "Changed exit: begin from mass",
+      "prompt": "A 0.50 L solution is made from 5.85 g NaCl (molar mass 58.5 g/mol). Assuming complete dissociation, which concentrations result?",
+      "response_type": "single_select",
+      "options": [
+        "0.10 M Na⁺ and 0.10 M Cl⁻",
+        "0.20 M Na⁺ and 0.20 M Cl⁻",
+        "0.40 M Na⁺ and 0.40 M Cl⁻",
+        "5.85 M Na⁺ and 5.85 M Cl⁻"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AQS_REPAIR_NEAR",
+      "title": "Repair the coefficient sequence",
+      "prompt": "Which sequence correctly finds ion concentrations from moles of an ionic solute and solution volume?",
+      "response_type": "single_select",
+      "options": [
+        "Multiply moles by liters, then divide by charge",
+        "Apply ionic charge first, then divide by liters",
+        "Divide moles by liters, then apply formula coefficients",
+        "Divide liters by moles, then apply atomic masses"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AQS_REENTRY_NEAR",
+      "title": "Fresh re-entry: nitrate salt",
+      "prompt": "A 0.25 L solution contains 0.050 mol Ca(NO₃)₂. What are the ion concentrations after complete dissociation?",
+      "response_type": "single_select",
+      "options": [
+        "0.20 M Ca²⁺ and 0.20 M NO₃⁻",
+        "0.40 M Ca²⁺ and 0.20 M NO₃⁻",
+        "0.10 M Ca²⁺ and 0.20 M NO₃⁻",
+        "0.20 M Ca²⁺ and 0.40 M NO₃⁻"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AQS_REPAIR_CHANGED",
+      "title": "Repair the mass conversion",
+      "prompt": "When a solution problem gives solute mass and molar mass, what must happen before calculating molarity?",
+      "response_type": "single_select",
+      "options": [
+        "Divide mass by molar mass to obtain moles",
+        "Multiply mass by volume to obtain moles",
+        "Divide molar mass by mass to obtain liters",
+        "Multiply ionic charge by mass to obtain moles"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "AQS_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: mass and coefficients",
+      "prompt": "A 0.50 L solution contains 11.1 g CaCl₂ (molar mass 111 g/mol). Which ion concentrations result after complete dissociation?",
+      "response_type": "single_select",
+      "options": [
+        "0.10 M Ca²⁺ and 0.20 M Cl⁻",
+        "0.20 M Ca²⁺ and 0.40 M Cl⁻",
+        "0.40 M Ca²⁺ and 0.20 M Cl⁻",
+        "0.20 M Ca⁺ and 0.20 M Cl₂⁻"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "ABC_ENTRY",
+      "title": "Starting check: follow the proton",
+      "prompt": "For NH₃ + H₂O ⇌ NH₄⁺ + OH⁻, which classification is correct?",
+      "response_type": "single_select",
+      "options": [
+        "NH₃ is the acid and OH⁻ its conjugate base",
+        "NH₃ is the base and NH₄⁺ its conjugate acid",
+        "H₂O is the base and OH⁻ its conjugate acid",
+        "NH₄⁺ is the base and H₂O its conjugate acid"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "ABC_GUIDED",
+      "title": "Guided practice: amphiprotic bicarbonate",
+      "prompt": "For HCO₃⁻ + H₂O ⇌ H₂CO₃ + OH⁻, what role does HCO₃⁻ play?",
+      "response_type": "single_select",
+      "options": [
+        "Acid; its conjugate base is H₂CO₃",
+        "Acid; its conjugate base is OH⁻",
+        "Base; its conjugate acid is H₂CO₃",
+        "Base; its conjugate acid is OH⁻"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "ABC_LIGHT",
+      "title": "Less help: sulfate pair",
+      "prompt": "For HSO₄⁻ + H₂O ⇌ SO₄²⁻ + H₃O⁺, which conjugate pair is correctly identified?",
+      "response_type": "single_select",
+      "options": [
+        "H₂O / SO₄²⁻",
+        "HSO₄⁻ / H₃O⁺",
+        "H₂O / HSO₄⁻",
+        "HSO₄⁻ / SO₄²⁻"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "ABC_SOLO",
+      "title": "On your own: identify the accepting species",
+      "prompt": "In CH₃COOH + H₂O ⇌ CH₃COO⁻ + H₃O⁺, which species is the Brønsted–Lowry base in the forward direction?",
+      "response_type": "single_select",
+      "options": [
+        "H₂O",
+        "CH₃COOH",
+        "CH₃COO⁻",
+        "H₃O⁺"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "ABC_NEAR",
+      "title": "Near exit: acid and conjugate base",
+      "prompt": "In H₂PO₄⁻ + H₂O ⇌ HPO₄²⁻ + H₃O⁺, which statement is correct?",
+      "response_type": "single_select",
+      "options": [
+        "H₂PO₄⁻ is a base paired with H₃O⁺",
+        "H₂PO₄⁻ is an acid paired with HPO₄²⁻",
+        "H₂O is an acid paired with HPO₄²⁻",
+        "HPO₄²⁻ is an acid paired with H₃O⁺"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "ABC_CHANGED",
+      "title": "Changed exit: use strength to compare solutions",
+      "prompt": "Equal-concentration aqueous solutions of HCl and CH₃COOH are prepared. Which comparison is expected?",
+      "response_type": "single_select",
+      "options": [
+        "Both produce identical hydronium concentrations",
+        "CH₃COOH produces more hydronium because it has more H atoms",
+        "HCl produces more hydronium because it ionizes more completely",
+        "Neither produces hydronium until a base is added"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "ABC_REPAIR_NEAR",
+      "title": "Repair conjugate-pair identification",
+      "prompt": "Which test reliably identifies a conjugate acid–base pair in a reaction?",
+      "response_type": "single_select",
+      "options": [
+        "The species have the same charge",
+        "The species appear on the same side",
+        "The species contain the same number of atoms",
+        "The species differ by exactly one H⁺"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "ABC_REENTRY_NEAR",
+      "title": "Fresh re-entry: carbonate transfer",
+      "prompt": "For CO₃²⁻ + H₂O ⇌ HCO₃⁻ + OH⁻, which statement is correct?",
+      "response_type": "single_select",
+      "options": [
+        "CO₃²⁻ is the base and HCO₃⁻ its conjugate acid",
+        "CO₃²⁻ is the acid and OH⁻ its conjugate base",
+        "H₂O is the base and HCO₃⁻ its conjugate acid",
+        "OH⁻ is the acid and CO₃²⁻ its conjugate base"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "ABC_REPAIR_CHANGED",
+      "title": "Repair the strength distinction",
+      "prompt": "What distinguishes a strong acid from a weak acid at the same stated concentration?",
+      "response_type": "single_select",
+      "options": [
+        "A strong acid always contains more hydrogen atoms",
+        "A strong acid ionizes to a greater extent in water",
+        "A strong acid must carry a positive charge",
+        "A strong acid can react only with strong bases"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "ABC_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: compare strong and weak acids",
+      "prompt": "Equal-concentration aqueous HNO₃ and HF solutions are compared. Which has the lower pH?",
+      "response_type": "single_select",
+      "options": [
+        "HF, because fluorine is more electronegative",
+        "They have the same pH at equal concentration",
+        "HNO₃, because it ionizes more completely",
+        "Neither, because pH applies only to weak acids"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "PHW_ENTRY",
+      "title": "Starting check: hydronium to pH",
+      "prompt": "At 25 °C, a solution has [H₃O⁺] = 1.0 × 10⁻⁵ M. What is its pH?",
+      "response_type": "single_select",
+      "options": [
+        "9.00",
+        "14.00",
+        "5.00",
+        "1.0 × 10⁻⁵"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "PHW_GUIDED",
+      "title": "Guided practice: hydroxide to pH",
+      "prompt": "At 25 °C, [OH⁻] = 1.0 × 10⁻⁴ M. Which pH is correct?",
+      "response_type": "single_select",
+      "options": [
+        "4.00",
+        "8.00",
+        "14.00",
+        "10.00"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "PHW_LIGHT",
+      "title": "Less help: pH to concentration",
+      "prompt": "A solution has pH 3.00. What is [H₃O⁺]?",
+      "response_type": "single_select",
+      "options": [
+        "1.0 × 10⁻³ M",
+        "3.0 M",
+        "1.0 × 10⁻¹¹ M",
+        "3.0 × 10⁻¹⁴ M"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "PHW_SOLO",
+      "title": "On your own: keep the coefficient",
+      "prompt": "A solution has [H₃O⁺] = 2.0 × 10⁻⁴ M. What is its approximate pH?",
+      "response_type": "single_select",
+      "options": [
+        "2.00",
+        "3.70",
+        "4.00",
+        "10.30"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "PHW_NEAR",
+      "title": "Near exit: pure water at 25 °C",
+      "prompt": "For pure water at 25 °C, which set is consistent with Kᵥ ≈ 1.0 × 10⁻¹⁴?",
+      "response_type": "single_select",
+      "options": [
+        "[H₃O⁺] = 10⁻¹⁴ M and pH 14",
+        "[OH⁻] = 1 M and pOH 0",
+        "[H₃O⁺] = [OH⁻] = 10⁻⁷ M and pH 7",
+        "[H₃O⁺] = 10⁻⁷ M and [OH⁻] = 10⁻¹⁴ M"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "PHW_CHANGED",
+      "title": "Changed exit: choose the hydroxide rail",
+      "prompt": "At 25 °C, a solution has [OH⁻] = 2.5 × 10⁻⁵ M. What is its approximate pH?",
+      "response_type": "single_select",
+      "options": [
+        "4.60",
+        "5.40",
+        "8.60",
+        "9.40"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "PHW_REPAIR_NEAR",
+      "title": "Repair the water-ionization relation",
+      "prompt": "At 25 °C, which chain correctly links pure-water ionization to pH?",
+      "response_type": "single_select",
+      "options": [
+        "[H₃O⁺] = [OH⁻] = √Kᵥ = 10⁻⁷ M, so pH = 7",
+        "[H₃O⁺] = Kᵥ = 10⁻¹⁴ M, so pH = 14",
+        "[OH⁻] = 1 M whenever [H₃O⁺] equals [OH⁻]",
+        "[H₃O⁺][OH⁻] = 10⁻⁷ and equal concentrations give pH 14"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "PHW_REENTRY_NEAR",
+      "title": "Fresh re-entry: neutral aqueous sample",
+      "prompt": "A neutral aqueous sample at 25 °C has [OH⁻] = 1.0 × 10⁻⁷ M. Which hydronium concentration and pH are consistent with Kᵥ?",
+      "response_type": "single_select",
+      "options": [
+        "[H₃O⁺] = 10⁻¹⁴ M and pH = 14",
+        "[H₃O⁺] = 10⁻⁷ M and pH = 7",
+        "[H₃O⁺] = 1 M and pH = 0",
+        "[H₃O⁺] = 10⁻²¹ M and pH = 21"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "PHW_REPAIR_CHANGED",
+      "title": "Repair crossing between rails",
+      "prompt": "At 25 °C, after finding pOH from [OH⁻], how is pH obtained?",
+      "response_type": "single_select",
+      "options": [
+        "Multiply pOH by pKᵥ",
+        "Divide 14.00 by pOH",
+        "Use pH = 14.00 − pOH",
+        "Use pH = pOH − 14.00"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "PHW_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: concentrated hydroxide",
+      "prompt": "At 25 °C, [OH⁻] = 4.0 × 10⁻³ M. What is the approximate pH?",
+      "response_type": "single_select",
+      "options": [
+        "2.40",
+        "3.00",
+        "10.00",
+        "11.60"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "WKS_ENTRY",
+      "title": "Starting check: write Kₐ",
+      "prompt": "For HA + H₂O ⇌ H₃O⁺ + A⁻, which expression is Kₐ?",
+      "response_type": "single_select",
+      "options": [
+        "[HA]/([H₃O⁺][A⁻])",
+        "[H₃O⁺][A⁻]/[HA]",
+        "[H₃O⁺][HA]/[A⁻]",
+        "[A⁻]/([HA][H₂O])"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "WKS_GUIDED",
+      "title": "Guided practice: weak-acid approximation",
+      "prompt": "A 0.10 M weak acid has Kₐ = 1.0 × 10⁻⁵. Using the small-dissociation approximation, what is [H₃O⁺]?",
+      "response_type": "single_select",
+      "options": [
+        "1.0 × 10⁻³ M",
+        "1.0 × 10⁻⁵ M",
+        "1.0 × 10⁻² M",
+        "1.0 × 10⁻⁶ M"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "WKS_LIGHT",
+      "title": "Less help: pKₐ to Kₐ",
+      "prompt": "An acid has pKₐ = 4.76. Which Kₐ is closest?",
+      "response_type": "single_select",
+      "options": [
+        "4.76 × 10⁻¹⁴",
+        "4.76 × 10⁻⁵",
+        "1.7 × 10⁻⁵",
+        "1.7 × 10⁵"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "WKS_SOLO",
+      "title": "On your own: conjugate constants",
+      "prompt": "At 25 °C, which relation connects a weak acid and its conjugate base?",
+      "response_type": "single_select",
+      "options": [
+        "Kₐ + Kᵦ = Kᵥ",
+        "Kₐ/Kᵦ = 14",
+        "pKₐKᵦ = 1",
+        "KₐKᵦ = Kᵥ"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "WKS_NEAR",
+      "title": "Near exit: classify a common salt",
+      "prompt": "What is the expected acid–base character of aqueous sodium acetate, CH₃COONa?",
+      "response_type": "single_select",
+      "options": [
+        "Basic, because acetate hydrolyzes to form OH⁻",
+        "Acidic, because sodium donates H⁺",
+        "Neutral, because every salt solution is neutral",
+        "Acidic, because acetate is a strong acid"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "WKS_CHANGED",
+      "title": "Changed exit: use a supplied conjugate constant",
+      "prompt": "A 0.20 M NH₄Cl solution is prepared. Given Kᵦ(NH₃) = 1.8 × 10⁻⁵ at 25 °C, which prediction is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Basic, because NH₄⁺ releases OH⁻",
+        "Neutral, because chloride cancels ammonium",
+        "Basic, because chloride accepts H⁺ strongly",
+        "Acidic, because NH₄⁺ has Kₐ = Kᵥ/Kᵦ"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "WKS_REPAIR_NEAR",
+      "title": "Repair salt triage",
+      "prompt": "Which first step best predicts whether a salt solution is acidic, basic, or neutral?",
+      "response_type": "single_select",
+      "options": [
+        "Add all ionic charges and treat charge balance as the pH",
+        "Split the salt and identify weak-parent conjugates",
+        "Assume every dissolved cation is the hydrolyzing acid",
+        "Use salt molar mass as the direct predictor of solution pH"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "WKS_REENTRY_NEAR",
+      "title": "Fresh re-entry: fluoride salt",
+      "prompt": "What is the expected acid–base character of aqueous NaF, given that HF is a weak acid?",
+      "response_type": "single_select",
+      "options": [
+        "Acidic, because Na⁺ donates H⁺",
+        "Neutral, because NaF has no hydrogen",
+        "Basic, because F⁻ accepts H⁺ from water",
+        "Acidic, because F⁻ is the conjugate acid of HF"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "WKS_REPAIR_CHANGED",
+      "title": "Repair conjugate conversion",
+      "prompt": "At 25 °C, how is Kₐ for BH⁺ obtained from a supplied Kᵦ for B?",
+      "response_type": "single_select",
+      "options": [
+        "Kₐ = Kᵥ/Kᵦ",
+        "Kₐ = Kᵦ/Kᵥ",
+        "Kₐ = 14 − Kᵦ",
+        "Kₐ = Kᵦ + Kᵥ"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "WKS_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: pyridinium salt",
+      "prompt": "Pyridine is a weak base. For an aqueous pyridinium chloride solution with Kᵦ(pyridine) supplied, which analysis is correct?",
+      "response_type": "single_select",
+      "options": [
+        "The solution is neutral because chloride is present",
+        "The solution is acidic because pyridinium has Kₐ = Kᵥ/Kᵦ",
+        "The solution is basic because pyridinium releases OH⁻",
+        "The solution is basic because chloride hydrolyzes strongly"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BUF_ENTRY",
+      "title": "Starting check: recognize a buffer",
+      "prompt": "Which mixture most directly forms a common acid buffer?",
+      "response_type": "single_select",
+      "options": [
+        "HCl and NaCl",
+        "NaOH and KOH",
+        "CH₃COOH and CH₃COO⁻",
+        "HNO₃ and HCl"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BUF_GUIDED",
+      "title": "Guided practice: add strong acid",
+      "prompt": "A buffer contains HA and A⁻. A small amount of HCl is added without exceeding buffer capacity. What happens first?",
+      "response_type": "single_select",
+      "options": [
+        "HA consumes H⁺ to form A⁻",
+        "A⁻ consumes H⁺ to form HA",
+        "Water converts all HA to H₃O⁺",
+        "HCl remains entirely unreacted"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BUF_LIGHT",
+      "title": "Less help: read the buffer ratio",
+      "prompt": "For a buffer with [A⁻]/[HA] = 10, what does Henderson–Hasselbalch predict?",
+      "response_type": "single_select",
+      "options": [
+        "pH = pKₐ − 10",
+        "pH = 10pKₐ",
+        "pH = pKₐ + 1",
+        "pH = pKₐ/10"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BUF_SOLO",
+      "title": "On your own: equal buffer amounts",
+      "prompt": "A buffer has equal concentrations of HA and A⁻. What relation follows?",
+      "response_type": "single_select",
+      "options": [
+        "pH = 0",
+        "pH = 14",
+        "pH = 2pKₐ",
+        "pH = pKₐ"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BUF_NEAR",
+      "title": "Near exit: add strong base",
+      "prompt": "A small amount of NaOH is added to an HA/A⁻ buffer without exceeding capacity. Which change is expected?",
+      "response_type": "single_select",
+      "options": [
+        "HA decreases, A⁻ increases, and pH rises slightly",
+        "HA increases, A⁻ decreases, and pH rises slightly",
+        "Both HA and A⁻ disappear, and pH stays fixed",
+        "A⁻ decreases, HA stays fixed, and pH falls sharply"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BUF_CHANGED",
+      "title": "Changed exit: locate half-equivalence",
+      "prompt": "A weak monoprotic acid is titrated with a strong base. At half-equivalence, which statement is correct?",
+      "response_type": "single_select",
+      "options": [
+        "Only unreacted strong base controls pH at this stage",
+        "All initial weak acid has already become conjugate base",
+        "The mixture is neutral, so the pH must equal exactly 7",
+        "The weak acid and conjugate base are equal, so pH = pKₐ"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BUF_REPAIR_NEAR",
+      "title": "Repair buffer perturbation order",
+      "prompt": "After adding a small amount of strong acid to a buffer, what calculation comes first?",
+      "response_type": "single_select",
+      "options": [
+        "Use pH = 7 immediately",
+        "Subtract acid from HA only",
+        "Perform stoichiometry between H⁺ and A⁻",
+        "Insert the original ratio without changes"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BUF_REENTRY_NEAR",
+      "title": "Fresh re-entry: update both reservoirs",
+      "prompt": "A buffer has 0.20 mol HA and 0.20 mol A⁻. Adding 0.020 mol HCl gives which amounts before equilibrium?",
+      "response_type": "single_select",
+      "options": [
+        "0.18 mol HA and 0.22 mol A⁻",
+        "0.20 mol HA and 0.18 mol A⁻",
+        "0.22 mol HA and 0.22 mol A⁻",
+        "0.22 mol HA and 0.18 mol A⁻"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BUF_REPAIR_CHANGED",
+      "title": "Repair titration landmarks",
+      "prompt": "Which landmark identifies half-equivalence in a weak-acid/strong-base titration?",
+      "response_type": "single_select",
+      "options": [
+        "Moles of added base equal half the initial acid moles",
+        "The measured pH first reaches exactly 7 during addition",
+        "All initial weak acid has been consumed by the added base",
+        "Stoichiometric excess hydroxide first remains after reaction"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    },
+    {
+      "prompt_key": "BUF_REENTRY_CHANGED",
+      "title": "Fresh changed re-entry: reason at equivalence",
+      "prompt": "A weak acid is titrated to equivalence with a strong base at 25 °C. Why is the pH typically above 7?",
+      "response_type": "single_select",
+      "options": [
+        "Unreacted weak acid releases excess H⁺",
+        "Its conjugate base hydrolyzes to form OH⁻",
+        "The strong base remains in stoichiometric excess",
+        "Every equivalence point is defined as pH 14"
+      ],
+      "directions": "Choose the best-supported answer, then commit once. You may omit rather than guess."
+    }
+  ]
+}

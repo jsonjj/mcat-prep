@@ -1,0 +1,658 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears.",
+  "items": [
+    {
+      "prompt_key": "CAR_ITEM_ENTRY",
+      "title": "Heart routes: Starting check",
+      "prompt": "Blood returning from systemic tissues enters the right atrium. Which route reaches the lungs?",
+      "response_type": "single_select",
+      "options": [
+        "Venae cavae → right heart → pulmonary arteries → lungs",
+        "Pulmonary veins → left heart → aorta → systemic tissues",
+        "Aorta → left heart → pulmonary veins → systemic tissues",
+        "Arteries always oxygenated; veins always deoxygenated"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CAR_ITEM_GUIDED",
+      "title": "Heart routes: Choose with support",
+      "prompt": "Oxygenated blood leaves the lungs. Which route delivers it to systemic tissues?",
+      "response_type": "single_select",
+      "options": [
+        "Venae cavae → right heart → pulmonary arteries → lungs",
+        "Pulmonary veins → left heart → aorta → systemic tissues",
+        "Aorta → left heart → pulmonary veins → systemic tissues",
+        "Arteries always oxygenated; veins always deoxygenated"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CAR_ITEM_LIGHT",
+      "title": "Heart routes: Choose with less support",
+      "prompt": "Which naming rule correctly distinguishes arteries from veins?",
+      "response_type": "single_select",
+      "options": [
+        "Arteries always oxygenated; veins always deoxygenated",
+        "Venae cavae → right heart → pulmonary arteries → lungs",
+        "Arteries carry blood away; veins carry blood toward heart",
+        "Pulmonary veins → left heart → aorta → systemic tissues"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CAR_ITEM_SOLO",
+      "title": "Heart routes: Choose independently",
+      "prompt": "Which pressure label matches ventricular contraction and the arterial peak?",
+      "response_type": "single_select",
+      "options": [
+        "Diastolic pressure: arterial low during ventricular relaxation",
+        "Diastolic is contraction peak; systolic is relaxation minimum",
+        "Arteries carry blood away; veins carry blood toward heart",
+        "Systolic pressure: arterial peak during ventricular contraction"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CAR_ITEM_NEAR",
+      "title": "Heart routes: Near-use check",
+      "prompt": "Blood in the pulmonary artery is traveling from the right ventricle toward the lungs. Which rule remains correct?",
+      "response_type": "single_select",
+      "options": [
+        "Arteries carry blood away; veins carry blood toward heart",
+        "Arteries always oxygenated; veins always deoxygenated",
+        "Pulmonary veins → left heart → aorta → systemic tissues",
+        "Aorta → left heart → pulmonary veins → systemic tissues"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CAR_ITEM_CHANGED",
+      "title": "Heart routes: Changed-task check",
+      "prompt": "During ventricular relaxation, arterial pressure falls toward its lower measured value. Which label fits?",
+      "response_type": "single_select",
+      "options": [
+        "Systolic pressure: arterial peak during ventricular contraction",
+        "Diastolic pressure: arterial low during ventricular relaxation",
+        "Diastolic is contraction peak; systolic is relaxation minimum",
+        "Arteries always oxygenated; veins always deoxygenated"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CAR_ITEM_REPAIR_NEAR",
+      "title": "Heart routes: Repair the near-use function",
+      "prompt": "Which rule repairs a route answer that called pulmonary veins arteries because they carry oxygenated blood?",
+      "response_type": "single_select",
+      "options": [
+        "Arteries always oxygenated; veins always deoxygenated",
+        "Venae cavae → right heart → pulmonary arteries → lungs",
+        "Arteries carry blood away; veins carry blood toward heart",
+        "Aorta → left heart → pulmonary veins → systemic tissues"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CAR_ITEM_REENTRY_NEAR",
+      "title": "Heart routes: Fresh near-use re-entry",
+      "prompt": "A fresh vessel carries relatively deoxygenated blood away from the heart toward the lungs. Which rule classifies it?",
+      "response_type": "single_select",
+      "options": [
+        "Arteries always oxygenated; veins always deoxygenated",
+        "Pulmonary veins → left heart → aorta → systemic tissues",
+        "Aorta → left heart → pulmonary veins → systemic tissues",
+        "Arteries carry blood away; veins carry blood toward heart"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CAR_ITEM_REPAIR_CHANGED",
+      "title": "Heart routes: Repair the changed-task function",
+      "prompt": "Which label repairs an answer that assigned peak arterial pressure to ventricular relaxation?",
+      "response_type": "single_select",
+      "options": [
+        "Systolic pressure: arterial peak during ventricular contraction",
+        "Diastolic pressure: arterial low during ventricular relaxation",
+        "Diastolic is contraction peak; systolic is relaxation minimum",
+        "Arteries always oxygenated; veins always deoxygenated"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CAR_ITEM_REENTRY_CHANGED",
+      "title": "Heart routes: Fresh changed-task re-entry",
+      "prompt": "A new trace marks the lower arterial pressure while ventricles are relaxed. Which label fits?",
+      "response_type": "single_select",
+      "options": [
+        "Systolic pressure: arterial peak during ventricular contraction",
+        "Diastolic pressure: arterial low during ventricular relaxation",
+        "Diastolic is contraction peak; systolic is relaxation minimum",
+        "Arteries carry blood away; veins carry blood toward heart"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "VSL_ITEM_ENTRY",
+      "title": "Vessels and exchange: Starting check",
+      "prompt": "Which vessel is best adapted to carry pulsatile blood directly from the heart at relatively high pressure?",
+      "response_type": "single_select",
+      "options": [
+        "Vein: lower-pressure capacitance vessel with one-way valves",
+        "Capillary: thin endothelium and large total exchange area",
+        "Artery: thick elastic muscular wall supports higher pressure",
+        "Smaller radius: markedly greater resistance and lower flow"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "VSL_ITEM_GUIDED",
+      "title": "Vessels and exchange: Choose with support",
+      "prompt": "Which structure best supports short diffusion distance for gas and solute exchange?",
+      "response_type": "single_select",
+      "options": [
+        "Artery: thick elastic muscular wall supports higher pressure",
+        "Vein: lower-pressure capacitance vessel with one-way valves",
+        "Smaller radius: markedly greater resistance and lower flow",
+        "Capillary: thin endothelium and large total exchange area"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "VSL_ITEM_LIGHT",
+      "title": "Vessels and exchange: Choose with less support",
+      "prompt": "At fixed pressure difference, a vessel radius decreases substantially. Which qualitative result follows?",
+      "response_type": "single_select",
+      "options": [
+        "Smaller radius: markedly greater resistance and lower flow",
+        "Higher pressure difference: higher flow at fixed resistance",
+        "Artery: thick elastic muscular wall supports higher pressure",
+        "Vein: lower-pressure capacitance vessel with one-way valves"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "VSL_ITEM_SOLO",
+      "title": "Vessels and exchange: Choose independently",
+      "prompt": "Which vessel feature most directly limits backward flow in a low-pressure limb vessel?",
+      "response_type": "single_select",
+      "options": [
+        "Capillary: thin endothelium and large total exchange area",
+        "Vein: lower-pressure capacitance vessel with one-way valves",
+        "Artery: thick elastic muscular wall supports higher pressure",
+        "Higher pressure difference: higher flow at fixed resistance"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "VSL_ITEM_NEAR",
+      "title": "Vessels and exchange: Near-use check",
+      "prompt": "If pressure difference increases while resistance stays constant, which flow relation follows?",
+      "response_type": "single_select",
+      "options": [
+        "Greater resistance: greater flow if pressure difference stays fixed",
+        "Smaller radius: markedly greater resistance and lower flow",
+        "Higher pressure difference: higher flow at fixed resistance",
+        "Capillary: thin endothelium and large total exchange area"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "VSL_ITEM_CHANGED",
+      "title": "Vessels and exchange: Changed-task check",
+      "prompt": "During heat exposure, skin arterioles widen. Which thermoregulatory consequence follows?",
+      "response_type": "single_select",
+      "options": [
+        "Cutaneous vasoconstriction: less skin flow and conserved heat",
+        "Smaller radius: markedly greater resistance and lower flow",
+        "Vein: lower-pressure capacitance vessel with one-way valves",
+        "Cutaneous vasodilation: more skin flow and greater heat loss"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "VSL_ITEM_REPAIR_NEAR",
+      "title": "Vessels and exchange: Repair the near-use function",
+      "prompt": "Which relation repairs an answer that predicted higher flow from higher resistance at fixed pressure difference?",
+      "response_type": "single_select",
+      "options": [
+        "Smaller radius: markedly greater resistance and lower flow",
+        "Greater resistance: greater flow if pressure difference stays fixed",
+        "Higher pressure difference: higher flow at fixed resistance",
+        "Capillary: thin endothelium and large total exchange area"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "VSL_ITEM_REENTRY_NEAR",
+      "title": "Vessels and exchange: Fresh near-use re-entry",
+      "prompt": "A fresh arteriole narrows while pressure difference remains fixed. Which result follows?",
+      "response_type": "single_select",
+      "options": [
+        "Higher pressure difference: higher flow at fixed resistance",
+        "Smaller radius: markedly greater resistance and lower flow",
+        "Greater resistance: greater flow if pressure difference stays fixed",
+        "Vein: lower-pressure capacitance vessel with one-way valves"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "VSL_ITEM_REPAIR_CHANGED",
+      "title": "Vessels and exchange: Repair the changed-task function",
+      "prompt": "Which response repairs a heat-loss item when skin blood flow was incorrectly predicted to fall?",
+      "response_type": "single_select",
+      "options": [
+        "Cutaneous vasoconstriction: less skin flow and conserved heat",
+        "Smaller radius: markedly greater resistance and lower flow",
+        "Cutaneous vasodilation: more skin flow and greater heat loss",
+        "Artery: thick elastic muscular wall supports higher pressure"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "VSL_ITEM_REENTRY_CHANGED",
+      "title": "Vessels and exchange: Fresh changed-task re-entry",
+      "prompt": "In a cold environment, cutaneous arterioles narrow. Which consequence follows?",
+      "response_type": "single_select",
+      "options": [
+        "Cutaneous vasodilation: more skin flow and greater heat loss",
+        "Higher pressure difference: higher flow at fixed resistance",
+        "Capillary: thin endothelium and large total exchange area",
+        "Cutaneous vasoconstriction: less skin flow and conserved heat"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "BLD_ITEM_ENTRY",
+      "title": "Blood medium: Starting check",
+      "prompt": "Which component is the water-rich circulating medium for proteins, ions, nutrients, and wastes?",
+      "response_type": "single_select",
+      "options": [
+        "Plasma: water-rich medium carrying proteins, ions, and solutes",
+        "Erythrocytes: hemoglobin-bearing cells for oxygen transport",
+        "Leukocytes: circulating cells supporting immune defense",
+        "Platelets: cell fragments that initiate a local hemostatic plug"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "BLD_ITEM_GUIDED",
+      "title": "Blood medium: Choose with support",
+      "prompt": "Which component contains hemoglobin and carries most oxygen in blood?",
+      "response_type": "single_select",
+      "options": [
+        "Plasma: water-rich medium carrying proteins, ions, and solutes",
+        "Erythrocytes: hemoglobin-bearing cells for oxygen transport",
+        "Leukocytes: circulating cells supporting immune defense",
+        "Platelets: cell fragments that initiate a local hemostatic plug"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "BLD_ITEM_LIGHT",
+      "title": "Blood medium: Choose with less support",
+      "prompt": "Which paired process maintains erythrocyte turnover without invoking a disease catalog?",
+      "response_type": "single_select",
+      "options": [
+        "Plasma-volume regulation adjusts circulating water and solute",
+        "Disease-factor catalog: detailed named disorders and factor defects",
+        "Bone marrow produces erythrocytes; spleen removes aged cells",
+        "Whole blood: plasma plus erythrocytes, leukocytes, and platelets"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "BLD_ITEM_SOLO",
+      "title": "Blood medium: Choose independently",
+      "prompt": "Which description correctly defines whole blood?",
+      "response_type": "single_select",
+      "options": [
+        "Plasma: water-rich medium carrying proteins, ions, and solutes",
+        "Erythrocytes: hemoglobin-bearing cells for oxygen transport",
+        "Disease-factor catalog: detailed named disorders and factor defects",
+        "Whole blood: plasma plus erythrocytes, leukocytes, and platelets"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "BLD_ITEM_NEAR",
+      "title": "Blood medium: Near-use check",
+      "prompt": "A sample loses most of its liquid water while cell count initially stays fixed. Which regulated quantity directly falls?",
+      "response_type": "single_select",
+      "options": [
+        "Plasma-volume regulation adjusts circulating water and solute",
+        "Bone marrow produces erythrocytes; spleen removes aged cells",
+        "Erythrocytes: hemoglobin-bearing cells for oxygen transport",
+        "Platelets: cell fragments that initiate a local hemostatic plug"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "BLD_ITEM_CHANGED",
+      "title": "Blood medium: Changed-task check",
+      "prompt": "A labeled aged erythrocyte disappears while marrow output of new erythrocytes continues. Which system-level process is illustrated?",
+      "response_type": "single_select",
+      "options": [
+        "Plasma-volume regulation adjusts circulating water and solute",
+        "Bone marrow produces erythrocytes; spleen removes aged cells",
+        "Plasma: water-rich medium carrying proteins, ions, and solutes",
+        "Disease-factor catalog: detailed named disorders and factor defects"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "BLD_ITEM_REPAIR_NEAR",
+      "title": "Blood medium: Repair the near-use function",
+      "prompt": "Which component distinction repairs an answer that treated plasma as an oxygen-carrying cell?",
+      "response_type": "single_select",
+      "options": [
+        "Erythrocytes: hemoglobin-bearing cells for oxygen transport",
+        "Leukocytes: circulating cells supporting immune defense",
+        "Plasma: water-rich medium carrying proteins, ions, and solutes",
+        "Platelets: cell fragments that initiate a local hemostatic plug"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "BLD_ITEM_REENTRY_NEAR",
+      "title": "Blood medium: Fresh near-use re-entry",
+      "prompt": "A fresh sample is centrifuged and the cell-free upper liquid contains ions and proteins. Which component is it?",
+      "response_type": "single_select",
+      "options": [
+        "Erythrocytes: hemoglobin-bearing cells for oxygen transport",
+        "Leukocytes: circulating cells supporting immune defense",
+        "Platelets: cell fragments that initiate a local hemostatic plug",
+        "Plasma: water-rich medium carrying proteins, ions, and solutes"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "BLD_ITEM_REPAIR_CHANGED",
+      "title": "Blood medium: Repair the changed-task function",
+      "prompt": "Which relation repairs a turnover answer that named only erythrocyte production?",
+      "response_type": "single_select",
+      "options": [
+        "Bone marrow produces erythrocytes; spleen removes aged cells",
+        "Plasma-volume regulation adjusts circulating water and solute",
+        "Disease-factor catalog: detailed named disorders and factor defects",
+        "Whole blood: plasma plus erythrocytes, leukocytes, and platelets"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "BLD_ITEM_REENTRY_CHANGED",
+      "title": "Blood medium: Fresh changed-task re-entry",
+      "prompt": "A new trace shows increased marrow release balanced by increased removal of aged red cells. Which process is represented?",
+      "response_type": "single_select",
+      "options": [
+        "Plasma-volume regulation adjusts circulating water and solute",
+        "Bone marrow produces erythrocytes; spleen removes aged cells",
+        "Plasma: water-rich medium carrying proteins, ions, and solutes",
+        "Disease-factor catalog: detailed named disorders and factor defects"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CLT_ITEM_ENTRY",
+      "title": "Coagulation: Starting check",
+      "prompt": "Immediately after a small vessel injury, which event forms the initial cellular plug?",
+      "response_type": "single_select",
+      "options": [
+        "Fibrin stabilization: plasma reactions reinforce the local plug",
+        "Erythrocyte mass: oxygen-carrying cells initiate the clot cascade",
+        "Platelet plug: cell fragments adhere and aggregate at injury",
+        "Plasma-volume response: water retention directly seals vessel wall"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CLT_ITEM_GUIDED",
+      "title": "Coagulation: Choose with support",
+      "prompt": "Which process strengthens a platelet plug into a more stable local clot?",
+      "response_type": "single_select",
+      "options": [
+        "Platelet plug: cell fragments adhere and aggregate at injury",
+        "Erythrocyte mass: oxygen-carrying cells initiate the clot cascade",
+        "Factor catalog: memorizing every named coagulation protein",
+        "Fibrin stabilization: plasma reactions reinforce the local plug"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CLT_ITEM_LIGHT",
+      "title": "Coagulation: Choose with less support",
+      "prompt": "Which description best captures coagulation as a protective response?",
+      "response_type": "single_select",
+      "options": [
+        "Bounded hemostasis: local clot limits blood loss, then resolves",
+        "Unbounded coagulation: clotting spreads through intact circulation",
+        "Factor catalog: memorizing every named coagulation protein",
+        "Plasma-volume response: water retention directly seals vessel wall"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CLT_ITEM_SOLO",
+      "title": "Coagulation: Choose independently",
+      "prompt": "Which component may be trapped in a clot but is not the initiating plug-forming element?",
+      "response_type": "single_select",
+      "options": [
+        "Platelet plug: cell fragments adhere and aggregate at injury",
+        "Erythrocyte mass: oxygen-carrying cells initiate the clot cascade",
+        "Fibrin stabilization: plasma reactions reinforce the local plug",
+        "Plasma-volume response: water retention directly seals vessel wall"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CLT_ITEM_NEAR",
+      "title": "Coagulation: Near-use check",
+      "prompt": "A vessel wall is cut and platelets fail to adhere. Which early function is most directly impaired?",
+      "response_type": "single_select",
+      "options": [
+        "Fibrin stabilization: plasma reactions reinforce the local plug",
+        "Bounded hemostasis: local clot limits blood loss, then resolves",
+        "Platelet plug: cell fragments adhere and aggregate at injury",
+        "Plasma-volume response: water retention directly seals vessel wall"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CLT_ITEM_CHANGED",
+      "title": "Coagulation: Changed-task check",
+      "prompt": "A platelet plug forms normally, but reinforcing strands do not develop. Which later function is impaired?",
+      "response_type": "single_select",
+      "options": [
+        "Platelet plug: cell fragments adhere and aggregate at injury",
+        "Erythrocyte mass: oxygen-carrying cells initiate the clot cascade",
+        "Unbounded coagulation: clotting spreads through intact circulation",
+        "Fibrin stabilization: plasma reactions reinforce the local plug"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CLT_ITEM_REPAIR_NEAR",
+      "title": "Coagulation: Repair the near-use function",
+      "prompt": "Which sequence repairs an answer that placed fibrin before platelet adhesion?",
+      "response_type": "single_select",
+      "options": [
+        "Platelet plug: cell fragments adhere and aggregate at injury",
+        "Fibrin stabilization: plasma reactions reinforce the local plug",
+        "Unbounded coagulation: clotting spreads through intact circulation",
+        "Factor catalog: memorizing every named coagulation protein"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CLT_ITEM_REENTRY_NEAR",
+      "title": "Coagulation: Fresh near-use re-entry",
+      "prompt": "A fresh injury shows platelet adhesion and aggregation before any reinforcing mesh appears. Which stage is observed?",
+      "response_type": "single_select",
+      "options": [
+        "Fibrin stabilization: plasma reactions reinforce the local plug",
+        "Platelet plug: cell fragments adhere and aggregate at injury",
+        "Erythrocyte mass: oxygen-carrying cells initiate the clot cascade",
+        "Plasma-volume response: water retention directly seals vessel wall"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CLT_ITEM_REPAIR_CHANGED",
+      "title": "Coagulation: Repair the changed-task function",
+      "prompt": "Which principle repairs an answer that allowed clotting to spread without limit?",
+      "response_type": "single_select",
+      "options": [
+        "Unbounded coagulation: clotting spreads through intact circulation",
+        "Factor catalog: memorizing every named coagulation protein",
+        "Bounded hemostasis: local clot limits blood loss, then resolves",
+        "Plasma-volume response: water retention directly seals vessel wall"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "CLT_ITEM_REENTRY_CHANGED",
+      "title": "Coagulation: Fresh changed-task re-entry",
+      "prompt": "A new clot seals a small injury, remains local, and is later removed as repair completes. Which model fits?",
+      "response_type": "single_select",
+      "options": [
+        "Unbounded coagulation: clotting spreads through intact circulation",
+        "Fibrin stabilization: plasma reactions reinforce the local plug",
+        "Factor catalog: memorizing every named coagulation protein",
+        "Bounded hemostasis: local clot limits blood loss, then resolves"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "GAS_ITEM_ENTRY",
+      "title": "Blood gases: Starting check",
+      "prompt": "Which form carries most oxygen content in normal blood?",
+      "response_type": "single_select",
+      "options": [
+        "Hemoglobin-bound oxygen: major form of oxygen carriage",
+        "Dissolved oxygen: small fraction that sets partial pressure",
+        "Bicarbonate: major plasma form of carbon-dioxide carriage",
+        "Carbaminohemoglobin: carbon dioxide bound to hemoglobin"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "GAS_ITEM_GUIDED",
+      "title": "Blood gases: Choose with support",
+      "prompt": "Which form carries the largest fraction of carbon dioxide in blood?",
+      "response_type": "single_select",
+      "options": [
+        "Carbaminohemoglobin: carbon dioxide bound to hemoglobin",
+        "Bicarbonate: major plasma form of carbon-dioxide carriage",
+        "Dissolved oxygen: small fraction that sets partial pressure",
+        "Hemoglobin-bound oxygen: major form of oxygen carriage"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "GAS_ITEM_LIGHT",
+      "title": "Blood gases: Choose with less support",
+      "prompt": "At equal hemoglobin saturation per cell, which change can raise oxygen-carrying capacity per blood volume?",
+      "response_type": "single_select",
+      "options": [
+        "Dissolved oxygen: small fraction that sets partial pressure",
+        "Bicarbonate: major plasma form of carbon-dioxide carriage",
+        "Higher hematocrit: more erythrocyte volume and oxygen capacity",
+        "Neural/endocrine control: supplied systemic parameter, detailed elsewhere"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "GAS_ITEM_SOLO",
+      "title": "Blood gases: Choose independently",
+      "prompt": "In metabolically active tissue with higher carbon dioxide and acidity, which hemoglobin response supports delivery?",
+      "response_type": "single_select",
+      "options": [
+        "Pulmonary exchange: oxygen loading and carbon-dioxide unloading",
+        "Hemoglobin-bound oxygen: major form of oxygen carriage",
+        "Neural/endocrine control: supplied systemic parameter, detailed elsewhere",
+        "Higher local CO2 and acidity: reduced affinity and oxygen unloading"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "GAS_ITEM_NEAR",
+      "title": "Blood gases: Near-use check",
+      "prompt": "Which oxygen form most directly determines blood oxygen partial pressure despite carrying a small content fraction?",
+      "response_type": "single_select",
+      "options": [
+        "Dissolved oxygen: small fraction that sets partial pressure",
+        "Hemoglobin-bound oxygen: major form of oxygen carriage",
+        "Bicarbonate: major plasma form of carbon-dioxide carriage",
+        "Carbaminohemoglobin: carbon dioxide bound to hemoglobin"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "GAS_ITEM_CHANGED",
+      "title": "Blood gases: Changed-task check",
+      "prompt": "Blood reaches pulmonary capillaries with lower oxygen and higher carbon dioxide. Which net exchange pattern follows?",
+      "response_type": "single_select",
+      "options": [
+        "Higher local CO2 and acidity: reduced affinity and oxygen unloading",
+        "Pulmonary exchange: oxygen loading and carbon-dioxide unloading",
+        "Neural/endocrine control: supplied systemic parameter, detailed elsewhere",
+        "Higher hematocrit: more erythrocyte volume and oxygen capacity"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "GAS_ITEM_REPAIR_NEAR",
+      "title": "Blood gases: Repair the near-use function",
+      "prompt": "Which distinction repairs an answer that equated oxygen partial pressure with total oxygen content?",
+      "response_type": "single_select",
+      "options": [
+        "Hemoglobin-bound oxygen: major form of oxygen carriage",
+        "Bicarbonate: major plasma form of carbon-dioxide carriage",
+        "Dissolved oxygen: small fraction that sets partial pressure",
+        "Carbaminohemoglobin: carbon dioxide bound to hemoglobin"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "GAS_ITEM_REENTRY_NEAR",
+      "title": "Blood gases: Fresh near-use re-entry",
+      "prompt": "A fresh sample has unchanged dissolved oxygen but less hemoglobin. Which quantity can fall most directly?",
+      "response_type": "single_select",
+      "options": [
+        "Dissolved oxygen: small fraction that sets partial pressure",
+        "Bicarbonate: major plasma form of carbon-dioxide carriage",
+        "Neural/endocrine control: supplied systemic parameter, detailed elsewhere",
+        "Hemoglobin-bound oxygen: major form of oxygen carriage"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "GAS_ITEM_REPAIR_CHANGED",
+      "title": "Blood gases: Repair the changed-task function",
+      "prompt": "Which form repairs an answer that named carbaminohemoglobin as the largest carbon-dioxide pool?",
+      "response_type": "single_select",
+      "options": [
+        "Bicarbonate: major plasma form of carbon-dioxide carriage",
+        "Carbaminohemoglobin: carbon dioxide bound to hemoglobin",
+        "Dissolved oxygen: small fraction that sets partial pressure",
+        "Hemoglobin-bound oxygen: major form of oxygen carriage"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    },
+    {
+      "prompt_key": "GAS_ITEM_REENTRY_CHANGED",
+      "title": "Blood gases: Fresh changed-task re-entry",
+      "prompt": "A new systemic tissue produces more carbon dioxide and acid while oxygen demand rises. Which hemoglobin response follows?",
+      "response_type": "single_select",
+      "options": [
+        "Pulmonary exchange: oxygen loading and carbon-dioxide unloading",
+        "Higher local CO2 and acidity: reduced affinity and oxygen unloading",
+        "Neural/endocrine control: supplied systemic parameter, detailed elsewhere",
+        "Higher hematocrit: more erythrocyte volume and oxygen capacity"
+      ],
+      "directions": "Select the best-supported option from the four choices."
+    }
+  ]
+}

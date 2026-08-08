@@ -12,6 +12,7 @@ import {
   type LearnerId,
   type LessonItemBinding,
   type LessonItemId,
+  type LessonObservationAttribution,
   type LessonRuntimeResponseFacts,
   type PolicyVersion,
   type SkillCluster,
@@ -955,6 +956,11 @@ export interface LessonResponseAdapterInput {
   readonly sequence: number;
   readonly contentRelease: string;
   readonly policies: readonly PolicyVersion[];
+  /**
+   * Exact normalized-lesson provenance. Optional for legacy/non-normalized
+   * callers; WP-05D normalized submissions always supply it.
+   */
+  readonly lessonAttribution?: LessonObservationAttribution;
   readonly accommodations?: readonly string[];
   readonly delayHours?: number;
 }
@@ -1045,6 +1051,9 @@ export function adaptLessonResponse(input: LessonResponseAdapterInput): LessonRe
     sequence: input.sequence,
     contentRelease: input.contentRelease,
     policies: [...input.policies],
+    ...(input.lessonAttribution === undefined
+      ? {}
+      : { lessonAttribution: input.lessonAttribution }),
   };
 
   const administration = administrationConditions(
@@ -1075,7 +1084,15 @@ export function adaptLessonResponse(input: LessonResponseAdapterInput): LessonRe
    * A declaration states what an item is ELIGIBLE TO SERVE AS; it is never a
    * finding about an attempt. One question, one authority.
    */
-  const evidenceKind = deriveEvidenceKind(binding.candidateEvidenceModes, response, administration);
+  const trustedExactReentry =
+    input.lessonAttribution?.activityRole === binding.activityRole &&
+    input.lessonAttribution.isReentry;
+  const processOnly = binding.activityRole === 'REPAIR_CONFIRMATION' && !trustedExactReentry;
+  const evidenceKind = deriveEvidenceKind(
+    processOnly ? ['REPAIR_CONFIRMATION'] : binding.candidateEvidenceModes,
+    response,
+    administration,
+  );
 
   const rejectionCodes: BktQualificationRejectionCode[] = [];
 
@@ -1138,6 +1155,9 @@ export function adaptLessonResponse(input: LessonResponseAdapterInput): LessonRe
         sequence: input.sequence,
         contentRelease: input.contentRelease,
         policies: [...input.policies],
+        ...(input.lessonAttribution === undefined
+          ? {}
+          : { lessonAttribution: input.lessonAttribution }),
       }
     : null;
 
@@ -1170,6 +1190,9 @@ export function adaptLessonResponse(input: LessonResponseAdapterInput): LessonRe
         sequence: input.sequence,
         contentRelease: input.contentRelease,
         policies: [...input.policies],
+        ...(input.lessonAttribution === undefined
+          ? {}
+          : { lessonAttribution: input.lessonAttribution }),
       },
     },
   };

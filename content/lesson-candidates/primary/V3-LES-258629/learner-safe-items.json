@@ -1,0 +1,528 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Exit misses may release one bounded function-specific repair and one fresh re-entry.",
+  "items": [
+    {
+      "prompt_key": "EMS_ENTRY",
+      "title": "Prerequisite check: fixed-speed waves",
+      "prompt": "A wave’s speed remains fixed while its frequency doubles. What happens to its wavelength?",
+      "response_type": "single_select",
+      "options": [
+        "It doubles",
+        "It is cut in half",
+        "It remains unchanged",
+        "It becomes four times larger"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "EMS_GUIDED",
+      "title": "Guided practice: photon energy",
+      "prompt": "The frequency of a photon is tripled. How does its energy change?",
+      "response_type": "single_select",
+      "options": [
+        "It falls to one third",
+        "It remains unchanged",
+        "It increases ninefold",
+        "It triples"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "EMS_LIGHT",
+      "title": "Less help: compare visible colors",
+      "prompt": "Compared with violet light in vacuum, red light has which combination?",
+      "response_type": "single_select",
+      "options": [
+        "Longer wavelength and lower photon energy",
+        "Longer wavelength and higher photon energy",
+        "Shorter wavelength and lower photon energy",
+        "Shorter wavelength and higher photon energy"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "EMS_SOLO",
+      "title": "On your own: classify a wavelength",
+      "prompt": "Radiation has a vacuum wavelength near 0.1 nanometer. Which broad region is the best classification?",
+      "response_type": "single_select",
+      "options": [
+        "Radio",
+        "Infrared",
+        "X-ray",
+        "Microwave"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "EMS_NEAR",
+      "title": "Near exit: compare two photons",
+      "prompt": "Photon B has twice the frequency of photon A in vacuum. Which comparison is correct?",
+      "response_type": "single_select",
+      "options": [
+        "B has twice the wavelength and half the energy",
+        "B has half the wavelength and twice the energy",
+        "B has the same wavelength and twice the energy",
+        "B has half the wavelength and the same energy"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "EMS_CHANGED",
+      "title": "Changed-task exit: hold beam power fixed",
+      "prompt": "Two monochromatic beams deliver equal total power. Beam B has photons with twice the energy of Beam A. How do their photon arrival rates compare?",
+      "response_type": "single_select",
+      "options": [
+        "B delivers twice as many photons per second",
+        "Both deliver the same number of photons per second",
+        "B delivers one quarter as many photons per second",
+        "B delivers half as many photons per second"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "EMS_REPAIR_NEAR",
+      "title": "Repair: use both proportionalities",
+      "prompt": "If vacuum wavelength becomes three times larger, which pair follows?",
+      "response_type": "single_select",
+      "options": [
+        "Frequency becomes one third and photon energy becomes one third",
+        "Frequency triples and photon energy triples",
+        "Frequency is unchanged and photon energy triples",
+        "Frequency becomes one third and photon energy triples"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "EMS_REENTRY_NEAR",
+      "title": "Fresh re-entry: use a new factor",
+      "prompt": "Photon C has four times the frequency of photon D in vacuum. Which statement is correct?",
+      "response_type": "single_select",
+      "options": [
+        "C has four times the wavelength and one quarter the energy",
+        "C has one quarter the wavelength and one quarter the energy",
+        "C has one quarter the wavelength and four times the energy",
+        "C has the same wavelength and four times the energy"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "EMS_REPAIR_CHANGED",
+      "title": "Repair: connect power and count",
+      "prompt": "At fixed beam power, photon energy decreases to one half. What happens to photon rate?",
+      "response_type": "single_select",
+      "options": [
+        "It falls to one half",
+        "It doubles",
+        "It remains unchanged",
+        "It increases fourfold"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "EMS_REENTRY_CHANGED",
+      "title": "Fresh re-entry: change wavelength at fixed power",
+      "prompt": "A beam’s wavelength is halved while total power is unchanged. What happens to photon energy and photon rate?",
+      "response_type": "single_select",
+      "options": [
+        "Energy halves and photon rate halves",
+        "Energy doubles and photon rate doubles",
+        "Energy is unchanged and photon rate halves",
+        "Energy doubles and photon rate halves"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "INT_ENTRY",
+      "title": "Prerequisite check: add in-phase waves",
+      "prompt": "Two waves of amplitude A reach the same point in phase. What is their combined amplitude at that instant?",
+      "response_type": "single_select",
+      "options": [
+        "Zero",
+        "A",
+        "2A",
+        "A squared"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "INT_GUIDED",
+      "title": "Guided practice: integer path difference",
+      "prompt": "Two coherent rays arrive with path difference 3λ. What interference is expected?",
+      "response_type": "single_select",
+      "options": [
+        "Constructive interference",
+        "Destructive interference",
+        "No superposition",
+        "A photon-energy increase"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "INT_LIGHT",
+      "title": "Less help: half-integer path difference",
+      "prompt": "Two equal-amplitude coherent rays arrive with path difference 5λ/2. What outcome follows?",
+      "response_type": "single_select",
+      "options": [
+        "Constructive interference",
+        "No phase difference",
+        "A change in photon frequency",
+        "Destructive interference"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "INT_SOLO",
+      "title": "On your own: change slit separation",
+      "prompt": "In a Young double-slit setup, slit separation doubles while wavelength and screen distance remain fixed. What happens to fringe spacing?",
+      "response_type": "single_select",
+      "options": [
+        "It doubles",
+        "It is cut in half",
+        "It remains unchanged",
+        "It becomes four times larger"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "INT_NEAR",
+      "title": "Near exit: change wavelength",
+      "prompt": "A double-slit experiment switches to light with twice the wavelength while L and d remain fixed. What happens to fringe spacing?",
+      "response_type": "single_select",
+      "options": [
+        "It is cut in half",
+        "It remains unchanged",
+        "It doubles",
+        "It becomes four times larger"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "INT_CHANGED",
+      "title": "Changed-task exit: count reflection phase",
+      "prompt": "Two reflected rays have negligible travel-phase difference. Only the first reflection is from lower to higher refractive index, producing a half-cycle reversal. For equal amplitudes, what is expected?",
+      "response_type": "single_select",
+      "options": [
+        "Destructive reflected interference",
+        "Constructive reflected interference",
+        "A doubling of photon frequency",
+        "No reflected superposition"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "INT_REPAIR_NEAR",
+      "title": "Repair: isolate one geometry factor",
+      "prompt": "In a double-slit setup, screen distance L triples while wavelength and slit separation stay fixed. How does fringe spacing change?",
+      "response_type": "single_select",
+      "options": [
+        "It becomes one third as large",
+        "It remains unchanged",
+        "It increases ninefold",
+        "It triples"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "INT_REENTRY_NEAR",
+      "title": "Fresh re-entry: change two factors",
+      "prompt": "Wavelength is doubled and slit separation is also doubled, while screen distance stays fixed. What happens to fringe spacing?",
+      "response_type": "single_select",
+      "options": [
+        "It doubles",
+        "It remains unchanged",
+        "It is cut in half",
+        "It increases fourfold"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "INT_REPAIR_CHANGED",
+      "title": "Repair: count reversals",
+      "prompt": "Two reflected rays have equal travel phase. One ray undergoes a half-cycle reflection reversal and the other does not. What is their relative phase?",
+      "response_type": "single_select",
+      "options": [
+        "Zero cycles",
+        "One full cycle",
+        "One half-cycle",
+        "Two full cycles"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "INT_REENTRY_CHANGED",
+      "title": "Fresh re-entry: match two reversals",
+      "prompt": "Two reflected rays have an integer-wavelength travel difference, and each reflection adds the same half-cycle reversal. What is the net interference?",
+      "response_type": "single_select",
+      "options": [
+        "Constructive interference",
+        "Destructive interference",
+        "No reflected light",
+        "A frequency shift"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIF_ENTRY",
+      "title": "Prerequisite check: inverse wave variables",
+      "prompt": "Wave speed stays fixed while frequency decreases. What happens to wavelength?",
+      "response_type": "single_select",
+      "options": [
+        "It decreases",
+        "It remains unchanged",
+        "It becomes zero",
+        "It increases"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIF_GUIDED",
+      "title": "Guided practice: narrow the slit",
+      "prompt": "A single slit becomes narrower while wavelength remains fixed. What happens to the angular diffraction pattern?",
+      "response_type": "single_select",
+      "options": [
+        "It becomes narrower",
+        "It becomes wider",
+        "It disappears because no wave passes",
+        "Its photon frequency doubles"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIF_LIGHT",
+      "title": "Less help: change wavelength",
+      "prompt": "Two waves pass through identical slits. Wave B has the longer wavelength. Which wave diffracts through the larger angle?",
+      "response_type": "single_select",
+      "options": [
+        "Wave A, because shorter waves always spread more",
+        "Both spread equally because slit width matches",
+        "Wave B",
+        "Neither wave, because diffraction requires a grating"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIF_SOLO",
+      "title": "On your own: identify grating control",
+      "prompt": "In a diffraction grating, which quantity most directly sets the angles of principal orders for fixed wavelength?",
+      "response_type": "single_select",
+      "options": [
+        "The regular spacing between adjacent openings",
+        "The total photon energy stored in the screen",
+        "The color of the opaque support alone",
+        "The source’s distance from every detector"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIF_NEAR",
+      "title": "Near exit: compare visible spreading",
+      "prompt": "Red and blue light pass through the same narrow slit. Which pattern has the wider central maximum?",
+      "response_type": "single_select",
+      "options": [
+        "Blue, because blue has the shorter wavelength",
+        "Both are identical because both are visible",
+        "Neither, because single slits cannot diffract light",
+        "Red, because red has the longer wavelength"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIF_CHANGED",
+      "title": "Changed-task exit: shift an X-ray peak",
+      "prompt": "For fixed lattice spacing and diffraction order, the X-ray wavelength increases. How does the peak angle change?",
+      "response_type": "single_select",
+      "options": [
+        "The angle decreases",
+        "The angle increases",
+        "The angle remains fixed",
+        "The peak becomes a sound resonance"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIF_REPAIR_NEAR",
+      "title": "Repair: use the aperture ratio",
+      "prompt": "Which change increases λ/a for a single slit?",
+      "response_type": "single_select",
+      "options": [
+        "Decrease wavelength and increase slit width",
+        "Keep wavelength fixed and increase slit width",
+        "Increase wavelength and decrease slit width",
+        "Decrease wavelength while slit width stays fixed"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIF_REENTRY_NEAR",
+      "title": "Fresh re-entry: change aperture only",
+      "prompt": "A slit width is reduced to one half at fixed wavelength. Which qualitative change follows?",
+      "response_type": "single_select",
+      "options": [
+        "The diffraction pattern becomes wider",
+        "The diffraction pattern becomes narrower",
+        "The photon energy doubles",
+        "The wave stops superposing with itself"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIF_REPAIR_CHANGED",
+      "title": "Repair: isolate the peak equation",
+      "prompt": "At fixed lattice spacing d and order n, which change requires a larger diffraction angle in 2d sinθ = nλ?",
+      "response_type": "single_select",
+      "options": [
+        "A smaller wavelength",
+        "A lower order with wavelength fixed",
+        "No change in any quantity",
+        "A larger wavelength"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "DIF_REENTRY_CHANGED",
+      "title": "Fresh re-entry: change lattice spacing",
+      "prompt": "For fixed X-ray wavelength and diffraction order, lattice spacing d increases. How does the peak angle change?",
+      "response_type": "single_select",
+      "options": [
+        "It increases",
+        "It decreases",
+        "It remains unchanged",
+        "It becomes a visible-color shift"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "POL_ENTRY",
+      "title": "Prerequisite check: orient the triad",
+      "prompt": "Electric field points +x and magnetic field points +y. Using the stated right-hand orientation from E toward B, which way does the wave propagate?",
+      "response_type": "single_select",
+      "options": [
+        "+z",
+        "−z",
+        "+x",
+        "+y"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "POL_GUIDED",
+      "title": "Guided practice: classify linear polarization",
+      "prompt": "At one location, the electric field oscillates back and forth along a fixed vertical line. Which polarization is described?",
+      "response_type": "single_select",
+      "options": [
+        "Circular polarization",
+        "Unpolarized sound",
+        "Linear polarization",
+        "No electromagnetic wave"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "POL_LIGHT",
+      "title": "Less help: classify circular polarization",
+      "prompt": "The electric-field magnitude remains constant while its direction rotates uniformly, tracing a circle. Which state is described?",
+      "response_type": "single_select",
+      "options": [
+        "Linear polarization",
+        "Circular polarization",
+        "Zero electric field",
+        "A frequency-free photon"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "POL_SOLO",
+      "title": "On your own: find the magnetic field",
+      "prompt": "A wave propagates +z and its electric field points +x. Which magnetic-field direction completes the stated right-hand triad?",
+      "response_type": "single_select",
+      "options": [
+        "−x",
+        "+z",
+        "−y",
+        "+y"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "POL_NEAR",
+      "title": "Near exit: select the valid triad",
+      "prompt": "Which set is mutually perpendicular and has the correct right-hand orientation?",
+      "response_type": "single_select",
+      "options": [
+        "E +y, B +z, propagation +x",
+        "E +y, B +y, propagation +x",
+        "E +y, B +z, propagation −x",
+        "E +x, B +z, propagation +x"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "POL_CHANGED",
+      "title": "Changed-task exit: rotate a polarizer",
+      "prompt": "Vertically linearly polarized light reaches an ideal linear polarizer whose axis is horizontal. What is transmitted ideally?",
+      "response_type": "single_select",
+      "options": [
+        "The full vertical electric field",
+        "A doubled vertical electric field",
+        "No electric-field component",
+        "A higher-frequency photon beam"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "POL_REPAIR_NEAR",
+      "title": "Repair: enforce perpendicularity",
+      "prompt": "Propagation is +x and electric field is +z. Which magnetic direction completes the right-hand orientation?",
+      "response_type": "single_select",
+      "options": [
+        "+z",
+        "−y",
+        "+y",
+        "+x"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "POL_REENTRY_NEAR",
+      "title": "Fresh re-entry: solve a new triad",
+      "prompt": "Electric field points −x and magnetic field points +y. Which propagation direction follows from the stated right-hand orientation?",
+      "response_type": "single_select",
+      "options": [
+        "+x",
+        "+y",
+        "+z",
+        "−z"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "POL_REPAIR_CHANGED",
+      "title": "Repair: use the transmitted component",
+      "prompt": "Which electric-field component does an ideal vertical linear polarizer transmit?",
+      "response_type": "single_select",
+      "options": [
+        "The component parallel to the vertical axis",
+        "The component perpendicular to the vertical axis",
+        "Only a component parallel to propagation",
+        "A component selected by photon energy alone"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    },
+    {
+      "prompt_key": "POL_REENTRY_CHANGED",
+      "title": "Fresh re-entry: use crossed axes",
+      "prompt": "Unpolarized light passes an ideal vertical polarizer and then an ideal horizontal polarizer. What leaves the second polarizer ideally?",
+      "response_type": "single_select",
+      "options": [
+        "All of the original light",
+        "Vertically polarized light at full transmitted amplitude",
+        "No transmitted electric-field component",
+        "Light with twice the original photon frequency"
+      ],
+      "directions": "Choose the single option best supported by the stated facts."
+    }
+  ]
+}

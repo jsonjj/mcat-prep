@@ -1,0 +1,386 @@
+{
+  "artifact_type": "LESSON_QUALITY_REPORT",
+  "artifact_id": "V3-LQRP-137490",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "74aee561ffcba9e89912c2c718c62f0460ba885be5a68a813b47eda12da25090",
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-137490",
+    "lesson_script_sha256": "9158eb5d60b5cf21a9252be354e1d1d8789dff14c126e99e779c4c75ecf908d9",
+    "kc_coverage_matrix_id": "V3-KCOV-137490",
+    "kc_coverage_matrix_sha256": "aa5f0f58cf8ff28563e7fcad7a1068957f39fac3f9560dbcb30b00e14fd00c7d",
+    "lesson_presentation_plan_id": "V3-LPPL-137490",
+    "lesson_presentation_plan_sha256": "1c00dc7639c7aa47eeb0d93e3aab0345dd7e587288e4534c76a38be5b931cd5f"
+  },
+  "payload": {
+    "lesson_id": "V3-LES-137490",
+    "review_scope": "STANDARD_AUTHOR_CANDIDATE",
+    "packet_binding": {
+      "path": "inputs/task-source-packet.json",
+      "sha256": "a287048cf04b79ff2d5f4fb3480554e536b27f643d5b31a77c2447d3c17f3e0b",
+      "route_scope_code": "STANDARD_ONLY"
+    },
+    "route_proofs": {
+      "STANDARD": {
+        "route_applicability": "APPLICABLE",
+        "absence_proof_basis": null,
+        "absence_proof_ref": null,
+        "blocker_code": null,
+        "evidence_refs": [
+          "spec:docs/design/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md#sha256:f9df47b75a7aca5bf5c59030d66261c118d6ea1f71002c4d4fde92592b05c8c8"
+        ]
+      },
+      "CONCISE": {
+        "route_applicability": "NOT_APPLICABLE",
+        "absence_proof_basis": "VERSIONED_RELEASE_POLICY",
+        "absence_proof_ref": "policy:lesson-factory-deadline-release@2.0.0#clause:ROUTE_ABSENCE_CONCISE",
+        "blocker_code": null,
+        "evidence_refs": [
+          "spec:docs/design/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md#sha256:f9df47b75a7aca5bf5c59030d66261c118d6ea1f71002c4d4fde92592b05c8c8"
+        ]
+      },
+      "MISCONCEPTION": {
+        "route_applicability": "NOT_APPLICABLE",
+        "absence_proof_basis": "VERSIONED_RELEASE_POLICY",
+        "absence_proof_ref": "policy:lesson-factory-deadline-release@2.0.0#clause:ROUTE_ABSENCE_MISCONCEPTION",
+        "blocker_code": null,
+        "evidence_refs": [
+          "spec:docs/design/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md#sha256:f9df47b75a7aca5bf5c59030d66261c118d6ea1f71002c4d4fde92592b05c8c8"
+        ]
+      },
+      "PREREQUISITE_SUPPORT": {
+        "route_applicability": "NOT_APPLICABLE",
+        "absence_proof_basis": "VERSIONED_RELEASE_POLICY",
+        "absence_proof_ref": "policy:lesson-factory-deadline-release@2.0.0#clause:ROUTE_ABSENCE_PREREQUISITE_SUPPORT",
+        "blocker_code": null,
+        "evidence_refs": [
+          "rubric:key-docs/lesson-quality-rubric.md#sha256:21f0cf751b752158b5c8f71fd762fcc956b9ba694c8f5ee8d50158b8972557b0"
+        ]
+      }
+    },
+    "check_results": [
+      {
+        "check_id": "SOURCE-PACKET-IDENTITY",
+        "status": "PASS",
+        "evidence_refs": [
+          "inputs/task-source-packet.json#sha256:a287048cf04b79ff2d5f4fb3480554e536b27f643d5b31a77c2447d3c17f3e0b"
+        ]
+      },
+      {
+        "check_id": "STRUCTURAL-VALIDATION",
+        "status": "PASS",
+        "evidence_refs": [
+          "validation/lesson-validate.json"
+        ]
+      },
+      {
+        "check_id": "CANONICAL-NORMALIZATION",
+        "status": "PASS",
+        "evidence_refs": [
+          "validation/normalization-smoke.json"
+        ]
+      },
+      {
+        "check_id": "PROTECTED-SEPARATION",
+        "status": "PASS",
+        "evidence_refs": [
+          "validation/protected-scan.json"
+        ]
+      },
+      {
+        "check_id": "INDEPENDENT-JUDGE-PRE-SCREEN",
+        "status": "BLOCKED",
+        "blocker_code": "JUDGE_PRE_SCREEN_REQUIRED",
+        "reason": "No independent judge record is authored by the lesson author."
+      },
+      {
+        "check_id": "BROWSER-RENDERED-EVIDENCE",
+        "status": "BLOCKED",
+        "blocker_code": "BLOCKER_NO_BROWSER_RENDERED_EVIDENCE",
+        "reason": "No revision-bound rendered browser evidence is claimed."
+      },
+      {
+        "check_id": "HUMAN-ACCESSIBILITY-REVIEW",
+        "status": "BLOCKED",
+        "blocker_code": "BLOCKER_NO_ACCESSIBILITY_REVIEW",
+        "reason": "No independent accessibility or construct-equivalence receipt is claimed."
+      }
+    ],
+    "authored_quality_evidence": {
+      "demand_inventory": [
+        {
+          "kc_id": "V3-KC-792562",
+          "competency": "Trace meiosis and gene segregation to explain chromosome-count maintenance and independent assortment.",
+          "scope_in": [
+            "significance of meiosis",
+            "difference from mitosis",
+            "segregation",
+            "independent assortment"
+          ],
+          "scope_out": [
+            "phase-label memorization without chromosome outcome"
+          ],
+          "prior_teaching_node_ids": [
+            "MEI-NODE-EXPLANATION",
+            "MEI-NODE-THINK",
+            "MEI-NODE-WORKED"
+          ],
+          "consequential_item_ids": [
+            "MEI-ITEM-SOLO",
+            "MEI-ITEM-NEAR",
+            "MEI-ITEM-CHANGED"
+          ]
+        },
+        {
+          "kc_id": "V3-KC-022516",
+          "competency": "Predict genetic combinations from linkage, synapsis, tetrads, and single/double crossover events.",
+          "scope_in": [
+            "linkage",
+            "recombination",
+            "single/double crossovers",
+            "synaptonemal complex",
+            "tetrad",
+            "synapsis"
+          ],
+          "scope_out": [
+            "advanced recombination molecular detail"
+          ],
+          "prior_teaching_node_ids": [
+            "REC-NODE-EXPLANATION",
+            "REC-NODE-THINK",
+            "REC-NODE-WORKED"
+          ],
+          "consequential_item_ids": [
+            "REC-ITEM-SOLO",
+            "REC-ITEM-NEAR",
+            "REC-ITEM-CHANGED"
+          ]
+        },
+        {
+          "kc_id": "V3-KC-201342",
+          "competency": "Predict inheritance patterns from sex linkage, sparse Y-chromosome content, sex determination, or cytoplasmic inheritance.",
+          "scope_in": [
+            "sex-linked characteristics",
+            "Y-chromosome constraint",
+            "sex determination",
+            "cytoplasmic/extranuclear inheritance"
+          ],
+          "scope_out": [
+            "clinical pedigree catalog"
+          ],
+          "prior_teaching_node_ids": [
+            "INH-NODE-EXPLANATION",
+            "INH-NODE-THINK",
+            "INH-NODE-WORKED"
+          ],
+          "consequential_item_ids": [
+            "INH-ITEM-SOLO",
+            "INH-ITEM-NEAR",
+            "INH-ITEM-CHANGED"
+          ]
+        },
+        {
+          "kc_id": "V3-KC-090946",
+          "competency": "Classify listed mutation sources/types and predict whether a sequence change is advantageous, deleterious, metabolic, or carcinogenic in context.",
+          "scope_in": [
+            "random/translation/transcription error; substitution, inversion, addition, deletion, translocation, mispairing; advantageous/deleterious; inborn errors; mutagen–carcinogen relation"
+          ],
+          "scope_out": [
+            "one KC per mutation name",
+            "clinical mutation catalog"
+          ],
+          "prior_teaching_node_ids": [
+            "MUT-NODE-EXPLANATION",
+            "MUT-NODE-THINK",
+            "MUT-NODE-WORKED"
+          ],
+          "consequential_item_ids": [
+            "MUT-ITEM-SOLO",
+            "MUT-ITEM-NEAR",
+            "MUT-ITEM-CHANGED"
+          ]
+        }
+      ],
+      "assistance_fade": [
+        {
+          "kc_id": "V3-KC-792562",
+          "guided": [
+            "VISIBLE_OPERATION_TEMPLATE",
+            "NOT_SURE_ALLOWED"
+          ],
+          "light_support": [
+            "ONE_OPERATION_REMINDER",
+            "NOT_SURE_ALLOWED"
+          ],
+          "solo": [
+            "NO_ANSWER_BEARING_ASSISTANCE"
+          ],
+          "exits": [
+            "NO_ANSWER_BEARING_ASSISTANCE"
+          ]
+        },
+        {
+          "kc_id": "V3-KC-022516",
+          "guided": [
+            "VISIBLE_OPERATION_TEMPLATE",
+            "NOT_SURE_ALLOWED"
+          ],
+          "light_support": [
+            "ONE_OPERATION_REMINDER",
+            "NOT_SURE_ALLOWED"
+          ],
+          "solo": [
+            "NO_ANSWER_BEARING_ASSISTANCE"
+          ],
+          "exits": [
+            "NO_ANSWER_BEARING_ASSISTANCE"
+          ]
+        },
+        {
+          "kc_id": "V3-KC-201342",
+          "guided": [
+            "VISIBLE_OPERATION_TEMPLATE",
+            "NOT_SURE_ALLOWED"
+          ],
+          "light_support": [
+            "ONE_OPERATION_REMINDER",
+            "NOT_SURE_ALLOWED"
+          ],
+          "solo": [
+            "NO_ANSWER_BEARING_ASSISTANCE"
+          ],
+          "exits": [
+            "NO_ANSWER_BEARING_ASSISTANCE"
+          ]
+        },
+        {
+          "kc_id": "V3-KC-090946",
+          "guided": [
+            "VISIBLE_OPERATION_TEMPLATE",
+            "NOT_SURE_ALLOWED"
+          ],
+          "light_support": [
+            "ONE_OPERATION_REMINDER",
+            "NOT_SURE_ALLOWED"
+          ],
+          "solo": [
+            "NO_ANSWER_BEARING_ASSISTANCE"
+          ],
+          "exits": [
+            "NO_ANSWER_BEARING_ASSISTANCE"
+          ]
+        }
+      ],
+      "repair_graph": [
+        {
+          "kc_id": "V3-KC-792562",
+          "failed_function": "NEAR_USE",
+          "observed_feature_id": "MEI-FEATURE-SEGREGATION-OUTCOME",
+          "repair_node_id": "MEI-NODE-REPAIR-NEAR",
+          "fresh_reentry_item_id": "MEI-ITEM-REENTRY-NEAR",
+          "attempt_bound": 1,
+          "exhaustion_handoff": "RETURN_TO_PLANNER_IF_UNRESOLVED"
+        },
+        {
+          "kc_id": "V3-KC-792562",
+          "failed_function": "CHANGED_TASK",
+          "observed_feature_id": "MEI-FEATURE-INDEPENDENT-ASSORTMENT",
+          "repair_node_id": "MEI-NODE-REPAIR-CHANGED",
+          "fresh_reentry_item_id": "MEI-ITEM-REENTRY-CHANGED",
+          "attempt_bound": 1,
+          "exhaustion_handoff": "RETURN_TO_PLANNER_IF_UNRESOLVED"
+        },
+        {
+          "kc_id": "V3-KC-022516",
+          "failed_function": "NEAR_USE",
+          "observed_feature_id": "REC-FEATURE-LINKAGE-CROSSOVER",
+          "repair_node_id": "REC-NODE-REPAIR-NEAR",
+          "fresh_reentry_item_id": "REC-ITEM-REENTRY-NEAR",
+          "attempt_bound": 1,
+          "exhaustion_handoff": "RETURN_TO_PLANNER_IF_UNRESOLVED"
+        },
+        {
+          "kc_id": "V3-KC-022516",
+          "failed_function": "CHANGED_TASK",
+          "observed_feature_id": "REC-FEATURE-DOUBLE-CROSSOVER",
+          "repair_node_id": "REC-NODE-REPAIR-CHANGED",
+          "fresh_reentry_item_id": "REC-ITEM-REENTRY-CHANGED",
+          "attempt_bound": 1,
+          "exhaustion_handoff": "RETURN_TO_PLANNER_IF_UNRESOLVED"
+        },
+        {
+          "kc_id": "V3-KC-201342",
+          "failed_function": "NEAR_USE",
+          "observed_feature_id": "INH-FEATURE-SEX-LINKED-ROUTE",
+          "repair_node_id": "INH-NODE-REPAIR-NEAR",
+          "fresh_reentry_item_id": "INH-ITEM-REENTRY-NEAR",
+          "attempt_bound": 1,
+          "exhaustion_handoff": "RETURN_TO_PLANNER_IF_UNRESOLVED"
+        },
+        {
+          "kc_id": "V3-KC-201342",
+          "failed_function": "CHANGED_TASK",
+          "observed_feature_id": "INH-FEATURE-EXTRANUCLEAR-ROUTE",
+          "repair_node_id": "INH-NODE-REPAIR-CHANGED",
+          "fresh_reentry_item_id": "INH-ITEM-REENTRY-CHANGED",
+          "attempt_bound": 1,
+          "exhaustion_handoff": "RETURN_TO_PLANNER_IF_UNRESOLVED"
+        },
+        {
+          "kc_id": "V3-KC-090946",
+          "failed_function": "NEAR_USE",
+          "observed_feature_id": "MUT-FEATURE-CLASSIFY-SEQUENCE-CHANGE",
+          "repair_node_id": "MUT-NODE-REPAIR-NEAR",
+          "fresh_reentry_item_id": "MUT-ITEM-REENTRY-NEAR",
+          "attempt_bound": 1,
+          "exhaustion_handoff": "RETURN_TO_PLANNER_IF_UNRESOLVED"
+        },
+        {
+          "kc_id": "V3-KC-090946",
+          "failed_function": "CHANGED_TASK",
+          "observed_feature_id": "MUT-FEATURE-CONTEXTUAL-CONSEQUENCE",
+          "repair_node_id": "MUT-NODE-REPAIR-CHANGED",
+          "fresh_reentry_item_id": "MUT-ITEM-REENTRY-CHANGED",
+          "attempt_bound": 1,
+          "exhaustion_handoff": "RETURN_TO_PLANNER_IF_UNRESOLVED"
+        }
+      ],
+      "prerequisite_handoffs": [],
+      "item_dok_policy": {
+        "packet_authorized": false,
+        "item_level_labels_authored": false,
+        "claim": "No item-level DOK label or DOK verdict is authored."
+      },
+      "evidence_mode_policy": {
+        "eligible_mode_claimed": false,
+        "reasoning_operation_inferred": false,
+        "rationale": "Packet KC reasoning operations are not specified; bindings remain instructional and do not claim mastery eligibility."
+      }
+    },
+    "findings": [
+      {
+        "finding_id": "137490-QUALITY-001",
+        "severity": "P1",
+        "status": "BLOCKED",
+        "required_correction": "Obtain an independent judge pre-screen bound to the current primary artifact hashes."
+      },
+      {
+        "finding_id": "137490-QUALITY-002",
+        "severity": "P2",
+        "status": "BLOCKED",
+        "required_correction": "Obtain revision-bound browser, accessibility, domain, novice, and reliability evidence before any approval decision."
+      }
+    ],
+    "claim_limits": {
+      "learner_validated": false,
+      "efficacy_established": false,
+      "mastery_calibrated": false,
+      "readiness_validated": false,
+      "production_published": false,
+      "calibrated_thresholds_available": false
+    },
+    "final_gate_status": "BLOCKED",
+    "release_eligibility": "INTERNAL_DRAFT_ONLY",
+    "production_golden_status": "BLOCKED"
+  }
+}

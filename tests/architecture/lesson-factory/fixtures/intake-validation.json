@@ -1,0 +1,67 @@
+{
+  "$test_fixture": {
+    "synthetic": true,
+    "not_for_production": true,
+    "fixture_of": "lesson-factory.intake-validation"
+  },
+  "instance": {
+    "contract_id": "lesson-factory.intake-validation",
+    "contract_version": "3.0.0",
+    "document": {
+      "kind": "profile",
+      "ref": "profile:content/lesson-factory/deadline-profile/deadline-profile.json#sha256:681d2864fbf22bfa3f947e4e21f846fe8ee5913ff91e82f56c95708cd344562c",
+      "sha256": "681d2864fbf22bfa3f947e4e21f846fe8ee5913ff91e82f56c95708cd344562c",
+      "contract_id": "lesson-factory.deadline-profile",
+      "contract_version": "7.0.0",
+      "schema_file": "deadline-profile.schema.json",
+      "schema_locator": "content/lesson-factory/schemas/deadline-profile.schema.json",
+      "schema_sha256": "ddbd6b89644d6de950704b3b41a0c6e4c6718fda03f153238bc62de5bd6a656f"
+    },
+    "schema_validation": {
+      "status": "PASS",
+      "error_count": 0
+    },
+    "resolver_validation": {
+      "status": "PASS",
+      "checked_count": 3,
+      "unresolved_count": 0,
+      "references": [
+        {
+          "field": "/lifecycle_nonclaims_ref",
+          "kind": "lifecycle",
+          "digest": "fadbda5cabf736c4028b5fab9f0c4705e0cacee228809ff73aa63bc9f91a024a",
+          "status": "RESOLVED"
+        },
+        {
+          "field": "/release_policy_ref",
+          "kind": "policy",
+          "digest": "0258c6c382ce2faf62c1a8da4bda35295c27c64e2be9c5510c2f923560ffba9e",
+          "status": "RESOLVED"
+        },
+        {
+          "field": "/source_use_receipt_ref",
+          "kind": "source-use-receipt",
+          "digest": "04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68",
+          "status": "RESOLVED"
+        }
+      ]
+    },
+    "input_validation": {
+      "status": "PASS",
+      "checked_count": 0,
+      "unresolved_count": 0,
+      "inputs": []
+    },
+    "semantic_validation": {
+      "validator": "PACKET_SEMANTICS_V1",
+      "status": "NOT_APPLICABLE",
+      "error_count": 0
+    },
+    "admission": "ADMITTED",
+    "admission_proof": {
+      "derivation": "INTAKE_DERIVATION_V3",
+      "derivation_sha256": "72a3867a17e1e8710424233eb3e7a5a05610d9fa0a8a3dccdf67447c586614ab"
+    },
+    "validated_at": "2026-08-03T22:28:00Z"
+  }
+}

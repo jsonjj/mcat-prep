@@ -1,0 +1,1858 @@
+{
+  "artifact_type": "PROTECTED_ANSWER_MATERIAL",
+  "artifact_version": "0.1.0-candidate.1",
+  "access_policy": "SERVER_ONLY",
+  "browser_import_prohibited": true,
+  "records": [
+    {
+      "answer_record_id": "LAW-ITEM-ENTRY",
+      "learner_prompt_key": "LAW_ENTRY",
+      "correct_option_index": 1,
+      "rationale": "The concentration factor 2 produces rate factor 4, so 2^m = 4 and m = 2.",
+      "post_commitment_feedback": "A twofold concentration increase produces a fourfold rate increase, identifying second order in A.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-ITEM-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Zero order would leave rate unchanged."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-ITEM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-ITEM-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "First order would only double the rate."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-ITEM-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Third order would increase the rate eightfold."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-GUIDED",
+      "learner_prompt_key": "LAW_GUIDED",
+      "correct_option_index": 2,
+      "rationale": "No rate change despite a concentration change gives order zero.",
+      "post_commitment_feedback": "The rate is independent of [B] over these trials, so the reaction is zero order in B.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-ITEM-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "First order would triple the rate."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-ITEM-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Second order would increase rate ninefold."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-ITEM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-ITEM-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A one-third order would still change the rate."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-LIGHT",
+      "learner_prompt_key": "LAW_LIGHT",
+      "correct_option_index": 0,
+      "rationale": "The exponents correctly encode second order in A and first order in B.",
+      "post_commitment_feedback": "The experimentally assigned orders become exponents: rate = k[A]^2[B].",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-ITEM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-ITEM-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses the assigned orders."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-ITEM-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Orders apply as concentration exponents, not as a summed concentration."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-ITEM-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This places A in the denominator and does not represent positive second order."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-SOLO",
+      "learner_prompt_key": "LAW_SOLO",
+      "correct_option_index": 3,
+      "rationale": "The factor is 3 × 1/4 = 3/4.",
+      "post_commitment_feedback": "Apply each concentration factor to its exponent: 3 × (1/2)^2 = 3/4.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-ITEM-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This multiplies by 3 and 2 rather than squaring the half-factor."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-ITEM-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The predicted factor is 3 × (1/2)^2, not 1/6."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-ITEM-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This treats halving B as a fourfold increase."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-ITEM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-NEAR",
+      "learner_prompt_key": "LAW_NEAR",
+      "correct_option_index": 1,
+      "rationale": "A is first order and B is second order because doubling B multiplies rate by four.",
+      "post_commitment_feedback": "The controlled comparisons give first order in A and second order in B.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-ITEM-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Doubling A only doubles rate, so A is not second order."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-ITEM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-ITEM-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "B produces a fourfold rate effect and is not first order."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-ITEM-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both concentrations affect rate in the table."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-CHANGED",
+      "learner_prompt_key": "LAW_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "M^-1 s^-1 times M^2 gives M/s.",
+      "post_commitment_feedback": "An overall second-order law requires k in M^-1 s^-1 so the product has units M/s.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-ITEM-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Multiplying this by M^2 would give M^3/s."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-ITEM-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A first-order rate constant has s^-1, but this law is overall second order."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-ITEM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This would give M^4/s after multiplying concentrations."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "LAW_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Holding other concentrations fixed lets one exponent be inferred.",
+      "post_commitment_feedback": "A one-variable comparison isolates one concentration exponent instead of mixing effects.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-ITEM-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-ITEM-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Controlled comparison does not force zero order."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-ITEM-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Measured rate response, not coefficients alone, determines order."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-ITEM-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The value of k is not fixed by comparison design."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "LAW_REENTRY_NEAR",
+      "correct_option_index": 3,
+      "rationale": "C is first order and D is zero order, so rate = k[C].",
+      "post_commitment_feedback": "The fresh comparisons give first order in C and zero order in D.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-ITEM-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "C gives a twofold, not fourfold, rate response."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-ITEM-REENTRY-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "D has zero-order behavior and C affects rate."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-ITEM-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Including D to the first power predicts a rate change that is not observed."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-ITEM-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "LAW_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "k must contribute M^(1-n) so k·M^n yields M/s.",
+      "post_commitment_feedback": "Use k units M^(1−n) s^-1 so multiplying by n concentration powers gives M/s.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-ITEM-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This increases rather than cancels the concentration powers."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-ITEM-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-ITEM-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Multiplying by seconds gives the wrong time dimension."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-ITEM-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This has the reciprocal concentration exponent and wrong time dimension."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "LAW-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "LAW_REENTRY_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Overall order is 3, so M^(1−3) s^-1 = M^-2 s^-1.",
+      "post_commitment_feedback": "The overall order is three, giving k units M^-2 s^-1.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "LAW-ITEM-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is the unit for overall first order."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "LAW-ITEM-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is the unit for overall second order."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "LAW-ITEM-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "LAW-ITEM-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This increases the concentration power instead of canceling it."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TMP-ITEM-ENTRY",
+      "learner_prompt_key": "TMP_ENTRY",
+      "correct_option_index": 3,
+      "rationale": "The exponential factor increases when the negative exponent moves toward zero.",
+      "post_commitment_feedback": "Increasing absolute temperature makes the Arrhenius exponent less negative and raises k.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TMP-ITEM-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Finite temperature increase does not make k exactly zero."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TMP-ITEM-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A larger denominator makes −Ea/RT less negative."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TMP-ITEM-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Arrhenius behavior explicitly makes k temperature-dependent."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TMP-ITEM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TMP-ITEM-GUIDED",
+      "learner_prompt_key": "TMP_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Since slope = −Ea/R, Ea = −slope·R.",
+      "post_commitment_feedback": "The Arrhenius-plot slope is −Ea/R, so multiplying its negative by R gives Ea.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TMP-ITEM-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The slope is negative while Ea is positive."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TMP-ITEM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TMP-ITEM-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The intercept corresponds to ln A, not Ea/R."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TMP-ITEM-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This does not rearrange slope = −Ea/R correctly."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TMP-ITEM-LIGHT",
+      "learner_prompt_key": "TMP_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "The larger Ea produces a larger change in the exponent for a given change in 1/T.",
+      "post_commitment_feedback": "The reaction with larger activation energy is generally more temperature-sensitive.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TMP-ITEM-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both Arrhenius rate constants depend on temperature."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TMP-ITEM-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A smaller barrier generally produces less exponential sensitivity."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TMP-ITEM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TMP-ITEM-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal A does not make k identical when Ea differs."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TMP-ITEM-SOLO",
+      "learner_prompt_key": "TMP_SOLO",
+      "correct_option_index": 0,
+      "rationale": "Temperature changes k; it does not rewrite experimentally determined concentration exponents.",
+      "post_commitment_feedback": "Temperature affects k through the Arrhenius term while the rate-law orders remain the same.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TMP-ITEM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TMP-ITEM-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reaction order is not incremented by heating."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TMP-ITEM-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Heating alone does not mathematically double each concentration."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TMP-ITEM-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The Arrhenius model does not require A to vanish."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TMP-ITEM-NEAR",
+      "learner_prompt_key": "TMP_NEAR",
+      "correct_option_index": 3,
+      "rationale": "More molecules can cross the activation barrier, increasing the rate constant.",
+      "post_commitment_feedback": "With concentrations fixed, a higher Arrhenius rate constant explains the faster run.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TMP-ITEM-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Temperature does not alter balanced stoichiometric coefficients."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TMP-ITEM-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No infinite concentration follows from heating."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TMP-ITEM-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The observed difference can arise through k without changing order."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TMP-ITEM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TMP-ITEM-CHANGED",
+      "learner_prompt_key": "TMP_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Since |slope| = Ea/R, Q has the larger activation energy.",
+      "post_commitment_feedback": "Q has the larger activation energy because its Arrhenius line is steeper in magnitude.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TMP-ITEM-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "P has the smaller slope magnitude and therefore smaller Ea."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TMP-ITEM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TMP-ITEM-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both slopes are nonzero."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TMP-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "As 1/T rises, the negative-slope line gives lower ln k."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TMP-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "TMP_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Increasing T enlarges the denominator, moving the negative quotient toward zero.",
+      "post_commitment_feedback": "Follow the denominator: higher T makes −Ea/RT less negative, so the exponential factor increases.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TMP-ITEM-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TMP-ITEM-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A larger denominator reduces the quotient magnitude."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TMP-ITEM-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The Arrhenius exponent is a quotient, not a product."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TMP-ITEM-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The sign remains negative; only its magnitude changes."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TMP-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "TMP_REENTRY_NEAR",
+      "correct_option_index": 0,
+      "rationale": "The Arrhenius rate constant increases at the higher absolute temperature.",
+      "post_commitment_feedback": "The fresh case again gives a larger k at higher kelvin temperature.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TMP-ITEM-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TMP-ITEM-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Heating makes the negative exponent smaller in magnitude, increasing the factor."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TMP-ITEM-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Temperature does not determine the concentration exponent this way."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TMP-ITEM-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Heating does not erase the activation barrier."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TMP-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "TMP_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "The equation has y = ln k and x = 1/T.",
+      "post_commitment_feedback": "Map the linear form directly: y is ln k and x is 1/T.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TMP-ITEM-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The untransformed variables do not match the stated linear form."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TMP-ITEM-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Ea and A are parameters rather than the standard plotted variables here."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TMP-ITEM-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TMP-ITEM-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This transformation is not the given linear relation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "TMP-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "TMP_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Line M has larger |slope| and therefore larger Ea.",
+      "post_commitment_feedback": "The fresh plot comparison gives a larger activation energy for the steeper line M.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "TMP-ITEM-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Greater negative slope magnitude corresponds to greater Ea."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "TMP-ITEM-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A steep nonzero slope does not indicate zero Ea."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "TMP-ITEM-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Activation energy is not inferred to be negative from this line."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "TMP-ITEM-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NRG-ITEM-ENTRY",
+      "learner_prompt_key": "NRG_ENTRY",
+      "correct_option_index": 2,
+      "rationale": "The peak corresponds to the transition-state configuration.",
+      "post_commitment_feedback": "The highest point on a one-step profile is the transition state.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NRG-ITEM-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Products are shown at the final endpoint."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NRG-ITEM-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An equilibrium constant is not a point on the energy profile."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NRG-ITEM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NRG-ITEM-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reaction order is inferred from rate data, not the profile peak."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NRG-ITEM-GUIDED",
+      "learner_prompt_key": "NRG_GUIDED",
+      "correct_option_index": 0,
+      "rationale": "Forward Ea is 65−15 = 50 kJ/mol.",
+      "post_commitment_feedback": "Measure from reactants to the peak: the forward activation energy is 50 kJ/mol.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NRG-ITEM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NRG-ITEM-GUIDED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds the two energy levels."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NRG-ITEM-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Activation-energy magnitude is positive in this profile."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NRG-ITEM-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This repeats the reactant energy rather than the barrier."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NRG-ITEM-LIGHT",
+      "learner_prompt_key": "NRG_LIGHT",
+      "correct_option_index": 1,
+      "rationale": "ΔH = 10−40 = −30 kJ/mol.",
+      "post_commitment_feedback": "Products minus reactants gives ΔH = −30 kJ/mol, an exothermic profile.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NRG-ITEM-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds endpoint energies rather than subtracting reactants from products."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NRG-ITEM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NRG-ITEM-LIGHT-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This has the correct magnitude but wrong sign."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NRG-ITEM-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This does not equal the endpoint difference."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NRG-ITEM-SOLO",
+      "learner_prompt_key": "NRG_SOLO",
+      "correct_option_index": 3,
+      "rationale": "Products above reactants give a positive product-minus-reactant energy difference.",
+      "post_commitment_feedback": "Higher-energy products indicate positive ΔH for the forward reaction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NRG-ITEM-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Endpoint order does not determine an instantaneous rate."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NRG-ITEM-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A profile can have products above reactants and a nonzero barrier."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NRG-ITEM-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No catalyst is required to explain endpoint placement."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NRG-ITEM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NRG-ITEM-NEAR",
+      "learner_prompt_key": "NRG_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Step 1 has barrier 45, while Step 2 has barrier 35 kJ/mol.",
+      "post_commitment_feedback": "The first local rise is 45 kJ/mol, larger than the second rise of 35 kJ/mol.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NRG-ITEM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NRG-ITEM-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The absolute peak alone ignores the preceding intermediate."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NRG-ITEM-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Peak-to-peak difference is not the local activation barrier."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NRG-ITEM-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Product energy does not eliminate the step barriers."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NRG-ITEM-CHANGED",
+      "learner_prompt_key": "NRG_CHANGED",
+      "correct_option_index": 0,
+      "rationale": "For the reverse direction, measure from products at 50 to the peak at 80.",
+      "post_commitment_feedback": "The reverse reaction starts at the product level, so Ea,reverse = 80−50 = 30 kJ/mol.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NRG-ITEM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NRG-ITEM-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is the forward barrier measured from reactants."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NRG-ITEM-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This adds product and peak energies."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NRG-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The barrier magnitude is positive."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NRG-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "NRG_REPAIR_NEAR",
+      "correct_option_index": 2,
+      "rationale": "Each elementary step begins at its preceding reactant or intermediate valley.",
+      "post_commitment_feedback": "Reset the reference at each valley, then measure to the next transition-state peak.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NRG-ITEM-REPAIR-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Only the reverse final step starts at the product level."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NRG-ITEM-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The diagram’s arbitrary zero is not the reactant state for each step."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NRG-ITEM-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NRG-ITEM-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Peak-to-peak differences do not give activation barriers."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NRG-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "NRG_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Step 2 rises from 25 to 75, a 50 kJ/mol barrier.",
+      "post_commitment_feedback": "The fresh profile gives the second step the larger local activation barrier.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NRG-ITEM-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Step 1 rises 40 kJ/mol."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NRG-ITEM-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NRG-ITEM-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The difference from reactants to TS2 is not Step 2’s local barrier."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NRG-ITEM-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "An intermediate is expected in a multistep profile."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NRG-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "NRG_REPAIR_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Ea uses the peak; ΔH uses the two endpoints.",
+      "post_commitment_feedback": "Keep the references distinct: reactant-to-peak is Ea; reactant-to-product is ΔH.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NRG-ITEM-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This swaps the barrier and endpoint difference."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NRG-ITEM-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NRG-ITEM-REPAIR-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The first subtraction is reverse Ea, and the second is forward Ea."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NRG-ITEM-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "These reverse both standard forward differences."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "NRG-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "NRG_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Peak−reactants is 60; products−reactants is −15 kJ/mol.",
+      "post_commitment_feedback": "The fresh profile yields Ea = 60 kJ/mol and ΔH = −15 kJ/mol.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "NRG-ITEM-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Forward Ea is 60, not 75, and products are lower."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "NRG-ITEM-REENTRY-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Forward activation energy is not negative, and ΔH sign is reversed."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "NRG-ITEM-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "These values come from adding or using the wrong reference."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "NRG-ITEM-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CAT-ITEM-ENTRY",
+      "learner_prompt_key": "CAT_ENTRY",
+      "correct_option_index": 3,
+      "rationale": "A catalyst supplies an alternate lower-barrier pathway.",
+      "post_commitment_feedback": "Catalysts lower activation energy while leaving thermodynamic endpoints unchanged.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CAT-ITEM-ENTRY-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "K depends on thermodynamic state, not the catalyst."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CAT-ITEM-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reactant and product enthalpies are unchanged."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CAT-ITEM-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The product endpoint energy is unchanged."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CAT-ITEM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CAT-ITEM-GUIDED",
+      "learner_prompt_key": "CAT_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Forward and reverse rates increase by compatible pathways while K stays the same.",
+      "post_commitment_feedback": "The catalyst speeds microscopic forward and reverse events but does not change the equilibrium composition.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CAT-ITEM-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A catalyst does not favor one equilibrium side."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CAT-ITEM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CAT-ITEM-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A catalyst does not force the reactant side."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CAT-ITEM-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "K is unchanged at fixed temperature."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CAT-ITEM-LIGHT",
+      "learner_prompt_key": "CAT_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "The lower activation barrier gives faster initial formation.",
+      "post_commitment_feedback": "Product A is kinetic because its lower barrier allows faster formation.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CAT-ITEM-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Both pathways may be accessible."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CAT-ITEM-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Lower final energy identifies thermodynamic stability."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CAT-ITEM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CAT-ITEM-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Barrier differences are the defining kinetic feature."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CAT-ITEM-SOLO",
+      "learner_prompt_key": "CAT_SOLO",
+      "correct_option_index": 0,
+      "rationale": "The lower product free energy identifies the thermodynamic product.",
+      "post_commitment_feedback": "Product Y is thermodynamically favored because it has the lower endpoint free energy.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CAT-ITEM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CAT-ITEM-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Faster formation identifies kinetic control, not greater stability."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CAT-ITEM-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Barriers govern rates; endpoint energies govern stability."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CAT-ITEM-SOLO-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Thermodynamic comparison does not require a catalyst."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CAT-ITEM-NEAR",
+      "learner_prompt_key": "CAT_NEAR",
+      "correct_option_index": 3,
+      "rationale": "The reverse barrier also falls, and equilibrium thermodynamics remain unchanged.",
+      "post_commitment_feedback": "A catalyst accelerates both directions without changing K or endpoint energies.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CAT-ITEM-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The catalyst does not change endpoint stability or K."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CAT-ITEM-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reactant and product enthalpies are unchanged."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CAT-ITEM-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A reversible alternate pathway lowers barriers in both directions."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CAT-ITEM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CAT-ITEM-CHANGED",
+      "learner_prompt_key": "CAT_CHANGED",
+      "correct_option_index": 1,
+      "rationale": "Long-time reversible conditions allow the lower-energy product to dominate thermodynamically.",
+      "post_commitment_feedback": "Under reversible long-time conditions, the lower-energy thermodynamic product T is favored.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CAT-ITEM-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Initial formation speed does not control a reversible equilibrium indefinitely."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CAT-ITEM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CAT-ITEM-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equal amounts are not implied by different endpoint energies."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CAT-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Barrier and stability answer different, relevant questions."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CAT-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "CAT_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "This is the defining path-versus-endpoint distinction.",
+      "post_commitment_feedback": "Draw fixed endpoints first; then lower the pathway peak to represent catalysis.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CAT-ITEM-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CAT-ITEM-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Catalysts do not change endpoint energies."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CAT-ITEM-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Catalysts change rates but not K."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CAT-ITEM-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Catalysis does not remove the reverse reaction."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CAT-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "CAT_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "K is determined by thermodynamics at the stated temperature.",
+      "post_commitment_feedback": "The fresh catalyst case leaves K unchanged while increasing both directional rate constants.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CAT-ITEM-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Catalysis shortens the approach time."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CAT-ITEM-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CAT-ITEM-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The forward rate constant increases."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CAT-ITEM-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The reverse rate constant also increases."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CAT-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "CAT_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Barrier controls formation speed; endpoint energy controls stability.",
+      "post_commitment_feedback": "Use barrier height for kinetic control and product endpoint energy for thermodynamic control.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CAT-ITEM-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This reverses barrier and stability criteria."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CAT-ITEM-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Higher barriers slow formation, and higher endpoints are less stable."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CAT-ITEM-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CAT-ITEM-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The labels answer different questions."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "CAT-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "CAT_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Irreversible trapping preserves the faster-forming kinetic product.",
+      "post_commitment_feedback": "The fresh trapped short-time case favors lower-barrier Product A.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "CAT-ITEM-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Endpoint stability does not override the lower initial barrier under trapping."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "CAT-ITEM-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Different barriers need not produce equal initial amounts."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "CAT-ITEM-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Products can form before equilibrium is reached."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "CAT-ITEM-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQL-ITEM-ENTRY",
+      "learner_prompt_key": "EQL_ENTRY",
+      "correct_option_index": 0,
+      "rationale": "Q < K, so product formation raises Q toward K.",
+      "post_commitment_feedback": "Because Q is below K, the net reaction proceeds forward toward B.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQL-ITEM-ENTRY-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQL-ITEM-ENTRY-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Reverse reaction would lower Q further."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQL-ITEM-ENTRY-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Equilibrium reactions continue, and Q is not yet equal to K."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQL-ITEM-ENTRY-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At fixed temperature, the system changes composition rather than redefining K."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQL-ITEM-GUIDED",
+      "learner_prompt_key": "EQL_GUIDED",
+      "correct_option_index": 1,
+      "rationale": "Adding a denominator reactant lowers Q and drives net product formation.",
+      "post_commitment_feedback": "Adding reactant lowers Q below K, so the system shifts right.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQL-ITEM-GUIDED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A left shift would add still more reactant X."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQL-ITEM-GUIDED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQL-ITEM-GUIDED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "K is fixed by temperature, not the added amount."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQL-ITEM-GUIDED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The system remains dynamically reactive."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQL-ITEM-LIGHT",
+      "learner_prompt_key": "EQL_LIGHT",
+      "correct_option_index": 2,
+      "rationale": "The forward reaction replaces some removed N.",
+      "post_commitment_feedback": "Product removal lowers Q and drives net forward formation of N.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQL-ITEM-LIGHT-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Removing product lowers Q, so the reverse direction is not favored."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQL-ITEM-LIGHT-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "K does not change when temperature is fixed."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQL-ITEM-LIGHT-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQL-ITEM-LIGHT-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Removing product does not set both rate constants to zero."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQL-ITEM-SOLO",
+      "learner_prompt_key": "EQL_SOLO",
+      "correct_option_index": 3,
+      "rationale": "The right side has one gas mole versus two on the left.",
+      "post_commitment_feedback": "Decreasing volume favors the side with fewer gas moles, so the system shifts right.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQL-ITEM-SOLO-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Compression favors the side with fewer gas particles."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQL-ITEM-SOLO-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Gas equilibria can respond to volume changes."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQL-ITEM-SOLO-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "K remains fixed at constant temperature."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQL-ITEM-SOLO-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQL-ITEM-NEAR",
+      "learner_prompt_key": "EQL_NEAR",
+      "correct_option_index": 0,
+      "rationale": "Cooling favors the exothermic direction that produces heat.",
+      "post_commitment_feedback": "Because heat is a product, cooling favors the forward exothermic direction.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQL-ITEM-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQL-ITEM-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "The reverse direction consumes heat and is favored by heating."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQL-ITEM-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Temperature changes can alter K and equilibrium composition."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQL-ITEM-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "No gas-mole information is needed for this thermal perturbation."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQL-ITEM-CHANGED",
+      "learner_prompt_key": "EQL_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Products appear in the numerator and stoichiometric coefficients become exponents.",
+      "post_commitment_feedback": "The mass-action expression is K = [C]^3/([A]^2[B]).",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQL-ITEM-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This is the reciprocal of the product-over-reactant expression."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQL-ITEM-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Concentrations are multiplied and raised to coefficients, not added."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQL-ITEM-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQL-ITEM-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Stoichiometric coefficients are exponents rather than prefactors in this expression."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQL-ITEM-REPAIR-NEAR",
+      "learner_prompt_key": "EQL_REPAIR_NEAR",
+      "correct_option_index": 0,
+      "rationale": "This rule moves Q toward K from either side.",
+      "post_commitment_feedback": "Anchor the comparison: Q below K needs more products; Q above K needs more reactants.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQL-ITEM-REPAIR-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQL-ITEM-REPAIR-NEAR-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "This would move Q farther away from K."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQL-ITEM-REPAIR-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Q depends on current concentrations and need not be zero."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQL-ITEM-REPAIR-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At fixed temperature, composition changes while K stays fixed."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQL-ITEM-REENTRY-NEAR",
+      "learner_prompt_key": "EQL_REENTRY_NEAR",
+      "correct_option_index": 1,
+      "rationale": "Q > K, so net reverse reaction lowers the quotient.",
+      "post_commitment_feedback": "The fresh comparison has Q greater than K, so the system shifts toward U.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQL-ITEM-REENTRY-NEAR-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Forward reaction would raise an already too-large Q."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQL-ITEM-REENTRY-NEAR-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQL-ITEM-REENTRY-NEAR-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A positive Q need not equal K."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQL-ITEM-REENTRY-NEAR-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "At fixed temperature, the composition changes rather than K."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQL-ITEM-REPAIR-CHANGED",
+      "learner_prompt_key": "EQL_REPAIR_CHANGED",
+      "correct_option_index": 2,
+      "rationale": "Both directions accelerate, shortening equilibration time without shifting equilibrium.",
+      "post_commitment_feedback": "A catalyst changes how quickly Q reaches K, not the value of K or the final composition.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQL-ITEM-REPAIR-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "A catalyst does not alter K."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQL-ITEM-REPAIR-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Standard free-energy difference is unchanged."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQL-ITEM-REPAIR-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQL-ITEM-REPAIR-CHANGED-OPTION-3-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Catalysts do not remove reversibility."
+        }
+      ]
+    },
+    {
+      "answer_record_id": "EQL-ITEM-REENTRY-CHANGED",
+      "learner_prompt_key": "EQL_REENTRY_CHANGED",
+      "correct_option_index": 3,
+      "rationale": "Equal gas-mole counts give no Le Châtelier preference from volume alone.",
+      "post_commitment_feedback": "The fresh gas case has equal mole counts, so compression alone gives no preferred shift.",
+      "feedback_release_point": "AFTER_COMMITMENT_ONLY",
+      "option_feedback": [
+        {
+          "option_index": 0,
+          "observed_feature_id": "EQL-ITEM-REENTRY-CHANGED-OPTION-0-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Compression does not favor the left when both sides have equal gas moles."
+        },
+        {
+          "option_index": 1,
+          "observed_feature_id": "EQL-ITEM-REENTRY-CHANGED-OPTION-1-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "Compression does not favor the right on gas-mole count alone."
+        },
+        {
+          "option_index": 2,
+          "observed_feature_id": "EQL-ITEM-REENTRY-CHANGED-OPTION-2-DIVERGENCE",
+          "observation_kind": "OBSERVED_DIVERGENCE",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY",
+          "rejection_rationale": "K remains fixed at constant temperature."
+        },
+        {
+          "option_index": 3,
+          "observed_feature_id": "EQL-ITEM-REENTRY-CHANGED-SUPPORTED",
+          "observation_kind": "SUPPORTED_REASONING",
+          "learner_safe_release": "AFTER_COMMITMENT_ONLY"
+        }
+      ]
+    }
+  ]
+}

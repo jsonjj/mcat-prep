@@ -1,0 +1,97 @@
+{
+  "artifact_type": "LESSON_QUALITY_REPORT",
+  "artifact_id": "V3-LQRP-323416",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "3d47897259fea3f0e8780644f7ff2a55dd313b5cac8a23b52d851c13a011d331",
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-323416",
+    "lesson_script_sha256": "ea96c16c404f3eeedc5f5d8aaeb1fdc9d828b7bfa0740ee39c7d3d36c98b03ee",
+    "kc_coverage_matrix_id": "V3-KCOV-323416",
+    "kc_coverage_matrix_sha256": "d0b1e4c5d3a6811049f514a00fc0a722048e51fe515426d018f9ff73f9b7298e",
+    "lesson_presentation_plan_id": "V3-LPPL-323416",
+    "lesson_presentation_plan_sha256": "a95c1b9c57216cef36ba6d74795764d47c625e429ce81a6a910c135077a6297e"
+  },
+  "payload": {
+    "lesson_id": "V3-LES-323416",
+    "review_scope": "STANDARD_PRIMARY_CANDIDATE",
+    "check_results": [
+      {
+        "check_id": "PACKET-KC-SCOPE-COVERAGE",
+        "status": "AUTHOR_CHECKED",
+        "evidence_refs": [
+          "source-claim-ledger.json",
+          "kc-coverage-matrix.json"
+        ]
+      },
+      {
+        "check_id": "FIFTEEN-FUNCTION-MICROCYCLES",
+        "status": "AUTHOR_CHECKED",
+        "evidence_refs": [
+          "lesson-script.json",
+          "kc-coverage-matrix.json"
+        ]
+      },
+      {
+        "check_id": "FUNCTION-SPECIFIC-REPAIR-AND-FRESH-REENTRY",
+        "status": "AUTHOR_CHECKED",
+        "evidence_refs": [
+          "lesson-script.json",
+          "protected-items.json"
+        ]
+      },
+      {
+        "check_id": "PREREQUISITE-BOTH-GAPS-DETERMINISTIC-CLOSURE",
+        "status": "AUTHOR_CHECKED",
+        "evidence_refs": [
+          "lesson-script.json",
+          "learner-safe-items.json",
+          "protected-items.json",
+          "lesson-presentation-plan.json",
+          "kc-coverage-matrix.json"
+        ]
+      },
+      {
+        "check_id": "ITEM-LEVEL-DOK-LABELS",
+        "status": "NOT_AUTHORED_BY_PACKET_RULE",
+        "evidence_refs": [
+          "inputs/task-source-packet.json"
+        ]
+      },
+      {
+        "check_id": "INDEPENDENT-DOMAIN-REVIEW",
+        "status": "BLOCKED",
+        "blocker_code": "BLOCKER_NO_DOMAIN_SME_RECEIPT"
+      },
+      {
+        "check_id": "ACCESSIBILITY-AND-BROWSER-QA",
+        "status": "BLOCKED",
+        "blocker_code": "BLOCKER_NO_ACCESSIBILITY_REVIEW"
+      },
+      {
+        "check_id": "INDEPENDENT-JUDGE-PRE-SCREEN",
+        "status": "BLOCKED",
+        "blocker_code": "FRESH_INDEPENDENT_JUDGE_REQUIRED"
+      }
+    ],
+    "findings": [
+      {
+        "finding_id": "V3-LES-323416-QUALITY-HUMAN-EVIDENCE",
+        "severity": "P1",
+        "status": "BLOCKED",
+        "required_correction_code": "OBTAIN_FRESH_REVISION_BOUND_INDEPENDENT_JUDGE"
+      }
+    ],
+    "claim_limits": {
+      "learner_validated": false,
+      "efficacy_established": false,
+      "mastery_calibrated": false,
+      "readiness_validated": false,
+      "production_published": false,
+      "calibrated_thresholds_available": false
+    },
+    "final_gate_status": "BLOCKED",
+    "release_eligibility": "INTERNAL_DRAFT_ONLY",
+    "production_golden_status": "BLOCKED"
+  }
+}

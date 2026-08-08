@@ -25,7 +25,11 @@ import { createGuestProjection } from './guest-projection';
 import { createPostgresDiagnosticPort } from './diagnostic-port';
 import { createPostgresPracticeTestPort } from './practice-test-port';
 import { createRepositoryLearnerApi, type LearnerApi, type PassagePort } from './handler';
-import { lessonContentProvider } from './lesson-content-provider';
+import {
+  createLessonRevisionProviderCompatibilityAdapter,
+  lessonContentProvider,
+  lessonRevisionProvider,
+} from './lesson-content-provider';
 import { loadLessonRevisionProvider } from './lesson-revision-provider';
 import type { LambdaApiGatewayEvent, LambdaApiGatewayResult, SafeLogger } from './http';
 
@@ -380,6 +384,7 @@ async function createRuntime(): Promise<LearnerApi> {
   try {
     const dbLessons = await loadLessonRevisionProvider({ db: pool, environment: 'dev' });
     lessonContentProvider.attach(dbLessons);
+    lessonRevisionProvider.attach(createLessonRevisionProviderCompatibilityAdapter(dbLessons));
   } catch {
     // Best-effort: a failure to attach the DB catalog must never take down the API.
     // The file-based pilots still serve, and an unattached release simply surfaces as

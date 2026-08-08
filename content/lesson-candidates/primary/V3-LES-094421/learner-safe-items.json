@@ -1,0 +1,398 @@
+{
+  "artifact_type": "LEARNER_SAFE_ITEM_PROJECTIONS",
+  "artifact_version": "0.1.0-candidate.1",
+  "visibility": "LEARNER_SAFE",
+  "learner_notice": "Commit one response before feedback appears. Entry checks are low stakes; an unresolved fresh re-entry returns control without exit credit.",
+  "items": [
+    {
+      "prompt_key": "CNT_ENTRY",
+      "title": "Starting check: narrower serial tube",
+      "prompt": "A steady incompressible fluid enters a narrower section of one unbranched tube. No leak occurs. What happens to average speed?",
+      "response_type": "single_select",
+      "options": [
+        "It decreases.",
+        "It increases.",
+        "It becomes zero.",
+        "It is unrelated to area."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CNT_GUIDED",
+      "title": "Guided practice: calculate serial speed",
+      "prompt": "A tube area decreases from 6 cm² to 2 cm². If the initial speed is 3 m/s, what is the new speed for steady incompressible flow?",
+      "response_type": "single_select",
+      "options": [
+        "1 m/s",
+        "3 m/s",
+        "18 m/s",
+        "9 m/s"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CNT_LIGHT",
+      "title": "Less help: use radius squared",
+      "prompt": "The radius of a serial tube decreases by a factor of two. What happens to speed if volume flow rate stays constant?",
+      "response_type": "single_select",
+      "options": [
+        "Speed increases fourfold.",
+        "Speed increases twofold.",
+        "Speed decreases fourfold.",
+        "Speed remains unchanged."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CNT_SOLO",
+      "title": "On your own: equal branch split",
+      "prompt": "A parent tube carries 15 mL/s and divides equally into five identical branches. What is the flow rate in each branch?",
+      "response_type": "single_select",
+      "options": [
+        "15 mL/s",
+        "5 mL/s",
+        "3 mL/s",
+        "75 mL/s"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CNT_NEAR",
+      "title": "Near exit: serial area ratio",
+      "prompt": "Section B has three times the area of Section A in one steady incompressible tube. How does vB compare with vA?",
+      "response_type": "single_select",
+      "options": [
+        "vB = 3vA",
+        "vB = vA",
+        "vB = vA/3",
+        "vB = vA/9"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CNT_CHANGED",
+      "title": "Changed exit: unequal branch areas",
+      "prompt": "A 20 mL/s parent flow divides equally by flow rate into two branches. Branch X has twice the area of Branch Y. How do their speeds compare?",
+      "response_type": "single_select",
+      "options": [
+        "vY = 2vX",
+        "vX = 2vY",
+        "vX = vY",
+        "vY = 4vX"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CNT_REPAIR_NEAR",
+      "title": "Repair: continuity order",
+      "prompt": "Which sequence correctly solves a serial continuity problem?",
+      "response_type": "single_select",
+      "options": [
+        "Set radii times speeds equal without squaring.",
+        "Set pressures equal before reading areas.",
+        "Add the two speeds and divide by area.",
+        "Area first; then A1v1 = A2v2"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CNT_REENTRY_NEAR",
+      "title": "Fresh re-entry: diameter change",
+      "prompt": "A tube diameter triples while Q stays constant. What happens to average speed?",
+      "response_type": "single_select",
+      "options": [
+        "It becomes one-third.",
+        "It becomes one-ninth.",
+        "It becomes three times larger.",
+        "It becomes nine times larger."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CNT_REPAIR_CHANGED",
+      "title": "Repair: junction ledger",
+      "prompt": "Which equation represents a steady no-leak parent splitting into three branches?",
+      "response_type": "single_select",
+      "options": [
+        "Qparent = Q1 + Q2 + Q3",
+        "Qparent = Q1 = Q2 = Q3 always",
+        "Qparent + Q1 + Q2 + Q3 = 0 with all values positive",
+        "vparent = v1 + v2 + v3"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "CNT_REENTRY_CHANGED",
+      "title": "Fresh re-entry: mixed branch sizes",
+      "prompt": "A 24 mL/s parent splits into branches carrying 8 and 16 mL/s. Both branches have the same area. How do their speeds compare?",
+      "response_type": "single_select",
+      "options": [
+        "The 8 mL/s branch is twice as fast.",
+        "The branch speeds are equal.",
+        "The 16 mL/s branch is twice as fast.",
+        "The parent flow violates conservation."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BER_ENTRY",
+      "title": "Starting check: equal-height tradeoff",
+      "prompt": "Along one ideal streamline at equal height, speed is greater at Point B than Point A. How does static pressure compare?",
+      "response_type": "single_select",
+      "options": [
+        "PB > PA",
+        "PB < PA",
+        "PB = PA",
+        "No relation is possible under the stated model."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BER_GUIDED",
+      "title": "Guided practice: calculate pressure change",
+      "prompt": "Horizontal water flow speeds up from 2 m/s to 6 m/s. Take ρ = 1000 kg/m³. What is P2 − P1 under the ideal model?",
+      "response_type": "single_select",
+      "options": [
+        "+16,000 Pa",
+        "−4,000 Pa",
+        "−32,000 Pa",
+        "−16,000 Pa"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BER_LIGHT",
+      "title": "Less help: height increase",
+      "prompt": "An ideal fluid has the same speed at a point 2 m higher on the same streamline. What happens to static pressure?",
+      "response_type": "single_select",
+      "options": [
+        "It increases by ρg(2 m).",
+        "It stays equal at every height.",
+        "It becomes zero in all fluids.",
+        "It decreases by ρg(2 m)."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BER_SOLO",
+      "title": "On your own: identify the valid model",
+      "prompt": "Which condition is required for the simple Bernoulli relation used in this lesson?",
+      "response_type": "single_select",
+      "options": [
+        "Strong viscous loss with no correction",
+        "Steady ideal streamline flow",
+        "Arbitrary points on unrelated streamlines",
+        "An unmodeled pump between points"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BER_NEAR",
+      "title": "Near exit: pressure at a constriction",
+      "prompt": "A horizontal ideal tube narrows. Continuity shows speed doubles in the narrow section. What happens to static pressure there?",
+      "response_type": "single_select",
+      "options": [
+        "It increases.",
+        "It remains identical.",
+        "It decreases.",
+        "It is set only by tube color."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BER_CHANGED",
+      "title": "Changed exit: compare speed and height",
+      "prompt": "Point B is higher than A on an ideal streamline and has the same static pressure. What must be true about speed if no energy is added?",
+      "response_type": "single_select",
+      "options": [
+        "vB < vA",
+        "vB > vA",
+        "vB = vA",
+        "Speed is unrelated to height under Bernoulli."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BER_REPAIR_NEAR",
+      "title": "Repair: write all three terms",
+      "prompt": "Which expression is the ideal Bernoulli ledger used here?",
+      "response_type": "single_select",
+      "options": [
+        "P + ρv + gh² = constant",
+        "Av + ρgh = constant",
+        "P + ½ρv² + ρgh = constant",
+        "P = ½ρv² for every point"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BER_REENTRY_NEAR",
+      "title": "Fresh re-entry: horizontal speed change",
+      "prompt": "Along a horizontal ideal streamline, speed falls from 5 m/s to 3 m/s. What happens to static pressure?",
+      "response_type": "single_select",
+      "options": [
+        "It increases.",
+        "It decreases.",
+        "It stays fixed.",
+        "It must become negative."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BER_REPAIR_CHANGED",
+      "title": "Repair: trace the height–speed tradeoff",
+      "prompt": "Two points on an ideal streamline have equal static pressure, and the downstream point is higher. No pump or loss is present. Which term tradeoff determines the speed change?",
+      "response_type": "single_select",
+      "options": [
+        "Both height and kinetic terms rise while total energy stays fixed.",
+        "Pressure rises enough to pay for height despite pressures being equal.",
+        "Height has no role once the fluid is moving.",
+        "Higher height lowers kinetic energy."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "BER_REENTRY_CHANGED",
+      "title": "Fresh re-entry: compare raised-section speed",
+      "prompt": "Water flows from a lower garden-pipe section to a raised section on the same ideal streamline. Static pressure is equal at both sections, and no device adds energy. How does speed at the raised section compare?",
+      "response_type": "single_select",
+      "options": [
+        "It is greater because height and speed always rise together.",
+        "It is lower at the raised section.",
+        "It is equal because equal pressure forces equal speed at any height.",
+        "It cannot be compared even with Bernoulli assumptions."
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MTR_ENTRY",
+      "title": "Starting check: Venturi throat",
+      "prompt": "In a horizontal ideal Venturi tube, how do speed and static pressure at the narrow throat compare with upstream?",
+      "response_type": "single_select",
+      "options": [
+        "Lower speed; higher static pressure",
+        "Higher speed; lower static pressure",
+        "Higher speed; higher static pressure",
+        "Equal speed; equal static pressure"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MTR_GUIDED",
+      "title": "Guided practice: pitot speed",
+      "prompt": "A pitot measurement in a fluid of density 800 kg/m³ gives Pstagnation − Pstatic = 1600 Pa. What is the ideal speed?",
+      "response_type": "single_select",
+      "options": [
+        "1 m/s",
+        "4 m/s",
+        "20 m/s",
+        "2 m/s"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MTR_LIGHT",
+      "title": "Less help: identify stagnation pressure",
+      "prompt": "A forward-facing pitot opening brings a small sampled streamline locally to rest. Which pressure is measured there?",
+      "response_type": "single_select",
+      "options": [
+        "Stagnation pressure",
+        "Throat static pressure",
+        "Hydrostatic pressure only",
+        "Zero pressure"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MTR_SOLO",
+      "title": "On your own: compare pitot differences",
+      "prompt": "Two measurements use the same fluid. Device A has twice the stagnation-minus-static pressure difference of Device B. How do ideal speeds compare?",
+      "response_type": "single_select",
+      "options": [
+        "vA = 2vB",
+        "vA = vB/2",
+        "vA = √2 vB",
+        "vA = vB"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MTR_NEAR",
+      "title": "Near exit: distinguish devices",
+      "prompt": "A diagram compares pressure at a wide flowing section with pressure at a narrow flowing throat. Which device principle is being used?",
+      "response_type": "single_select",
+      "options": [
+        "Pitot stagnation principle",
+        "Hydrostatic manometer only",
+        "Venturi principle",
+        "Thermal expansion"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MTR_CHANGED",
+      "title": "Changed exit: infer from pressure ports",
+      "prompt": "A probe records static pressure through a side port and a larger pressure through a forward-facing port at the same location. What does their difference represent ideally?",
+      "response_type": "single_select",
+      "options": [
+        "Dynamic pressure, ½ρv²",
+        "A Venturi area ratio by itself",
+        "Only gravitational pressure ρgh",
+        "Viscous loss with no speed information"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MTR_REPAIR_NEAR",
+      "title": "Repair: identify the pressure pair",
+      "prompt": "Which observation identifies a pitot rather than Venturi measurement?",
+      "response_type": "single_select",
+      "options": [
+        "Both ports sample moving sections of different area.",
+        "A tube narrows and throat static pressure falls.",
+        "Only the branch flow rates are summed.",
+        "Stagnation port plus static port"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MTR_REENTRY_NEAR",
+      "title": "Fresh re-entry: throat comparison",
+      "prompt": "A horizontal tube narrows while two side ports measure static pressure upstream and at the throat. Which pressure is lower ideally?",
+      "response_type": "single_select",
+      "options": [
+        "Upstream pressure",
+        "Throat pressure",
+        "They are always equal",
+        "Both are stagnation pressures"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MTR_REPAIR_CHANGED",
+      "title": "Repair: pitot equation order",
+      "prompt": "Which equation correctly infers ideal speed from a pitot pressure pair?",
+      "response_type": "single_select",
+      "options": [
+        "v = √(2(Pstag − Pstatic)/ρ)",
+        "v = 2ρ(Pstatic − Pstag)",
+        "v = (Pstag + Pstatic)/ρ",
+        "v = ρg(Pstag − Pstatic)"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    },
+    {
+      "prompt_key": "MTR_REENTRY_CHANGED",
+      "title": "Fresh re-entry: density effect",
+      "prompt": "Two fluids produce the same pitot pressure difference, but Fluid X has four times the density of Fluid Y. How do ideal speeds compare?",
+      "response_type": "single_select",
+      "options": [
+        "vX = 4vY",
+        "vX = vY/4",
+        "vX = vY/2",
+        "vX = vY"
+      ],
+      "directions": "Choose one response, then commit it to receive feedback."
+    }
+  ]
+}

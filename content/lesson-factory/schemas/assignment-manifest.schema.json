@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcat-mastery.internal/lesson-factory/schemas/v1/assignment-manifest.schema.json",
+  "x_contract_id": "lesson-factory.assignment-manifest",
+  "x_contract_version": "3.0.0",
+  "title": "Lesson factory assignment manifest",
+  "description": "The controller's assignment of authoring work: which lane authors which lesson, from which frozen packet, into which isolated draft directory, under which deadline profile and release policy.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "contract_version",
+    "assignment_id",
+    "created_at",
+    "deadline_profile_ref",
+    "release_policy_ref",
+    "rubric_identity",
+    "assignments",
+    "nonclaims"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "lesson-factory.assignment-manifest"
+    },
+    "contract_version": {
+      "const": "3.0.0",
+      "description": "The one contract version this schema describes. An instance that claims another version was validated against a contract that is not this one."
+    },
+    "assignment_id": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/AssignmentId"
+    },
+    "created_at": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/IsoTimestamp"
+    },
+    "deadline_profile_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/ProfileRef"
+    },
+    "release_policy_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/FrozenReleasePolicyRef"
+    },
+    "rubric_identity": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/RubricIdentity"
+    },
+    "assignments": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "lane_id",
+          "lesson_id",
+          "task_packet_ref",
+          "output_directory",
+          "max_revision_cycles",
+          "required_human_review_roles"
+        ],
+        "properties": {
+          "lane_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/LaneId"
+          },
+          "lesson_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/LessonId"
+          },
+          "task_packet_ref": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/PacketRef"
+          },
+          "output_directory": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/OutputDirectory"
+          },
+          "max_revision_cycles": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/MaxRevisionCycles"
+          },
+          "required_human_review_roles": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "shared-vocabulary.schema.json#/$defs/CanonicalRole"
+            }
+          }
+        }
+      }
+    },
+    "nonclaims": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/Nonclaims"
+    }
+  }
+}

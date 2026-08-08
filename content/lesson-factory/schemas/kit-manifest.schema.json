@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcat-mastery.internal/lesson-factory/schemas/v1/kit-manifest.schema.json",
+  "x_contract_id": "lesson-factory.kit-manifest",
+  "x_contract_version": "3.0.0",
+  "title": "Kit manifest",
+  "description": "The packaged output of one deadline run: every bundle, its pinned lesson identity, its handoff, its readiness record, and the hash of the bundle index itself. A kit is a package, not an approval.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "contract_version",
+    "kit_id",
+    "kit_version",
+    "assembled_at",
+    "deadline_profile_ref",
+    "release_policy_ref",
+    "assignment_ref",
+    "bundles",
+    "bundle_index_sha256",
+    "nonclaims"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "lesson-factory.kit-manifest"
+    },
+    "contract_version": {
+      "const": "3.0.0",
+      "description": "The one contract version this schema describes. An instance that claims another version was validated against a contract that is not this one."
+    },
+    "kit_id": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/KitId"
+    },
+    "kit_version": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/SemanticVersion"
+    },
+    "assembled_at": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/IsoTimestamp"
+    },
+    "deadline_profile_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/ProfileRef"
+    },
+    "release_policy_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/FrozenReleasePolicyRef"
+    },
+    "assignment_ref": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/AssignmentRef"
+    },
+    "bundles": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "bundle_id",
+          "lesson_identity",
+          "lesson_handoff_ref",
+          "readiness_ref",
+          "bundle_sha256"
+        ],
+        "properties": {
+          "bundle_id": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/BundleId"
+          },
+          "lesson_identity": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/LessonIdentity"
+          },
+          "lesson_handoff_ref": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/HandoffRef"
+          },
+          "readiness_ref": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/ReadinessRef"
+          },
+          "bundle_sha256": {
+            "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+          }
+        }
+      }
+    },
+    "bundle_index_sha256": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/Sha256"
+    },
+    "nonclaims": {
+      "$ref": "shared-vocabulary.schema.json#/$defs/Nonclaims"
+    }
+  }
+}

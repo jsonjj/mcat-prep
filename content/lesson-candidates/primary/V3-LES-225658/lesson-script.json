@@ -1,0 +1,4498 @@
+{
+  "artifact_type": "LESSON_SCRIPT",
+  "artifact_id": "V3-LSCR-225658",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "a2d5d39bb889a870c18b474e9249ba0bf92cd47a743ce8bcf336faf6ac0bfb85",
+  "payload": {
+    "lesson_id": "V3-LES-225658",
+    "grouping_id": "V3-CL-225658",
+    "ordered_kc_ids": [
+      "V3-KC-337354",
+      "V3-KC-564671",
+      "V3-KC-628404",
+      "V3-KC-730668"
+    ],
+    "ordered_required_kc_ids": [
+      "V3-KC-337354",
+      "V3-KC-564671",
+      "V3-KC-628404",
+      "V3-KC-730668"
+    ],
+    "throughline": "Identify whether change comes from repetition, stimulus pairing, behavior–consequence contingencies, or constraints that alter an otherwise reasonable associative prediction.",
+    "curriculum_context": {
+      "canonical_title": "Discriminate and model associative learning",
+      "phase_ids": [
+        "V3-PHS-280641",
+        "V3-PHS-608354"
+      ],
+      "module_ids": [
+        "V3-MOD-938420",
+        "V3-MOD-741509"
+      ],
+      "pathway_positions": [
+        {
+          "pathway_id": "V3-PTH-581402",
+          "position": 46,
+          "relation_ids": [
+            "R14-PL-581402-046"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-904137",
+          "position": 46,
+          "relation_ids": [
+            "R14-PL-904137-046"
+          ]
+        },
+        {
+          "pathway_id": "V3-PTH-315978",
+          "position": 9,
+          "relation_ids": [
+            "R14-PL-315978-009"
+          ]
+        }
+      ],
+      "first_delivery_relation_id": "R14-FD-225658",
+      "revisit_relation_ids": [
+        "R14-RV-225658"
+      ],
+      "hard_prerequisites": [],
+      "helpful_context": [],
+      "route_scope_code": "STANDARD_ONLY",
+      "applicable_routes": [
+        "STANDARD"
+      ]
+    },
+    "nodes": [
+      {
+        "node_id": "HAB-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify a response that declines as one harmless stimulus repeats. This is low stakes and does not select a route or establish mastery."
+        ],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "activity_ids": [
+          "HAB-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "HAB-CP-ENTRY",
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ]
+      },
+      {
+        "node_id": "HAB-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: recognize nonassociative learning from a response-over-trials pattern, then use a changed stimulus to distinguish habituation from sensory adaptation and from conditioning."
+        ],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HAB-CP-ORIENTATION",
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ]
+      },
+      {
+        "node_id": "HAB-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Habituation is reduced responding after repeated presentation of the same stimulus. The learner changes how strongly it responds to repetition; no pairing of two stimuli and no behavior–consequence contingency is required.",
+          "Dishabituation is renewed responding when a novel or changed stimulus appears after habituation. Renewal shows that the response system can still react and that the decline was tied to the repeated stimulus.",
+          "Sensory adaptation is reduced receptor sensitivity during sustained stimulation rather than a learned reduction in responding. Conditioning requires an association. This lesson stays at the behavioral mechanism level and does not claim a cellular molecular mechanism."
+        ],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HAB-CP-EXPLANATION",
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ]
+      },
+      {
+        "node_id": "HAB-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — Same stimulus repeats → response falls = habituation candidate. Change the stimulus → response returns = dishabituation evidence. Check for receptor fatigue or an explicit association before deciding."
+        ],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HAB-CP-MODEL",
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ]
+      },
+      {
+        "node_id": "HAB-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Expert selection: I inspect what changes across trials. If only one stimulus repeats and response declines, I consider habituation. If a novel stimulus restores response, I choose dishabituation. If a sensory receptor itself becomes less responsive to continuous input, I choose adaptation; if two events are paired, I move to conditioning."
+        ],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HAB-CP-THINK",
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ]
+      },
+      {
+        "node_id": "HAB-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: a participant initially orients to a soft chime, then turns less across ten identical chimes. An unexpected buzzer produces a strong orientation response. The decline to the repeated chime supports habituation, and the renewed response to a different sound supports dishabituation. No reward, punishment, or paired predictive cue is present."
+        ],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HAB-CP-WORKED",
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ]
+      },
+      {
+        "node_id": "HAB-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: mark the repeated stimulus, graph the response decline, and check whether any association is actually described."
+        ],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "activity_ids": [
+          "HAB-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "HAB-CP-GUIDED",
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ]
+      },
+      {
+        "node_id": "HAB-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: compare a repeated-stimulus decline with continuous sensory exposure and choose the better mechanism."
+        ],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "activity_ids": [
+          "HAB-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "HAB-CP-LIGHT",
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ]
+      },
+      {
+        "node_id": "HAB-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: classify a fresh response-over-trials graph and justify why conditioning is not required."
+        ],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "activity_ids": [
+          "HAB-ACT-SOLO"
+        ],
+        "checkpoint_ref": "HAB-CP-SOLO",
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ]
+      },
+      {
+        "node_id": "HAB-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: habituation is not sensory receptor adaptation, extinction of a conditioned response, or reduced behavior after punishment. Dishabituation requires renewed responding after change, not merely passage of time."
+        ],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HAB-CP-CONTRAST",
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ]
+      },
+      {
+        "node_id": "HAB-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: classify a decreasing response to repeated harmless stimulation as nonassociative learning."
+        ],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "activity_ids": [
+          "HAB-ACT-NEAR"
+        ],
+        "checkpoint_ref": "HAB-CP-NEAR",
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ]
+      },
+      {
+        "node_id": "HAB-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: predict and interpret renewed responding when stimulus intensity or identity changes after the decline."
+        ],
+        "representation_ids": [
+          "HAB-REP-STIMULUS-CHANGE"
+        ],
+        "activity_ids": [
+          "HAB-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "HAB-CP-CHANGED",
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ]
+      },
+      {
+        "node_id": "HAB-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed near-use function: verify that one stimulus repeats and no predictive pairing or consequence contingency is present before naming habituation."
+        ],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "activity_ids": [
+          "HAB-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "HAB-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ]
+      },
+      {
+        "node_id": "HAB-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near-use re-entry: classify a new response-over-trials pattern with a different sensory modality."
+        ],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "activity_ids": [
+          "HAB-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "HAB-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ]
+      },
+      {
+        "node_id": "HAB-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed changed-task function: compare response to the repeated stimulus with response to a novel stimulus. Renewal supports dishabituation and argues against a system unable to respond."
+        ],
+        "representation_ids": [
+          "HAB-REP-STIMULUS-CHANGE"
+        ],
+        "activity_ids": [
+          "HAB-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "HAB-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ]
+      },
+      {
+        "node_id": "HAB-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: interpret a new stimulus-change vignette without reusing the exposed trial pattern."
+        ],
+        "representation_ids": [
+          "HAB-REP-STIMULUS-CHANGE"
+        ],
+        "activity_ids": [
+          "HAB-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "HAB-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ]
+      },
+      {
+        "node_id": "HAB-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: repetition-linked response decline suggests habituation; renewed response after change suggests dishabituation. Check adaptation and conditioning contrasts before deciding."
+        ],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HAB-CP-RECAP",
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ]
+      },
+      {
+        "node_id": "HAB-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "If one fresh re-entry remains unresolved, return to the planner without exit credit and resume later at the exact failed nonassociative-learning function."
+        ],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "HAB-CP-HANDOFF",
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ]
+      },
+      {
+        "node_id": "CLS-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify the event that naturally elicits a response before any pairing. This is low stakes and does not select a route or establish mastery."
+        ],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "activity_ids": [
+          "CLS-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "CLS-CP-ENTRY",
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "CLS-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: label every event and response before and after pairing, then use trial history to predict acquisition, extinction, spontaneous recovery, generalization, and discrimination."
+        ],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CLS-CP-ORIENTATION",
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "CLS-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Before conditioning, an unconditioned stimulus (US) naturally elicits an unconditioned response (UR). A neutral stimulus (NS) initially does not elicit the target response. Through acquisition, repeated NS–US pairings make the former NS a conditioned stimulus (CS). The response elicited by the CS is the conditioned response (CR).",
+          "Repeated CS presentations without the US weaken the CR through extinction. After a rest, a previously extinguished CR can briefly return as spontaneous recovery. Generalization is responding to stimuli similar to the CS; discrimination is learning to respond differently when cues predict different outcomes."
+        ],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CLS-CP-EXPLANATION",
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "CLS-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — Before: US → UR; NS → no target response. Pair: NS + US. After: CS → CR. Then inspect cue-alone trials, delay, and cue similarity."
+        ],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CLS-CP-MODEL",
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "CLS-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Expert selection: I label the US from what works without learning, then its automatic UR. I track the formerly neutral cue across pairings to identify the CS and CR. For later phases, I ask whether the cue appears without the US, whether time passes, or whether a similar cue is tested."
+        ],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CLS-CP-THINK",
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "CLS-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: an air puff naturally causes an eye blink. A light initially causes no blink. After repeated light–puff pairings, the light alone elicits blinking. Air puff is US, the original blink is UR, light becomes CS, and light-elicited blink is CR. Light-alone trials reduce the CR through extinction; a small return after a rest is spontaneous recovery."
+        ],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CLS-CP-WORKED",
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "CLS-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: label the natural relation first, then follow the neutral cue through pairing."
+        ],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "activity_ids": [
+          "CLS-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "CLS-CP-GUIDED",
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "CLS-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: infer the process from whether the CS is paired, presented alone, or tested after a delay."
+        ],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "activity_ids": [
+          "CLS-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "CLS-CP-LIGHT",
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "CLS-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: distinguish generalization from discrimination using two similar cues with different histories."
+        ],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "activity_ids": [
+          "CLS-ACT-SOLO"
+        ],
+        "checkpoint_ref": "CLS-CP-SOLO",
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "CLS-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: extinction is new learning that reduces expression of the CR, not proof that acquisition never occurred. Spontaneous recovery is return after a rest, not reacquisition through new pairings."
+        ],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CLS-CP-CONTRAST",
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "CLS-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: map NS, US, UR, CS, and CR in a fresh trial history."
+        ],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "activity_ids": [
+          "CLS-ACT-NEAR"
+        ],
+        "checkpoint_ref": "CLS-CP-NEAR",
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "CLS-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: interpret a learning curve containing extinction, a rest interval, recovery, and responses to similar versus distinguished cues."
+        ],
+        "representation_ids": [
+          "CLS-REP-LEARNING-CURVE"
+        ],
+        "activity_ids": [
+          "CLS-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "CLS-CP-CHANGED",
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "CLS-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed near-use function: start with the unlearned US–UR relation, then relabel only the former NS as CS after acquisition."
+        ],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "activity_ids": [
+          "CLS-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "CLS-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "CLS-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near-use re-entry: label a new taste-and-sound trial sequence without reusing the exposed events."
+        ],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "activity_ids": [
+          "CLS-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "CLS-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "CLS-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed changed-task function: tie each process to its observable history—pairing, CS alone, rest, similar cue, or different cue contingency."
+        ],
+        "representation_ids": [
+          "CLS-REP-LEARNING-CURVE"
+        ],
+        "activity_ids": [
+          "CLS-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "CLS-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "CLS-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: classify a new multi-phase curve with a different conditioned response."
+        ],
+        "representation_ids": [
+          "CLS-REP-LEARNING-CURVE"
+        ],
+        "activity_ids": [
+          "CLS-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "CLS-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "CLS-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: map the natural US–UR relation, track the neutral cue into CS–CR, and use trial history to classify acquisition, extinction, recovery, generalization, and discrimination."
+        ],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CLS-CP-RECAP",
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "CLS-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "If one fresh re-entry remains unresolved, return to the planner without exit credit and resume later at the exact failed classical-conditioning function."
+        ],
+        "representation_ids": [
+          "CLS-REP-SR-MAP"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CLS-CP-HANDOFF",
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "OPR-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify the behavior and the consequence that follows it. This is low stakes and does not select a route or establish mastery."
+        ],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "activity_ids": [
+          "OPR-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "OPR-CP-ENTRY",
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "OPR-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: predict behavior from a consequence contingency. Separate reinforcement from punishment, positive from negative, then use shaping, extinction, schedules, escape, and avoidance histories."
+        ],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "OPR-CP-ORIENTATION",
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "OPR-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Reinforcement increases future behavior; punishment decreases it. Positive means a consequence is added, and negative means one is removed. Positive and negative do not mean good and bad.",
+          "Shaping reinforces successive approximations toward a target behavior. Operant extinction occurs when a behavior no longer produces its former reinforcer, so the behavior tends to decline. Escape behavior terminates an aversive stimulus already present; avoidance behavior prevents or postpones it.",
+          "Ratio schedules depend on response count; interval schedules depend on time before the first reinforced response. Fixed ratio uses a set response count, variable ratio an unpredictable count, fixed interval a set time, and variable interval an unpredictable time. Variable ratio often supports high steady responding; fixed interval often produces increasing responding near the expected time."
+        ],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "OPR-CP-EXPLANATION",
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "OPR-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — Behavior → consequence added or removed → behavior later increases or decreases. Then inspect whether reinforcement depends on responses, time, fixed rules, or variable rules."
+        ],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "OPR-CP-MODEL",
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "OPR-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Expert selection: I never classify from pleasantness alone. I mark what changed after the behavior and then observe the future behavior. For schedule questions, I ask whether the rule counts responses or waits for time, then whether the requirement is predictable."
+        ],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "OPR-CP-THINK",
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "OPR-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: fastening a seat belt stops an irritating buzzer, and seat-belt use increases. The behavior removes an aversive stimulus and becomes more frequent, so this is negative reinforcement. It is not punishment because the behavior increases. If the driver buckles before the buzzer begins to prevent it, that instance is avoidance rather than escape."
+        ],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "OPR-CP-WORKED",
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "OPR-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: label behavior, immediate consequence, and future frequency before naming the contingency."
+        ],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "activity_ids": [
+          "OPR-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "OPR-CP-GUIDED",
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "OPR-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: distinguish added versus removed consequences and reinforcement versus punishment in a fresh vignette."
+        ],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "activity_ids": [
+          "OPR-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "OPR-CP-LIGHT",
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "OPR-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: identify a reinforcement schedule from its actual delivery rule, not from a memorized graph alone."
+        ],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "activity_ids": [
+          "OPR-ACT-SOLO"
+        ],
+        "checkpoint_ref": "OPR-CP-SOLO",
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "OPR-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: negative reinforcement increases behavior by removal; it is not punishment. Escape stops an aversive event already present, while avoidance prevents it. Shaping changes criteria gradually; bribery and clinical program design are outside this lesson."
+        ],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "OPR-CP-CONTRAST",
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "OPR-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: classify a behavior–consequence relation using sign and future behavior effect."
+        ],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "activity_ids": [
+          "OPR-ACT-NEAR"
+        ],
+        "checkpoint_ref": "OPR-CP-NEAR",
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "OPR-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: classify whether a response prevents or terminates an aversive event, determine whether that consequence increases behavior, and distinguish elapsed-time from response-count schedules."
+        ],
+        "representation_ids": [
+          "OPR-REP-SCHEDULE-GRAPH"
+        ],
+        "activity_ids": [
+          "OPR-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "OPR-CP-CHANGED",
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "OPR-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed near-use function: ask two questions in order—was something added or removed, and did the behavior increase or decrease later?"
+        ],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "activity_ids": [
+          "OPR-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "OPR-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "OPR-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near-use re-entry: classify a new consequence relation with a different behavior and outcome."
+        ],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "activity_ids": [
+          "OPR-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "OPR-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "OPR-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed changed-task function with three checks: prevention means avoidance, termination means escape, and an increasing response after aversive removal is negative reinforcement; then classify a schedule by time versus response count."
+        ],
+        "representation_ids": [
+          "OPR-REP-SCHEDULE-GRAPH"
+        ],
+        "activity_ids": [
+          "OPR-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "OPR-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "OPR-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: classify a new prevention contingency and its unpredictable time-based reinforcement opportunities."
+        ],
+        "representation_ids": [
+          "OPR-REP-SCHEDULE-GRAPH"
+        ],
+        "activity_ids": [
+          "OPR-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "OPR-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "OPR-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: future behavior decides reinforcement versus punishment; added or removed decides positive versus negative. Shaping, extinction, schedules, escape, and avoidance each have distinct contingencies."
+        ],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "OPR-CP-RECAP",
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "OPR-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "If one fresh re-entry remains unresolved, return to the planner without exit credit and resume later at the exact failed operant function."
+        ],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "OPR-CP-HANDOFF",
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ]
+      },
+      {
+        "node_id": "CNS-NODE-ENTRY",
+        "node_kind": "ENTRY_CHECK_BOUNDARY",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Starting check: identify a result that cannot be predicted from reward count alone. This is low stakes and does not select a route or establish mastery."
+        ],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "activity_ids": [
+          "CNS-ACT-ENTRY"
+        ],
+        "checkpoint_ref": "CNS-CP-ENTRY",
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ]
+      },
+      {
+        "node_id": "CNS-NODE-ORIENTATION",
+        "node_kind": "ORIENTATION",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Goal: treat associative principles as models with constraints. Use expectancy and cognitive representation, biological predisposition, and instinctive drift when observed learning departs systematically from a simple pairing or reinforcement prediction."
+        ],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CNS-CP-ORIENTATION",
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ]
+      },
+      {
+        "node_id": "CNS-NODE-EXPLANATION",
+        "node_kind": "EXPLANATION",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Cognitive processes matter when learners represent relations, expect outcomes, or acquire information not immediately expressed in performance. A changed expectation can rapidly alter behavior even when raw pairing counts are similar.",
+          "Biological predispositions make some cue–outcome relations easier to acquire than others. Prepared associations can emerge rapidly or across unusual delays compared with arbitrary relations.",
+          "Instinctive drift occurs when a trained operant response increasingly gives way to a species-typical behavior that competes with the contingency. These ideas constrain predictions; they do not require advanced comparative-learning theory."
+        ],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CNS-CP-EXPLANATION",
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ]
+      },
+      {
+        "node_id": "CNS-NODE-MODEL",
+        "node_kind": "MENTAL_MODEL",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Mental model — Start with the associative prediction, compare observed behavior, then test three modifiers: represented expectancy, biologically prepared relation, or species-typical competing response."
+        ],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CNS-CP-MODEL",
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ]
+      },
+      {
+        "node_id": "CNS-NODE-THINK",
+        "node_kind": "EXPERT_THINK_ALOUD",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Expert selection: if performance changes immediately after an outcome is devalued, I inspect expectancy. If one cue–outcome pairing is learned much more readily than an arbitrary pairing, I inspect predisposition. If a trained behavior degrades into a natural action despite continued reinforcement, I inspect instinctive drift."
+        ],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CNS-CP-THINK",
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ]
+      },
+      {
+        "node_id": "CNS-NODE-WORKED",
+        "node_kind": "WORKED_EXAMPLE",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Worked example: two groups receive equal training navigating a maze, but one group receives reward only later and immediately performs an efficient route. The sudden performance reveals information acquired before reward expression, consistent with a cognitive map rather than reward creating every route relation at that moment. This does not erase reinforcement effects; it changes the model of what was learned."
+        ],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CNS-CP-WORKED",
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ]
+      },
+      {
+        "node_id": "CNS-NODE-GUIDED",
+        "node_kind": "GUIDED_PRACTICE",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Guided practice: state the simple associative prediction, then name the specific observed departure that needs a constraint."
+        ],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "activity_ids": [
+          "CNS-ACT-GUIDED"
+        ],
+        "checkpoint_ref": "CNS-CP-GUIDED",
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ]
+      },
+      {
+        "node_id": "CNS-NODE-LIGHT",
+        "node_kind": "LIGHT_SUPPORT_PRACTICE",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Less help: distinguish expectancy-driven performance change from additional acquisition trials."
+        ],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "activity_ids": [
+          "CNS-ACT-LIGHT"
+        ],
+        "checkpoint_ref": "CNS-CP-LIGHT",
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ]
+      },
+      {
+        "node_id": "CNS-NODE-SOLO",
+        "node_kind": "SOLO_PRACTICE",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "On your own: identify whether a rapid selective association is more consistent with biological predisposition than equal associability."
+        ],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "activity_ids": [
+          "CNS-ACT-SOLO"
+        ],
+        "checkpoint_ref": "CNS-CP-SOLO",
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ]
+      },
+      {
+        "node_id": "CNS-NODE-CONTRAST",
+        "node_kind": "CONTRAST_BOUNDARY",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Boundary: a difficult task is not automatically a biological constraint, and one failed response is not instinctive drift. Drift requires a trained behavior shifting toward a species-typical competing pattern."
+        ],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CNS-CP-CONTRAST",
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ]
+      },
+      {
+        "node_id": "CNS-NODE-NEAR",
+        "node_kind": "NEAR_EXIT",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Near exit: explain a performance shift from changed expectancy or a cognitive representation."
+        ],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "activity_ids": [
+          "CNS-ACT-NEAR"
+        ],
+        "checkpoint_ref": "CNS-CP-NEAR",
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ]
+      },
+      {
+        "node_id": "CNS-NODE-CHANGED",
+        "node_kind": "CHANGED_EXIT",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Changed-task exit: distinguish biological predisposition from instinctive drift in paired expected-versus-observed cases."
+        ],
+        "representation_ids": [
+          "CNS-REP-CONSTRAINT-VIGNETTE"
+        ],
+        "activity_ids": [
+          "CNS-ACT-CHANGED"
+        ],
+        "checkpoint_ref": "CNS-CP-CHANGED",
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ]
+      },
+      {
+        "node_id": "CNS-NODE-REPAIR-NEAR",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed near-use function: compare training history with the timing of the performance change. A rapid change after new information can implicate expectancy without new pairings."
+        ],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "activity_ids": [
+          "CNS-ACT-REPAIR-NEAR"
+        ],
+        "checkpoint_ref": "CNS-CP-REPAIR-NEAR",
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ]
+      },
+      {
+        "node_id": "CNS-NODE-REENTRY-NEAR",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh near-use re-entry: interpret a new route-choice case after outcome information changes."
+        ],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "activity_ids": [
+          "CNS-ACT-REENTRY-NEAR"
+        ],
+        "checkpoint_ref": "CNS-CP-REENTRY-NEAR",
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ]
+      },
+      {
+        "node_id": "CNS-NODE-REPAIR-CHANGED",
+        "node_kind": "TARGETED_REPAIR",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Repair the failed changed-task function: predisposition changes which associations are readily learned; instinctive drift changes a trained response toward a natural behavior."
+        ],
+        "representation_ids": [
+          "CNS-REP-CONSTRAINT-VIGNETTE"
+        ],
+        "activity_ids": [
+          "CNS-ACT-REPAIR-CHANGED"
+        ],
+        "checkpoint_ref": "CNS-CP-REPAIR-CHANGED",
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ]
+      },
+      {
+        "node_id": "CNS-NODE-REENTRY-CHANGED",
+        "node_kind": "EXACT_REENTRY",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Fresh changed-task re-entry: classify a new selective-association and trained-response breakdown pair."
+        ],
+        "representation_ids": [
+          "CNS-REP-CONSTRAINT-VIGNETTE"
+        ],
+        "activity_ids": [
+          "CNS-ACT-REENTRY-CHANGED"
+        ],
+        "checkpoint_ref": "CNS-CP-REENTRY-CHANGED",
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ]
+      },
+      {
+        "node_id": "CNS-NODE-RECAP",
+        "node_kind": "RECAP",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "Recap: cognitive expectations and representations, biological predispositions, and instinctive drift can each produce principled departures from a simple associative prediction."
+        ],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CNS-CP-RECAP",
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ]
+      },
+      {
+        "node_id": "CNS-NODE-HANDOFF",
+        "node_kind": "TRANSITION",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "route_eligibility": [
+          "STANDARD"
+        ],
+        "learner_content_blocks": [
+          "If one fresh re-entry remains unresolved, return to the planner without exit credit and resume later at the exact failed constraint function."
+        ],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED"
+        ],
+        "activity_ids": [],
+        "checkpoint_ref": "CNS-CP-HANDOFF",
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ]
+      }
+    ],
+    "activities": [
+      {
+        "activity_id": "HAB-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-337354",
+        "item_binding_id": "HAB-ITEM-ENTRY",
+        "learner_operation": "Inspect the entry scenario to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "authorized_next_node_ids": [
+          "HAB-NODE-ORIENTATION",
+          "HAB-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "HAB-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-337354",
+        "item_binding_id": "HAB-ITEM-GUIDED",
+        "learner_operation": "Follow the guided steps to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "authorized_next_node_ids": [
+          "HAB-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "HAB-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-337354",
+        "item_binding_id": "HAB-ITEM-LIGHT",
+        "learner_operation": "Complete a brief scaffolded check to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "authorized_next_node_ids": [
+          "HAB-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "HAB-ACT-SOLO",
+        "primary_kc_id": "V3-KC-337354",
+        "item_binding_id": "HAB-ITEM-SOLO",
+        "learner_operation": "Work independently to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "authorized_next_node_ids": [
+          "HAB-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "HAB-ACT-NEAR",
+        "primary_kc_id": "V3-KC-337354",
+        "item_binding_id": "HAB-ITEM-NEAR",
+        "learner_operation": "Apply the method in a nearby context to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "authorized_next_node_ids": [
+          "HAB-NODE-CHANGED",
+          "HAB-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "HAB-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-337354",
+        "item_binding_id": "HAB-ITEM-CHANGED",
+        "learner_operation": "Transfer the method to a changed representation and context to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "authorized_next_node_ids": [
+          "HAB-NODE-RECAP",
+          "HAB-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "HAB-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-337354",
+        "item_binding_id": "HAB-ITEM-REPAIR-NEAR",
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "authorized_next_node_ids": [
+          "HAB-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "HAB-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-337354",
+        "item_binding_id": "HAB-ITEM-REENTRY-NEAR",
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "authorized_next_node_ids": [
+          "HAB-NODE-CHANGED",
+          "HAB-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "HAB-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-337354",
+        "item_binding_id": "HAB-ITEM-REPAIR-CHANGED",
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "authorized_next_node_ids": [
+          "HAB-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "HAB-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-337354",
+        "item_binding_id": "HAB-ITEM-REENTRY-CHANGED",
+        "learner_operation": "Reapply the corrected method in a fresh changed context to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "authorized_next_node_ids": [
+          "HAB-NODE-RECAP",
+          "HAB-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "CLS-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-564671",
+        "item_binding_id": "CLS-ITEM-ENTRY",
+        "learner_operation": "Inspect the entry scenario to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "authorized_next_node_ids": [
+          "CLS-NODE-ORIENTATION",
+          "CLS-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "CLS-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-564671",
+        "item_binding_id": "CLS-ITEM-GUIDED",
+        "learner_operation": "Follow the guided steps to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "authorized_next_node_ids": [
+          "CLS-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "CLS-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-564671",
+        "item_binding_id": "CLS-ITEM-LIGHT",
+        "learner_operation": "Complete a brief scaffolded check to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "authorized_next_node_ids": [
+          "CLS-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "CLS-ACT-SOLO",
+        "primary_kc_id": "V3-KC-564671",
+        "item_binding_id": "CLS-ITEM-SOLO",
+        "learner_operation": "Work independently to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "authorized_next_node_ids": [
+          "CLS-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "CLS-ACT-NEAR",
+        "primary_kc_id": "V3-KC-564671",
+        "item_binding_id": "CLS-ITEM-NEAR",
+        "learner_operation": "Apply the method in a nearby context to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "authorized_next_node_ids": [
+          "CLS-NODE-CHANGED",
+          "CLS-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "CLS-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-564671",
+        "item_binding_id": "CLS-ITEM-CHANGED",
+        "learner_operation": "Transfer the method to a changed representation and context to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "authorized_next_node_ids": [
+          "CLS-NODE-RECAP",
+          "CLS-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "CLS-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-564671",
+        "item_binding_id": "CLS-ITEM-REPAIR-NEAR",
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "authorized_next_node_ids": [
+          "CLS-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "CLS-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-564671",
+        "item_binding_id": "CLS-ITEM-REENTRY-NEAR",
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "authorized_next_node_ids": [
+          "CLS-NODE-CHANGED",
+          "CLS-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "CLS-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-564671",
+        "item_binding_id": "CLS-ITEM-REPAIR-CHANGED",
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "authorized_next_node_ids": [
+          "CLS-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "CLS-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-564671",
+        "item_binding_id": "CLS-ITEM-REENTRY-CHANGED",
+        "learner_operation": "Reapply the corrected method in a fresh changed context to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "authorized_next_node_ids": [
+          "CLS-NODE-RECAP",
+          "CLS-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "OPR-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-628404",
+        "item_binding_id": "OPR-ITEM-ENTRY",
+        "learner_operation": "Inspect the entry scenario to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "authorized_next_node_ids": [
+          "OPR-NODE-ORIENTATION",
+          "OPR-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "OPR-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-628404",
+        "item_binding_id": "OPR-ITEM-GUIDED",
+        "learner_operation": "Follow the guided steps to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "authorized_next_node_ids": [
+          "OPR-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "OPR-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-628404",
+        "item_binding_id": "OPR-ITEM-LIGHT",
+        "learner_operation": "Complete a brief scaffolded check to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "authorized_next_node_ids": [
+          "OPR-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "OPR-ACT-SOLO",
+        "primary_kc_id": "V3-KC-628404",
+        "item_binding_id": "OPR-ITEM-SOLO",
+        "learner_operation": "Work independently to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "authorized_next_node_ids": [
+          "OPR-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "OPR-ACT-NEAR",
+        "primary_kc_id": "V3-KC-628404",
+        "item_binding_id": "OPR-ITEM-NEAR",
+        "learner_operation": "Apply the method in a nearby context to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "authorized_next_node_ids": [
+          "OPR-NODE-CHANGED",
+          "OPR-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "OPR-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-628404",
+        "item_binding_id": "OPR-ITEM-CHANGED",
+        "learner_operation": "Transfer the method to a changed representation and context to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "authorized_next_node_ids": [
+          "OPR-NODE-RECAP",
+          "OPR-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "OPR-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-628404",
+        "item_binding_id": "OPR-ITEM-REPAIR-NEAR",
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "authorized_next_node_ids": [
+          "OPR-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "OPR-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-628404",
+        "item_binding_id": "OPR-ITEM-REENTRY-NEAR",
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "authorized_next_node_ids": [
+          "OPR-NODE-CHANGED",
+          "OPR-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "OPR-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-628404",
+        "item_binding_id": "OPR-ITEM-REPAIR-CHANGED",
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "authorized_next_node_ids": [
+          "OPR-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "OPR-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-628404",
+        "item_binding_id": "OPR-ITEM-REENTRY-CHANGED",
+        "learner_operation": "Reapply the corrected method in a fresh changed context to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "authorized_next_node_ids": [
+          "OPR-NODE-RECAP",
+          "OPR-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "CNS-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-730668",
+        "item_binding_id": "CNS-ITEM-ENTRY",
+        "learner_operation": "Inspect the entry scenario to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "authorized_next_node_ids": [
+          "CNS-NODE-ORIENTATION",
+          "CNS-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "CNS-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-730668",
+        "item_binding_id": "CNS-ITEM-GUIDED",
+        "learner_operation": "Follow the guided steps to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "authorized_next_node_ids": [
+          "CNS-NODE-LIGHT"
+        ]
+      },
+      {
+        "activity_id": "CNS-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-730668",
+        "item_binding_id": "CNS-ITEM-LIGHT",
+        "learner_operation": "Complete a brief scaffolded check to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "authorized_next_node_ids": [
+          "CNS-NODE-SOLO"
+        ]
+      },
+      {
+        "activity_id": "CNS-ACT-SOLO",
+        "primary_kc_id": "V3-KC-730668",
+        "item_binding_id": "CNS-ITEM-SOLO",
+        "learner_operation": "Work independently to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "authorized_next_node_ids": [
+          "CNS-NODE-CONTRAST"
+        ]
+      },
+      {
+        "activity_id": "CNS-ACT-NEAR",
+        "primary_kc_id": "V3-KC-730668",
+        "item_binding_id": "CNS-ITEM-NEAR",
+        "learner_operation": "Apply the method in a nearby context to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "authorized_next_node_ids": [
+          "CNS-NODE-CHANGED",
+          "CNS-NODE-REPAIR-NEAR"
+        ]
+      },
+      {
+        "activity_id": "CNS-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-730668",
+        "item_binding_id": "CNS-ITEM-CHANGED",
+        "learner_operation": "Transfer the method to a changed representation and context to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "authorized_next_node_ids": [
+          "CNS-NODE-RECAP",
+          "CNS-NODE-REPAIR-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "CNS-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-730668",
+        "item_binding_id": "CNS-ITEM-REPAIR-NEAR",
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "authorized_next_node_ids": [
+          "CNS-NODE-REENTRY-NEAR"
+        ]
+      },
+      {
+        "activity_id": "CNS-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-730668",
+        "item_binding_id": "CNS-ITEM-REENTRY-NEAR",
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "authorized_next_node_ids": [
+          "CNS-NODE-CHANGED",
+          "CNS-NODE-HANDOFF"
+        ]
+      },
+      {
+        "activity_id": "CNS-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-730668",
+        "item_binding_id": "CNS-ITEM-REPAIR-CHANGED",
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "authorized_next_node_ids": [
+          "CNS-NODE-REENTRY-CHANGED"
+        ]
+      },
+      {
+        "activity_id": "CNS-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-730668",
+        "item_binding_id": "CNS-ITEM-REENTRY-CHANGED",
+        "learner_operation": "Reapply the corrected method in a fresh changed context to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "authorized_next_node_ids": [
+          "CNS-NODE-RECAP",
+          "CNS-NODE-HANDOFF"
+        ]
+      }
+    ],
+    "kc_scripts": [
+      {
+        "kc_id": "V3-KC-337354",
+        "canonical_ordinal": 1,
+        "objective_ref": "objective:V3-KC-337354",
+        "scope_in_refs": [
+          "V3-KC-337354:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-337354:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "HAB-CLAIM-DECLINE",
+          "HAB-CLAIM-RENEWAL"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "HAB-NODE-ENTRY",
+        "orientation_node_id": "HAB-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "HAB-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "HAB-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "HAB-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "HAB-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "HAB-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "HAB-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "HAB-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "HAB-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "HAB-NODE-NEAR",
+          "activity_ids": [
+            "HAB-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "HAB-NODE-CHANGED",
+          "activity_ids": [
+            "HAB-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "HAB-FEATURE-REPETITION-RESPONSE-DECLINE",
+          "HAB-FEATURE-RENEWAL-AFTER-NOVEL-STIMULUS"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "HAB-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "HAB-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "HAB-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "HAB-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "HAB-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "HAB-ACT-REENTRY-NEAR",
+            "success_next_node_id": "HAB-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "HAB-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "HAB-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "HAB-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "HAB-REP-TRIAL-GRAPH",
+          "HAB-REP-STIMULUS-CHANGE"
+        ],
+        "accessibility_equivalent_ids": [
+          "HAB-REP-TEXT-EQUIVALENT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "HAB-NODE-ENTRY",
+            "HAB-NODE-RECAP"
+          ],
+          "standard": [
+            "HAB-NODE-ENTRY",
+            "HAB-NODE-ORIENTATION",
+            "HAB-NODE-EXPLANATION",
+            "HAB-NODE-MODEL",
+            "HAB-NODE-THINK",
+            "HAB-NODE-WORKED",
+            "HAB-NODE-GUIDED",
+            "HAB-NODE-LIGHT",
+            "HAB-NODE-SOLO",
+            "HAB-NODE-CONTRAST",
+            "HAB-NODE-NEAR",
+            "HAB-NODE-CHANGED",
+            "HAB-NODE-REPAIR-NEAR",
+            "HAB-NODE-REENTRY-NEAR",
+            "HAB-NODE-REPAIR-CHANGED",
+            "HAB-NODE-REENTRY-CHANGED",
+            "HAB-NODE-RECAP",
+            "HAB-NODE-HANDOFF"
+          ],
+          "misconception": [
+            "HAB-NODE-ENTRY",
+            "HAB-NODE-REPAIR-NEAR",
+            "HAB-NODE-REPAIR-CHANGED",
+            "HAB-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "HAB-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-564671",
+        "canonical_ordinal": 2,
+        "objective_ref": "objective:V3-KC-564671",
+        "scope_in_refs": [
+          "V3-KC-564671:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-564671:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "CLS-CLAIM-MAP",
+          "CLS-CLAIM-PROCESSES"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "CLS-NODE-ENTRY",
+        "orientation_node_id": "CLS-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "CLS-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "CLS-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "CLS-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "CLS-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "CLS-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "CLS-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "CLS-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "CLS-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "CLS-NODE-NEAR",
+          "activity_ids": [
+            "CLS-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "CLS-NODE-CHANGED",
+          "activity_ids": [
+            "CLS-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "CLS-FEATURE-US-UR-CS-CR-MAP",
+          "CLS-FEATURE-ACQUISITION-EXTINCTION-RETURN-AND-SCOPE"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "CLS-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "CLS-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "CLS-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "CLS-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "CLS-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "CLS-ACT-REENTRY-NEAR",
+            "success_next_node_id": "CLS-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "CLS-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "CLS-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "CLS-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "CLS-REP-SR-MAP",
+          "CLS-REP-LEARNING-CURVE"
+        ],
+        "accessibility_equivalent_ids": [
+          "CLS-REP-TEXT-EQUIVALENT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "CLS-NODE-ENTRY",
+            "CLS-NODE-RECAP"
+          ],
+          "standard": [
+            "CLS-NODE-ENTRY",
+            "CLS-NODE-ORIENTATION",
+            "CLS-NODE-EXPLANATION",
+            "CLS-NODE-MODEL",
+            "CLS-NODE-THINK",
+            "CLS-NODE-WORKED",
+            "CLS-NODE-GUIDED",
+            "CLS-NODE-LIGHT",
+            "CLS-NODE-SOLO",
+            "CLS-NODE-CONTRAST",
+            "CLS-NODE-NEAR",
+            "CLS-NODE-CHANGED",
+            "CLS-NODE-REPAIR-NEAR",
+            "CLS-NODE-REENTRY-NEAR",
+            "CLS-NODE-REPAIR-CHANGED",
+            "CLS-NODE-REENTRY-CHANGED",
+            "CLS-NODE-RECAP",
+            "CLS-NODE-HANDOFF"
+          ],
+          "misconception": [
+            "CLS-NODE-ENTRY",
+            "CLS-NODE-REPAIR-NEAR",
+            "CLS-NODE-REPAIR-CHANGED",
+            "CLS-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "CLS-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-628404",
+        "canonical_ordinal": 3,
+        "objective_ref": "objective:V3-KC-628404",
+        "scope_in_refs": [
+          "V3-KC-628404:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-628404:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "OPR-CLAIM-CONTINGENCY",
+          "OPR-CLAIM-PROCESSES"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "OPR-NODE-ENTRY",
+        "orientation_node_id": "OPR-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "OPR-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "OPR-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "OPR-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "OPR-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "OPR-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "OPR-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "OPR-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "OPR-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "OPR-NODE-NEAR",
+          "activity_ids": [
+            "OPR-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "OPR-NODE-CHANGED",
+          "activity_ids": [
+            "OPR-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "OPR-FEATURE-CONSEQUENCE-EFFECT-AND-SIGN",
+          "OPR-FEATURE-SHAPING-SCHEDULE-EXTINCTION-ESCAPE-AVOIDANCE"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "OPR-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "OPR-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "OPR-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "OPR-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "OPR-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "OPR-ACT-REENTRY-NEAR",
+            "success_next_node_id": "OPR-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "OPR-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "OPR-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "OPR-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "OPR-REP-CONTINGENCY",
+          "OPR-REP-SCHEDULE-GRAPH"
+        ],
+        "accessibility_equivalent_ids": [
+          "OPR-REP-TEXT-EQUIVALENT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "OPR-NODE-ENTRY",
+            "OPR-NODE-RECAP"
+          ],
+          "standard": [
+            "OPR-NODE-ENTRY",
+            "OPR-NODE-ORIENTATION",
+            "OPR-NODE-EXPLANATION",
+            "OPR-NODE-MODEL",
+            "OPR-NODE-THINK",
+            "OPR-NODE-WORKED",
+            "OPR-NODE-GUIDED",
+            "OPR-NODE-LIGHT",
+            "OPR-NODE-SOLO",
+            "OPR-NODE-CONTRAST",
+            "OPR-NODE-NEAR",
+            "OPR-NODE-CHANGED",
+            "OPR-NODE-REPAIR-NEAR",
+            "OPR-NODE-REENTRY-NEAR",
+            "OPR-NODE-REPAIR-CHANGED",
+            "OPR-NODE-REENTRY-CHANGED",
+            "OPR-NODE-RECAP",
+            "OPR-NODE-HANDOFF"
+          ],
+          "misconception": [
+            "OPR-NODE-ENTRY",
+            "OPR-NODE-REPAIR-NEAR",
+            "OPR-NODE-REPAIR-CHANGED",
+            "OPR-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "OPR-NODE-RECAP"
+      },
+      {
+        "kc_id": "V3-KC-730668",
+        "canonical_ordinal": 4,
+        "objective_ref": "objective:V3-KC-730668",
+        "scope_in_refs": [
+          "V3-KC-730668:SCOPE_IN:0"
+        ],
+        "scope_out_refs": [
+          "V3-KC-730668:SCOPE_OUT:0"
+        ],
+        "source_claim_refs": [
+          "CNS-CLAIM-COGNITION",
+          "CNS-CLAIM-BIOLOGY"
+        ],
+        "prerequisite_point_refs": [],
+        "entry_check_boundary_id": "CNS-NODE-ENTRY",
+        "orientation_node_id": "CNS-NODE-ORIENTATION",
+        "explanation_node_ids": [
+          "CNS-NODE-EXPLANATION"
+        ],
+        "mental_model_node_ids": [
+          "CNS-NODE-MODEL"
+        ],
+        "expert_think_aloud_node_ids": [
+          "CNS-NODE-THINK"
+        ],
+        "worked_example_node_ids": [
+          "CNS-NODE-WORKED"
+        ],
+        "guided_activity_ids": [
+          "CNS-ACT-GUIDED"
+        ],
+        "light_support_activity_ids": [
+          "CNS-ACT-LIGHT"
+        ],
+        "solo_activity_ids": [
+          "CNS-ACT-SOLO"
+        ],
+        "contrast_boundary_node_ids": [
+          "CNS-NODE-CONTRAST"
+        ],
+        "near_exit_binding": {
+          "node_id": "CNS-NODE-NEAR",
+          "activity_ids": [
+            "CNS-ACT-NEAR"
+          ]
+        },
+        "changed_exit_binding": {
+          "node_id": "CNS-NODE-CHANGED",
+          "activity_ids": [
+            "CNS-ACT-CHANGED"
+          ]
+        },
+        "misconception_feature_ids": [
+          "CNS-FEATURE-EXPECTANCY-AND-COGNITIVE-MAP",
+          "CNS-FEATURE-PREDISPOSITION-AND-INSTINCTIVE-DRIFT"
+        ],
+        "repair_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "CNS-NODE-REPAIR-NEAR",
+            "confirmation_activity_id": "CNS-ACT-REPAIR-NEAR"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "CNS-NODE-REPAIR-CHANGED",
+            "confirmation_activity_id": "CNS-ACT-REPAIR-CHANGED"
+          }
+        ],
+        "exact_reentry_bindings": [
+          {
+            "failed_function": "NEAR_USE",
+            "node_id": "CNS-NODE-REENTRY-NEAR",
+            "fresh_confirmation_activity_id": "CNS-ACT-REENTRY-NEAR",
+            "success_next_node_id": "CNS-NODE-CHANGED"
+          },
+          {
+            "failed_function": "CHANGED_TASK",
+            "node_id": "CNS-NODE-REENTRY-CHANGED",
+            "fresh_confirmation_activity_id": "CNS-ACT-REENTRY-CHANGED",
+            "success_next_node_id": "CNS-NODE-RECAP"
+          }
+        ],
+        "representation_ids": [
+          "CNS-REP-EXPECTED-OBSERVED",
+          "CNS-REP-CONSTRAINT-VIGNETTE"
+        ],
+        "accessibility_equivalent_ids": [
+          "CNS-REP-TEXT-EQUIVALENT"
+        ],
+        "route_node_coverage": {
+          "concise": [
+            "CNS-NODE-ENTRY",
+            "CNS-NODE-RECAP"
+          ],
+          "standard": [
+            "CNS-NODE-ENTRY",
+            "CNS-NODE-ORIENTATION",
+            "CNS-NODE-EXPLANATION",
+            "CNS-NODE-MODEL",
+            "CNS-NODE-THINK",
+            "CNS-NODE-WORKED",
+            "CNS-NODE-GUIDED",
+            "CNS-NODE-LIGHT",
+            "CNS-NODE-SOLO",
+            "CNS-NODE-CONTRAST",
+            "CNS-NODE-NEAR",
+            "CNS-NODE-CHANGED",
+            "CNS-NODE-REPAIR-NEAR",
+            "CNS-NODE-REENTRY-NEAR",
+            "CNS-NODE-REPAIR-CHANGED",
+            "CNS-NODE-REENTRY-CHANGED",
+            "CNS-NODE-RECAP",
+            "CNS-NODE-HANDOFF"
+          ],
+          "misconception": [
+            "CNS-NODE-ENTRY",
+            "CNS-NODE-REPAIR-NEAR",
+            "CNS-NODE-REPAIR-CHANGED",
+            "CNS-NODE-RECAP"
+          ]
+        },
+        "recap_node_id": "CNS-NODE-RECAP"
+      }
+    ],
+    "question_evidence_plan": [
+      {
+        "item_binding_id": "HAB-ITEM-ENTRY",
+        "activity_id": "HAB-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "HAB-FAMILY-ENTRY",
+        "stimulus_lineage_id": "HAB-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HAB-REP-TRIAL-GRAPH",
+        "changed_dimensions": [],
+        "learner_operation": "Inspect the entry scenario to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "hint_policy": "NO_ANSWER_BEARING_HINT_BEFORE_COMMITMENT",
+        "feedback_release": "AFTER_COMMIT_NONCONSEQUENTIAL",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_OBSERVATION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "HAB_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#HAB-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#HAB-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HAB-SOLUTION-ENTRY",
+        "decisive_cue_id": "HAB-CUE-ENTRY",
+        "distractor_lineage_id": "HAB-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "HAB-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "HAB-FAMILY-WORKED",
+        "stimulus_lineage_id": "HAB-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HAB-REP-TRIAL-GRAPH",
+        "changed_dimensions": [],
+        "learner_operation": "Trace a worked example to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:HAB-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HAB-SOLUTION-WORKED",
+        "decisive_cue_id": "HAB-CUE-WORKED",
+        "distractor_lineage_id": "HAB-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "HAB-ITEM-GUIDED",
+        "activity_id": "HAB-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "HAB-FAMILY-GUIDED",
+        "stimulus_lineage_id": "HAB-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_DECISION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HAB-REP-TRIAL-GRAPH",
+        "changed_dimensions": [],
+        "learner_operation": "Follow the guided steps to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "hint_policy": "DECISION_SEQUENCE_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "HAB_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#HAB-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#HAB-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HAB-SOLUTION-GUIDED",
+        "decisive_cue_id": "HAB-CUE-GUIDED",
+        "distractor_lineage_id": "HAB-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "HAB-ITEM-LIGHT",
+        "activity_id": "HAB-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "HAB-FAMILY-LIGHT",
+        "stimulus_lineage_id": "HAB-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_DECISION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HAB-REP-TRIAL-GRAPH",
+        "changed_dimensions": [],
+        "learner_operation": "Complete a brief scaffolded check to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "hint_policy": "BRIEF_NONANSWER_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "HAB_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#HAB-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#HAB-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HAB-SOLUTION-LIGHT",
+        "decisive_cue_id": "HAB-CUE-LIGHT",
+        "distractor_lineage_id": "HAB-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "HAB-ITEM-SOLO",
+        "activity_id": "HAB-ACT-SOLO",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "HAB-FAMILY-SOLO",
+        "stimulus_lineage_id": "HAB-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HAB-REP-TRIAL-GRAPH",
+        "changed_dimensions": [],
+        "learner_operation": "Work independently to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "HAB_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#HAB-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#HAB-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HAB-SOLUTION-SOLO",
+        "decisive_cue_id": "HAB-CUE-SOLO",
+        "distractor_lineage_id": "HAB-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "HAB-ITEM-NEAR",
+        "activity_id": "HAB-ACT-NEAR",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "HAB-FAMILY-NEAR",
+        "stimulus_lineage_id": "HAB-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HAB-REP-TRIAL-GRAPH",
+        "changed_dimensions": [],
+        "learner_operation": "Apply the method in a nearby context to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HAB_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#HAB-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#HAB-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HAB-SOLUTION-NEAR",
+        "decisive_cue_id": "HAB-CUE-NEAR",
+        "distractor_lineage_id": "HAB-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "HAB-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "HAB-FEATURE-REPETITION-RESPONSE-DECLINE"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "HAB-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "HAB-FEATURE-REPETITION-RESPONSE-DECLINE"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "HAB-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "HAB-FEATURE-REPETITION-RESPONSE-DECLINE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "HAB-ITEM-CHANGED",
+        "activity_id": "HAB-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "HAB-FAMILY-CHANGED",
+        "stimulus_lineage_id": "HAB-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HAB-REP-STIMULUS-CHANGE",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "Transfer the method to a changed representation and context to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HAB_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#HAB-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#HAB-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HAB-SOLUTION-CHANGED",
+        "decisive_cue_id": "HAB-CUE-CHANGED",
+        "distractor_lineage_id": "HAB-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "HAB-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "HAB-FEATURE-RENEWAL-AFTER-NOVEL-STIMULUS"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "HAB-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "HAB-FEATURE-RENEWAL-AFTER-NOVEL-STIMULUS"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "HAB-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "HAB-FEATURE-RENEWAL-AFTER-NOVEL-STIMULUS"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "HAB-ITEM-REPAIR-NEAR",
+        "activity_id": "HAB-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "HAB-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "HAB-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "HAB-REP-TRIAL-GRAPH",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HAB_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#HAB-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#HAB-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HAB-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "HAB-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "HAB-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "HAB-ITEM-REENTRY-NEAR",
+        "activity_id": "HAB-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "HAB-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "HAB-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HAB-REP-TRIAL-GRAPH",
+        "changed_dimensions": [],
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HAB_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#HAB-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#HAB-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HAB-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "HAB-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "HAB-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "HAB-ITEM-REPAIR-CHANGED",
+        "activity_id": "HAB-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "HAB-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "HAB-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "HAB-REP-STIMULUS-CHANGE",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HAB_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#HAB-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#HAB-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HAB-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "HAB-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "HAB-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "HAB-ITEM-REENTRY-CHANGED",
+        "activity_id": "HAB-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-337354",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "HAB-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "HAB-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "HAB-REP-STIMULUS-CHANGE",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "Reapply the corrected method in a fresh changed context to distinguish habituation, dishabituation, and sensitization from changes in response.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "HAB_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#HAB-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#HAB-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "HAB-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "HAB-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "HAB-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "CLS-ITEM-ENTRY",
+        "activity_id": "CLS-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "CLS-FAMILY-ENTRY",
+        "stimulus_lineage_id": "CLS-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CLS-REP-SR-MAP",
+        "changed_dimensions": [],
+        "learner_operation": "Inspect the entry scenario to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "hint_policy": "NO_ANSWER_BEARING_HINT_BEFORE_COMMITMENT",
+        "feedback_release": "AFTER_COMMIT_NONCONSEQUENTIAL",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_OBSERVATION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "CLS_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#CLS-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#CLS-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CLS-SOLUTION-ENTRY",
+        "decisive_cue_id": "CLS-CUE-ENTRY",
+        "distractor_lineage_id": "CLS-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "CLS-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "CLS-FAMILY-WORKED",
+        "stimulus_lineage_id": "CLS-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CLS-REP-SR-MAP",
+        "changed_dimensions": [],
+        "learner_operation": "Trace a worked example to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:CLS-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CLS-SOLUTION-WORKED",
+        "decisive_cue_id": "CLS-CUE-WORKED",
+        "distractor_lineage_id": "CLS-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "CLS-ITEM-GUIDED",
+        "activity_id": "CLS-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "CLS-FAMILY-GUIDED",
+        "stimulus_lineage_id": "CLS-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_DECISION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CLS-REP-SR-MAP",
+        "changed_dimensions": [],
+        "learner_operation": "Follow the guided steps to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "hint_policy": "DECISION_SEQUENCE_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "CLS_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#CLS-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#CLS-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CLS-SOLUTION-GUIDED",
+        "decisive_cue_id": "CLS-CUE-GUIDED",
+        "distractor_lineage_id": "CLS-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "CLS-ITEM-LIGHT",
+        "activity_id": "CLS-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "CLS-FAMILY-LIGHT",
+        "stimulus_lineage_id": "CLS-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_DECISION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CLS-REP-SR-MAP",
+        "changed_dimensions": [],
+        "learner_operation": "Complete a brief scaffolded check to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "hint_policy": "BRIEF_NONANSWER_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "CLS_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#CLS-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#CLS-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CLS-SOLUTION-LIGHT",
+        "decisive_cue_id": "CLS-CUE-LIGHT",
+        "distractor_lineage_id": "CLS-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "CLS-ITEM-SOLO",
+        "activity_id": "CLS-ACT-SOLO",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "CLS-FAMILY-SOLO",
+        "stimulus_lineage_id": "CLS-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CLS-REP-SR-MAP",
+        "changed_dimensions": [],
+        "learner_operation": "Work independently to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "CLS_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#CLS-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#CLS-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CLS-SOLUTION-SOLO",
+        "decisive_cue_id": "CLS-CUE-SOLO",
+        "distractor_lineage_id": "CLS-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "CLS-ITEM-NEAR",
+        "activity_id": "CLS-ACT-NEAR",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "CLS-FAMILY-NEAR",
+        "stimulus_lineage_id": "CLS-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CLS-REP-SR-MAP",
+        "changed_dimensions": [],
+        "learner_operation": "Apply the method in a nearby context to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CLS_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#CLS-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#CLS-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CLS-SOLUTION-NEAR",
+        "decisive_cue_id": "CLS-CUE-NEAR",
+        "distractor_lineage_id": "CLS-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "CLS-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "CLS-FEATURE-US-UR-CS-CR-MAP"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "CLS-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "CLS-FEATURE-US-UR-CS-CR-MAP"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "CLS-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "CLS-FEATURE-US-UR-CS-CR-MAP"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "CLS-ITEM-CHANGED",
+        "activity_id": "CLS-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "CLS-FAMILY-CHANGED",
+        "stimulus_lineage_id": "CLS-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CLS-REP-LEARNING-CURVE",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "Transfer the method to a changed representation and context to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CLS_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#CLS-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#CLS-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CLS-SOLUTION-CHANGED",
+        "decisive_cue_id": "CLS-CUE-CHANGED",
+        "distractor_lineage_id": "CLS-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "CLS-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "CLS-FEATURE-ACQUISITION-EXTINCTION-RETURN-AND-SCOPE"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "CLS-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "CLS-FEATURE-ACQUISITION-EXTINCTION-RETURN-AND-SCOPE"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "CLS-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "CLS-FEATURE-ACQUISITION-EXTINCTION-RETURN-AND-SCOPE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "CLS-ITEM-REPAIR-NEAR",
+        "activity_id": "CLS-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CLS-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "CLS-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "CLS-REP-SR-MAP",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CLS_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#CLS-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#CLS-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CLS-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "CLS-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "CLS-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "CLS-ITEM-REENTRY-NEAR",
+        "activity_id": "CLS-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CLS-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "CLS-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CLS-REP-SR-MAP",
+        "changed_dimensions": [],
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CLS_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#CLS-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#CLS-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CLS-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "CLS-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "CLS-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "CLS-ITEM-REPAIR-CHANGED",
+        "activity_id": "CLS-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CLS-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "CLS-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "CLS-REP-LEARNING-CURVE",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CLS_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#CLS-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#CLS-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CLS-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "CLS-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "CLS-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "CLS-ITEM-REENTRY-CHANGED",
+        "activity_id": "CLS-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-564671",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CLS-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "CLS-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CLS-REP-LEARNING-CURVE",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "Reapply the corrected method in a fresh changed context to map conditioned and unconditioned stimuli and responses across acquisition and extinction.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CLS_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#CLS-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#CLS-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CLS-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "CLS-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "CLS-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "OPR-ITEM-ENTRY",
+        "activity_id": "OPR-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "OPR-FAMILY-ENTRY",
+        "stimulus_lineage_id": "OPR-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "OPR-REP-CONTINGENCY",
+        "changed_dimensions": [],
+        "learner_operation": "Inspect the entry scenario to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "hint_policy": "NO_ANSWER_BEARING_HINT_BEFORE_COMMITMENT",
+        "feedback_release": "AFTER_COMMIT_NONCONSEQUENTIAL",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_OBSERVATION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "OPR_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#OPR-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#OPR-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "OPR-SOLUTION-ENTRY",
+        "decisive_cue_id": "OPR-CUE-ENTRY",
+        "distractor_lineage_id": "OPR-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "OPR-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "OPR-FAMILY-WORKED",
+        "stimulus_lineage_id": "OPR-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "OPR-REP-CONTINGENCY",
+        "changed_dimensions": [],
+        "learner_operation": "Trace a worked example to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:OPR-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "OPR-SOLUTION-WORKED",
+        "decisive_cue_id": "OPR-CUE-WORKED",
+        "distractor_lineage_id": "OPR-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "OPR-ITEM-GUIDED",
+        "activity_id": "OPR-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "OPR-FAMILY-GUIDED",
+        "stimulus_lineage_id": "OPR-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_DECISION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "OPR-REP-CONTINGENCY",
+        "changed_dimensions": [],
+        "learner_operation": "Follow the guided steps to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "hint_policy": "DECISION_SEQUENCE_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "OPR_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#OPR-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#OPR-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "OPR-SOLUTION-GUIDED",
+        "decisive_cue_id": "OPR-CUE-GUIDED",
+        "distractor_lineage_id": "OPR-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "OPR-ITEM-LIGHT",
+        "activity_id": "OPR-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "OPR-FAMILY-LIGHT",
+        "stimulus_lineage_id": "OPR-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_DECISION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "OPR-REP-CONTINGENCY",
+        "changed_dimensions": [],
+        "learner_operation": "Complete a brief scaffolded check to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "hint_policy": "BRIEF_NONANSWER_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "OPR_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#OPR-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#OPR-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "OPR-SOLUTION-LIGHT",
+        "decisive_cue_id": "OPR-CUE-LIGHT",
+        "distractor_lineage_id": "OPR-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "OPR-ITEM-SOLO",
+        "activity_id": "OPR-ACT-SOLO",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "OPR-FAMILY-SOLO",
+        "stimulus_lineage_id": "OPR-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "OPR-REP-CONTINGENCY",
+        "changed_dimensions": [],
+        "learner_operation": "Work independently to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "OPR_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#OPR-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#OPR-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "OPR-SOLUTION-SOLO",
+        "decisive_cue_id": "OPR-CUE-SOLO",
+        "distractor_lineage_id": "OPR-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "OPR-ITEM-NEAR",
+        "activity_id": "OPR-ACT-NEAR",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "OPR-FAMILY-NEAR",
+        "stimulus_lineage_id": "OPR-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "OPR-REP-CONTINGENCY",
+        "changed_dimensions": [],
+        "learner_operation": "Apply the method in a nearby context to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "OPR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#OPR-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#OPR-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "OPR-SOLUTION-NEAR",
+        "decisive_cue_id": "OPR-CUE-NEAR",
+        "distractor_lineage_id": "OPR-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 1,
+            "response_feature_id": "OPR-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "OPR-FEATURE-CONSEQUENCE-EFFECT-AND-SIGN"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "OPR-NEAR-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "OPR-FEATURE-CONSEQUENCE-EFFECT-AND-SIGN"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "OPR-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "OPR-FEATURE-CONSEQUENCE-EFFECT-AND-SIGN"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "OPR-ITEM-CHANGED",
+        "activity_id": "OPR-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "OPR-FAMILY-CHANGED",
+        "stimulus_lineage_id": "OPR-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "OPR-REP-SCHEDULE-GRAPH",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "Transfer the method to a changed representation and context to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "OPR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#OPR-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#OPR-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "OPR-SOLUTION-CHANGED",
+        "decisive_cue_id": "OPR-CUE-CHANGED",
+        "distractor_lineage_id": "OPR-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "OPR-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "OPR-FEATURE-SHAPING-SCHEDULE-EXTINCTION-ESCAPE-AVOIDANCE"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "OPR-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "OPR-FEATURE-SHAPING-SCHEDULE-EXTINCTION-ESCAPE-AVOIDANCE"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "OPR-CHANGED-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "OPR-FEATURE-SHAPING-SCHEDULE-EXTINCTION-ESCAPE-AVOIDANCE"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "OPR-ITEM-REPAIR-NEAR",
+        "activity_id": "OPR-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "OPR-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "OPR-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "OPR-REP-CONTINGENCY",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "OPR_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#OPR-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#OPR-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "OPR-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "OPR-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "OPR-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "OPR-ITEM-REENTRY-NEAR",
+        "activity_id": "OPR-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "OPR-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "OPR-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "OPR-REP-CONTINGENCY",
+        "changed_dimensions": [],
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "OPR_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#OPR-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#OPR-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "OPR-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "OPR-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "OPR-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "OPR-ITEM-REPAIR-CHANGED",
+        "activity_id": "OPR-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "OPR-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "OPR-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "OPR-REP-SCHEDULE-GRAPH",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "OPR_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#OPR-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#OPR-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "OPR-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "OPR-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "OPR-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "OPR-ITEM-REENTRY-CHANGED",
+        "activity_id": "OPR-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-628404",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "OPR-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "OPR-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "OPR-REP-SCHEDULE-GRAPH",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "Reapply the corrected method in a fresh changed context to classify operant consequences, schedules, shaping, extinction, escape, and avoidance from observable contingencies.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "OPR_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#OPR-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#OPR-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "OPR-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "OPR-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "OPR-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT"
+      },
+      {
+        "item_binding_id": "CNS-ITEM-ENTRY",
+        "activity_id": "CNS-ACT-ENTRY",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "activity_role": "ENTRY_CHECK",
+        "semantic_family_id": "CNS-FAMILY-ENTRY",
+        "stimulus_lineage_id": "CNS-STIMULUS-ENTRY",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NOT_SURE_ALLOWED"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CNS-REP-EXPECTED-OBSERVED",
+        "changed_dimensions": [],
+        "learner_operation": "Inspect the entry scenario to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "hint_policy": "NO_ANSWER_BEARING_HINT_BEFORE_COMMITMENT",
+        "feedback_release": "AFTER_COMMIT_NONCONSEQUENTIAL",
+        "omission_policy": "RECORD_AS_NONCONSEQUENTIAL_OBSERVATION",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "CNS_ENTRY",
+        "server_scoring_authority_ref": "protected-items.json#CNS-ITEM-ENTRY",
+        "server_rationale_authority_ref": "protected-items.json#CNS-ITEM-ENTRY",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CNS-SOLUTION-ENTRY",
+        "decisive_cue_id": "CNS-CUE-ENTRY",
+        "distractor_lineage_id": "CNS-DISTRACTOR-ENTRY"
+      },
+      {
+        "item_binding_id": "CNS-ITEM-WORKED",
+        "activity_id": null,
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "activity_role": "WORKED_EXAMPLE",
+        "semantic_family_id": "CNS-FAMILY-WORKED",
+        "stimulus_lineage_id": "CNS-STIMULUS-WORKED",
+        "first_attempt_immutable": null,
+        "first_attempt_policy": "NOT_APPLICABLE_WORKED_EXPOSITION",
+        "assistance_available": [
+          "VISIBLE_EXPLANATION"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CNS-REP-EXPECTED-OBSERVED",
+        "changed_dimensions": [],
+        "learner_operation": "Trace a worked example to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "hint_policy": "NOT_APPLICABLE",
+        "feedback_release": "WORKED_REASONING_VISIBLE",
+        "omission_policy": "NOT_APPLICABLE",
+        "retry_policy": "NOT_APPLICABLE",
+        "invalid_item_policy": "CONTENT_REVIEW_REQUIRED",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "NODE:CNS-NODE-WORKED",
+        "server_scoring_authority_ref": null,
+        "server_rationale_authority_ref": null,
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CNS-SOLUTION-WORKED",
+        "decisive_cue_id": "CNS-CUE-WORKED",
+        "distractor_lineage_id": "CNS-DISTRACTOR-WORKED"
+      },
+      {
+        "item_binding_id": "CNS-ITEM-GUIDED",
+        "activity_id": "CNS-ACT-GUIDED",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "activity_role": "GUIDED_PRACTICE",
+        "semantic_family_id": "CNS-FAMILY-GUIDED",
+        "stimulus_lineage_id": "CNS-STIMULUS-GUIDED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "VISIBLE_DECISION_SEQUENCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CNS-REP-EXPECTED-OBSERVED",
+        "changed_dimensions": [],
+        "learner_operation": "Follow the guided steps to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "hint_policy": "DECISION_SEQUENCE_VISIBLE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "CNS_GUIDED",
+        "server_scoring_authority_ref": "protected-items.json#CNS-ITEM-GUIDED",
+        "server_rationale_authority_ref": "protected-items.json#CNS-ITEM-GUIDED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CNS-SOLUTION-GUIDED",
+        "decisive_cue_id": "CNS-CUE-GUIDED",
+        "distractor_lineage_id": "CNS-DISTRACTOR-GUIDED"
+      },
+      {
+        "item_binding_id": "CNS-ITEM-LIGHT",
+        "activity_id": "CNS-ACT-LIGHT",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "activity_role": "LIGHT_SUPPORT_PRACTICE",
+        "semantic_family_id": "CNS-FAMILY-LIGHT",
+        "stimulus_lineage_id": "CNS-STIMULUS-LIGHT",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "BRIEF_DECISION_REMINDER"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CNS-REP-EXPECTED-OBSERVED",
+        "changed_dimensions": [],
+        "learner_operation": "Complete a brief scaffolded check to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "hint_policy": "BRIEF_NONANSWER_REMINDER",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_SUPPORTED_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "CNS_LIGHT",
+        "server_scoring_authority_ref": "protected-items.json#CNS-ITEM-LIGHT",
+        "server_rationale_authority_ref": "protected-items.json#CNS-ITEM-LIGHT",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CNS-SOLUTION-LIGHT",
+        "decisive_cue_id": "CNS-CUE-LIGHT",
+        "distractor_lineage_id": "CNS-DISTRACTOR-LIGHT"
+      },
+      {
+        "item_binding_id": "CNS-ITEM-SOLO",
+        "activity_id": "CNS-ACT-SOLO",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "activity_role": "SOLO_PRACTICE",
+        "semantic_family_id": "CNS-FAMILY-SOLO",
+        "stimulus_lineage_id": "CNS-STIMULUS-SOLO",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CNS-REP-EXPECTED-OBSERVED",
+        "changed_dimensions": [],
+        "learner_operation": "Work independently to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "EXPOSED_FAMILY_NEVER_REUSED",
+        "learner_safe_projection_ref": "CNS_SOLO",
+        "server_scoring_authority_ref": "protected-items.json#CNS-ITEM-SOLO",
+        "server_rationale_authority_ref": "protected-items.json#CNS-ITEM-SOLO",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CNS-SOLUTION-SOLO",
+        "decisive_cue_id": "CNS-CUE-SOLO",
+        "distractor_lineage_id": "CNS-DISTRACTOR-SOLO"
+      },
+      {
+        "item_binding_id": "CNS-ITEM-NEAR",
+        "activity_id": "CNS-ACT-NEAR",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "activity_role": "NEAR_EXIT",
+        "semantic_family_id": "CNS-FAMILY-NEAR",
+        "stimulus_lineage_id": "CNS-STIMULUS-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CNS-REP-EXPECTED-OBSERVED",
+        "changed_dimensions": [],
+        "learner_operation": "Apply the method in a nearby context to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CNS_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#CNS-ITEM-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#CNS-ITEM-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CNS-SOLUTION-NEAR",
+        "decisive_cue_id": "CNS-CUE-NEAR",
+        "distractor_lineage_id": "CNS-DISTRACTOR-NEAR",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "CNS-NEAR-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "CNS-FEATURE-EXPECTANCY-AND-COGNITIVE-MAP"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "CNS-NEAR-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "CNS-FEATURE-EXPECTANCY-AND-COGNITIVE-MAP"
+          },
+          {
+            "response_option_index": 3,
+            "response_feature_id": "CNS-NEAR-OPTION-3-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "CNS-FEATURE-EXPECTANCY-AND-COGNITIVE-MAP"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "CNS-ITEM-CHANGED",
+        "activity_id": "CNS-ACT-CHANGED",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "activity_role": "CHANGED_EXIT",
+        "semantic_family_id": "CNS-FAMILY-CHANGED",
+        "stimulus_lineage_id": "CNS-STIMULUS-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CNS-REP-CONSTRAINT-VIGNETTE",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "Transfer the method to a changed representation and context to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RECORD_AND_ROUTE",
+        "retry_policy": "FRESH_FAMILY_ONLY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CNS_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#CNS-ITEM-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#CNS-ITEM-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CNS-SOLUTION-CHANGED",
+        "decisive_cue_id": "CNS-CUE-CHANGED",
+        "distractor_lineage_id": "CNS-DISTRACTOR-CHANGED",
+        "response_feature_routes": [
+          {
+            "response_option_index": 0,
+            "response_feature_id": "CNS-CHANGED-OPTION-0-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "CNS-FEATURE-PREDISPOSITION-AND-INSTINCTIVE-DRIFT"
+          },
+          {
+            "response_option_index": 1,
+            "response_feature_id": "CNS-CHANGED-OPTION-1-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "CNS-FEATURE-PREDISPOSITION-AND-INSTINCTIVE-DRIFT"
+          },
+          {
+            "response_option_index": 2,
+            "response_feature_id": "CNS-CHANGED-OPTION-2-DIVERGENCE",
+            "route_kind": "TARGETED_REPAIR",
+            "repair_feature_id": "CNS-FEATURE-PREDISPOSITION-AND-INSTINCTIVE-DRIFT"
+          }
+        ]
+      },
+      {
+        "item_binding_id": "CNS-ITEM-REPAIR-NEAR",
+        "activity_id": "CNS-ACT-REPAIR-NEAR",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CNS-FAMILY-REPAIR-NEAR",
+        "stimulus_lineage_id": "CNS-STIMULUS-REPAIR-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_NEAR_USE_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "CNS-REP-EXPECTED-OBSERVED",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the near-use reasoning by using explicit evidence to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CNS_REPAIR_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#CNS-ITEM-REPAIR-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#CNS-ITEM-REPAIR-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CNS-SOLUTION-REPAIR-NEAR",
+        "decisive_cue_id": "CNS-CUE-REPAIR-NEAR",
+        "distractor_lineage_id": "CNS-DISTRACTOR-REPAIR-NEAR"
+      },
+      {
+        "item_binding_id": "CNS-ITEM-REENTRY-NEAR",
+        "activity_id": "CNS-ACT-REENTRY-NEAR",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CNS-FAMILY-REENTRY-NEAR",
+        "stimulus_lineage_id": "CNS-STIMULUS-REENTRY-NEAR",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CNS-REP-EXPECTED-OBSERVED",
+        "changed_dimensions": [],
+        "learner_operation": "Reapply the corrected method in a fresh nearby context to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "NEAR_USE",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CNS_REENTRY_NEAR",
+        "server_scoring_authority_ref": "protected-items.json#CNS-ITEM-REENTRY-NEAR",
+        "server_rationale_authority_ref": "protected-items.json#CNS-ITEM-REENTRY-NEAR",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CNS-SOLUTION-REENTRY-NEAR",
+        "decisive_cue_id": "CNS-CUE-REENTRY-NEAR",
+        "distractor_lineage_id": "CNS-DISTRACTOR-REENTRY-NEAR",
+        "exact_reentry_for": "NEAR_EXIT"
+      },
+      {
+        "item_binding_id": "CNS-ITEM-REPAIR-CHANGED",
+        "activity_id": "CNS-ACT-REPAIR-CHANGED",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CNS-FAMILY-REPAIR-CHANGED",
+        "stimulus_lineage_id": "CNS-STIMULUS-REPAIR-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "TARGETED_CHANGED_TASK_CUE"
+        ],
+        "candidate_evidence_modes": [
+          "REPAIR_CONFIRMATION"
+        ],
+        "representation_id": "CNS-REP-CONSTRAINT-VIGNETTE",
+        "changed_dimensions": [],
+        "learner_operation": "Correct the changed-task reasoning by using explicit evidence to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "hint_policy": "ONE_TARGETED_NONANSWER_CUE",
+        "feedback_release": "AFTER_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "ONE_REPAIR_CONFIRMATION_THEN_FRESH_REENTRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": null,
+        "freshness_policy": "UNTOUCHED_REPAIR_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CNS_REPAIR_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#CNS-ITEM-REPAIR-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#CNS-ITEM-REPAIR-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CNS-SOLUTION-REPAIR-CHANGED",
+        "decisive_cue_id": "CNS-CUE-REPAIR-CHANGED",
+        "distractor_lineage_id": "CNS-DISTRACTOR-REPAIR-CHANGED"
+      },
+      {
+        "item_binding_id": "CNS-ITEM-REENTRY-CHANGED",
+        "activity_id": "CNS-ACT-REENTRY-CHANGED",
+        "primary_kc_id": "V3-KC-730668",
+        "secondary_kc_refs": [],
+        "activity_role": "REPAIR_CONFIRMATION",
+        "semantic_family_id": "CNS-FAMILY-REENTRY-CHANGED",
+        "stimulus_lineage_id": "CNS-STIMULUS-REENTRY-CHANGED",
+        "first_attempt_immutable": true,
+        "first_attempt_policy": "IMMUTABLE",
+        "assistance_available": [
+          "NO_ANSWER_BEARING_ASSISTANCE"
+        ],
+        "candidate_evidence_modes": [
+          "INSTRUCTIONAL"
+        ],
+        "representation_id": "CNS-REP-CONSTRAINT-VIGNETTE",
+        "changed_dimensions": [
+          "domain_context",
+          "required_operation"
+        ],
+        "learner_operation": "Reapply the corrected method in a fresh changed context to evaluate expectancy, prepared associations, and biological constraints on associative learning.",
+        "hint_policy": "NONE_BEFORE_COMMIT",
+        "feedback_release": "AFTER_EXIT_COMMIT",
+        "omission_policy": "RETURN_TO_PLANNER_IF_UNRESOLVED",
+        "retry_policy": "NO_SAME_FAMILY_RETRY",
+        "invalid_item_policy": "VOID_AND_REPLACE_FRESH",
+        "exit_function": "CHANGED_TASK",
+        "freshness_policy": "UNTOUCHED_FAMILY_REQUIRED",
+        "learner_safe_projection_ref": "CNS_REENTRY_CHANGED",
+        "server_scoring_authority_ref": "protected-items.json#CNS-ITEM-REENTRY-CHANGED",
+        "server_rationale_authority_ref": "protected-items.json#CNS-ITEM-REENTRY-CHANGED",
+        "publication_eligibility": "INTERNAL_DRAFT_ONLY",
+        "solution_path_lineage_id": "CNS-SOLUTION-REENTRY-CHANGED",
+        "decisive_cue_id": "CNS-CUE-REENTRY-CHANGED",
+        "distractor_lineage_id": "CNS-DISTRACTOR-REENTRY-CHANGED",
+        "exact_reentry_for": "CHANGED_EXIT"
+      }
+    ],
+    "transitions": [
+      {
+        "transition_id": "HAB-TRANSITION-NEAR-PASS",
+        "from_node_id": "HAB-NODE-NEAR",
+        "to_node_id": "HAB-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "HAB-TRANSITION-NEAR-MISS",
+        "from_node_id": "HAB-NODE-NEAR",
+        "to_node_id": "HAB-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "HAB-TRANSITION-CHANGED-PASS",
+        "from_node_id": "HAB-NODE-CHANGED",
+        "to_node_id": "HAB-NODE-RECAP",
+        "predicate": "CHANGED_TASK_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "HAB-TRANSITION-CHANGED-MISS",
+        "from_node_id": "HAB-NODE-CHANGED",
+        "to_node_id": "HAB-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "HAB-TRANSITION-REENTRY-NEAR-PASS",
+        "from_node_id": "HAB-NODE-REENTRY-NEAR",
+        "to_node_id": "HAB-NODE-CHANGED",
+        "predicate": "FRESH_NEAR_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "HAB-TRANSITION-REENTRY-NEAR-BOUND",
+        "from_node_id": "HAB-NODE-REENTRY-NEAR",
+        "to_node_id": "HAB-NODE-HANDOFF",
+        "predicate": "FRESH_NEAR_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "HAB-TRANSITION-REENTRY-CHANGED-PASS",
+        "from_node_id": "HAB-NODE-REENTRY-CHANGED",
+        "to_node_id": "HAB-NODE-RECAP",
+        "predicate": "FRESH_CHANGED_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "HAB-TRANSITION-REENTRY-CHANGED-BOUND",
+        "from_node_id": "HAB-NODE-REENTRY-CHANGED",
+        "to_node_id": "HAB-NODE-HANDOFF",
+        "predicate": "FRESH_CHANGED_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "CLS-TRANSITION-NEAR-PASS",
+        "from_node_id": "CLS-NODE-NEAR",
+        "to_node_id": "CLS-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "CLS-TRANSITION-NEAR-MISS",
+        "from_node_id": "CLS-NODE-NEAR",
+        "to_node_id": "CLS-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "CLS-TRANSITION-CHANGED-PASS",
+        "from_node_id": "CLS-NODE-CHANGED",
+        "to_node_id": "CLS-NODE-RECAP",
+        "predicate": "CHANGED_TASK_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "CLS-TRANSITION-CHANGED-MISS",
+        "from_node_id": "CLS-NODE-CHANGED",
+        "to_node_id": "CLS-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "CLS-TRANSITION-REENTRY-NEAR-PASS",
+        "from_node_id": "CLS-NODE-REENTRY-NEAR",
+        "to_node_id": "CLS-NODE-CHANGED",
+        "predicate": "FRESH_NEAR_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "CLS-TRANSITION-REENTRY-NEAR-BOUND",
+        "from_node_id": "CLS-NODE-REENTRY-NEAR",
+        "to_node_id": "CLS-NODE-HANDOFF",
+        "predicate": "FRESH_NEAR_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "CLS-TRANSITION-REENTRY-CHANGED-PASS",
+        "from_node_id": "CLS-NODE-REENTRY-CHANGED",
+        "to_node_id": "CLS-NODE-RECAP",
+        "predicate": "FRESH_CHANGED_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "CLS-TRANSITION-REENTRY-CHANGED-BOUND",
+        "from_node_id": "CLS-NODE-REENTRY-CHANGED",
+        "to_node_id": "CLS-NODE-HANDOFF",
+        "predicate": "FRESH_CHANGED_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "OPR-TRANSITION-NEAR-PASS",
+        "from_node_id": "OPR-NODE-NEAR",
+        "to_node_id": "OPR-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "OPR-TRANSITION-NEAR-MISS",
+        "from_node_id": "OPR-NODE-NEAR",
+        "to_node_id": "OPR-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "OPR-TRANSITION-CHANGED-PASS",
+        "from_node_id": "OPR-NODE-CHANGED",
+        "to_node_id": "OPR-NODE-RECAP",
+        "predicate": "CHANGED_TASK_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "OPR-TRANSITION-CHANGED-MISS",
+        "from_node_id": "OPR-NODE-CHANGED",
+        "to_node_id": "OPR-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "OPR-TRANSITION-REENTRY-NEAR-PASS",
+        "from_node_id": "OPR-NODE-REENTRY-NEAR",
+        "to_node_id": "OPR-NODE-CHANGED",
+        "predicate": "FRESH_NEAR_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "OPR-TRANSITION-REENTRY-NEAR-BOUND",
+        "from_node_id": "OPR-NODE-REENTRY-NEAR",
+        "to_node_id": "OPR-NODE-HANDOFF",
+        "predicate": "FRESH_NEAR_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "OPR-TRANSITION-REENTRY-CHANGED-PASS",
+        "from_node_id": "OPR-NODE-REENTRY-CHANGED",
+        "to_node_id": "OPR-NODE-RECAP",
+        "predicate": "FRESH_CHANGED_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "OPR-TRANSITION-REENTRY-CHANGED-BOUND",
+        "from_node_id": "OPR-NODE-REENTRY-CHANGED",
+        "to_node_id": "OPR-NODE-HANDOFF",
+        "predicate": "FRESH_CHANGED_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "CNS-TRANSITION-NEAR-PASS",
+        "from_node_id": "CNS-NODE-NEAR",
+        "to_node_id": "CNS-NODE-CHANGED",
+        "predicate": "NEAR_USE_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "CNS-TRANSITION-NEAR-MISS",
+        "from_node_id": "CNS-NODE-NEAR",
+        "to_node_id": "CNS-NODE-REPAIR-NEAR",
+        "predicate": "NEAR_USE_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "CNS-TRANSITION-CHANGED-PASS",
+        "from_node_id": "CNS-NODE-CHANGED",
+        "to_node_id": "CNS-NODE-RECAP",
+        "predicate": "CHANGED_TASK_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "CNS-TRANSITION-CHANGED-MISS",
+        "from_node_id": "CNS-NODE-CHANGED",
+        "to_node_id": "CNS-NODE-REPAIR-CHANGED",
+        "predicate": "CHANGED_TASK_NOT_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "CNS-TRANSITION-REENTRY-NEAR-PASS",
+        "from_node_id": "CNS-NODE-REENTRY-NEAR",
+        "to_node_id": "CNS-NODE-CHANGED",
+        "predicate": "FRESH_NEAR_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "CNS-TRANSITION-REENTRY-NEAR-BOUND",
+        "from_node_id": "CNS-NODE-REENTRY-NEAR",
+        "to_node_id": "CNS-NODE-HANDOFF",
+        "predicate": "FRESH_NEAR_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "CNS-TRANSITION-REENTRY-CHANGED-PASS",
+        "from_node_id": "CNS-NODE-REENTRY-CHANGED",
+        "to_node_id": "CNS-NODE-RECAP",
+        "predicate": "FRESH_CHANGED_REENTRY_PASSED_AFTER_COMMIT"
+      },
+      {
+        "transition_id": "CNS-TRANSITION-REENTRY-CHANGED-BOUND",
+        "from_node_id": "CNS-NODE-REENTRY-CHANGED",
+        "to_node_id": "CNS-NODE-HANDOFF",
+        "predicate": "FRESH_CHANGED_REENTRY_STILL_UNRESOLVED"
+      },
+      {
+        "transition_id": "HAB-TO-CLS",
+        "from_node_id": "HAB-NODE-RECAP",
+        "to_node_id": "CLS-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      },
+      {
+        "transition_id": "CLS-TO-OPR",
+        "from_node_id": "CLS-NODE-RECAP",
+        "to_node_id": "OPR-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      },
+      {
+        "transition_id": "OPR-TO-CNS",
+        "from_node_id": "OPR-NODE-RECAP",
+        "to_node_id": "CNS-NODE-ENTRY",
+        "predicate": "KC_RECAP_ACKNOWLEDGED"
+      }
+    ],
+    "attachment_bindings": [
+      {
+        "attachment_id": "V3-EXT-910216",
+        "attachment_type": "EXTENSION",
+        "owner_lesson_id": "V3-LES-225658",
+        "host_scope": {
+          "kind": "MULTI_KC",
+          "kc_ids": [
+            "V3-KC-337354",
+            "V3-KC-564671",
+            "V3-KC-628404",
+            "V3-KC-730668"
+          ]
+        },
+        "declared_host_core_ids": [
+          "V3-KC-337354",
+          "V3-KC-564671",
+          "V3-KC-628404",
+          "V3-KC-730668"
+        ],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": true,
+        "relation_ids": [
+          "R14-FD-225658"
+        ],
+        "relation_class": "FIRST_DELIVERY",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": false
+      },
+      {
+        "attachment_id": "V3-SUP-941207",
+        "attachment_type": "SUPPORT",
+        "owner_lesson_id": "V3-LES-225658",
+        "host_scope": {
+          "kind": "LESSON"
+        },
+        "declared_host_core_ids": [],
+        "host_core_membership_status": "RESOLVED",
+        "credits_kc_evidence": false,
+        "relation_ids": [
+          "R14-FD-225658"
+        ],
+        "relation_class": "FIRST_DELIVERY",
+        "relation_direction": "ATTACHMENT_TO_LESSON",
+        "required_delivery": false
+      }
+    ]
+  }
+}

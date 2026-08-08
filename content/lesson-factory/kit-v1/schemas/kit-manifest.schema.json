@@ -1,0 +1,230 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcat-mastery.internal/lesson-generation-kit/v1/kit-manifest.schema.json",
+  "title": "Lesson generation kit manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "runId",
+    "teamId",
+    "laneId",
+    "assignmentId",
+    "assignmentBindingId",
+    "contractVersion",
+    "schemaVersion",
+    "generation",
+    "assembledAt",
+    "lifecycle",
+    "deadline",
+    "branchConvention",
+    "repositoryUrl",
+    "repositoryCommit",
+    "allowedOutputRoot",
+    "forbiddenSharedPaths",
+    "runtimeRequirements",
+    "deterministicInstallCommand",
+    "handoffEndpoint",
+    "validatorAuthority",
+    "pins",
+    "assignmentSha256",
+    "inventorySha256",
+    "filesSha256",
+    "allowedLessonIds",
+    "allowedPaths",
+    "packetCount",
+    "sourceMappings",
+    "coreFiles",
+    "files",
+    "readOrder",
+    "nonclaims",
+    "manifestHashRule"
+  ],
+  "properties": {
+    "format": { "const": "lesson-generation-kit-v1/2" },
+    "runId": { "type": "string", "minLength": 1 },
+    "teamId": { "enum": ["team-A", "team-B"] },
+    "laneId": { "type": "string", "minLength": 1 },
+    "assignmentId": { "type": "string", "minLength": 1 },
+    "assignmentBindingId": { "$ref": "#/$defs/hash" },
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "schemaVersion": { "type": "string", "minLength": 1 },
+    "generation": { "const": 2 },
+    "assembledAt": { "type": "string", "format": "date-time" },
+    "lifecycle": { "const": "CANDIDATE_RUBRIC_SCREENED" },
+    "deadline": { "type": "string", "format": "date-time" },
+    "branchConvention": { "type": "string", "minLength": 1 },
+    "repositoryUrl": { "const": "https://github.com/jsonjj/mcat-prep.git" },
+    "repositoryCommit": { "$ref": "#/$defs/commit" },
+    "allowedOutputRoot": {
+      "enum": ["content/lesson-candidates/team-A", "content/lesson-candidates/team-B"]
+    },
+    "forbiddenSharedPaths": {
+      "const": [
+        "apps",
+        "content/curriculum",
+        "content/lesson-factory/assignments",
+        "content/lesson-factory/packets",
+        "content/lesson-factory/schemas",
+        "content/lessons",
+        "docs/lesson-registration.md",
+        "package.json",
+        "packages",
+        "pnpm-lock.yaml",
+        "services",
+        "tests/architecture",
+        "tools"
+      ]
+    },
+    "runtimeRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nodeMajorMinimum", "packageManager", "installPolicy"],
+      "properties": {
+        "nodeMajorMinimum": { "const": 20 },
+        "packageManager": { "const": "pnpm@9.15.9" },
+        "installPolicy": { "const": "FROZEN_OFFLINE_IGNORE_SCRIPTS" }
+      }
+    },
+    "deterministicInstallCommand": {
+      "const": "corepack pnpm install --frozen-lockfile --offline --ignore-scripts"
+    },
+    "handoffEndpoint": { "type": "string", "minLength": 1 },
+    "validatorAuthority": { "$ref": "#/$defs/validatorAuthority" },
+    "pins": { "$ref": "#/$defs/pins" },
+    "assignmentSha256": { "$ref": "#/$defs/hash" },
+    "inventorySha256": { "$ref": "#/$defs/hash" },
+    "filesSha256": { "$ref": "#/$defs/hash" },
+    "allowedLessonIds": {
+      "type": "array",
+      "minItems": 30,
+      "maxItems": 30,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^V3-LES-[0-9]{6}$" }
+    },
+    "allowedPaths": {
+      "type": "array",
+      "minItems": 75,
+      "maxItems": 75,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "packetCount": { "const": 30 },
+    "sourceMappings": {
+      "type": "array",
+      "minItems": 44,
+      "maxItems": 44,
+      "items": { "$ref": "#/$defs/sourceMapping" }
+    },
+    "coreFiles": {
+      "type": "array",
+      "minItems": 44,
+      "maxItems": 44,
+      "items": { "$ref": "#/$defs/file" }
+    },
+    "files": {
+      "type": "array",
+      "minItems": 75,
+      "maxItems": 75,
+      "items": { "$ref": "#/$defs/file" }
+    },
+    "readOrder": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "nonclaims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["officialRubricPass", "humanApproved", "publicationApproved"],
+      "properties": {
+        "officialRubricPass": { "const": false },
+        "humanApproved": { "const": false },
+        "publicationApproved": { "const": false }
+      }
+    },
+    "manifestHashRule": {
+      "const": "KIT-MANIFEST.json is self-excluded; READY.json pins its SHA-256"
+    }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "size", "mode", "kind"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "sha256": { "$ref": "#/$defs/hash" },
+        "size": { "type": "integer", "minimum": 0 },
+        "mode": { "type": "integer", "enum": [420, 493] },
+        "kind": { "enum": ["core", "team-metadata", "assignment", "packet"] },
+        "sourcePath": { "type": "string", "minLength": 1 },
+        "sourceSha256": { "$ref": "#/$defs/hash" }
+      }
+    },
+    "pins": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repositoryCommit",
+        "kitSha256",
+        "profileSha256",
+        "schemaSha256",
+        "templateSha256",
+        "curriculumSha256",
+        "toolVersions"
+      ],
+      "properties": {
+        "repositoryCommit": { "$ref": "#/$defs/commit" },
+        "kitSha256": { "$ref": "#/$defs/hash" },
+        "profileSha256": { "$ref": "#/$defs/hash" },
+        "schemaSha256": { "$ref": "#/$defs/hash" },
+        "templateSha256": { "$ref": "#/$defs/hash" },
+        "curriculumSha256": { "$ref": "#/$defs/hash" },
+        "toolVersions": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "sourceMapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["archivePath", "archiveSha256", "sourcePath", "sourceSha256"],
+      "properties": {
+        "archivePath": { "type": "string", "minLength": 1 },
+        "archiveSha256": { "$ref": "#/$defs/hash" },
+        "sourcePath": { "type": "string", "minLength": 1 },
+        "sourceSha256": { "$ref": "#/$defs/hash" }
+      }
+    },
+    "validatorAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repositoryCommit", "aggregateSha256", "files"],
+      "properties": {
+        "repositoryCommit": { "$ref": "#/$defs/commit" },
+        "aggregateSha256": { "$ref": "#/$defs/hash" },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "sha256", "gitBlobSha256"],
+            "properties": {
+              "path": { "type": "string", "minLength": 1 },
+              "sha256": { "$ref": "#/$defs/hash" },
+              "gitBlobSha256": { "$ref": "#/$defs/hash" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

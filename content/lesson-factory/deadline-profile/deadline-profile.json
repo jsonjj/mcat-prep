@@ -1,0 +1,244 @@
+{
+  "contract_id": "lesson-factory.deadline-profile",
+  "contract_version": "7.0.0",
+  "profile_id": "lesson-factory-deadline-2026-08-03",
+  "profile_version": "2.4.0",
+  "status": "ACTIVE",
+  "frozen_at": "2026-08-03T23:05:00Z",
+  "rubric_identity": {
+    "rubric_path": "key-docs/lesson-quality-rubric.md",
+    "rubric_version": "0.9.1",
+    "rubric_sha256": "21f0cf751b752158b5c8f71fd762fcc956b9ba694c8f5ee8d50158b8972557b0"
+  },
+  "structural_authority": {
+    "spec_path": "docs/design/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md",
+    "spec_sha256": "f9df47b75a7aca5bf5c59030d66261c118d6ea1f71002c4d4fde92592b05c8c8",
+    "validator_rule_set": "R1-R15"
+  },
+  "mastery_authority": {
+    "contract_path": "docs/lesson-evidence-mastery-contract.md",
+    "contract_sha256": "72263ce66c5b354e0cfa0a3ebb1a7db5c56c08d95bb4f1808a7f21c5209c483d"
+  },
+  "canonical_template_path": "docs/lesson-authoring/template/v3-les-000000",
+  "release_policy_ref": "policy:content/lesson-factory/deadline-profile/release-policy.json#sha256:0258c6c382ce2faf62c1a8da4bda35295c27c64e2be9c5510c2f923560ffba9e",
+  "lifecycle_nonclaims_ref": "lifecycle:content/lesson-factory/deadline-profile/lifecycle-nonclaims.json#sha256:fadbda5cabf736c4028b5fab9f0c4705e0cacee228809ff73aa63bc9f91a024a",
+  "screened_status": "CANDIDATE_RUBRIC_SCREENED",
+  "hard_gates": {
+    "R1_R15_STRUCTURAL": {
+      "description": "R1-R15 structural validation is green for the exact draft revision, with no rule or pin weakened to get there.",
+      "enforcement": "HARD",
+      "fail_closed": true,
+      "waivable": false,
+      "authority_ref": "spec#2"
+    },
+    "NORMALIZATION": {
+      "description": "The lesson normalizes cleanly and every KC carries a runtime-servable micro-cycle: entry check, a practice role, near exit, changed exit, and repair confirmation (R15).",
+      "enforcement": "HARD",
+      "fail_closed": true,
+      "waivable": false,
+      "authority_ref": "spec#2,R15"
+    },
+    "SOURCE_RIGHTS": {
+      "description": "Every source record in the frozen packet is PERMITTED with a receipt before extraction, storage, or calibration use. PENDING, RESTRICTED, and PROHIBITED stop the work rather than being noted and passed.",
+      "enforcement": "HARD",
+      "fail_closed": true,
+      "waivable": false,
+      "authority_ref": "rubric#9.2"
+    },
+    "PROTECTED_SEPARATION": {
+      "description": "Protected keys, scoring material, and private rationale are server-only and absent from learner-safe projections, author diagnostics, logs, and public handoff metadata.",
+      "enforcement": "HARD",
+      "fail_closed": true,
+      "waivable": false,
+      "authority_ref": "rubric#7.3,3.1"
+    },
+    "HASH_CHAIN_INTEGRITY": {
+      "description": "Every embedded content_sha256 equals its canonical recomputation, every stored-byte hash matches, and the dependency chain resolves upward from coverage to script (R3, R4, R5).",
+      "enforcement": "HARD",
+      "fail_closed": true,
+      "waivable": false,
+      "authority_ref": "spec#2,R3-R5,5"
+    },
+    "DEADLINE_MACHINE_SCREEN": {
+      "description": "The deadline contract's own machine screens pass: a four-member route proof, closed and versioned contracts, hash-pinned identities with no reconstruction, and every nonclaim recorded false.",
+      "enforcement": "HARD",
+      "fail_closed": true,
+      "waivable": false,
+      "authority_ref": "profile#1"
+    }
+  },
+  "evidence_classes": {
+    "BROWSER_RENDERED": {
+      "description": "Rendered-experience capture on an exact build: DOM and accessibility-tree state, focus behaviour, branch coverage, terminal dispositions. No capture harness exists, and no application commit or build id can be bound, so every LQR-X dimension is unevaluated.",
+      "expected_state": "BLOCKED",
+      "normalization_to_pass_allowed": false,
+      "blocker_code": "BLOCKER_NO_BROWSER_RENDERED_EVIDENCE",
+      "required_roles": [
+        "PRODUCT_PEDAGOGY_OWNER"
+      ]
+    },
+    "ACCESSIBILITY": {
+      "description": "Keyboard, focus, contrast, reflow, target-size, and math-transcript results, plus an independent real Safari and VoiceOver receipt recorded by someone other than the primary author.",
+      "expected_state": "BLOCKED",
+      "normalization_to_pass_allowed": false,
+      "blocker_code": "BLOCKER_NO_ACCESSIBILITY_REVIEW",
+      "required_roles": [
+        "ACCESSIBILITY_REVIEWER",
+        "PRODUCT_PEDAGOGY_OWNER"
+      ]
+    },
+    "DOMAIN_SME": {
+      "description": "Domain construct comparison, distractor and error-model equivalence review, and two independent keyless blind solves.",
+      "expected_state": "BLOCKED",
+      "normalization_to_pass_allowed": false,
+      "blocker_code": "BLOCKER_NO_DOMAIN_SME_RECEIPT",
+      "required_roles": [
+        "DOMAIN_CONSTRUCT_SME",
+        "INDEPENDENT_BLIND_SOLVER"
+      ]
+    },
+    "NOVICE_WALKTHROUGH": {
+      "description": "A proxy-learner walkthrough answering the four fixed orientation questions per consequential screen, by a reviewer who does not hold the target knowledge component.",
+      "expected_state": "BLOCKED",
+      "normalization_to_pass_allowed": false,
+      "blocker_code": "BLOCKER_NO_NOVICE_WALKTHROUGH_RECEIPT",
+      "required_roles": [
+        "NOVICE_WALKTHROUGH_REVIEWER"
+      ]
+    },
+    "PLATFORM_RELIABILITY": {
+      "description": "Interruption, recovery, persistence, and branch-termination runs against the exact build.",
+      "expected_state": "BLOCKED",
+      "normalization_to_pass_allowed": false,
+      "blocker_code": "BLOCKER_NO_PLATFORM_RELIABILITY_RECEIPT",
+      "required_roles": [
+        "PLATFORM_RELIABILITY_REVIEWER"
+      ]
+    },
+    "HUMAN_DECISION": {
+      "description": "The decision-role receipt that approves a lesson revision. Its absence never blocks a dimension; it withholds approval at the lesson level, permanently, until a qualified human records a reason.",
+      "expected_state": "BLOCKED",
+      "normalization_to_pass_allowed": false,
+      "blocker_code": "BLOCKER_NO_HUMAN_DECISION_RECEIPT",
+      "required_roles": [
+        "PRODUCT_PEDAGOGY_OWNER"
+      ]
+    }
+  },
+  "namespaces": {
+    "author_diagnostics_namespace": "author_diagnostics",
+    "official_quality_namespace": "official_quality_result",
+    "separation_enforced": true
+  },
+  "protected_boundary": {
+    "learner_safe_surfaces": [
+      "lesson-handoff.learner_safe_summary (title referenced by hash, never restated)",
+      "lesson-handoff.author_diagnostics (closed code vocabularies only)",
+      "team-handoff.public_metadata",
+      "kit-manifest.bundles",
+      "import-index.entries",
+      "bundle-readiness (every field)",
+      "candidate-quality-ledger.author_diagnostics (closed code vocabularies only)",
+      "candidate-quality-ledger.official_quality_result (coded blockers only)",
+      "runner-log-record (every field)"
+    ],
+    "protected_surfaces": [
+      "server-only protected item store, addressed only by lesson-handoff.protected_material_reference.inventory_sha256"
+    ],
+    "protected_material_transport": "REFERENCE_BY_HASH_ONLY"
+  },
+  "log_boundary": {
+    "record_contract": "lesson-factory.runner-log-record",
+    "record_schema_path": "content/lesson-factory/schemas/runner-log-record.schema.json",
+    "record_schema_sha256": "0ec265a5af0306501f91180e39e71130293124e1057cf68555e989950d3c845f",
+    "free_text_permitted": false,
+    "permitted_payload_kinds": [
+      "OPAQUE_CODE",
+      "OPAQUE_HASH",
+      "COUNT"
+    ],
+    "forbidden_payload_kinds": [
+      "PROTECTED_ANSWER",
+      "SCORING_AUTHORITY",
+      "ACCEPTED_RESPONSE",
+      "RATIONALE",
+      "SECRET",
+      "LEARNER_PII",
+      "ARBITRARY_PAYLOAD",
+      "FREE_TEXT"
+    ]
+  },
+  "nonclaims": {
+    "official_rubric_pass": false,
+    "human_approved": false,
+    "release_approved": false,
+    "efficacy_established": false,
+    "mastery_calibrated": false,
+    "readiness_validated": false,
+    "learner_validated": false,
+    "publication_safe": false,
+    "production_published": false
+  },
+  "identifier_boundary": {
+    "identifier_grammar": "CONTEXT_SPECIFIC",
+    "general_slug_identifiers_permitted": false,
+    "general_locator_references_permitted": false,
+    "reference_resolution": "KIND_LOCATOR_BYTES_AND_DIGEST",
+    "placeholder_digests_permitted": false
+  },
+  "intake_contract": {
+    "record_contract": "lesson-factory.intake-validation",
+    "record_contract_version": "3.0.0",
+    "record_schema_path": "content/lesson-factory/schemas/intake-validation.schema.json",
+    "record_schema_sha256": "688fda70c334dc6907821e28bf752f0404a1dc886241e42dea0fc63bc0a113d9",
+    "schema_validation_required": true,
+    "resolver_validation_required": true,
+    "schema_validation_alone_sufficient": false,
+    "caller_supplied_identity_permitted": false,
+    "admission_proof_required": true,
+    "admission_rule": "BOTH_MUST_PASS",
+    "admissible_contracts": [
+      "lesson-factory.deadline-profile",
+      "lesson-factory.release-policy",
+      "lesson-factory.lifecycle-nonclaims",
+      "lesson-factory.owner-route-policy-receipt",
+      "lesson-factory.owner-source-use-receipt",
+      "lesson-factory.assignment-manifest",
+      "lesson-factory.task-source-packet",
+      "lesson-factory.lesson-handoff",
+      "lesson-factory.team-handoff",
+      "lesson-factory.candidate-quality-ledger",
+      "lesson-factory.kit-manifest",
+      "lesson-factory.import-index",
+      "lesson-factory.bundle-readiness"
+    ],
+    "non_admissible_contracts": [
+      {
+        "contract_id": "lesson-factory.shared-vocabulary",
+        "reason_code": "SCHEMA_ONLY"
+      },
+      {
+        "contract_id": "lesson-factory.intake-validation",
+        "reason_code": "ADMISSION_RECORD"
+      },
+      {
+        "contract_id": "lesson-factory.runner-log-record",
+        "reason_code": "LOG_EVENT"
+      }
+    ],
+    "dynamic_reference_kinds": [
+      "assignment",
+      "kit",
+      "packet",
+      "quarantine-packet",
+      "handoff",
+      "team-handoff",
+      "import-index",
+      "ledger",
+      "screen",
+      "bundle",
+      "readiness"
+    ]
+  },
+  "source_use_receipt_ref": "source-use-receipt:content/lesson-factory/deadline-profile/owner-source-use-receipt.json#sha256:04a2ac3b1e1eb8030f1b4f53db4d8ee5b74eee824c0c30318c30e780a6a98c68"
+}

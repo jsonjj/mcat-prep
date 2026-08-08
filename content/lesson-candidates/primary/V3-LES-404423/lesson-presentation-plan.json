@@ -1,0 +1,2233 @@
+{
+  "artifact_type": "LESSON_PRESENTATION_PLAN",
+  "artifact_id": "V3-LPPL-404423",
+  "artifact_version": "0.1.0-candidate.1",
+  "artifact_status": "DRAFT",
+  "content_sha256": "4cbdf726506202a9a686bee0dcc30066daf5213e4d12a2630826014ec352ffb5",
+  "dependency_bindings": {
+    "lesson_script_id": "V3-LSCR-404423",
+    "lesson_script_sha256": "90237cfde39684ec8d7397324b9a21f33144dd57e9451c49a56a94dff2fae2e2",
+    "kc_coverage_matrix_id": "V3-KCOV-404423",
+    "kc_coverage_matrix_sha256": "6b16a049c3f3e1aaba6ee48856e7aebdbdb2b63218c96e033604aa1bbe313ac3"
+  },
+  "payload": {
+    "lesson_id": "V3-LES-404423",
+    "lesson_script_id": "V3-LSCR-404423",
+    "lesson_script_sha256": "90237cfde39684ec8d7397324b9a21f33144dd57e9451c49a56a94dff2fae2e2",
+    "kc_coverage_matrix_id": "V3-KCOV-404423",
+    "kc_coverage_matrix_sha256": "6b16a049c3f3e1aaba6ee48856e7aebdbdb2b63218c96e033604aa1bbe313ac3",
+    "learner_rhythm": [
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "RECAP",
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "RECAP",
+      "ENTRY_CHECK_BOUNDARY",
+      "ORIENTATION",
+      "EXPLANATION",
+      "MENTAL_MODEL",
+      "EXPERT_THINK_ALOUD",
+      "WORKED_EXAMPLE",
+      "GUIDED_PRACTICE",
+      "LIGHT_SUPPORT_PRACTICE",
+      "SOLO_PRACTICE",
+      "CONTRAST_BOUNDARY",
+      "NEAR_EXIT",
+      "CHANGED_EXIT",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "TARGETED_REPAIR",
+      "EXACT_REENTRY",
+      "RECAP"
+    ],
+    "screens": [
+      {
+        "screen_id": "MOB-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "MOB-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Mobility: Starting check",
+        "progress_label": "Starting check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOB-REP-MATRIX",
+          "MOB-REP-TRAJECTORY"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOB-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "MOB-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Mobility: What this lens helps you notice",
+        "progress_label": "What this lens helps you notice",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOB-REP-MATRIX",
+          "MOB-REP-TRAJECTORY"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOB-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "MOB-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Mobility: Build the selection rule",
+        "progress_label": "Build the selection rule",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOB-REP-MATRIX",
+          "MOB-REP-TRAJECTORY"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOB-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "MOB-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Mobility: Keep the lens and cue together",
+        "progress_label": "Keep the lens and cue together",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOB-REP-MATRIX",
+          "MOB-REP-TRAJECTORY"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOB-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "MOB-NODE-THINK"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Mobility: Watch the lens selection",
+        "progress_label": "Watch the lens selection",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOB-REP-MATRIX",
+          "MOB-REP-TRAJECTORY"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOB-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "MOB-NODE-WORKED"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Mobility: Worked comparison",
+        "progress_label": "Worked comparison",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOB-REP-MATRIX",
+          "MOB-REP-TRAJECTORY"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOB-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "MOB-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Mobility: Choose with support",
+        "progress_label": "Choose with support",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOB-REP-MATRIX",
+          "MOB-REP-TRAJECTORY"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOB-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "MOB-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Mobility: Choose with less support",
+        "progress_label": "Choose with less support",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOB-REP-MATRIX",
+          "MOB-REP-TRAJECTORY"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOB-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "MOB-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Mobility: Choose independently",
+        "progress_label": "Choose independently",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOB-REP-MATRIX",
+          "MOB-REP-TRAJECTORY"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOB-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "MOB-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Mobility: Mark the boundary",
+        "progress_label": "Mark the boundary",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOB-REP-MATRIX",
+          "MOB-REP-TRAJECTORY"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOB-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "MOB-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Mobility: Near-use check",
+        "progress_label": "Near-use check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOB-REP-MATRIX",
+          "MOB-REP-TRAJECTORY"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOB-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "MOB-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Mobility: Changed-task check",
+        "progress_label": "Changed-task check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOB-REP-MATRIX",
+          "MOB-REP-TRAJECTORY"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOB-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "MOB-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Mobility: Repair the near-use function",
+        "progress_label": "Repair the near-use function",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOB-REP-MATRIX",
+          "MOB-REP-TRAJECTORY"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOB-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "MOB-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Mobility: Fresh near-use re-entry",
+        "progress_label": "Fresh near-use re-entry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOB-REP-MATRIX",
+          "MOB-REP-TRAJECTORY"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOB-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "MOB-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Mobility: Repair the changed-task function",
+        "progress_label": "Repair the changed-task function",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOB-REP-MATRIX",
+          "MOB-REP-TRAJECTORY"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOB-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "MOB-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Mobility: Fresh changed-task re-entry",
+        "progress_label": "Fresh changed-task re-entry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOB-REP-MATRIX",
+          "MOB-REP-TRAJECTORY"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "MOB-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "MOB-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Mobility: Keep the decision rule",
+        "progress_label": "Keep the decision rule",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "MOB-REP-MATRIX",
+          "MOB-REP-TRAJECTORY"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "POV-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "POV-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Poverty and exclusion: Starting check",
+        "progress_label": "Starting check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "POV-REP-COMPARISON",
+          "POV-REP-EXCLUSION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "POV-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "POV-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Poverty and exclusion: What this lens helps you notice",
+        "progress_label": "What this lens helps you notice",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "POV-REP-COMPARISON",
+          "POV-REP-EXCLUSION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "POV-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "POV-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Poverty and exclusion: Build the selection rule",
+        "progress_label": "Build the selection rule",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "POV-REP-COMPARISON",
+          "POV-REP-EXCLUSION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "POV-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "POV-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Poverty and exclusion: Keep the lens and cue together",
+        "progress_label": "Keep the lens and cue together",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "POV-REP-COMPARISON",
+          "POV-REP-EXCLUSION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "POV-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "POV-NODE-THINK"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Poverty and exclusion: Watch the lens selection",
+        "progress_label": "Watch the lens selection",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "POV-REP-COMPARISON",
+          "POV-REP-EXCLUSION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "POV-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "POV-NODE-WORKED"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Poverty and exclusion: Worked comparison",
+        "progress_label": "Worked comparison",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "POV-REP-COMPARISON",
+          "POV-REP-EXCLUSION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "POV-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "POV-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Poverty and exclusion: Choose with support",
+        "progress_label": "Choose with support",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "POV-REP-COMPARISON",
+          "POV-REP-EXCLUSION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "POV-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "POV-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Poverty and exclusion: Choose with less support",
+        "progress_label": "Choose with less support",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "POV-REP-COMPARISON",
+          "POV-REP-EXCLUSION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "POV-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "POV-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Poverty and exclusion: Choose independently",
+        "progress_label": "Choose independently",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "POV-REP-COMPARISON",
+          "POV-REP-EXCLUSION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "POV-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "POV-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Poverty and exclusion: Mark the boundary",
+        "progress_label": "Mark the boundary",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "POV-REP-COMPARISON",
+          "POV-REP-EXCLUSION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "POV-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "POV-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Poverty and exclusion: Near-use check",
+        "progress_label": "Near-use check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "POV-REP-COMPARISON",
+          "POV-REP-EXCLUSION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "POV-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "POV-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Poverty and exclusion: Changed-task check",
+        "progress_label": "Changed-task check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "POV-REP-COMPARISON",
+          "POV-REP-EXCLUSION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "POV-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "POV-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Poverty and exclusion: Repair the near-use function",
+        "progress_label": "Repair the near-use function",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "POV-REP-COMPARISON",
+          "POV-REP-EXCLUSION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "POV-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "POV-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Poverty and exclusion: Fresh near-use re-entry",
+        "progress_label": "Fresh near-use re-entry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "POV-REP-COMPARISON",
+          "POV-REP-EXCLUSION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "POV-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "POV-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Poverty and exclusion: Repair the changed-task function",
+        "progress_label": "Repair the changed-task function",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "POV-REP-COMPARISON",
+          "POV-REP-EXCLUSION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "POV-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "POV-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Poverty and exclusion: Fresh changed-task re-entry",
+        "progress_label": "Fresh changed-task re-entry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "POV-REP-COMPARISON",
+          "POV-REP-EXCLUSION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "POV-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "POV-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Poverty and exclusion: Keep the decision rule",
+        "progress_label": "Keep the decision rule",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "POV-REP-COMPARISON",
+          "POV-REP-EXCLUSION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "DIS-SCREEN-ENTRY",
+        "screen_kind": "ENTRY_CHECK_BOUNDARY",
+        "script_node_ids": [
+          "DIS-NODE-ENTRY"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Health disparities: Starting check",
+        "progress_label": "Starting check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "DIS-REP-OUTCOME-ACCESS",
+          "DIS-REP-PATHWAY",
+          "DIS-REP-POPULATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "DIS-SCREEN-ORIENTATION",
+        "screen_kind": "ORIENTATION",
+        "script_node_ids": [
+          "DIS-NODE-ORIENTATION"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Health disparities: What this lens helps you notice",
+        "progress_label": "What this lens helps you notice",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "DIS-REP-OUTCOME-ACCESS",
+          "DIS-REP-PATHWAY",
+          "DIS-REP-POPULATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "DIS-SCREEN-EXPLANATION",
+        "screen_kind": "EXPLANATION",
+        "script_node_ids": [
+          "DIS-NODE-EXPLANATION"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Health disparities: Build the selection rule",
+        "progress_label": "Build the selection rule",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "DIS-REP-OUTCOME-ACCESS",
+          "DIS-REP-PATHWAY",
+          "DIS-REP-POPULATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "DIS-SCREEN-MODEL",
+        "screen_kind": "MENTAL_MODEL",
+        "script_node_ids": [
+          "DIS-NODE-MODEL"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Health disparities: Keep the lens and cue together",
+        "progress_label": "Keep the lens and cue together",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "DIS-REP-OUTCOME-ACCESS",
+          "DIS-REP-PATHWAY",
+          "DIS-REP-POPULATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "DIS-SCREEN-THINK",
+        "screen_kind": "EXPERT_THINK_ALOUD",
+        "script_node_ids": [
+          "DIS-NODE-THINK"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Health disparities: Watch the lens selection",
+        "progress_label": "Watch the lens selection",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "DIS-REP-OUTCOME-ACCESS",
+          "DIS-REP-PATHWAY",
+          "DIS-REP-POPULATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "DIS-SCREEN-WORKED",
+        "screen_kind": "WORKED_EXAMPLE",
+        "script_node_ids": [
+          "DIS-NODE-WORKED"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Health disparities: Worked comparison",
+        "progress_label": "Worked comparison",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "DIS-REP-OUTCOME-ACCESS",
+          "DIS-REP-PATHWAY",
+          "DIS-REP-POPULATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "DIS-SCREEN-GUIDED",
+        "screen_kind": "GUIDED_PRACTICE",
+        "script_node_ids": [
+          "DIS-NODE-GUIDED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Health disparities: Choose with support",
+        "progress_label": "Choose with support",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "DIS-REP-OUTCOME-ACCESS",
+          "DIS-REP-PATHWAY",
+          "DIS-REP-POPULATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "DIS-SCREEN-LIGHT",
+        "screen_kind": "LIGHT_SUPPORT_PRACTICE",
+        "script_node_ids": [
+          "DIS-NODE-LIGHT"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Health disparities: Choose with less support",
+        "progress_label": "Choose with less support",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "DIS-REP-OUTCOME-ACCESS",
+          "DIS-REP-PATHWAY",
+          "DIS-REP-POPULATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "DIS-SCREEN-SOLO",
+        "screen_kind": "SOLO_PRACTICE",
+        "script_node_ids": [
+          "DIS-NODE-SOLO"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Health disparities: Choose independently",
+        "progress_label": "Choose independently",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "DIS-REP-OUTCOME-ACCESS",
+          "DIS-REP-PATHWAY",
+          "DIS-REP-POPULATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "DIS-SCREEN-CONTRAST",
+        "screen_kind": "CONTRAST_BOUNDARY",
+        "script_node_ids": [
+          "DIS-NODE-CONTRAST"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Health disparities: Mark the boundary",
+        "progress_label": "Mark the boundary",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "DIS-REP-OUTCOME-ACCESS",
+          "DIS-REP-PATHWAY",
+          "DIS-REP-POPULATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "DIS-SCREEN-NEAR",
+        "screen_kind": "NEAR_EXIT",
+        "script_node_ids": [
+          "DIS-NODE-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Health disparities: Near-use check",
+        "progress_label": "Near-use check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "DIS-REP-OUTCOME-ACCESS",
+          "DIS-REP-PATHWAY",
+          "DIS-REP-POPULATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "DIS-SCREEN-CHANGED",
+        "screen_kind": "CHANGED_EXIT",
+        "script_node_ids": [
+          "DIS-NODE-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Health disparities: Changed-task check",
+        "progress_label": "Changed-task check",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "DIS-REP-OUTCOME-ACCESS",
+          "DIS-REP-PATHWAY",
+          "DIS-REP-POPULATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "DIS-SCREEN-REPAIR-NEAR",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "DIS-NODE-REPAIR-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Health disparities: Repair the near-use function",
+        "progress_label": "Repair the near-use function",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "DIS-REP-OUTCOME-ACCESS",
+          "DIS-REP-PATHWAY",
+          "DIS-REP-POPULATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "DIS-SCREEN-REENTRY-NEAR",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "DIS-NODE-REENTRY-NEAR"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Health disparities: Fresh near-use re-entry",
+        "progress_label": "Fresh near-use re-entry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "DIS-REP-OUTCOME-ACCESS",
+          "DIS-REP-PATHWAY",
+          "DIS-REP-POPULATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "DIS-SCREEN-REPAIR-CHANGED",
+        "screen_kind": "TARGETED_REPAIR",
+        "script_node_ids": [
+          "DIS-NODE-REPAIR-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Health disparities: Repair the changed-task function",
+        "progress_label": "Repair the changed-task function",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "DIS-REP-OUTCOME-ACCESS",
+          "DIS-REP-PATHWAY",
+          "DIS-REP-POPULATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "DIS-SCREEN-REENTRY-CHANGED",
+        "screen_kind": "EXACT_REENTRY",
+        "script_node_ids": [
+          "DIS-NODE-REENTRY-CHANGED"
+        ],
+        "primary_job": "Complete one clearly stated learner operation.",
+        "learner_heading": "Health disparities: Fresh changed-task re-entry",
+        "progress_label": "Fresh changed-task re-entry",
+        "primary_action": "SUBMIT_RESPONSE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "DIS-REP-OUTCOME-ACCESS",
+          "DIS-REP-PATHWAY",
+          "DIS-REP-POPULATION"
+        ],
+        "focus_target": "SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT",
+        "keyboard_order": [
+          "HEADING",
+          "PROMPT_OR_CONTENT",
+          "RESPONSE_CONTROL",
+          "PRIMARY_ACTION",
+          "FEEDBACK_AFTER_COMMITMENT"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      },
+      {
+        "screen_id": "DIS-SCREEN-RECAP",
+        "screen_kind": "RECAP",
+        "script_node_ids": [
+          "DIS-NODE-RECAP"
+        ],
+        "primary_job": "Understand one current selection move.",
+        "learner_heading": "Health disparities: Keep the decision rule",
+        "progress_label": "Keep the decision rule",
+        "primary_action": "CONTINUE",
+        "important_callout_count": 0,
+        "collapsed_detail_ids": [],
+        "representation_ids": [
+          "DIS-REP-OUTCOME-ACCESS",
+          "DIS-REP-PATHWAY",
+          "DIS-REP-POPULATION"
+        ],
+        "focus_target": "SCREEN_HEADING",
+        "keyboard_order": [
+          "HEADING",
+          "CONTENT",
+          "PRIMARY_ACTION"
+        ],
+        "responsive_behavior": "SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM",
+        "reviewer_only_refs": []
+      }
+    ],
+    "representation_plans": [
+      {
+        "representation_id": "MOB-REP-MATRIX",
+        "target_kc_id": "V3-KC-921385",
+        "representation_type": "MOBILITY_MATRIX",
+        "learner_operation": "Classify a case on generation and rank axes independently.",
+        "text_nonvisual_equivalent": "Present a four-cell list crossing across-generation versus within-life with changed-rank versus similar-rank."
+      },
+      {
+        "representation_id": "MOB-REP-TRAJECTORY",
+        "target_kc_id": "V3-KC-921385",
+        "representation_type": "INTERGENERATIONAL_TRAJECTORY",
+        "learner_operation": "Compare a focal person’s position with a parent’s position.",
+        "text_nonvisual_equivalent": "State the parent and child positions, time points, and relative rank without classifying the mobility."
+      },
+      {
+        "representation_id": "POV-REP-COMPARISON",
+        "target_kc_id": "V3-KC-946152",
+        "representation_type": "POVERTY_COMPARISON",
+        "learner_operation": "Separate basic-needs sufficiency from position relative to social norms.",
+        "text_nonvisual_equivalent": "List basic-needs access and society-relative participation indicators in separate labeled groups."
+      },
+      {
+        "representation_id": "POV-REP-EXCLUSION",
+        "target_kc_id": "V3-KC-946152",
+        "representation_type": "SEGREGATION_ISOLATION_PATHWAY",
+        "learner_operation": "Trace segregation or isolation to reduced access and participation.",
+        "text_nonvisual_equivalent": "State the separating condition, the blocked connection, and the resulting participation limit in sequence."
+      },
+      {
+        "representation_id": "DIS-REP-OUTCOME-ACCESS",
+        "target_kc_id": "V3-KC-404327",
+        "representation_type": "OUTCOME_ACCESS_TABLE",
+        "learner_operation": "Sort measures into health outcomes versus health-care access or delivery.",
+        "text_nonvisual_equivalent": "Present each measure with its group values and label whether it records health status or a care-system process."
+      },
+      {
+        "representation_id": "DIS-REP-PATHWAY",
+        "target_kc_id": "V3-KC-404327",
+        "representation_type": "PATHWAY_COMPARISON",
+        "learner_operation": "Keep observed care-system differences and observed health outcomes in separate boxes.",
+        "text_nonvisual_equivalent": "List the care-system observation and health-outcome observation separately without drawing a causal arrow."
+      },
+      {
+        "representation_id": "DIS-REP-POPULATION",
+        "target_kc_id": "V3-KC-404327",
+        "representation_type": "POPULATION_GRAPH",
+        "learner_operation": "Identify which group-patterned measure differs and classify its domain.",
+        "text_nonvisual_equivalent": "State the groups, measure, units, and values in a table without interpreting causality."
+      }
+    ],
+    "learner_reviewer_separation": {
+      "learner_projection": "NORMALIZED_LEARNER_SAFE_ONLY",
+      "reviewer_projection": "SEPARATE_SERVER_AUTHORITY",
+      "prohibited_learner_fields": [
+        "ANSWER_KEY",
+        "CORRECT_RESPONSE",
+        "RATIONALE",
+        "RESPONSE_AUTHORITY",
+        "ROUTE_METADATA"
+      ]
+    },
+    "accessibility_acceptance": {
+      "keyboard_required": true,
+      "visible_focus_required": true,
+      "text_equivalent_required": true,
+      "human_accessibility_review_status": "BLOCKED"
+    },
+    "authoring_evidence": {
+      "route_profile": {
+        "route": "STANDARD",
+        "learner_profile": "DECLARED_PREREQUISITES_PRESENT_TARGET_KCS_NOT_YET_LEARNED",
+        "route_selection_authority": "FROZEN_RELEASE_POLICY_STANDARD_ONLY",
+        "observable_selection_state": "STANDARD_ONLY_POLICY_SCOPE"
+      },
+      "demand_inventory": [
+        {
+          "demand_id": "MOB-DEMAND-TIME",
+          "kc_id": "V3-KC-921385",
+          "description": "Distinguish intergenerational comparison from intragenerational change.",
+          "instruction_node_ids": [
+            "MOB-NODE-EXPLANATION",
+            "MOB-NODE-MODEL",
+            "MOB-NODE-THINK",
+            "MOB-NODE-WORKED"
+          ]
+        },
+        {
+          "demand_id": "MOB-DEMAND-RANK",
+          "kc_id": "V3-KC-921385",
+          "description": "Distinguish vertical rank change from horizontal movement at a similar rank.",
+          "instruction_node_ids": [
+            "MOB-NODE-EXPLANATION",
+            "MOB-NODE-MODEL",
+            "MOB-NODE-THINK",
+            "MOB-NODE-WORKED",
+            "MOB-NODE-CONTRAST"
+          ]
+        },
+        {
+          "demand_id": "MOB-DEMAND-MERIT",
+          "kc_id": "V3-KC-921385",
+          "description": "Identify a meritocracy claim and avoid treating the claim itself as proof of equal opportunity.",
+          "instruction_node_ids": [
+            "MOB-NODE-THINK",
+            "MOB-NODE-WORKED",
+            "MOB-NODE-CONTRAST"
+          ]
+        },
+        {
+          "demand_id": "POV-DEMAND-ABSOLUTE",
+          "kc_id": "V3-KC-946152",
+          "description": "Identify absolute poverty from inability to secure basic necessities.",
+          "instruction_node_ids": [
+            "POV-NODE-EXPLANATION",
+            "POV-NODE-MODEL",
+            "POV-NODE-WORKED",
+            "POV-NODE-CONTRAST"
+          ]
+        },
+        {
+          "demand_id": "POV-DEMAND-RELATIVE",
+          "kc_id": "V3-KC-946152",
+          "description": "Identify relative poverty from resources below prevailing social standards despite basic survival.",
+          "instruction_node_ids": [
+            "POV-NODE-EXPLANATION",
+            "POV-NODE-MODEL",
+            "POV-NODE-THINK",
+            "POV-NODE-WORKED"
+          ]
+        },
+        {
+          "demand_id": "POV-DEMAND-EXCLUSION",
+          "kc_id": "V3-KC-946152",
+          "description": "Explain how segregation or isolation restricts resource access and social participation.",
+          "instruction_node_ids": [
+            "POV-NODE-THINK",
+            "POV-NODE-WORKED",
+            "POV-NODE-CONTRAST"
+          ]
+        },
+        {
+          "demand_id": "DIS-DEMAND-HEALTH",
+          "kc_id": "V3-KC-404327",
+          "description": "Classify disease, mortality, life expectancy, and other status differences as health disparities.",
+          "instruction_node_ids": [
+            "DIS-NODE-EXPLANATION",
+            "DIS-NODE-MODEL",
+            "DIS-NODE-WORKED",
+            "DIS-NODE-CONTRAST"
+          ]
+        },
+        {
+          "demand_id": "DIS-DEMAND-CARE",
+          "kc_id": "V3-KC-404327",
+          "description": "Classify access, utilization, wait time, coverage, or delivery differences as health-care disparities.",
+          "instruction_node_ids": [
+            "DIS-NODE-EXPLANATION",
+            "DIS-NODE-MODEL",
+            "DIS-NODE-THINK",
+            "DIS-NODE-WORKED"
+          ]
+        },
+        {
+          "demand_id": "DIS-DEMAND-PATTERN",
+          "kc_id": "V3-KC-404327",
+          "description": "Identify class, gender, or race patterning while avoiding unsupported causal inference.",
+          "instruction_node_ids": [
+            "DIS-NODE-THINK",
+            "DIS-NODE-WORKED",
+            "DIS-NODE-CONTRAST"
+          ]
+        }
+      ],
+      "item_to_instruction_trace": [
+        {
+          "item_binding_id": "MOB-ITEM-ENTRY",
+          "kc_id": "V3-KC-921385",
+          "demand_ids": [
+            "MOB-DEMAND-TIME",
+            "MOB-DEMAND-RANK"
+          ],
+          "prior_instruction_node_ids": [
+            "MOB-NODE-EXPLANATION",
+            "MOB-NODE-MODEL"
+          ]
+        },
+        {
+          "item_binding_id": "MOB-ITEM-GUIDED",
+          "kc_id": "V3-KC-921385",
+          "demand_ids": [
+            "MOB-DEMAND-TIME",
+            "MOB-DEMAND-RANK"
+          ],
+          "prior_instruction_node_ids": [
+            "MOB-NODE-EXPLANATION",
+            "MOB-NODE-THINK",
+            "MOB-NODE-WORKED"
+          ]
+        },
+        {
+          "item_binding_id": "MOB-ITEM-LIGHT",
+          "kc_id": "V3-KC-921385",
+          "demand_ids": [
+            "MOB-DEMAND-TIME",
+            "MOB-DEMAND-RANK"
+          ],
+          "prior_instruction_node_ids": [
+            "MOB-NODE-EXPLANATION",
+            "MOB-NODE-MODEL",
+            "MOB-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "MOB-ITEM-SOLO",
+          "kc_id": "V3-KC-921385",
+          "demand_ids": [
+            "MOB-DEMAND-TIME",
+            "MOB-DEMAND-RANK"
+          ],
+          "prior_instruction_node_ids": [
+            "MOB-NODE-EXPLANATION",
+            "MOB-NODE-WORKED",
+            "MOB-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "MOB-ITEM-NEAR",
+          "kc_id": "V3-KC-921385",
+          "demand_ids": [
+            "MOB-DEMAND-TIME",
+            "MOB-DEMAND-RANK"
+          ],
+          "prior_instruction_node_ids": [
+            "MOB-NODE-EXPLANATION",
+            "MOB-NODE-MODEL",
+            "MOB-NODE-THINK",
+            "MOB-NODE-WORKED",
+            "MOB-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "MOB-ITEM-CHANGED",
+          "kc_id": "V3-KC-921385",
+          "demand_ids": [
+            "MOB-DEMAND-MERIT"
+          ],
+          "prior_instruction_node_ids": [
+            "MOB-NODE-EXPLANATION",
+            "MOB-NODE-THINK",
+            "MOB-NODE-WORKED",
+            "MOB-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "MOB-ITEM-REPAIR-NEAR",
+          "kc_id": "V3-KC-921385",
+          "demand_ids": [
+            "MOB-DEMAND-TIME",
+            "MOB-DEMAND-RANK"
+          ],
+          "prior_instruction_node_ids": [
+            "MOB-NODE-EXPLANATION",
+            "MOB-NODE-MODEL",
+            "MOB-NODE-REPAIR-NEAR"
+          ]
+        },
+        {
+          "item_binding_id": "MOB-ITEM-REENTRY-NEAR",
+          "kc_id": "V3-KC-921385",
+          "demand_ids": [
+            "MOB-DEMAND-TIME",
+            "MOB-DEMAND-RANK"
+          ],
+          "prior_instruction_node_ids": [
+            "MOB-NODE-EXPLANATION",
+            "MOB-NODE-MODEL",
+            "MOB-NODE-REPAIR-NEAR"
+          ]
+        },
+        {
+          "item_binding_id": "MOB-ITEM-REPAIR-CHANGED",
+          "kc_id": "V3-KC-921385",
+          "demand_ids": [
+            "MOB-DEMAND-MERIT"
+          ],
+          "prior_instruction_node_ids": [
+            "MOB-NODE-EXPLANATION",
+            "MOB-NODE-MODEL",
+            "MOB-NODE-REPAIR-CHANGED"
+          ]
+        },
+        {
+          "item_binding_id": "MOB-ITEM-REENTRY-CHANGED",
+          "kc_id": "V3-KC-921385",
+          "demand_ids": [
+            "MOB-DEMAND-MERIT"
+          ],
+          "prior_instruction_node_ids": [
+            "MOB-NODE-EXPLANATION",
+            "MOB-NODE-MODEL",
+            "MOB-NODE-REPAIR-CHANGED"
+          ]
+        },
+        {
+          "item_binding_id": "POV-ITEM-ENTRY",
+          "kc_id": "V3-KC-946152",
+          "demand_ids": [
+            "POV-DEMAND-ABSOLUTE"
+          ],
+          "prior_instruction_node_ids": [
+            "POV-NODE-EXPLANATION",
+            "POV-NODE-MODEL"
+          ]
+        },
+        {
+          "item_binding_id": "POV-ITEM-GUIDED",
+          "kc_id": "V3-KC-946152",
+          "demand_ids": [
+            "POV-DEMAND-RELATIVE"
+          ],
+          "prior_instruction_node_ids": [
+            "POV-NODE-EXPLANATION",
+            "POV-NODE-THINK",
+            "POV-NODE-WORKED"
+          ]
+        },
+        {
+          "item_binding_id": "POV-ITEM-LIGHT",
+          "kc_id": "V3-KC-946152",
+          "demand_ids": [
+            "POV-DEMAND-EXCLUSION"
+          ],
+          "prior_instruction_node_ids": [
+            "POV-NODE-EXPLANATION",
+            "POV-NODE-MODEL",
+            "POV-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "POV-ITEM-SOLO",
+          "kc_id": "V3-KC-946152",
+          "demand_ids": [
+            "POV-DEMAND-RELATIVE"
+          ],
+          "prior_instruction_node_ids": [
+            "POV-NODE-EXPLANATION",
+            "POV-NODE-WORKED",
+            "POV-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "POV-ITEM-NEAR",
+          "kc_id": "V3-KC-946152",
+          "demand_ids": [
+            "POV-DEMAND-ABSOLUTE",
+            "POV-DEMAND-RELATIVE"
+          ],
+          "prior_instruction_node_ids": [
+            "POV-NODE-EXPLANATION",
+            "POV-NODE-MODEL",
+            "POV-NODE-THINK",
+            "POV-NODE-WORKED",
+            "POV-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "POV-ITEM-CHANGED",
+          "kc_id": "V3-KC-946152",
+          "demand_ids": [
+            "POV-DEMAND-EXCLUSION"
+          ],
+          "prior_instruction_node_ids": [
+            "POV-NODE-EXPLANATION",
+            "POV-NODE-MODEL",
+            "POV-NODE-THINK",
+            "POV-NODE-WORKED",
+            "POV-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "POV-ITEM-REPAIR-NEAR",
+          "kc_id": "V3-KC-946152",
+          "demand_ids": [
+            "POV-DEMAND-ABSOLUTE",
+            "POV-DEMAND-RELATIVE"
+          ],
+          "prior_instruction_node_ids": [
+            "POV-NODE-EXPLANATION",
+            "POV-NODE-MODEL",
+            "POV-NODE-REPAIR-NEAR"
+          ]
+        },
+        {
+          "item_binding_id": "POV-ITEM-REENTRY-NEAR",
+          "kc_id": "V3-KC-946152",
+          "demand_ids": [
+            "POV-DEMAND-RELATIVE"
+          ],
+          "prior_instruction_node_ids": [
+            "POV-NODE-EXPLANATION",
+            "POV-NODE-MODEL",
+            "POV-NODE-REPAIR-NEAR"
+          ]
+        },
+        {
+          "item_binding_id": "POV-ITEM-REPAIR-CHANGED",
+          "kc_id": "V3-KC-946152",
+          "demand_ids": [
+            "POV-DEMAND-EXCLUSION"
+          ],
+          "prior_instruction_node_ids": [
+            "POV-NODE-EXPLANATION",
+            "POV-NODE-MODEL",
+            "POV-NODE-REPAIR-CHANGED"
+          ]
+        },
+        {
+          "item_binding_id": "POV-ITEM-REENTRY-CHANGED",
+          "kc_id": "V3-KC-946152",
+          "demand_ids": [
+            "POV-DEMAND-EXCLUSION"
+          ],
+          "prior_instruction_node_ids": [
+            "POV-NODE-EXPLANATION",
+            "POV-NODE-MODEL",
+            "POV-NODE-REPAIR-CHANGED"
+          ]
+        },
+        {
+          "item_binding_id": "DIS-ITEM-ENTRY",
+          "kc_id": "V3-KC-404327",
+          "demand_ids": [
+            "DIS-DEMAND-HEALTH",
+            "DIS-DEMAND-PATTERN"
+          ],
+          "prior_instruction_node_ids": [
+            "DIS-NODE-EXPLANATION",
+            "DIS-NODE-MODEL"
+          ]
+        },
+        {
+          "item_binding_id": "DIS-ITEM-GUIDED",
+          "kc_id": "V3-KC-404327",
+          "demand_ids": [
+            "DIS-DEMAND-CARE",
+            "DIS-DEMAND-PATTERN"
+          ],
+          "prior_instruction_node_ids": [
+            "DIS-NODE-EXPLANATION",
+            "DIS-NODE-THINK",
+            "DIS-NODE-WORKED"
+          ]
+        },
+        {
+          "item_binding_id": "DIS-ITEM-LIGHT",
+          "kc_id": "V3-KC-404327",
+          "demand_ids": [
+            "DIS-DEMAND-HEALTH",
+            "DIS-DEMAND-CARE"
+          ],
+          "prior_instruction_node_ids": [
+            "DIS-NODE-EXPLANATION",
+            "DIS-NODE-MODEL",
+            "DIS-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "DIS-ITEM-SOLO",
+          "kc_id": "V3-KC-404327",
+          "demand_ids": [
+            "DIS-DEMAND-HEALTH",
+            "DIS-DEMAND-CARE"
+          ],
+          "prior_instruction_node_ids": [
+            "DIS-NODE-EXPLANATION",
+            "DIS-NODE-WORKED",
+            "DIS-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "DIS-ITEM-NEAR",
+          "kc_id": "V3-KC-404327",
+          "demand_ids": [
+            "DIS-DEMAND-HEALTH",
+            "DIS-DEMAND-PATTERN"
+          ],
+          "prior_instruction_node_ids": [
+            "DIS-NODE-EXPLANATION",
+            "DIS-NODE-MODEL",
+            "DIS-NODE-THINK",
+            "DIS-NODE-WORKED",
+            "DIS-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "DIS-ITEM-CHANGED",
+          "kc_id": "V3-KC-404327",
+          "demand_ids": [
+            "DIS-DEMAND-HEALTH",
+            "DIS-DEMAND-CARE",
+            "DIS-DEMAND-PATTERN"
+          ],
+          "prior_instruction_node_ids": [
+            "DIS-NODE-EXPLANATION",
+            "DIS-NODE-MODEL",
+            "DIS-NODE-THINK",
+            "DIS-NODE-WORKED",
+            "DIS-NODE-CONTRAST"
+          ]
+        },
+        {
+          "item_binding_id": "DIS-ITEM-REPAIR-NEAR",
+          "kc_id": "V3-KC-404327",
+          "demand_ids": [
+            "DIS-DEMAND-HEALTH",
+            "DIS-DEMAND-CARE"
+          ],
+          "prior_instruction_node_ids": [
+            "DIS-NODE-EXPLANATION",
+            "DIS-NODE-MODEL",
+            "DIS-NODE-REPAIR-NEAR"
+          ]
+        },
+        {
+          "item_binding_id": "DIS-ITEM-REENTRY-NEAR",
+          "kc_id": "V3-KC-404327",
+          "demand_ids": [
+            "DIS-DEMAND-HEALTH",
+            "DIS-DEMAND-PATTERN"
+          ],
+          "prior_instruction_node_ids": [
+            "DIS-NODE-EXPLANATION",
+            "DIS-NODE-MODEL",
+            "DIS-NODE-REPAIR-NEAR"
+          ]
+        },
+        {
+          "item_binding_id": "DIS-ITEM-REPAIR-CHANGED",
+          "kc_id": "V3-KC-404327",
+          "demand_ids": [
+            "DIS-DEMAND-HEALTH",
+            "DIS-DEMAND-CARE",
+            "DIS-DEMAND-PATTERN"
+          ],
+          "prior_instruction_node_ids": [
+            "DIS-NODE-EXPLANATION",
+            "DIS-NODE-MODEL",
+            "DIS-NODE-REPAIR-CHANGED"
+          ]
+        },
+        {
+          "item_binding_id": "DIS-ITEM-REENTRY-CHANGED",
+          "kc_id": "V3-KC-404327",
+          "demand_ids": [
+            "DIS-DEMAND-HEALTH",
+            "DIS-DEMAND-CARE",
+            "DIS-DEMAND-PATTERN"
+          ],
+          "prior_instruction_node_ids": [
+            "DIS-NODE-EXPLANATION",
+            "DIS-NODE-MODEL",
+            "DIS-NODE-REPAIR-CHANGED"
+          ]
+        }
+      ],
+      "assistance_affordance_inventory": [
+        {
+          "kc_id": "V3-KC-921385",
+          "sequence": [
+            {
+              "role": "GUIDED_PRACTICE",
+              "assistance": "VISIBLE_SELECTION_CUE"
+            },
+            {
+              "role": "LIGHT_SUPPORT_PRACTICE",
+              "assistance": "BRIEF_SELECTION_REMINDER"
+            },
+            {
+              "role": "SOLO_PRACTICE",
+              "assistance": "NONE_BEFORE_COMMIT"
+            },
+            {
+              "role": "NEAR_EXIT",
+              "assistance": "NONE_BEFORE_COMMIT"
+            },
+            {
+              "role": "CHANGED_EXIT",
+              "assistance": "NONE_BEFORE_COMMIT"
+            }
+          ],
+          "strictly_less_at_exit": true
+        },
+        {
+          "kc_id": "V3-KC-946152",
+          "sequence": [
+            {
+              "role": "GUIDED_PRACTICE",
+              "assistance": "VISIBLE_SELECTION_CUE"
+            },
+            {
+              "role": "LIGHT_SUPPORT_PRACTICE",
+              "assistance": "BRIEF_SELECTION_REMINDER"
+            },
+            {
+              "role": "SOLO_PRACTICE",
+              "assistance": "NONE_BEFORE_COMMIT"
+            },
+            {
+              "role": "NEAR_EXIT",
+              "assistance": "NONE_BEFORE_COMMIT"
+            },
+            {
+              "role": "CHANGED_EXIT",
+              "assistance": "NONE_BEFORE_COMMIT"
+            }
+          ],
+          "strictly_less_at_exit": true
+        },
+        {
+          "kc_id": "V3-KC-404327",
+          "sequence": [
+            {
+              "role": "GUIDED_PRACTICE",
+              "assistance": "VISIBLE_SELECTION_CUE"
+            },
+            {
+              "role": "LIGHT_SUPPORT_PRACTICE",
+              "assistance": "BRIEF_SELECTION_REMINDER"
+            },
+            {
+              "role": "SOLO_PRACTICE",
+              "assistance": "NONE_BEFORE_COMMIT"
+            },
+            {
+              "role": "NEAR_EXIT",
+              "assistance": "NONE_BEFORE_COMMIT"
+            },
+            {
+              "role": "CHANGED_EXIT",
+              "assistance": "NONE_BEFORE_COMMIT"
+            }
+          ],
+          "strictly_less_at_exit": true
+        }
+      ],
+      "changed_task_decision_points": [
+        {
+          "kc_id": "V3-KC-921385",
+          "near_item_id": "MOB-ITEM-NEAR",
+          "changed_item_id": "MOB-ITEM-CHANGED",
+          "decision_point": "The near task classifies a trajectory on time and rank axes; the changed task evaluates what a meritocracy statement claims. Reusing only the mobility label misses the shift from classification to claim evaluation.",
+          "near_trace": [
+            "Identify whether the comparison is across generations or within one life.",
+            "Identify whether relative social rank changes or stays similar.",
+            "Combine the two independent classifications."
+          ],
+          "changed_trace": [
+            "Locate the explanation offered for the mobility outcome.",
+            "Identify whether ability and effort are presented as the basis of reward.",
+            "Label the meritocracy invocation while checking whether equal opportunity is evidence or merely assumed."
+          ],
+          "changed_dimensions": [
+            "required_operation",
+            "domain_context"
+          ]
+        },
+        {
+          "kc_id": "V3-KC-946152",
+          "near_item_id": "POV-ITEM-NEAR",
+          "changed_item_id": "POV-ITEM-CHANGED",
+          "decision_point": "The near task classifies a resource condition as absolute or relative poverty; the changed task traces a segregation/isolation mechanism to blocked participation. Reusing the poverty label alone misses the access pathway.",
+          "near_trace": [
+            "Identify whether basic necessities can be secured.",
+            "If they can, compare resources with prevailing social standards.",
+            "Classify absolute or relative poverty from the decisive comparison."
+          ],
+          "changed_trace": [
+            "Identify the separating or isolating condition.",
+            "Identify which resource, network, or institution becomes harder to reach.",
+            "Explain the resulting restriction in participation as social exclusion."
+          ],
+          "changed_dimensions": [
+            "required_operation",
+            "domain_context"
+          ]
+        },
+        {
+          "kc_id": "V3-KC-404327",
+          "near_item_id": "DIS-ITEM-NEAR",
+          "changed_item_id": "DIS-ITEM-CHANGED",
+          "decision_point": "The near task classifies one outcome measure; the changed task separates a care-system measure from an outcome measure in the same case. Treating every difference as health status collapses the care/outcome boundary.",
+          "near_trace": [
+            "Identify the measured variable.",
+            "Decide whether it is health status or a care-system process.",
+            "Classify the observed group difference without adding a cause."
+          ],
+          "changed_trace": [
+            "Inventory each measured variable separately.",
+            "Place appointment access or delivery in the health-care box and disease outcome in the health box.",
+            "Report both disparity types while withholding causal direction unless evidence supports it."
+          ],
+          "changed_dimensions": [
+            "required_operation",
+            "passage_or_data"
+          ]
+        }
+      ],
+      "repair_graphs": [
+        {
+          "kc_id": "V3-KC-921385",
+          "failed_function": "NEAR_USE",
+          "triggering_response_feature_ids": [
+            "MOB-FEATURE-NEAR-1",
+            "MOB-FEATURE-NEAR-2",
+            "MOB-FEATURE-NEAR-3"
+          ],
+          "repair_node_id": "MOB-NODE-REPAIR-NEAR",
+          "repair_confirmation_item_id": "MOB-ITEM-REPAIR-NEAR",
+          "fresh_reentry_item_id": "MOB-ITEM-REENTRY-NEAR",
+          "fresh_semantic_family_id": "MOB-FAMILY-REENTRY-NEAR",
+          "maximum_repair_cycles": 1,
+          "exhaustion_disposition": "RETURN_TO_PLANNER_WITHOUT_EXIT_CREDIT"
+        },
+        {
+          "kc_id": "V3-KC-921385",
+          "failed_function": "CHANGED_TASK",
+          "triggering_response_feature_ids": [
+            "MOB-FEATURE-CHANGED-0",
+            "MOB-FEATURE-CHANGED-2",
+            "MOB-FEATURE-CHANGED-3"
+          ],
+          "repair_node_id": "MOB-NODE-REPAIR-CHANGED",
+          "repair_confirmation_item_id": "MOB-ITEM-REPAIR-CHANGED",
+          "fresh_reentry_item_id": "MOB-ITEM-REENTRY-CHANGED",
+          "fresh_semantic_family_id": "MOB-FAMILY-REENTRY-CHANGED",
+          "maximum_repair_cycles": 1,
+          "exhaustion_disposition": "RETURN_TO_PLANNER_WITHOUT_EXIT_CREDIT"
+        },
+        {
+          "kc_id": "V3-KC-946152",
+          "failed_function": "NEAR_USE",
+          "triggering_response_feature_ids": [
+            "POV-FEATURE-NEAR-0",
+            "POV-FEATURE-NEAR-1",
+            "POV-FEATURE-NEAR-3"
+          ],
+          "repair_node_id": "POV-NODE-REPAIR-NEAR",
+          "repair_confirmation_item_id": "POV-ITEM-REPAIR-NEAR",
+          "fresh_reentry_item_id": "POV-ITEM-REENTRY-NEAR",
+          "fresh_semantic_family_id": "POV-FAMILY-REENTRY-NEAR",
+          "maximum_repair_cycles": 1,
+          "exhaustion_disposition": "RETURN_TO_PLANNER_WITHOUT_EXIT_CREDIT"
+        },
+        {
+          "kc_id": "V3-KC-946152",
+          "failed_function": "CHANGED_TASK",
+          "triggering_response_feature_ids": [
+            "POV-FEATURE-CHANGED-0",
+            "POV-FEATURE-CHANGED-1",
+            "POV-FEATURE-CHANGED-2"
+          ],
+          "repair_node_id": "POV-NODE-REPAIR-CHANGED",
+          "repair_confirmation_item_id": "POV-ITEM-REPAIR-CHANGED",
+          "fresh_reentry_item_id": "POV-ITEM-REENTRY-CHANGED",
+          "fresh_semantic_family_id": "POV-FAMILY-REENTRY-CHANGED",
+          "maximum_repair_cycles": 1,
+          "exhaustion_disposition": "RETURN_TO_PLANNER_WITHOUT_EXIT_CREDIT"
+        },
+        {
+          "kc_id": "V3-KC-404327",
+          "failed_function": "NEAR_USE",
+          "triggering_response_feature_ids": [
+            "DIS-FEATURE-NEAR-1",
+            "DIS-FEATURE-NEAR-2",
+            "DIS-FEATURE-NEAR-3"
+          ],
+          "repair_node_id": "DIS-NODE-REPAIR-NEAR",
+          "repair_confirmation_item_id": "DIS-ITEM-REPAIR-NEAR",
+          "fresh_reentry_item_id": "DIS-ITEM-REENTRY-NEAR",
+          "fresh_semantic_family_id": "DIS-FAMILY-REENTRY-NEAR",
+          "maximum_repair_cycles": 1,
+          "exhaustion_disposition": "RETURN_TO_PLANNER_WITHOUT_EXIT_CREDIT"
+        },
+        {
+          "kc_id": "V3-KC-404327",
+          "failed_function": "CHANGED_TASK",
+          "triggering_response_feature_ids": [
+            "DIS-FEATURE-CHANGED-0",
+            "DIS-FEATURE-CHANGED-2",
+            "DIS-FEATURE-CHANGED-3"
+          ],
+          "repair_node_id": "DIS-NODE-REPAIR-CHANGED",
+          "repair_confirmation_item_id": "DIS-ITEM-REPAIR-CHANGED",
+          "fresh_reentry_item_id": "DIS-ITEM-REENTRY-CHANGED",
+          "fresh_semantic_family_id": "DIS-FAMILY-REENTRY-CHANGED",
+          "maximum_repair_cycles": 1,
+          "exhaustion_disposition": "RETURN_TO_PLANNER_WITHOUT_EXIT_CREDIT"
+        }
+      ],
+      "prerequisite_handoffs": [],
+      "hard_prerequisite_relation_ids": [],
+      "item_level_dok_labels_authored": false,
+      "item_dok_claims_made": false
+    },
+    "presentation_status": "CONTENT_CANDIDATE_RUNTIME_AND_BROWSER_QA_PENDING"
+  }
+}
