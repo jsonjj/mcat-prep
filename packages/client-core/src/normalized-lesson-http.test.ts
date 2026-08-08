@@ -66,7 +66,11 @@ describe('HttpAuthorityClient normalized-catalog slug routing', () => {
         calls.push(request);
         if (request.url.endsWith('/v1/bootstrap')) return Response.json(bootstrap);
         if (request.url.endsWith(`/v1/lessons/${L2_SLUG}/status`)) {
-          return Response.json({ availability: 'AVAILABLE', runState: 'NOT_STARTED', actionLabel: 'Start' });
+          return Response.json({
+            availability: 'AVAILABLE',
+            runState: 'NOT_STARTED',
+            actionLabel: 'Start',
+          });
         }
         if (request.url.endsWith(`/v1/lessons/${L2_SLUG}/start`)) {
           const command = NormalizedLessonStartCommandSchema.parse(
@@ -93,7 +97,9 @@ describe('HttpAuthorityClient normalized-catalog slug routing', () => {
 
     await client.bootstrap();
     expect(await client.getNormalizedLessonStatus(L2_SLUG)).toMatchObject({ actionLabel: 'Start' });
-    expect(await client.startNormalizedLesson(L2_SLUG, L2)).toMatchObject({ disposition: 'STARTED' });
+    expect(await client.startNormalizedLesson(L2_SLUG, L2)).toMatchObject({
+      disposition: 'STARTED',
+    });
     expect((await client.getNormalizedLessonRun(L2_SLUG)).screen.kind).toBe('QUESTION');
     await client.submitNormalizedLessonAction(L2_SLUG, {
       type: 'SUBMIT_RESPONSE',
@@ -102,7 +108,9 @@ describe('HttpAuthorityClient normalized-catalog slug routing', () => {
 
     // Every endpoint was addressed under the lesson's OWN slug.
     for (const segment of ['status', 'start', 'run', 'commands']) {
-      expect(calls.some((call) => call.url.endsWith(`/v1/lessons/${L2_SLUG}/${segment}`))).toBe(true);
+      expect(calls.some((call) => call.url.endsWith(`/v1/lessons/${L2_SLUG}/${segment}`))).toBe(
+        true,
+      );
     }
     // The start body carries the id and the pre-start stream version; the command
     // that follows advances on the accepted stream — same envelope discipline the
@@ -119,6 +127,54 @@ describe('HttpAuthorityClient normalized-catalog slug routing', () => {
     expect(actionCommand).not.toHaveProperty('runId');
   });
 
+  it('resyncs and retries the lesson start once on a stream_conflict (launch race)', async () => {
+    const startBodies: string[] = [];
+    const client = new HttpAuthorityClient({
+      baseUrl: 'https://api.example.test',
+      fetch: async (url, init) => {
+        const u = String(url);
+        if (u.endsWith('/v1/bootstrap')) return Response.json(bootstrap);
+        if (u.endsWith(`/v1/lessons/${L2_SLUG}/start`)) {
+          startBodies.push(String(init?.body));
+          // First attempt loses the optimistic-concurrency check (a concurrent command
+          // advanced the stream), reported with the CURRENT version.
+          if (startBodies.length === 1) {
+            return new Response(
+              JSON.stringify({
+                code: 'stream_conflict',
+                message: 'The learner stream changed.',
+                requestId: 'req-conflict',
+                retryable: false,
+                currentStreamVersion: 42,
+              }),
+              { status: 409, headers: { 'content-type': 'application/json' } },
+            );
+          }
+          const command = NormalizedLessonStartCommandSchema.parse(JSON.parse(String(init?.body)));
+          return Response.json({
+            runId,
+            disposition: 'STARTED',
+            streamVersion: command.envelope.expectedStreamVersion + 1,
+          });
+        }
+        throw new Error(`unexpected fetch ${u}`);
+      },
+    });
+
+    await client.bootstrap();
+    expect(await client.startNormalizedLesson(L2_SLUG, L2)).toMatchObject({
+      disposition: 'STARTED',
+    });
+    // Retried exactly once: the conflicted command did not apply, so re-issuing is safe.
+    expect(startBodies).toHaveLength(2);
+    const first = NormalizedLessonStartCommandSchema.parse(JSON.parse(startBodies[0]!));
+    const retry = NormalizedLessonStartCommandSchema.parse(JSON.parse(startBodies[1]!));
+    // Retry rebuilt the envelope: adopts the server's current version + a fresh event id.
+    expect(first.envelope.expectedStreamVersion).toBe(7);
+    expect(retry.envelope.expectedStreamVersion).toBe(42);
+    expect(retry.envelope.eventId).not.toBe(first.envelope.eventId);
+  });
+
   it('rejects a run view that leaks a protected answer field', async () => {
     const client = new HttpAuthorityClient({
       baseUrl: 'https://api.example.test',
@@ -132,6 +188,8 @@ describe('HttpAuthorityClient normalized-catalog slug routing', () => {
     });
 
     await client.bootstrap();
-    await expect(client.getNormalizedLessonRun(L2_SLUG)).rejects.toMatchObject({ name: 'ZodError' });
+    await expect(client.getNormalizedLessonRun(L2_SLUG)).rejects.toMatchObject({
+      name: 'ZodError',
+    });
   });
 });

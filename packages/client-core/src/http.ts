@@ -274,6 +274,32 @@ export class HttpAuthorityClient implements AuthorityPort, AuthPort {
   }
 
   /**
+   * Re-issue a command ONCE if it lost the optimistic-concurrency check.
+   *
+   * A concurrent command can advance the learner's stream between our last resync
+   * and this one — e.g. launching a Today's-Path activity records it `in_progress`
+   * a beat before the lesson `start` fires, or a second tab acts — so the envelope's
+   * `expectedStreamVersion` is stale and the server rejects with `stream_conflict`,
+   * which carries the CURRENT version. The rejected command did NOT apply, so adopting
+   * that version and RE-RUNNING the caller (which rebuilds the envelope with a fresh
+   * eventId/idempotencyKey/version) is a safe retry, never a double-apply. `run` must
+   * therefore construct its own envelope inside the closure, not before it.
+   */
+  private async withStreamConflictRetry<T>(run: () => Promise<T>): Promise<T> {
+    try {
+      return await run();
+    } catch (error) {
+      if (!(error instanceof ApiClientError) || error.code !== 'stream_conflict') throw error;
+      if (typeof error.currentStreamVersion === 'number') {
+        this.streamVersion = error.currentStreamVersion;
+      } else {
+        await this.bootstrap();
+      }
+      return run();
+    }
+  }
+
+  /**
    * Establish or refresh the session.
    *
    * A signed-out visitor gets `{ authenticated: false }` and a CSRF token that is
@@ -728,17 +754,19 @@ export class HttpAuthorityClient implements AuthorityPort, AuthPort {
   }
 
   async startNormalizedLesson(slug: string, lessonId: string) {
-    const command = NormalizedLessonStartCommandSchema.parse({
-      envelope: await this.commandEnvelope(),
-      lessonId,
+    return this.withStreamConflictRetry(async () => {
+      const command = NormalizedLessonStartCommandSchema.parse({
+        envelope: await this.commandEnvelope(),
+        lessonId,
+      });
+      const response = await this.request(
+        normalizedLessonPath(slug, 'start'),
+        NormalizedLessonStartResponseSchema,
+        { method: 'POST', body: JSON.stringify(command) },
+      );
+      this.accept(response);
+      return response;
     });
-    const response = await this.request(
-      normalizedLessonPath(slug, 'start'),
-      NormalizedLessonStartResponseSchema,
-      { method: 'POST', body: JSON.stringify(command) },
-    );
-    this.accept(response);
-    return response;
   }
 
   async getNormalizedLessonRun(slug: string) {
@@ -747,11 +775,13 @@ export class HttpAuthorityClient implements AuthorityPort, AuthPort {
   }
 
   async submitNormalizedLessonAction(slug: string, action: NormalizedLessonAction): Promise<void> {
-    const command = NormalizedLessonCommandSchema.parse({
-      envelope: await this.commandEnvelope(),
-      action,
+    await this.withStreamConflictRetry(async () => {
+      const command = NormalizedLessonCommandSchema.parse({
+        envelope: await this.commandEnvelope(),
+        action,
+      });
+      await this.acceptedCommand(normalizedLessonPath(slug, 'commands'), command);
     });
-    await this.acceptedCommand(normalizedLessonPath(slug, 'commands'), command);
   }
 
   async resetProgress(): Promise<void> {
