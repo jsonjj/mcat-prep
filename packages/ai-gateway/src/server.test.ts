@@ -10,7 +10,8 @@ import {
 import { MAX_CHAT_INPUT_CHARS } from './port';
 
 const source = {
-  rationale: 'The buffer resists pH change because the weak acid and its conjugate base absorb added H+.',
+  rationale:
+    'The buffer resists pH change because the weak acid and its conjugate base absorb added H+.',
   choiceRationales: { C: 'C confuses buffering with neutralization.' },
 };
 
@@ -35,7 +36,9 @@ function recordingFetch(content: string): { fetchImpl: AiFetch; bodies: string[]
 
 describe('groundedRewrite (production route)', () => {
   it('is grounded: it sends the model only the source and returns a clean re-wording', async () => {
-    const { fetchImpl, bodies } = recordingFetch('Put another way: the buffer soaks up added acid.');
+    const { fetchImpl, bodies } = recordingFetch(
+      'Put another way: the buffer soaks up added acid.',
+    );
     const result = await groundedRewrite(
       { questionId: 'q-1', mode: 'example', source },
       { apiKey: 'k', fetchImpl },
@@ -56,7 +59,9 @@ describe('groundedRewrite (production route)', () => {
   });
 
   it('drops a hallucinated number back to the deterministic re-statement', async () => {
-    const numericSource = { rationale: 'Doubling the substrate doubles the rate for a first-order step.' };
+    const numericSource = {
+      rationale: 'Doubling the substrate doubles the rate for a first-order step.',
+    };
     const { fetchImpl } = recordingFetch('Doubling substrate raises the rate by 87% per second.');
     const result = await groundedRewrite(
       { questionId: 'q-2', mode: 'example', source: numericSource },
@@ -86,7 +91,10 @@ describe('groundedRewrite (production route)', () => {
   });
 
   it('returns 503 when no key is configured (client falls back)', async () => {
-    const result = await groundedRewrite({ questionId: 'q-1', mode: 'example', source }, { apiKey: '' });
+    const result = await groundedRewrite(
+      { questionId: 'q-1', mode: 'example', source },
+      { apiKey: '' },
+    );
     expect(result.status).toBe(503);
   });
 
@@ -99,7 +107,12 @@ describe('groundedRewrite (production route)', () => {
     });
     const result = await groundedRewrite(
       // A valid step gate so this reaches the upstream path (steps is gated below).
-      { questionId: 'q-1', mode: 'steps', source, gate: { skill: 'QUANTIFY', section: null, dok: null } },
+      {
+        questionId: 'q-1',
+        mode: 'steps',
+        source,
+        gate: { skill: 'QUANTIFY', section: null, dok: null },
+      },
       { apiKey: 'k', fetchImpl },
     );
     expect(result.status).toBe(502);
@@ -107,7 +120,10 @@ describe('groundedRewrite (production route)', () => {
 
   it('rejects a malformed body with 400 and never calls the gateway', async () => {
     const fetchImpl = vi.fn<AiFetch>();
-    const result = await groundedRewrite({ questionId: 'q-1', mode: 'bogus' }, { apiKey: 'k', fetchImpl });
+    const result = await groundedRewrite(
+      { questionId: 'q-1', mode: 'bogus' },
+      { apiKey: 'k', fetchImpl },
+    );
     expect(result.status).toBe(400);
     expect(fetchImpl).not.toHaveBeenCalled();
   });
@@ -117,7 +133,12 @@ describe('groundedRewrite (production route)', () => {
     const result = await groundedRewrite(
       // Low-DOK, non-QUANTIFY, non-C/P: the client hides the button, and the route
       // refuses it too rather than trusting a client that asks for steps anyway.
-      { questionId: 'q-1', mode: 'steps', source, gate: { skill: 'IDENTIFY', section: 'bb', dok: 1 } },
+      {
+        questionId: 'q-1',
+        mode: 'steps',
+        source,
+        gate: { skill: 'IDENTIFY', section: 'bb', dok: 1 },
+      },
       { apiKey: 'k', fetchImpl },
     );
     expect(result.status).toBe(400);
@@ -188,6 +209,33 @@ describe('proxyChat (generic route, e.g. CARS Duel)', () => {
     );
     expect(result.status).toBe(502);
     expect((result.json as { error: string }).error).toBe('proxy_failure');
+  });
+
+  it('does not leak the provider error body to the client — logs it server-side only', async () => {
+    const sensitive =
+      "Budget exceeded for model global.anthropic.claude-sonnet-5, budget 'v2a-block-pat' (per-user: someone@example.com)";
+    const failingUpstream: AiFetch = async () => ({
+      ok: false,
+      status: 429,
+      json: async () => ({ message: sensitive }),
+      text: async () => sensitive,
+    });
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const result = await proxyChat(
+      { messages: [{ role: 'user', content: 'hi' }] },
+      { apiKey: 'k', fetchImpl: failingUpstream },
+    );
+    // The client learns the status only — never the budget, model, or account email.
+    expect(result.status).toBe(502);
+    expect(result.json).toEqual({ error: 'upstream_error', status: 429 });
+    expect(JSON.stringify(result.json)).not.toContain('per-user');
+    expect(JSON.stringify(result.json)).not.toContain('budget');
+    // The provider body is retained server-side (CloudWatch) for debugging.
+    expect(errorSpy).toHaveBeenCalledWith(
+      '[ai-gateway] proxyChat upstream error',
+      expect.objectContaining({ status: 429, detail: expect.stringContaining('per-user') }),
+    );
+    errorSpy.mockRestore();
   });
 });
 

@@ -158,11 +158,17 @@ export async function proxyChat(rawBody: unknown, config: AiProxyConfig): Promis
     if (!upstream.ok) {
       let detail = '';
       try {
-        detail = (await upstream.text()).slice(0, 300);
+        detail = (await upstream.text()).slice(0, 500);
       } catch {
         /* unreadable upstream body */
       }
-      return { status: 502, json: { error: 'upstream_error', status: upstream.status, detail } };
+      // Log the provider's failure body SERVER-SIDE ONLY. It can name the budget,
+      // the model, and the account email tied to the key — internal details that
+      // must never reach the learner's browser — so the client is handed the status
+      // alone (mirrors groundedRewrite). The client already degrades to "opponent
+      // offline" on any 5xx.
+      console.error('[ai-gateway] proxyChat upstream error', { status: upstream.status, detail });
+      return { status: 502, json: { error: 'upstream_error', status: upstream.status } };
     }
     return { status: 200, json: { text: extractText(await upstream.json()) } };
   } catch (err) {
@@ -201,7 +207,10 @@ export async function groundedRewrite(
   // button: a worked, segmented walk is offered only where it pays off (QUANTIFY /
   // C-P / DOK >= 2). A client that requests `steps` for an ineligible item — or omits
   // the gate entirely — is refused here rather than trusted. `example` has no gate.
-  if (mode === 'steps' && !canStepByStep(request.gate ?? { skill: null, section: null, dok: null })) {
+  if (
+    mode === 'steps' &&
+    !canStepByStep(request.gate ?? { skill: null, section: null, dok: null })
+  ) {
     return { status: 400, json: { error: 'steps_not_available' } };
   }
   // No key: let the client fall back deterministically (it holds the same source).
@@ -212,6 +221,18 @@ export async function groundedRewrite(
   try {
     const upstream = await callCompletions(messages, MAX_OUTPUT_TOKENS, config);
     if (!upstream.ok) {
+      let detail = '';
+      try {
+        detail = (await upstream.text()).slice(0, 500);
+      } catch {
+        /* unreadable upstream body */
+      }
+      // Same containment as proxyChat: the provider body stays in server logs; the
+      // client only learns the status (and falls back to the deterministic re-statement).
+      console.error('[ai-gateway] groundedRewrite upstream error', {
+        status: upstream.status,
+        detail,
+      });
       return { status: 502, json: { error: 'upstream_error', status: upstream.status } };
     }
     const sanitized = sanitizeRewrite(extractText(await upstream.json()), mode, request.source);

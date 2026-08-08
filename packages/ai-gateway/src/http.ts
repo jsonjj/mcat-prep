@@ -38,16 +38,20 @@ export class HttpAiChat implements AiChat {
       throw new AiUnavailableError('The AI opponent endpoint was not found');
     }
     if (!res.ok) {
-      let detail = '';
+      // Surface only OUR terse error code + status — never any `detail` the body may
+      // carry. The gateway logs the provider's raw failure (budget/model/account
+      // email) server-side; it must not ride back to the browser via the thrown
+      // message, and any surviving message is shown to the learner only in dev.
+      let code = '';
       try {
-        const body = (await res.json()) as { error?: string; status?: number; detail?: string };
+        const body = (await res.json()) as { error?: string; status?: number };
         if (body?.error) {
-          detail = ` — ${body.error}${body.status ? ` (${body.status})` : ''}${body.detail ? `: ${body.detail}` : ''}`;
+          code = ` — ${body.error}${body.status ? ` (${body.status})` : ''}`;
         }
       } catch {
         /* non-JSON error body */
       }
-      throw new Error(`Gateway request failed (${res.status})${detail}`);
+      throw new Error(`Gateway request failed (${res.status})${code}`);
     }
     const data = (await res.json()) as { text?: string };
     return { text: data.text ?? '' };

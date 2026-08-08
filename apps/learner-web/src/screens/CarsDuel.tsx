@@ -31,7 +31,10 @@ import { Markdown } from '../components/Markdown';
 const MODES: DuelMode[] = ['rebut', 'defend'];
 
 /** Setup mode cards — an icon + a short "what you'll do" line for each side of the duel. */
-const MODE_CARDS: Record<DuelMode, { title: string; description: string; Icon: (p: SVGProps<SVGSVGElement>) => JSX.Element }> = {
+const MODE_CARDS: Record<
+  DuelMode,
+  { title: string; description: string; Icon: (p: SVGProps<SVGSVGElement>) => JSX.Element }
+> = {
   rebut: {
     title: 'Rebut the argument',
     description: "You dismantle the AI's case — closest to real CARS",
@@ -95,18 +98,17 @@ export function CarsDuel() {
   // Today's Path launches the duel with the server-resolved selection + a return
   // target. The selection ({mode, topicId, intensity, side}) is authoritative — the
   // learner never picks their topic, intensity, or stance (WS6).
-  const navState = location.state as
-    | {
-        autostart?: boolean;
-        returnTo?: string;
-        activityId?: string;
-        selection?: CarsDuelSelectionView | null;
-      }
-    | null;
+  const navState = location.state as {
+    autostart?: boolean;
+    returnTo?: string;
+    activityId?: string;
+    selection?: CarsDuelSelectionView | null;
+  } | null;
   const returnTo = navState?.returnTo;
   const activityId = navState?.activityId;
   const finish = (complete = true) => {
-    if (returnTo) navigate(returnTo, complete ? { state: { completedActivityId: activityId } } : {});
+    if (returnTo)
+      navigate(returnTo, complete ? { state: { completedActivityId: activityId } } : {});
     else navigate('/app');
   };
   const recordDuel = useRecordCarsDuel();
@@ -192,7 +194,8 @@ export function CarsDuel() {
     if (useMode === 'rebut') {
       const kickoff: AiMessage = {
         role: 'user',
-        content: 'Begin: state your position on the topic in 2-3 sentences, then invite my rebuttal.',
+        content:
+          'Begin: state your position on the topic in 2-3 sentences, then invite my rebuttal.',
       };
       sent.current = [system, kickoff];
       setPhase('debating');
@@ -299,12 +302,12 @@ export function CarsDuel() {
             <>
               {' '}
               In local dev it runs through the AI proxy (see <code>apps/learner-web/.env</code>):
-              after setting or changing the key, fully restart the dev server — Vite only reads it at
-              startup.
+              after setting or changing the key, fully restart the dev server — Vite only reads it
+              at startup.
             </>
           ) : null}
         </Callout>
-        {errorDetail ? (
+        {import.meta.env.DEV && errorDetail ? (
           <Callout tone="warning" title="What went wrong">
             {errorDetail}
           </Callout>
@@ -474,10 +477,15 @@ export function CarsDuel() {
 
       <div className="mc-duel__log" aria-live="polite">
         {mode === 'defend' && shown.length === 0 ? (
-          <p className="mc-muted mc-fineprint">State your thesis to open — the AI will push back.</p>
+          <p className="mc-muted mc-fineprint">
+            State your thesis to open — the AI will push back.
+          </p>
         ) : null}
         {shown.map((m, i) => (
-          <div key={i} className={`mc-duel__msg mc-duel__msg--${m.role === 'user' ? 'user' : 'ai'}`}>
+          <div
+            key={i}
+            className={`mc-duel__msg mc-duel__msg--${m.role === 'user' ? 'user' : 'ai'}`}
+          >
             <span className="mc-duel__who">{m.role === 'user' ? 'You' : 'Opponent'}</span>
             <p>{m.content}</p>
           </div>
@@ -503,7 +511,9 @@ export function CarsDuel() {
             className="mc-input"
             rows={3}
             aria-label="Your argument"
-            placeholder={mode === 'defend' && shown.length === 0 ? 'Your thesis…' : 'Your rebuttal…'}
+            placeholder={
+              mode === 'defend' && shown.length === 0 ? 'Your thesis…' : 'Your rebuttal…'
+            }
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             disabled={busy}
