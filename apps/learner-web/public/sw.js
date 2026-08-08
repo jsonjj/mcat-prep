@@ -2,7 +2,7 @@
  * Public shell cache only. API/auth traffic and private responses are always
  * network-only; arbitrary same-origin GET responses are never admitted.
  */
-const SHELL_CACHE = 'mc-shell-v2';
+const SHELL_CACHE = 'mc-shell-v3';
 const STATIC_SHELL_PATHS = new Set(['/', '/index.html', '/manifest.webmanifest']);
 const HASHED_STATIC_ASSET = /^\/assets\/[a-z0-9/_-]+-[a-z0-9]{8,}\.[a-z0-9]+$/i;
 

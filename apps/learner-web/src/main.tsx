@@ -36,10 +36,30 @@ createRoot(rootEl).render(
 // Register a minimal service worker (shell caching only; never caches APIs/keys).
 // Production only — the SW must never run against the dev server.
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  // Auto-update. The SW calls skipWaiting()+clients.claim(), so when a NEW deploy's
+  // worker activates, `controllerchange` fires. If a controller was already in charge
+  // when this page loaded, that means a fresh version just took over — reload ONCE so
+  // the user runs the new bundle instead of being stranded on the previously cached
+  // one (the bug behind "still on the old index-*.js after a deploy"). A first-ever
+  // load has no prior controller, so this never fires there — no reload loop.
+  let reloadedForSwUpdate = false;
+  const hadControllerAtLoad = Boolean(navigator.serviceWorker.controller);
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadControllerAtLoad || reloadedForSwUpdate) return;
+    reloadedForSwUpdate = true;
+    window.location.reload();
+  });
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {
-      /* offline shell is a progressive enhancement */
-    });
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then((registration) => {
+        // Poll for a newer worker on every load so a deploy is picked up promptly,
+        // even for a long-lived tab that never fully restarts.
+        void registration.update().catch(() => {});
+      })
+      .catch(() => {
+        /* offline shell is a progressive enhancement */
+      });
   });
 } else if ('serviceWorker' in navigator && import.meta.env.DEV) {
   // DEV self-heal: a service worker left over from a production build/preview on
