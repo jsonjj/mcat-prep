@@ -1,3 +1,5 @@
+import { gunzipSync } from 'node:zlib';
+
 import type { RawLessonArtifacts } from '@mcat/content/lesson-normalization';
 
 import {
@@ -5,6 +7,14 @@ import {
   UnknownLessonError,
   type LessonContentProvider,
 } from './lesson-content-provider';
+
+/**
+ * Serve-time artifact bytes are stored gzip+base64-encoded (design note D5) so the
+ * seed migration stays ~2.6MB instead of ~22MB. Decode is synchronous and runs once
+ * per artifact at cold start (~333 small buffers), well within the boot budget.
+ */
+const decodeArtifact = (encoded: string): string =>
+  gunzipSync(Buffer.from(encoded, 'base64')).toString('utf8');
 
 /**
  * DB-backed lesson provider (design note D5). Resolves a content release's immutable
@@ -80,13 +90,15 @@ export async function loadLessonRevisionProvider(deps: {
     for (const [lessonId, files] of byLesson) {
       const scriptText = files.get('lesson-script.json');
       if (scriptText === undefined) continue; // no script -> not servable; skip
-      const script = JSON.parse(scriptText) as Record<string, unknown>;
+      const script = JSON.parse(decodeArtifact(scriptText)) as Record<string, unknown>;
       const learnerSafe = files.get('learner-safe-items.json');
       const protectedItems = files.get('protected-items.json');
       artifactsById.set(lessonId, {
         script,
-        learnerSafeItems: learnerSafe === undefined ? undefined : JSON.parse(learnerSafe),
-        protectedItems: protectedItems === undefined ? undefined : JSON.parse(protectedItems),
+        learnerSafeItems:
+          learnerSafe === undefined ? undefined : JSON.parse(decodeArtifact(learnerSafe)),
+        protectedItems:
+          protectedItems === undefined ? undefined : JSON.parse(decodeArtifact(protectedItems)),
       });
       scriptById.set(lessonId, script);
     }
