@@ -11,7 +11,7 @@ import type {
   NormalizedLessonAction,
   VectorLessonAction,
 } from '@mcat/contracts';
-import type { AttemptTiming, GoalInput } from '@mcat/client-core';
+import { isUnauthenticatedError, type AttemptTiming, type GoalInput } from '@mcat/client-core';
 import { authority } from './authority';
 import { diagnosticClient, type DiagnosticBlockView } from './diagnostic-client';
 import { practiceTestClient, type PracticeTestBlockView } from './practice-test-client';
@@ -30,7 +30,23 @@ export const queryClient = new QueryClient({
       console.error(`Query failed [${String(query.queryKey)}]:`, error);
     },
   }),
-  defaultOptions: { queries: { staleTime: 0, refetchOnWindowFocus: false, retry: false } },
+  defaultOptions: {
+    queries: {
+      staleTime: 0,
+      refetchOnWindowFocus: false,
+      // On load the app fires learner reads in parallel with the `bootstrap` that
+      // establishes/refreshes the session cookie. A read that loses that race gets
+      // a transient 401, and under a blanket `retry: false` it failed PERMANENTLY:
+      // progress/mastery blanked out, and — worse — the Today's-Path GET erroring
+      // meant useEnsureTodaysPath never saw `isSuccess`, so the build POST was never
+      // sent and the plan hung. Retry ONLY unauthorized reads, a few times with a
+      // short backoff, so they re-issue once the session lands. Genuine sign-out is
+      // still handled by RequireAuth (bootstrap), and every other error class still
+      // fails fast — no hammering a truly broken endpoint.
+      retry: (failureCount, error) => failureCount < 3 && isUnauthenticatedError(error),
+      retryDelay: (attempt) => Math.min(300 * 2 ** attempt, 1500),
+    },
+  },
 });
 
 /**
