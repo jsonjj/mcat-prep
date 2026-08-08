@@ -76,6 +76,19 @@ import { RepositoryLearnerKernel, type NormalizedLessonCommandInput } from './wo
 import { DiagnosticSessionError } from '@mcat/diagnostic-runner';
 import type { DiagnosticPort } from './diagnostic-port';
 import type { PracticeTestPort } from './practice-test-port';
+import { lessonContentProvider } from './lesson-content-provider';
+
+/**
+ * Resolve a normalized-lesson request path to a lesson id ONLY when the slug is
+ * well-formed AND the lesson is actually servable right now (a registered pilot or an
+ * active DB-backed revision attached at cold start). An unknown/unservable slug
+ * resolves to null -> 404, keeping the catalog closed even though the route pattern is
+ * now generic over v3-les-######.
+ */
+const resolveServableLesson = (path: string): string | null => {
+  const lessonId = normalizedLessonIdFor(path);
+  return lessonId !== null && lessonContentProvider.hasLesson(lessonId) ? lessonId : null;
+};
 
 interface KernelPort {
   handle(input: unknown, principal: Principal): ReturnType<AuthorityKernel['handle']>;
@@ -1263,7 +1276,7 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
             requestIdValue,
           );
         case 'normalizedLessonStart': {
-          const lessonId = normalizedLessonIdFor(event.rawPath);
+          const lessonId = resolveServableLesson(event.rawPath);
           const command = parsed.data as NormalizedLessonStartCommand;
           // The slug is the authority for which lesson runs; a body id that names
           // a different lesson is rejected, exactly as L1's `z.literal` rejects a
@@ -1290,7 +1303,7 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
           );
         }
         case 'normalizedLessonCommand': {
-          const lessonId = normalizedLessonIdFor(event.rawPath);
+          const lessonId = resolveServableLesson(event.rawPath);
           if (lessonId === null) {
             return errorResponse('not_found', 'Route not found.', origin, requestIdValue);
           }
@@ -1490,7 +1503,7 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
     }
 
     if (route.id === 'normalizedLessonStatus') {
-      const lessonId = normalizedLessonIdFor(event.rawPath);
+      const lessonId = resolveServableLesson(event.rawPath);
       if (lessonId === null) {
         return errorResponse('not_found', 'Route not found.', origin, requestIdValue);
       }
@@ -1505,7 +1518,7 @@ export function createLearnerApi(dependencies: LearnerApiDependencies): LearnerA
     }
 
     if (route.id === 'normalizedLessonRun') {
-      const lessonId = normalizedLessonIdFor(event.rawPath);
+      const lessonId = resolveServableLesson(event.rawPath);
       if (lessonId === null) {
         return errorResponse('not_found', 'Route not found.', origin, requestIdValue);
       }
