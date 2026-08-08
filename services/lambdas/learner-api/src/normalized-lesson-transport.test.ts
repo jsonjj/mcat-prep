@@ -1,5 +1,9 @@
 import { Authority } from '@mcat/authority-core';
-import { InMemoryAuthorityRepository, toProjectionRecord, type Principal } from '@mcat/authority-kernel';
+import {
+  InMemoryAuthorityRepository,
+  toProjectionRecord,
+  type Principal,
+} from '@mcat/authority-kernel';
 import { CommandEnvelopeSchema, fixedClock } from '@mcat/contracts';
 import { describe, expect, it } from 'vitest';
 
@@ -28,12 +32,35 @@ const provider = createRepoLessonContentProvider();
 
 function correctResponseFor(lessonId: string, itemId: string): EngineResponse {
   const answer = provider.getAnswerKey(lessonId).byItemId[itemId];
+  const item = provider
+    .getNormalizedLesson(lessonId)
+    .items.find((candidate) => candidate.itemId === itemId);
   if (answer === undefined) throw new Error(`no answer for ${itemId}`);
-  if (answer.correctChoiceId !== null) return { kind: 'MULTIPLE_CHOICE', choiceId: answer.correctChoiceId };
+  if (answer.correctChoiceId !== null)
+    return { kind: 'MULTIPLE_CHOICE', choiceId: answer.correctChoiceId };
   if (answer.structuredAuthority !== undefined) {
+    const control = item?.projection.responseControl;
+    if (control?.kind !== 'STRUCTURED_FIELDS')
+      throw new Error(`no structured control for ${itemId}`);
+    const authority = answer.structuredAuthority as {
+      expected_equation_forms?: readonly string[];
+      expected_solution_pair?: readonly string[];
+    };
+    const equations = [...(authority.expected_equation_forms ?? [])];
+    const pair = (authority.expected_solution_pair ?? []).map((part) =>
+      part.split('=').at(-1)?.trim(),
+    );
+    let equationIndex = 0;
     return {
       kind: 'CONSTRUCTED',
-      fields: Object.fromEntries(answer.acceptedResponses.map((part, index) => [`f${index}`, part])),
+      fields: Object.fromEntries(
+        control.fields.map(({ fieldId }) => [
+          fieldId,
+          fieldId.includes('solution')
+            ? `(${pair.join(', ')})`
+            : (equations[equationIndex++] ?? '__missing_authority__'),
+        ]),
+      ),
     };
   }
   return { kind: 'SHORT', text: answer.acceptedResponses[0] ?? '' };
@@ -70,7 +97,11 @@ async function startProbe(lessonId: string) {
   const guest = authority.createGuest();
   guest.onboarding.diagnosticComplete = true;
   const repository = new InMemoryAuthorityRepository([toProjectionRecord(guest, 0, NOW)]);
-  const principal: Principal = { kind: 'guest', learnerId: guest.learnerId, sessionId: crypto.randomUUID() };
+  const principal: Principal = {
+    kind: 'guest',
+    learnerId: guest.learnerId,
+    sessionId: crypto.randomUUID(),
+  };
   const kernel = new RepositoryLearnerKernel({ repository, clock, bank: authority.bank });
 
   let streamVersion = 0;
@@ -171,7 +202,11 @@ describe('normalized-engine lesson transport drives L2/L3 through the real kerne
     const guest = authority.createGuest();
     guest.onboarding.diagnosticComplete = true;
     const repository = new InMemoryAuthorityRepository([toProjectionRecord(guest, 0, NOW)]);
-    const principal: Principal = { kind: 'guest', learnerId: guest.learnerId, sessionId: crypto.randomUUID() };
+    const principal: Principal = {
+      kind: 'guest',
+      learnerId: guest.learnerId,
+      sessionId: crypto.randomUUID(),
+    };
     const kernel = new RepositoryLearnerKernel({ repository, clock, bank: authority.bank });
 
     await expect(kernel.normalizedLessonRun(L3, principal)).rejects.toThrow(/Start this lesson/);

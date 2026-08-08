@@ -1,8 +1,11 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { LessonItemBindingSchema } from '@mcat/contracts';
+import { normalizeAuthoredLessonBinding } from '@mcat/domain';
 import { describe, expect, it } from 'vitest';
 
+import * as lessonNormalization from '../lesson-normalization';
 import { buildResolvableIds, validateLesson, type LessonValidationInput } from './index';
 
 /**
@@ -32,7 +35,9 @@ const RUNBOOK_REL = 'docs/design/06-LESSON-AUTHORING-WORKFLOW.md';
 // The real in-repo curriculum catalog R14 resolves against (indexes.kc_by_id etc.) — the
 // identical source the content-cli merge gate uses, so this test can't pass on a laxer catalog.
 const RESOLVABLE_IDS = buildResolvableIds(
-  JSON.parse(readFileSync(join(repoRoot, 'curriculum/v3/v3-lesson-authoring-manifest.json'), 'utf8')) as unknown,
+  JSON.parse(
+    readFileSync(join(repoRoot, 'curriculum/v3/v3-lesson-authoring-manifest.json'), 'utf8'),
+  ) as unknown,
 );
 
 // Build the validator input for a lesson directory EXACTLY as tools/content-cli does:
@@ -46,12 +51,41 @@ function buildInput(lessonId: string, dir: string): LessonValidationInput {
       return { relPath, rawBytes, json: JSON.parse(rawBytes) as unknown };
     });
   const manifestPath = join(dir, 'artifact-manifest.json');
-  const manifest = existsSync(manifestPath) ? (JSON.parse(readFileSync(manifestPath, 'utf8')) as unknown) : null;
+  const manifest = existsSync(manifestPath)
+    ? (JSON.parse(readFileSync(manifestPath, 'utf8')) as unknown)
+    : null;
   return { lessonId, files, manifest, resolvableIds: RESOLVABLE_IDS, browserEvidence: null };
 }
 
+function readTemplateArtifacts(): lessonNormalization.RawLessonArtifacts {
+  const read = (file: string): unknown =>
+    JSON.parse(readFileSync(join(templateDir, file), 'utf8')) as unknown;
+  return {
+    script: read('lesson-script.json'),
+    learnerSafeItems: read('learner-safe-items.json'),
+    protectedItems: existsSync(join(templateDir, 'protected-items.json'))
+      ? read('protected-items.json')
+      : undefined,
+    presentationPlan: read('lesson-presentation-plan.json'),
+  };
+}
+
 const CANONICAL_RULE_IDS = [
-  'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8', 'R9', 'R10', 'R11', 'R12', 'R13', 'R14', 'R15',
+  'R1',
+  'R2',
+  'R3',
+  'R4',
+  'R5',
+  'R6',
+  'R7',
+  'R8',
+  'R9',
+  'R10',
+  'R11',
+  'R12',
+  'R13',
+  'R14',
+  'R15',
 ] as const;
 
 describe('Phase 9 spec-sufficiency: the authoring template is a gate-passing lesson', () => {
@@ -64,7 +98,10 @@ describe('Phase 9 spec-sufficiency: the authoring template is a gate-passing les
     // Every implemented rule produced at least one result — the template exercises the
     // WHOLE contract, not a passing subset.
     for (const rule of CANONICAL_RULE_IDS) {
-      expect(report.results.some((r) => r.rule === rule), `no ${rule} result produced`).toBe(true);
+      expect(
+        report.results.some((r) => r.rule === rule),
+        `no ${rule} result produced`,
+      ).toBe(true);
     }
   });
 
@@ -93,7 +130,11 @@ describe('Phase 9 spec-sufficiency: the authoring template is a gate-passing les
     expect(r8.length).toBe(1);
     expect(r8[0]?.ok).toBe(true);
     // …and that single KC is proven runtime-servable (full micro-cycle present) by R15.
-    expect(report.results.some((r) => r.rule === 'R15' && r.ok && /full micro-cycle present/.test(r.detail))).toBe(true);
+    expect(
+      report.results.some(
+        (r) => r.rule === 'R15' && r.ok && /full micro-cycle present/.test(r.detail),
+      ),
+    ).toBe(true);
   });
 
   it('the spec and runbook document every rule id the validator actually enforces (drift guard)', () => {
@@ -111,5 +152,198 @@ describe('Phase 9 spec-sufficiency: the authoring template is a gate-passing les
       expect(token.test(spec), `${SPEC_REL} does not document ${rule}`).toBe(true);
       expect(token.test(runbook), `${RUNBOOK_REL} does not document ${rule}`).toBe(true);
     }
+  });
+
+  it('is a canonical compilation fixture with a total protected key and learner-safe delivery model', () => {
+    const compiled = lessonNormalization.compileCanonicalLesson(readTemplateArtifacts());
+    const scored = compiled.lesson.items.filter((item) => item.scored);
+    const entryAnswer = compiled.answerKey.byItemId['TPL-GRAPH-ENTRY'];
+    expect(compiled.lesson.lessonId).toBe('V3-LES-000000');
+    expect(compiled.lesson.definitionHash).toMatch(/^[0-9a-f]{64}$/);
+    expect(scored).toHaveLength(10);
+    expect(Object.keys(compiled.answerKey.byItemId)).toHaveLength(scored.length);
+    expect(Object.keys(compiled.answerKey.byItemId).sort()).toEqual(
+      scored.map((item) => item.itemId).sort(),
+    );
+    expect(JSON.stringify(compiled.lesson.items.map((item) => item.projection))).not.toMatch(
+      /accepted_responses|answer_authority|correct_response|correct_option|rationale|scoring_authority/i,
+    );
+    expect(entryAnswer?.rationale).toContain('PRIVATE');
+    expect(entryAnswer?.learnerSafePostCommitmentFeedback).toBe(
+      'Each equal display step multiplies the labelled value by ten.',
+    );
+  });
+
+  it('ships one complete presentation sequence and both runnable repair/re-entry branches', () => {
+    const normalize = lessonNormalization.normalizeLesson(readTemplateArtifacts());
+    const kc = normalize.kcs[0];
+    expect(kc?.deliverySteps?.map((step) => step.stage) ?? []).toEqual([
+      'ENTRY_CHECK_BOUNDARY',
+      'ORIENTATION',
+      'EXPLANATION',
+      'MENTAL_MODEL',
+      'EXPERT_THINK_ALOUD',
+      'WORKED_EXAMPLE',
+      'GUIDED_PRACTICE',
+      'LIGHT_SUPPORT_PRACTICE',
+      'SOLO_PRACTICE',
+      'CONTRAST_BOUNDARY',
+      'NEAR_EXIT',
+      'CHANGED_EXIT',
+      'TARGETED_REPAIR',
+      'EXACT_REENTRY',
+      'TARGETED_REPAIR',
+      'EXACT_REENTRY',
+      'RECAP',
+    ]);
+    expect(kc?.cleanBaselineItemIds).toHaveLength(7);
+    expect(kc?.branchBindings.map((binding) => binding.failedFunction)).toEqual([
+      'NEAR_USE',
+      'CHANGED_TASK',
+    ]);
+    expect(
+      kc?.branchBindings.every(
+        (binding) => binding.repairItemIds.length > 0 && binding.reentryItemId.length > 0,
+      ),
+    ).toBe(true);
+  });
+
+  it('passes every QEP record through the real mastery binding seam', () => {
+    const script = JSON.parse(readFileSync(join(templateDir, 'lesson-script.json'), 'utf8')) as {
+      artifact_version: string;
+      payload: {
+        lesson_id: string;
+        question_evidence_plan: Array<Record<string, unknown>>;
+      };
+    };
+    const protectedItems = JSON.parse(
+      readFileSync(join(templateDir, 'protected-items.json'), 'utf8'),
+    ) as {
+      records: Array<{ answer_record_id: string }>;
+    };
+    const protectedIds = new Set(protectedItems.records.map((record) => record.answer_record_id));
+
+    expect(script.payload.question_evidence_plan).toHaveLength(11);
+    for (const authored of script.payload.question_evidence_plan) {
+      const itemId = String(authored.item_binding_id);
+      const normalized = normalizeAuthoredLessonBinding(
+        {
+          lessonId: script.payload.lesson_id,
+          artifactVersion: script.artifact_version,
+        },
+        authored,
+      );
+      expect(normalized.rejectionCodes, itemId).toEqual([]);
+      const parsed = LessonItemBindingSchema.safeParse(normalized.value);
+      expect(parsed.success, itemId).toBe(true);
+      if (!parsed.success) continue;
+
+      if (authored.activity_role === 'WORKED_EXAMPLE') {
+        expect(parsed.data.measurementKind, itemId).toBe('NON_MEASURABLE');
+        expect(authored).toMatchObject({
+          activity_id: null,
+          answer_authority_ref: null,
+          rationale_authority_ref: null,
+          first_attempt_immutable: null,
+        });
+      } else {
+        expect(parsed.data.measurementKind, itemId).toBe('MEASURABLE');
+        expect(authored.first_attempt_immutable, itemId).toBe(true);
+        expect(Array.isArray(authored.assistance_available), itemId).toBe(true);
+        expect(protectedIds.has(itemId), itemId).toBe(true);
+        expect(authored.answer_authority_ref, itemId).toBe(`protected-items.json#${itemId}`);
+        expect(authored.rationale_authority_ref, itemId).toBe(`protected-items.json#${itemId}`);
+      }
+    }
+  });
+
+  it('authors the complete focus and responsive presentation surface for every screen', () => {
+    const script = JSON.parse(readFileSync(join(templateDir, 'lesson-script.json'), 'utf8')) as {
+      payload: {
+        nodes: Array<{ node_id: string; activity_ids: string[]; representation_ids: string[] }>;
+      };
+    };
+    const presentation = JSON.parse(
+      readFileSync(join(templateDir, 'lesson-presentation-plan.json'), 'utf8'),
+    ) as {
+      payload: {
+        screens: Array<Record<string, unknown> & { script_node_ids: string[] }>;
+      };
+    };
+    const nodes = new Map(script.payload.nodes.map((node) => [node.node_id, node]));
+
+    expect(presentation.payload.screens).toHaveLength(17);
+    for (const screen of presentation.payload.screens) {
+      const node = nodes.get(screen.script_node_ids[0] ?? '');
+      expect(node, String(screen.screen_id)).toBeDefined();
+      const responseBearing = (node?.activity_ids.length ?? 0) > 0;
+      expect(screen.important_callout_count, String(screen.screen_id)).toBe(0);
+      expect(screen.collapsed_detail_ids, String(screen.screen_id)).toEqual([]);
+      expect(screen.reviewer_only_refs, String(screen.screen_id)).toEqual([]);
+      expect(screen.representation_ids, String(screen.screen_id)).toEqual(
+        node?.representation_ids ?? [],
+      );
+      expect(screen.responsive_behavior, String(screen.screen_id)).toBe(
+        'SINGLE_COLUMN_REFLOW_320PX_NO_PRIMARY_HORIZONTAL_SCROLL_200_PERCENT_ZOOM',
+      );
+      expect(screen.focus_target, String(screen.screen_id)).toBe(
+        responseBearing
+          ? 'SCREEN_HEADING_THEN_RESPONSE_CONTROL_THEN_FEEDBACK_REGION_AFTER_COMMITMENT'
+          : 'SCREEN_HEADING',
+      );
+      expect(screen.keyboard_order, String(screen.screen_id)).toEqual(
+        responseBearing
+          ? [
+              'HEADING',
+              'PROMPT_OR_CONTENT',
+              'RESPONSE_CONTROL',
+              'PRIMARY_ACTION',
+              'FEEDBACK_AFTER_COMMITMENT',
+            ]
+          : ['HEADING', 'CONTENT', 'PRIMARY_ACTION'],
+      );
+    }
+  });
+
+  it('has an exact one-KC manifest/hash chain and no stale source-lesson content', () => {
+    const manifestPath = join(templateDir, 'artifact-manifest.json');
+    expect(existsSync(manifestPath)).toBe(true);
+    if (!existsSync(manifestPath)) return;
+    const manifestText = readFileSync(manifestPath, 'utf8');
+    const manifest = JSON.parse(manifestText) as {
+      lesson_binding?: { lesson_id?: string; ordered_kc_ids?: string[] };
+      primary_artifacts?: unknown[];
+      companion_artifacts?: unknown[];
+    };
+    expect(manifest.lesson_binding).toEqual({
+      lesson_id: 'V3-LES-000000',
+      grouping_id: 'V3-CL-000000',
+      ordered_kc_ids: ['V3-KC-452593'],
+    });
+    expect(manifest.primary_artifacts).toHaveLength(4);
+    expect(manifest.companion_artifacts).toHaveLength(2);
+
+    const fixtureText = readdirSync(templateDir)
+      .filter((file) => file.endsWith('.json'))
+      .map((file) => readFileSync(join(templateDir, file), 'utf8'))
+      .join('\n');
+    expect(fixtureText).not.toMatch(/V3-KC-008681|V3-KC-238607|844372/);
+  });
+
+  it('reports candidate quality honestly without production, mastery, or efficacy claims', () => {
+    const quality = JSON.parse(
+      readFileSync(join(templateDir, 'lesson-quality-report.json'), 'utf8'),
+    ) as {
+      payload?: {
+        final_gate_status?: string;
+        release_eligibility?: string;
+        claim_limits?: Record<string, unknown>;
+      };
+    };
+    expect(quality.payload?.final_gate_status).toBe('BLOCKED');
+    expect(quality.payload?.release_eligibility).toBe('INTERNAL_DRAFT_ONLY');
+    expect(
+      Object.values(quality.payload?.claim_limits ?? {}).every((claim) => claim === false),
+    ).toBe(true);
   });
 });

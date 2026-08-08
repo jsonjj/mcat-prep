@@ -1,66 +1,59 @@
-# Lesson authoring template — `V3-LES-000000`
+# Canonical lesson template — `V3-LES-000000`
 
-A **real, minimal, gate-passing lesson** you copy to start a new V3 lesson. It passes the
-same structural validator the merge gate runs (`content-cli lesson-validate`, rules R1–R15)
-and is pinned green by `packages/content/src/lesson-validator/template-sufficiency.test.ts`.
+This directory is the smallest complete fixture for the shared lesson compiler. Copy it
+when authoring a V3 lesson, then replace every template identity and every instructional
+or assessment record.
 
-Read alongside:
+It contains one real curriculum KC (`V3-KC-452593`) solely so the structural validator can
+prove catalog resolution. The fixture is outside `content/lessons/`, so it is never served
+or counted as a catalog lesson.
 
-- **[Structural authoring spec](../../../design/05-LESSON-STRUCTURAL-AUTHORING-SPEC.md)** — what each artifact and rule requires.
-- **[Authoring workflow / runbook](../../../design/06-LESSON-AUTHORING-WORKFLOW.md)** — the step-by-step draft → register path.
+## Artifact set
 
-## Why it lives here (not under `content/lessons/`)
+- `lesson-script.json` — 17 ordered nodes covering the complete 15-function instructional
+  contract, 10 measurable activities, 11 QEP records, and two finite repair → exact
+  re-entry paths.
+- `learner-safe-items.json` — answer-free learner prompts and authored response controls.
+- `protected-items.json` — the server-only total answer authority for all 10 scored items.
+- `kc-coverage-matrix.json` — one-KC route, exit, repair, and re-entry coverage.
+- `lesson-presentation-plan.json` — one-KC screen order plus the focus, keyboard,
+  responsive, representation, detail, callout, and reviewer-separation authoring surface.
+- `lesson-quality-report.json` — honest candidate checks and blocked human/runtime gates.
+- `artifact-manifest.json` — content and stored-byte hashes for all six JSON artifacts.
 
-`content/lessons/` is the **served catalog corpus**: it is swept by the 115-binding corpus
-pin and by the `lesson-validate` merge gate. A template there would corrupt those counts and
-try to become a servable lesson. This template deliberately sits in the docs tree so it is
-**validated on demand but never served and never counted**.
+The normalized learner projection never contains protected answers, accepted responses,
+rationales, or scoring authority. `compileCanonicalLesson` returns that learner model and
+the protected answer key as separate objects.
 
-## What it is
+Each measurable QEP record carries immutable-first-attempt semantics, authored assistance
+affordances, evidence-mode metadata, and opaque answer/rationale authority refs resolving to
+`protected-items.json`. The worked example is explicitly non-measurable: its activity,
+first-attempt boolean, and authority refs are `null`, while its visible explanation remains
+an authored assistance affordance.
 
-The **single smallest complete authoring unit**: one knowledge component (KC) with its full
-micro-cycle. It was derived by reducing the smallest real lesson (`V3-LES-844372`) to just its
-GRAPH KC (`V3-KC-452593`) — 18 nodes (all 15 required kinds), 10 activities, 1 `kc_script`,
-11 evidence items (entry-check → practice → near/changed exits → repair/re-entry), and 1
-coverage row across 3 content routes.
+Every screen authors the presentation fields used by focus and responsive checks. An empty
+`collapsed_detail_ids` means the screen has no secondary disclosure; an
+`important_callout_count` of `0` means it has no callout; and empty `reviewer_only_refs`
+means reviewer material is wholly separated into protected artifacts. These values are
+explicit semantics, not omitted authoring. `representation_ids` exactly mirror the screen's
+script node. Content-only screens focus the heading and use heading → content → action
+keyboard order; response-bearing screens additionally order the response control and
+post-commit feedback region.
 
-Files (L1-style envelope: four primaries + learner-safe, **no manifest**):
+## Required authoring workflow
 
-| File | Role |
-| --- | --- |
-| `lesson-script.json` | nodes, activities, kc_scripts, `question_evidence_plan` (reduced to 1 KC) |
-| `kc-coverage-matrix.json` | one coverage row (3 routes × 2 exits + repair) |
-| `learner-safe-items.json` | the 10 learner-safe prompts the evidence items resolve to |
-| `lesson-presentation-plan.json` | carried verbatim from the source (see caveat) |
-| `lesson-quality-report.json` | carried verbatim; gate flags pinned `BLOCKED` / `INTERNAL_DRAFT_ONLY` |
+1. Replace the lesson, grouping, node, activity, item, semantic-family, and presentation
+   identities without deriving routing from mutable titles or prose.
+2. Preserve all 15 instructional functions and author both failed-function repair paths.
+3. Author stable choice IDs or structured field IDs/labels and a protected answer for every
+   scored item.
+4. Regenerate the quality report honestly; do not claim efficacy, mastery, readiness, human
+   review, accessibility review, browser QA, or production release without evidence.
+5. Rehash the artifact chain:
+   `pnpm --filter @mcat/content-cli start rehash docs/lesson-authoring/template/v3-les-000000`
+   for this fixture, or replace the path with `content/lessons/<slug>` for a catalog lesson.
+6. Run structural validation:
+   `pnpm --filter @mcat/content-cli start lesson-validate content/lessons/<slug>`.
 
-### Caveats (honest scope of the reduction)
-
-- `payload.transitions` is `[]` **by design**: a single-KC lesson has no KC→KC boundary
-  hops. Intra-KC sequencing lives on `activities[].authorized_next_node_ids` (checked by R10).
-- `lesson-presentation-plan.json` and `lesson-quality-report.json` are **carried verbatim**
-  from `V3-LES-844372`. Only their hash chain (R3/R5) and the release-honesty gate (R12) are
-  gate-relevant, so they validate as-is — but their *content* still describes three KCs.
-  **Regenerate both for your lesson**; do not ship them unchanged.
-
-## Using it for a new lesson
-
-1. Copy this directory to `content/lessons/<your-lesson-slug>/`.
-2. Replace the identity and authored content:
-   - `V3-LES-000000` → your assigned lesson id (all four primaries carry it).
-   - `V3-KC-452593` → your real curriculum KC id (must exist in
-     `curriculum/v3/v3-lesson-authoring-manifest.json` → `indexes.kc_by_id`, or R14 fails).
-   - node / activity / item / semantic-family ids and every learner-facing prompt.
-   - Add one KC block per additional KC (repeat the 18-node micro-cycle + coverage row).
-3. Regenerate the presentation plan and quality report for your lesson.
-4. Fix the hash chain: `pnpm --filter @mcat/content-cli start rehash content/lessons/<slug>`.
-5. Prove it: `pnpm --filter @mcat/content-cli start lesson-validate content/lessons/<slug>`
-   — expect `PASS … 0 failing`.
-6. Register + route it per the runbook.
-
-## Regenerating this template
-
-The template is a derived artifact. To re-derive after a source change, reduce `V3-LES-844372`
-to its GRAPH KC, then `rehash` + `lesson-validate` the output. The one-time derivation script is
-kept in the out-of-repo scratch area (not committed) to avoid shipping throwaway tooling; the
-recipe above is the reproducible source of truth.
+Read this fixture with the structural authoring spec and authoring runbook under
+`docs/design/`.

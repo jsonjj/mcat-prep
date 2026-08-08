@@ -1,4 +1,8 @@
-import type { LessonItemBinding, LessonRuntimeResponseFacts } from '@mcat/contracts';
+import type {
+  LessonItemBinding,
+  LessonObservationAttribution,
+  LessonRuntimeResponseFacts,
+} from '@mcat/contracts';
 import type { ServerScoringResolution } from '@mcat/domain';
 
 /**
@@ -58,6 +62,14 @@ export interface LessonResponseSubmission {
   readonly bindingResolution: LessonBindingResolution;
   readonly response: LessonRuntimeResponseFacts;
   readonly scoring: ServerScoringResolution;
+  /** Exact normalized-lesson provenance; legacy and non-normalized sources may omit it. */
+  readonly lessonAttribution?: LessonObservationAttribution;
+  /** Additional observed facts retained for the response ledger. */
+  readonly runtimeObservation?: {
+    readonly firstAttempt: boolean;
+    readonly assistanceRequested: boolean;
+    readonly assistanceTaken: boolean;
+  };
   /**
    * Whether the runtime MEASURED the `response.assistanceLevel` it reported, or
    * fail-closed because it could not tell.

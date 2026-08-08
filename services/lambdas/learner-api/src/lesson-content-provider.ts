@@ -1,32 +1,34 @@
+import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
+  LessonNormalizationError,
+  compileCanonicalLesson,
+  detectGrammar,
   normalizeLesson,
+  type CanonicalServerAnswerKey,
+  type CanonicalServerItemAnswer,
   type NormalizedItem,
   type NormalizedLesson,
   type RawLessonArtifacts,
 } from '@mcat/content/lesson-normalization';
+import {
+  LessonCatalogEntrySchema,
+  LessonCatalogIdentitySchema,
+  LessonCatalogResponseSchema,
+  LessonDefinitionHashSchema,
+  LessonLifecycleSchema,
+  type LessonCatalogEntry,
+  type LessonCatalogIdentity,
+  type LessonDefinitionHash,
+  type LessonLifecycle,
+} from '@mcat/contracts';
 
 import { VECTOR_LESSON_PROTECTED_ANSWERS } from './vector-lesson-protected';
 
-/**
- * The one seam through which the learner runtime obtains lesson content.
- *
- * It reads the vendored catalog under `content/lessons/<id>/`, hands the raw
- * artifacts to `@mcat/content` `normalizeLesson`, and returns the SAME
- * `NormalizedLesson` every downstream consumer already speaks (the Phase 3
- * validator, the Phase 5 runtime). The learner-facing surface
- * (`getNormalizedLesson`) is answer-free by construction — normalization never
- * reads protected material. Correct answers live ONLY behind `getAnswerKey`,
- * which is server-only and is the seam the browser-boundary architecture test
- * forbids `apps/learner-web` from reaching.
- *
- * Storage is an implementation detail: this repo-backed provider satisfies the
- * interface with the filesystem today; a bundle- or DB-backed provider can drop
- * in later without changing a caller (design note D5).
- */
+/** Temporary synchronous surface retained until WP-05C migrates existing callers. */
 export interface LessonContentProvider {
   /** Every lesson id discovered in the catalog, sorted. */
   listLessonIds(): readonly string[];
@@ -55,35 +57,108 @@ export interface AuthoredLessonBindings {
   readonly entries: readonly Readonly<Record<string, unknown>>[];
 }
 
-/** SERVER-ONLY correct-answer record for one scored item. */
-export interface ServerItemAnswer {
-  readonly itemId: string;
-  readonly primaryKcId: string;
-  /** Projection response type (`single_select`, `MULTIPLE_CHOICE`, `SHORT_RESPONSE`, …). */
-  readonly responseType: string;
-  /**
-   * The winning `NormalizedChoice.choiceId` for select items; `null` for
-   * free/short-response items, whose answer is `acceptedResponses` instead.
-   */
-  readonly correctChoiceId: string | null;
-  /** One or more canonical correct responses (option text or accepted free text). Always non-empty. */
-  readonly acceptedResponses: readonly string[];
-  /** Post-commitment rationale/derivation when the source supplies one. */
-  readonly rationale: string | null;
-  /**
-   * For structured/constructed-response items that have no single correct
-   * option, the raw server-only scoring authority (e.g. L3
-   * `constructed_system_and_solution`: required fields + expected equation forms
-   * + solution pair). Absent for plain multiple-choice / short-response items.
-   */
-  readonly structuredAuthority?: Readonly<Record<string, unknown>>;
+/** Compatibility names for the canonical WP-05A protected authority. */
+export type ServerItemAnswer = CanonicalServerItemAnswer;
+export type ServerAnswerKey = CanonicalServerAnswerKey;
+
+export type ActiveLessonReference =
+  | { readonly lessonId: string; readonly slug?: never }
+  | { readonly slug: string; readonly lessonId?: never };
+
+export interface LessonRevisionArtifactHashes {
+  readonly lessonScript: string;
+  readonly learnerSafeItems: string | null;
+  readonly protectedItems: string | null;
+  readonly presentationPlan: string | null;
 }
 
-/** SERVER-ONLY answer key for a lesson: `itemId -> answer`, over scored items only. */
-export interface ServerAnswerKey {
+export interface LessonRevisionInputHash {
+  readonly inputId: string;
+  readonly sha256: string;
+}
+
+/** SERVER ONLY. The protected half of one compiled revision. */
+export interface LessonProtectedAuthority {
+  readonly answerKey: ServerAnswerKey;
+}
+
+/** A complete immutable server revision; never serialize this object as a catalog response. */
+export interface LoadedLessonRevision {
   readonly lessonId: string;
-  readonly definitionHash: string;
-  readonly byItemId: Readonly<Record<string, ServerItemAnswer>>;
+  readonly definitionHash: LessonDefinitionHash;
+  readonly lifecycle: LessonLifecycle;
+  readonly catalogEntry: LessonCatalogEntry;
+  readonly lesson: NormalizedLesson;
+  readonly protectedAuthority: LessonProtectedAuthority;
+  readonly authoredBindings: AuthoredLessonBindings;
+  readonly artifactHashes: LessonRevisionArtifactHashes;
+  readonly inputHashes: readonly LessonRevisionInputHash[];
+}
+
+export type LessonLearnerAccessMode =
+  | 'ACTIVE_DISCOVERY'
+  | 'ACTIVE_LOAD'
+  | 'EXACT_RESUME'
+  | 'LEGACY_COMPATIBILITY';
+
+export type LessonLearnerDeliveryBlockReason = 'DISABLED' | 'KILL_SWITCH_ENGAGED' | 'RETIRED';
+
+/**
+ * Storage-neutral learner-delivery contract for the filesystem adapter and WP-11
+ * Postgres repository. `loadExactRevision` addresses the pinned immutable revision
+ * rather than the active pointer, but intentionally still honors disabled,
+ * kill-switch, and retired emergency controls during learner resume.
+ */
+export interface LessonRevisionProvider {
+  listActiveCatalogEntries(): Promise<readonly LessonCatalogEntry[]>;
+  resolveSlug(slug: string): Promise<LessonCatalogIdentity>;
+  loadActiveRevision(reference: ActiveLessonReference): Promise<LoadedLessonRevision>;
+  /** Learner resume by pinned revision; active-pointer changes do not affect this address. */
+  loadExactRevision(lessonId: string, definitionHash: string): Promise<LoadedLessonRevision>;
+}
+
+export type LessonCatalogProvider = LessonRevisionProvider;
+
+export type RepoLessonCatalogDefinition = Omit<LessonCatalogEntry, 'activeDefinitionHash'> & {
+  readonly activeDefinitionHash?: string;
+};
+
+export interface RepoLessonRevisionProviderOptions {
+  readonly contentRoot?: string;
+  readonly catalog?: readonly RepoLessonCatalogDefinition[];
+  /** Explicit exceptions to the ID-derived slug rule; defaults to L1's approved legacy route. */
+  readonly approvedLegacySlugs?: Readonly<Record<string, string>>;
+}
+
+export type LessonProviderErrorCode =
+  | 'ACTIVE_REVISION_MISSING'
+  | 'CATALOG_REQUIRED_FOR_CUSTOM_ROOT'
+  | 'COMPATIBILITY_UNAVAILABLE'
+  | 'DUPLICATE_LESSON_ID'
+  | 'DUPLICATE_LESSON_ID_LOCATION'
+  | 'DUPLICATE_REVISION_LOCATION'
+  | 'DUPLICATE_SLUG'
+  | 'HASH_MISMATCH'
+  | 'INVALID_CATALOG'
+  | 'INVALID_REVISION'
+  | 'KILL_SWITCH_ENGAGED'
+  | 'LESSON_DISABLED'
+  | 'LESSON_RETIRED'
+  | 'LIFECYCLE_MISMATCH'
+  | 'PROTECTED_CATALOG_LEAK'
+  | 'REVISION_NOT_FOUND'
+  | 'UNKNOWN_LESSON'
+  | 'UNKNOWN_SLUG';
+
+export class LessonProviderError extends Error {
+  constructor(
+    readonly code: LessonProviderErrorCode,
+    message: string,
+    readonly detail: Readonly<Record<string, unknown>> = {},
+  ) {
+    super(message);
+    this.name = 'LessonProviderError';
+  }
 }
 
 export class UnknownLessonError extends Error {
@@ -112,28 +187,9 @@ export class AnswerKeyResolutionError extends Error {
   }
 }
 
-// This module's own directory, resolved so the provider works BOTH under ESM
-// (dev/tests/tsx, where `import.meta.url` is defined and `__dirname` is not) AND
-// inside the CommonJS Lambda bundle esbuild emits (where `__dirname` is the real
-// Node global and `import.meta` is empty). Referencing `import.meta.url` unguarded
-// at module scope is exactly what crashed the deployed handler on load
-// (`fileURLToPath(undefined)` throws), 502'ing EVERY route at import time. This
-// resolution must therefore NEVER throw — a bundle quirk in one file must not be
-// able to take the whole Lambda down before a single request is served.
-//
-// Priority (mirrors the numbered contract): the caller checks
-// `LESSON_CONTENT_ROOT` first (see `DEFAULT_CONTENT_ROOT`); then this function
-// prefers (2) the CJS `__dirname` global, (3) a VALID ESM `import.meta.url`, and
-// finally (4) degrades to `process.cwd()`. Pure and parameterized so a test can
-// exercise the "both unavailable" and "malformed URL" branches directly.
+/** Resolve safely in ESM tests and in the CommonJS Lambda bundle. */
 export function resolveModuleDir(dirnameGlobal: unknown, importMetaUrl: unknown): string {
-  // (2) The CJS bundle path: `__dirname` is the real Node global. Selected first
-  // so the ESM-only branch is never evaluated in a bundle where `import.meta` is
-  // empty (`import.meta.url === undefined`).
   if (typeof dirnameGlobal === 'string' && dirnameGlobal.length > 0) return dirnameGlobal;
-  // (3) The ESM path (dev/tests/tsx): a real `file:` URL. Wrapped in try/catch so a
-  // non-`file:` scheme or malformed URL degrades to the safe default instead of
-  // throwing `ERR_INVALID_URL*` at module load.
   if (typeof importMetaUrl === 'string' && importMetaUrl.length > 0) {
     try {
       return dirname(fileURLToPath(importMetaUrl));
@@ -141,16 +197,10 @@ export function resolveModuleDir(dirnameGlobal: unknown, importMetaUrl: unknown)
       return process.cwd();
     }
   }
-  // (4) Neither is available (e.g. a CJS bundle with an empty `import.meta` AND no
-  // usable `__dirname`): fall back to a safe, non-throwing default.
   return process.cwd();
 }
 
 function moduleDirname(): string {
-  // Read the ambient globals defensively. `typeof` never throws even when the
-  // identifier is undeclared (ESM has no `__dirname`), and `import.meta` is empty
-  // rather than absent in the CJS bundle, so `import.meta.url` reads as `undefined`
-  // there instead of throwing.
   const dirnameGlobal = typeof __dirname === 'string' ? __dirname : undefined;
   const importMetaUrl =
     typeof import.meta !== 'undefined' && typeof import.meta.url === 'string'
@@ -159,11 +209,6 @@ function moduleDirname(): string {
   return resolveModuleDir(dirnameGlobal, importMetaUrl);
 }
 
-// The vendored catalog root. In the deployed Lambda the catalog is copied next to
-// the handler and pointed at by `LESSON_CONTENT_ROOT` (see the learner function's
-// bundling in `infra/cdk/lib/api-stack.ts`); in dev and tests it resolves relative
-// to this module (services/lambdas/learner-api/src -> repo root -> content/lessons)
-// so the provider stays cwd-independent.
 const DEFAULT_CONTENT_ROOT =
   process.env.LESSON_CONTENT_ROOT ??
   join(moduleDirname(), '..', '..', '..', '..', 'content', 'lessons');
@@ -179,13 +224,18 @@ const asArray = (value: unknown): readonly unknown[] => (Array.isArray(value) ? 
 
 const readJsonFile = (path: string): unknown => JSON.parse(readFileSync(path, 'utf8'));
 
-function readArtifacts(dir: string): RawLessonArtifacts {
+function readArtifacts(dir: string, includePresentationPlan = false): RawLessonArtifacts {
   const learnerSafePath = join(dir, 'learner-safe-items.json');
   const protectedPath = join(dir, 'protected-items.json');
+  const presentationPath = join(dir, 'lesson-presentation-plan.json');
   return {
     script: readJsonFile(join(dir, 'lesson-script.json')),
     learnerSafeItems: existsSync(learnerSafePath) ? readJsonFile(learnerSafePath) : undefined,
     protectedItems: existsSync(protectedPath) ? readJsonFile(protectedPath) : undefined,
+    presentationPlan:
+      includePresentationPlan && existsSync(presentationPath)
+        ? readJsonFile(presentationPath)
+        : undefined,
   };
 }
 
@@ -225,225 +275,701 @@ function resolveL1Answer(lessonId: string, item: NormalizedItem): ServerItemAnsw
   };
 }
 
-interface L2ProtectedRecord {
-  readonly acceptedResponses: readonly string[];
-  readonly rationale: string | null;
-}
-
-function buildL2Index(artifacts: RawLessonArtifacts): Map<string, L2ProtectedRecord> {
-  const index = new Map<string, L2ProtectedRecord>();
-  for (const raw of asArray(asRecord(artifacts.protectedItems)?.items)) {
-    const rec = asRecord(raw);
-    if (rec === undefined) continue;
-    const key =
-      typeof rec.internal_item_binding_id === 'string'
-        ? rec.internal_item_binding_id
-        : typeof rec.prompt_ref === 'string'
-          ? rec.prompt_ref
-          : undefined;
-    if (key === undefined) continue;
-    const accepted = asArray(rec.accepted_responses).filter(
-      (x): x is string => typeof x === 'string',
-    );
-    const correct = typeof rec.correct_response === 'string' ? rec.correct_response : undefined;
-    const acceptedResponses = [
-      ...new Set([...(correct !== undefined ? [correct] : []), ...accepted]),
-    ];
-    const rationale =
-      typeof rec.rationale === 'string'
-        ? rec.rationale
-        : typeof rec.post_commitment_feedback === 'string'
-          ? rec.post_commitment_feedback
-          : null;
-    index.set(key, { acceptedResponses, rationale });
-  }
-  return index;
-}
-
-function resolveL2Answer(
-  lessonId: string,
-  item: NormalizedItem,
-  index: Map<string, L2ProtectedRecord>,
-): ServerItemAnswer {
-  const record = index.get(item.itemId);
-  if (record === undefined) {
-    throw new AnswerKeyResolutionError(
-      `L2 item "${item.itemId}" has no protected record (by internal_item_binding_id/prompt_ref)`,
-      { lessonId, itemId: item.itemId },
-    );
-  }
-  if (record.acceptedResponses.length === 0) {
-    throw new AnswerKeyResolutionError(`L2 item "${item.itemId}" has no correct_response`, {
-      lessonId,
-      itemId: item.itemId,
-    });
-  }
-  const base = {
-    itemId: item.itemId,
-    primaryKcId: item.primaryKcId,
-    responseType: item.projection.responseType,
-    rationale: record.rationale,
-  };
-  // Multiple-choice: the correct_response is the TEXT of one option. Free/short
-  // response items carry no options, so the accepted text(s) ARE the key.
-  if (item.projection.choices.length === 0) {
-    return { ...base, correctChoiceId: null, acceptedResponses: record.acceptedResponses };
-  }
-  const accepted = new Set(record.acceptedResponses);
-  const choice = item.projection.choices.find((c) => accepted.has(c.text));
-  if (choice === undefined) {
-    throw new AnswerKeyResolutionError(
-      `L2 correct_response for "${item.itemId}" ("${record.acceptedResponses[0]}") matches none of the ${item.projection.choices.length} options`,
-      { lessonId, itemId: item.itemId },
-    );
-  }
-  return { ...base, correctChoiceId: choice.choiceId, acceptedResponses: [choice.text] };
-}
-
-interface L3ProtectedRecord {
-  /** Present for multiple-choice items; absent for constructed-response items. */
-  readonly correctOptionIndex: number | undefined;
-  /** Present for `constructed_system_and_solution` items; absent for multiple choice. */
-  readonly responseAuthority: Record<string, unknown> | undefined;
-  readonly rationale: string | null;
-}
-
-function buildL3Index(artifacts: RawLessonArtifacts): Map<string, L3ProtectedRecord> {
-  const index = new Map<string, L3ProtectedRecord>();
-  for (const raw of asArray(asRecord(artifacts.protectedItems)?.records)) {
-    const rec = asRecord(raw);
-    if (rec === undefined) continue;
-    if (typeof rec.answer_record_id !== 'string') continue;
-    index.set(rec.answer_record_id, {
-      correctOptionIndex:
-        typeof rec.correct_option_index === 'number' ? rec.correct_option_index : undefined,
-      responseAuthority: asRecord(rec.response_authority),
-      rationale: typeof rec.rationale === 'string' ? rec.rationale : null,
-    });
-  }
-  return index;
-}
-
-function resolveL3Answer(
-  lessonId: string,
-  item: NormalizedItem,
-  index: Map<string, L3ProtectedRecord>,
-): ServerItemAnswer {
-  const record = index.get(item.itemId);
-  if (record === undefined) {
-    throw new AnswerKeyResolutionError(
-      `L3 item "${item.itemId}" has no protected record (by answer_record_id)`,
-      {
-        lessonId,
-        itemId: item.itemId,
-      },
-    );
-  }
-  const base = {
-    itemId: item.itemId,
-    primaryKcId: item.primaryKcId,
-    responseType: item.projection.responseType,
-    rationale: record.rationale,
-  };
-
-  // Constructed-response items (`constructed_system_and_solution`) carry a
-  // response_authority (equation forms + solution pair) instead of an option
-  // index — they are NOT multiple choice, so there is no choiceId to point at.
-  if (record.correctOptionIndex === undefined) {
-    if (record.responseAuthority === undefined) {
-      throw new AnswerKeyResolutionError(
-        `L3 item "${item.itemId}" has neither a correct_option_index nor a response_authority`,
-        { lessonId, itemId: item.itemId },
-      );
-    }
-    const accepted = [
-      ...asArray(record.responseAuthority.expected_equation_forms),
-      ...asArray(record.responseAuthority.expected_solution_pair),
-    ].filter((x): x is string => typeof x === 'string');
-    if (accepted.length === 0) {
-      throw new AnswerKeyResolutionError(
-        `L3 item "${item.itemId}" response_authority carries no expected equation/solution strings`,
-        { lessonId, itemId: item.itemId },
-      );
-    }
-    return {
-      ...base,
-      correctChoiceId: null,
-      acceptedResponses: accepted,
-      structuredAuthority: record.responseAuthority,
-    };
-  }
-
-  if (!Number.isInteger(record.correctOptionIndex)) {
-    throw new AnswerKeyResolutionError(
-      `L3 item "${item.itemId}" has a non-integer correct_option_index`,
-      {
-        lessonId,
-        itemId: item.itemId,
-      },
-    );
-  }
-  const choice = item.projection.choices.find((c) => c.ordinal === record.correctOptionIndex);
-  if (choice === undefined) {
-    throw new AnswerKeyResolutionError(
-      `L3 correct_option_index ${record.correctOptionIndex} for "${item.itemId}" is out of range (${item.projection.choices.length} options)`,
-      { lessonId, itemId: item.itemId },
-    );
-  }
-  return { ...base, correctChoiceId: choice.choiceId, acceptedResponses: [choice.text] };
-}
-
-function buildAnswerKey(
-  normalized: NormalizedLesson,
-  artifacts: RawLessonArtifacts,
-): ServerAnswerKey {
+function buildL1AnswerKey(normalized: NormalizedLesson): ServerAnswerKey {
   const scored = normalized.items.filter((item) => item.scored);
   const byItemId: Record<string, ServerItemAnswer> = {};
-  switch (normalized.grammar) {
-    case 'L1_INLINE':
-      for (const item of scored) byItemId[item.itemId] = resolveL1Answer(normalized.lessonId, item);
-      break;
-    case 'L2_PROMPTREF': {
-      const index = buildL2Index(artifacts);
-      for (const item of scored)
-        byItemId[item.itemId] = resolveL2Answer(normalized.lessonId, item, index);
-      break;
-    }
-    case 'L3_PROJECTIONREF': {
-      const index = buildL3Index(artifacts);
-      for (const item of scored)
-        byItemId[item.itemId] = resolveL3Answer(normalized.lessonId, item, index);
-      break;
-    }
-  }
+  for (const item of scored) byItemId[item.itemId] = resolveL1Answer(normalized.lessonId, item);
   return { lessonId: normalized.lessonId, definitionHash: normalized.definitionHash, byItemId };
 }
 
-/**
- * A storage-agnostic source of a lesson's raw artifacts. Both the filesystem
- * (repo) provider and the DB/S3-backed revision provider build one of these and
- * share the grammar-agnostic normalization + answer-key resolution below, so the
- * protection split and the L1/L2/L3 answer logic can never diverge by storage.
- */
+const DEFAULT_APPROVED_LEGACY_SLUGS: Readonly<Record<string, string>> = {
+  'V3-LES-130923': 'vectors-and-trigonometry',
+};
+
+const DEFAULT_CATALOG_DEFINITIONS: readonly RepoLessonCatalogDefinition[] = [
+  {
+    lessonId: 'V3-LES-130923',
+    slug: 'vectors-and-trigonometry',
+    title: 'Vectors and Trigonometry',
+    section: null,
+    cluster: 'R1',
+    estimatedMinutes: 12,
+    orderedKcIds: ['V3-KC-866848', 'V3-KC-700208', 'V3-KC-159529'],
+    prerequisiteLessonIds: [],
+    runtimeKind: 'vector',
+    lifecycle: 'DRAFT',
+    enabled: true,
+    killSwitch: 'OPEN',
+    routePath: '/app/lessons/vectors-and-trigonometry',
+    candidateNonclaimStatus: 'INTERNAL_DRAFT_ONLY',
+  },
+  {
+    lessonId: 'V3-LES-789208',
+    slug: 'v3-les-789208',
+    title: 'Quantitative Measurement and Scaling',
+    section: null,
+    cluster: 'R1',
+    estimatedMinutes: 15,
+    orderedKcIds: ['V3-KC-399019', 'V3-KC-799492', 'V3-KC-919842', 'V3-KC-981438'],
+    prerequisiteLessonIds: [],
+    runtimeKind: 'normalized',
+    lifecycle: 'DRAFT',
+    enabled: true,
+    killSwitch: 'OPEN',
+    routePath: '/app/lessons/v3-les-789208',
+    candidateNonclaimStatus: 'INTERNAL_DRAFT_ONLY',
+  },
+  {
+    lessonId: 'V3-LES-844372',
+    slug: 'v3-les-844372',
+    title: 'Algebra and Graphs',
+    section: null,
+    cluster: 'R1',
+    estimatedMinutes: 12,
+    orderedKcIds: ['V3-KC-452593', 'V3-KC-008681', 'V3-KC-238607'],
+    prerequisiteLessonIds: [],
+    runtimeKind: 'normalized',
+    lifecycle: 'DRAFT',
+    enabled: true,
+    killSwitch: 'OPEN',
+    routePath: '/app/lessons/v3-les-844372',
+    candidateNonclaimStatus: 'INTERNAL_DRAFT_ONLY',
+  },
+];
+
+interface RevisionLocation {
+  readonly lessonId: string;
+  readonly expectedDefinitionHash: string;
+  readonly directory: string;
+}
+
+interface RevisionDiscovery {
+  readonly byLessonId: ReadonlyMap<string, ReadonlyMap<string, RevisionLocation>>;
+  readonly directHashByLessonId: ReadonlyMap<string, string>;
+}
+
+interface JsonArtifact {
+  readonly value: unknown;
+  readonly sha256: string;
+}
+
+interface RevisionSnapshot {
+  readonly artifacts: RawLessonArtifacts;
+  readonly actualDefinitionHash: LessonDefinitionHash;
+  readonly lessonId: string;
+  readonly lifecycle: LessonLifecycle;
+  readonly artifactHashes: LessonRevisionArtifactHashes;
+  readonly inputHashes: readonly LessonRevisionInputHash[];
+  readonly authoredBindings: AuthoredLessonBindings;
+}
+
+const sha256 = (bytes: Uint8Array): string => createHash('sha256').update(bytes).digest('hex');
+
+function readJsonArtifact(path: string): JsonArtifact {
+  const bytes = readFileSync(path);
+  return {
+    value: JSON.parse(bytes.toString('utf8')),
+    sha256: sha256(bytes),
+  };
+}
+
+function readOptionalJsonArtifact(path: string): JsonArtifact | undefined {
+  return existsSync(path) ? readJsonArtifact(path) : undefined;
+}
+
+function scriptIdentity(directory: string): { lessonId: string; definitionHash: string } {
+  const script = asRecord(readJsonFile(join(directory, 'lesson-script.json')));
+  const payload = asRecord(script?.payload);
+  if (typeof payload?.lesson_id !== 'string' || typeof script?.content_sha256 !== 'string') {
+    throw new LessonProviderError(
+      'INVALID_REVISION',
+      `lesson revision at "${directory}" has no lesson id or definition hash`,
+      { directory },
+    );
+  }
+  return { lessonId: payload.lesson_id, definitionHash: script.content_sha256 };
+}
+
+function discoverRevisions(contentRoot: string): RevisionDiscovery {
+  const mutable = new Map<string, Map<string, RevisionLocation>>();
+  const directHashByLessonId = new Map<string, string>();
+  const directLocationByLessonId = new Map<string, string>();
+  const sortedPaths = (left: string, right: string): readonly string[] =>
+    [left, right].sort((a, b) => a.localeCompare(b));
+  const add = (location: RevisionLocation): void => {
+    let byHash = mutable.get(location.lessonId);
+    if (byHash === undefined) {
+      byHash = new Map<string, RevisionLocation>();
+      mutable.set(location.lessonId, byHash);
+    }
+    const existing = byHash.get(location.expectedDefinitionHash);
+    if (existing !== undefined && existing.directory !== location.directory) {
+      const paths = sortedPaths(existing.directory, location.directory);
+      throw new LessonProviderError(
+        'DUPLICATE_REVISION_LOCATION',
+        `revision ${location.lessonId}@${location.expectedDefinitionHash} exists at both "${paths[0]}" and "${paths[1]}"`,
+        {
+          lessonId: location.lessonId,
+          definitionHash: location.expectedDefinitionHash,
+          paths,
+        },
+      );
+    }
+    byHash.set(location.expectedDefinitionHash, location);
+  };
+
+  if (existsSync(contentRoot)) {
+    const lessonEntries = readdirSync(contentRoot, { withFileTypes: true }).sort((left, right) =>
+      left.name.localeCompare(right.name),
+    );
+    for (const entry of lessonEntries) {
+      if (!entry.isDirectory()) continue;
+      const lessonDirectory = join(contentRoot, entry.name);
+      if (existsSync(join(lessonDirectory, 'lesson-script.json'))) {
+        const identity = scriptIdentity(lessonDirectory);
+        const parsed = LessonDefinitionHashSchema.safeParse(identity.definitionHash);
+        if (!parsed.success) {
+          throw new LessonProviderError(
+            'HASH_MISMATCH',
+            `direct revision for ${identity.lessonId} has an invalid definition hash`,
+            { lessonId: identity.lessonId, definitionHash: identity.definitionHash },
+          );
+        }
+        const existingDirect = directLocationByLessonId.get(identity.lessonId);
+        if (existingDirect !== undefined && existingDirect !== lessonDirectory) {
+          const paths = sortedPaths(existingDirect, lessonDirectory);
+          throw new LessonProviderError(
+            'DUPLICATE_LESSON_ID_LOCATION',
+            `lesson id "${identity.lessonId}" exists at both "${paths[0]}" and "${paths[1]}"`,
+            { lessonId: identity.lessonId, paths },
+          );
+        }
+        directLocationByLessonId.set(identity.lessonId, lessonDirectory);
+        directHashByLessonId.set(identity.lessonId, parsed.data);
+        add({
+          lessonId: identity.lessonId,
+          expectedDefinitionHash: parsed.data,
+          directory: lessonDirectory,
+        });
+      }
+
+      const revisionsDirectory = join(lessonDirectory, 'revisions');
+      if (!existsSync(revisionsDirectory)) continue;
+      const revisionEntries = readdirSync(revisionsDirectory, { withFileTypes: true }).sort(
+        (left, right) => left.name.localeCompare(right.name),
+      );
+      for (const revisionEntry of revisionEntries) {
+        if (!revisionEntry.isDirectory()) continue;
+        const directory = join(revisionsDirectory, revisionEntry.name);
+        if (!existsSync(join(directory, 'lesson-script.json'))) continue;
+        const address = LessonDefinitionHashSchema.safeParse(revisionEntry.name);
+        if (!address.success) {
+          throw new LessonProviderError(
+            'HASH_MISMATCH',
+            `revision directory "${revisionEntry.name}" is not a definition hash`,
+            { directory },
+          );
+        }
+        add({
+          lessonId: scriptIdentity(directory).lessonId,
+          expectedDefinitionHash: address.data,
+          directory,
+        });
+      }
+    }
+  }
+  return { byLessonId: mutable, directHashByLessonId };
+}
+
+const PROTECTED_CATALOG_KEYS = new Set([
+  'acceptedresponses',
+  'answerauthority',
+  'answerkey',
+  'correctanswer',
+  'correctchoiceid',
+  'protectedref',
+  'rationale',
+  'scoringauthority',
+  'sourceref',
+  'structuredauthority',
+]);
+
+function assertNoProtectedCatalogFields(value: unknown, path = 'catalog'): void {
+  if (value === null || typeof value !== 'object') return;
+  if (Array.isArray(value)) {
+    value.forEach((entry, index) => assertNoProtectedCatalogFields(entry, `${path}[${index}]`));
+    return;
+  }
+  for (const [key, child] of Object.entries(value as JsonRecord)) {
+    const canonical = key.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (PROTECTED_CATALOG_KEYS.has(canonical)) {
+      throw new LessonProviderError(
+        'PROTECTED_CATALOG_LEAK',
+        `protected catalog field "${key}" is forbidden at ${path}`,
+        { field: key, path },
+      );
+    }
+    assertNoProtectedCatalogFields(child, `${path}.${key}`);
+  }
+}
+
+const messageOf = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error);
+
+function buildCatalog(
+  discovery: RevisionDiscovery,
+  options: RepoLessonRevisionProviderOptions,
+): readonly LessonCatalogEntry[] {
+  const definitions =
+    options.catalog ??
+    DEFAULT_CATALOG_DEFINITIONS.filter((definition) =>
+      discovery.byLessonId.has(definition.lessonId),
+    );
+  if (options.contentRoot !== undefined) {
+    const coveredLessonIds = new Set(definitions.map((definition) => definition.lessonId));
+    const uncoveredLessonIds = [...discovery.byLessonId.keys()]
+      .filter((lessonId) => !coveredLessonIds.has(lessonId))
+      .sort((left, right) => left.localeCompare(right));
+    if (uncoveredLessonIds.length > 0) {
+      throw new LessonProviderError(
+        'CATALOG_REQUIRED_FOR_CUSTOM_ROOT',
+        `custom content root requires explicit catalog metadata for: ${uncoveredLessonIds.join(
+          ', ',
+        )}`,
+        { lessonIds: uncoveredLessonIds },
+      );
+    }
+  }
+  const approvedLegacySlugs = {
+    ...DEFAULT_APPROVED_LEGACY_SLUGS,
+    ...options.approvedLegacySlugs,
+  };
+  const seenIds = new Set<string>();
+  const seenSlugs = new Set<string>();
+  const entries: LessonCatalogEntry[] = [];
+
+  for (const definition of definitions) {
+    assertNoProtectedCatalogFields(definition);
+    const activeDefinitionHash =
+      definition.activeDefinitionHash ?? discovery.directHashByLessonId.get(definition.lessonId);
+    if (activeDefinitionHash === undefined) {
+      throw new LessonProviderError(
+        'ACTIVE_REVISION_MISSING',
+        `active revision is absent for ${definition.lessonId}`,
+        { lessonId: definition.lessonId },
+      );
+    }
+    let entry: LessonCatalogEntry;
+    try {
+      entry = LessonCatalogEntrySchema.parse({ ...definition, activeDefinitionHash });
+    } catch (error) {
+      throw new LessonProviderError(
+        'INVALID_CATALOG',
+        `invalid catalog entry for ${definition.lessonId}: ${messageOf(error)}`,
+        { lessonId: definition.lessonId },
+      );
+    }
+    if (seenIds.has(entry.lessonId)) {
+      throw new LessonProviderError(
+        'DUPLICATE_LESSON_ID',
+        `duplicate lesson id "${entry.lessonId}"`,
+        { lessonId: entry.lessonId },
+      );
+    }
+    if (seenSlugs.has(entry.slug)) {
+      throw new LessonProviderError('DUPLICATE_SLUG', `duplicate slug "${entry.slug}"`, {
+        slug: entry.slug,
+      });
+    }
+    seenIds.add(entry.lessonId);
+    seenSlugs.add(entry.slug);
+    if (
+      entry.slug !== entry.lessonId.toLowerCase() &&
+      approvedLegacySlugs[entry.lessonId] !== entry.slug
+    ) {
+      throw new LessonProviderError(
+        'INVALID_CATALOG',
+        `${entry.lessonId} slug "${entry.slug}" is neither ID-based nor approved`,
+        { lessonId: entry.lessonId, slug: entry.slug },
+      );
+    }
+    if (!discovery.byLessonId.get(entry.lessonId)?.has(entry.activeDefinitionHash)) {
+      throw new LessonProviderError(
+        'ACTIVE_REVISION_MISSING',
+        `active revision ${entry.activeDefinitionHash} is absent for ${entry.lessonId}`,
+        { lessonId: entry.lessonId, definitionHash: entry.activeDefinitionHash },
+      );
+    }
+    entries.push(entry);
+  }
+
+  for (const entry of entries) {
+    for (const prerequisite of entry.prerequisiteLessonIds) {
+      if (!seenIds.has(prerequisite)) {
+        throw new LessonProviderError(
+          'INVALID_CATALOG',
+          `${entry.lessonId} prerequisite ${prerequisite} is outside this catalog`,
+          { lessonId: entry.lessonId, prerequisite },
+        );
+      }
+    }
+  }
+  try {
+    return LessonCatalogResponseSchema.parse({
+      lessons: entries.sort((left, right) => left.lessonId.localeCompare(right.lessonId)),
+    }).lessons;
+  } catch (error) {
+    throw new LessonProviderError('INVALID_CATALOG', `invalid lesson catalog: ${messageOf(error)}`);
+  }
+}
+
+function authoredBindingsOf(script: JsonRecord, lessonId: string): AuthoredLessonBindings {
+  const payload = asRecord(script.payload);
+  return {
+    lessonId,
+    artifactVersion:
+      typeof script.artifact_version === 'string' ? script.artifact_version : undefined,
+    entries: asArray(payload?.question_evidence_plan)
+      .map(asRecord)
+      .filter((entry): entry is JsonRecord => entry !== undefined),
+  };
+}
+
+function revisionInputHashes(script: JsonRecord, lessonId: string): LessonRevisionInputHash[] {
+  const hashes: LessonRevisionInputHash[] = [];
+  const seen = new Set<string>();
+  for (const raw of asArray(script.input_bindings)) {
+    const binding = asRecord(raw);
+    if (
+      binding === undefined ||
+      typeof binding.input_id !== 'string' ||
+      typeof binding.sha256 !== 'string'
+    ) {
+      throw new LessonProviderError(
+        'INVALID_REVISION',
+        `${lessonId} has an incomplete input hash binding`,
+        { lessonId },
+      );
+    }
+    const hash = LessonDefinitionHashSchema.safeParse(binding.sha256);
+    if (!hash.success) {
+      throw new LessonProviderError(
+        'HASH_MISMATCH',
+        `${lessonId} input "${binding.input_id}" has an invalid SHA-256`,
+        { lessonId, inputId: binding.input_id },
+      );
+    }
+    if (seen.has(binding.input_id)) {
+      throw new LessonProviderError(
+        'INVALID_REVISION',
+        `${lessonId} has duplicate input hash "${binding.input_id}"`,
+        { lessonId, inputId: binding.input_id },
+      );
+    }
+    seen.add(binding.input_id);
+    hashes.push({ inputId: binding.input_id, sha256: hash.data });
+  }
+  return hashes;
+}
+
+function readRevisionSnapshot(location: RevisionLocation): RevisionSnapshot {
+  const scriptArtifact = readJsonArtifact(join(location.directory, 'lesson-script.json'));
+  const script = asRecord(scriptArtifact.value);
+  const payload = asRecord(script?.payload);
+  if (script === undefined || typeof payload?.lesson_id !== 'string') {
+    throw new LessonProviderError(
+      'INVALID_REVISION',
+      `revision ${location.expectedDefinitionHash} has no lesson identity`,
+      { directory: location.directory },
+    );
+  }
+  if (payload.lesson_id !== location.lessonId) {
+    throw new LessonProviderError(
+      'INVALID_REVISION',
+      `revision identity ${payload.lesson_id} does not match ${location.lessonId}`,
+      { lessonId: location.lessonId, actualLessonId: payload.lesson_id },
+    );
+  }
+  const actualDefinitionHash = LessonDefinitionHashSchema.safeParse(script.content_sha256);
+  if (
+    !actualDefinitionHash.success ||
+    actualDefinitionHash.data !== location.expectedDefinitionHash
+  ) {
+    throw new LessonProviderError(
+      'HASH_MISMATCH',
+      `revision ${location.lessonId}@${location.expectedDefinitionHash} contains hash "${String(
+        script.content_sha256,
+      )}"`,
+      {
+        lessonId: location.lessonId,
+        expectedDefinitionHash: location.expectedDefinitionHash,
+        actualDefinitionHash: script.content_sha256,
+      },
+    );
+  }
+  const lifecycle = LessonLifecycleSchema.safeParse(script.artifact_status);
+  if (!lifecycle.success) {
+    throw new LessonProviderError(
+      'LIFECYCLE_MISMATCH',
+      `${location.lessonId}@${location.expectedDefinitionHash} has unknown lifecycle "${String(
+        script.artifact_status,
+      )}"`,
+      { lessonId: location.lessonId, lifecycle: script.artifact_status },
+    );
+  }
+
+  const learnerSafe = readOptionalJsonArtifact(join(location.directory, 'learner-safe-items.json'));
+  const protectedItems = readOptionalJsonArtifact(join(location.directory, 'protected-items.json'));
+  const presentationPlan = readOptionalJsonArtifact(
+    join(location.directory, 'lesson-presentation-plan.json'),
+  );
+  return {
+    artifacts: {
+      script,
+      learnerSafeItems: learnerSafe?.value,
+      protectedItems: protectedItems?.value,
+      presentationPlan: presentationPlan?.value,
+    },
+    actualDefinitionHash: actualDefinitionHash.data,
+    lessonId: location.lessonId,
+    lifecycle: lifecycle.data,
+    artifactHashes: {
+      lessonScript: scriptArtifact.sha256,
+      learnerSafeItems: learnerSafe?.sha256 ?? null,
+      protectedItems: protectedItems?.sha256 ?? null,
+      presentationPlan: presentationPlan?.sha256 ?? null,
+    },
+    inputHashes: revisionInputHashes(script, location.lessonId),
+    authoredBindings: authoredBindingsOf(script, location.lessonId),
+  };
+}
+
+function learnerDeliveryBlockReason(
+  entry: LessonCatalogEntry,
+): LessonLearnerDeliveryBlockReason | undefined {
+  if (!entry.enabled) return 'DISABLED';
+  if (entry.killSwitch === 'ENGAGED') return 'KILL_SWITCH_ENGAGED';
+  if (entry.lifecycle === 'RETIRED') return 'RETIRED';
+  return undefined;
+}
+
+const isVisible = (entry: LessonCatalogEntry): boolean =>
+  learnerDeliveryBlockReason(entry) === undefined;
+
+const sameStrings = (left: readonly string[], right: readonly string[]): boolean =>
+  left.length === right.length && left.every((value, index) => value === right[index]);
+
+class RepoLessonStore {
+  readonly entries: readonly LessonCatalogEntry[];
+  readonly lessonIds: readonly string[];
+  private readonly byLessonId: ReadonlyMap<string, LessonCatalogEntry>;
+  private readonly bySlug: ReadonlyMap<string, LessonCatalogEntry>;
+  private readonly cache = new Map<string, LoadedLessonRevision>();
+
+  constructor(
+    private readonly discovery: RevisionDiscovery,
+    entries: readonly LessonCatalogEntry[],
+  ) {
+    this.entries = entries;
+    this.lessonIds = entries.filter(isVisible).map((entry) => entry.lessonId);
+    this.byLessonId = new Map(entries.map((entry) => [entry.lessonId, entry]));
+    this.bySlug = new Map(entries.map((entry) => [entry.slug, entry]));
+  }
+
+  hasLesson(lessonId: string): boolean {
+    const entry = this.byLessonId.get(lessonId);
+    return entry !== undefined && isVisible(entry);
+  }
+
+  listVisible(): readonly LessonCatalogEntry[] {
+    return this.entries.filter(isVisible);
+  }
+
+  resolveSlug(slug: string): LessonCatalogIdentity {
+    const entry = this.bySlug.get(slug);
+    if (entry === undefined) {
+      throw new LessonProviderError('UNKNOWN_SLUG', `unknown lesson slug "${slug}"`, { slug });
+    }
+    this.assertLearnerDeliverable(entry, 'ACTIVE_DISCOVERY');
+    return LessonCatalogIdentitySchema.parse({
+      lessonId: entry.lessonId,
+      slug: entry.slug,
+      activeDefinitionHash: entry.activeDefinitionHash,
+    });
+  }
+
+  loadActive(reference: ActiveLessonReference): LoadedLessonRevision {
+    const byLessonId = 'lessonId' in reference && reference.lessonId !== undefined;
+    const entry = byLessonId
+      ? this.byLessonId.get(reference.lessonId)
+      : this.bySlug.get(reference.slug);
+    if (entry === undefined) {
+      const code = byLessonId ? 'UNKNOWN_LESSON' : 'UNKNOWN_SLUG';
+      const value = byLessonId ? reference.lessonId : reference.slug;
+      throw new LessonProviderError(code, `unknown lesson identity "${value}"`, { value });
+    }
+    this.assertLearnerDeliverable(entry, 'ACTIVE_LOAD');
+    return this.loadExact(entry.lessonId, entry.activeDefinitionHash);
+  }
+
+  /**
+   * Loads a pinned immutable revision for learner resume. The active pointer is
+   * irrelevant, while current emergency delivery controls remain authoritative.
+   */
+  loadExact(lessonId: string, definitionHash: string): LoadedLessonRevision {
+    const entry = this.byLessonId.get(lessonId);
+    if (entry === undefined) {
+      throw new LessonProviderError('UNKNOWN_LESSON', `unknown lesson "${lessonId}"`, {
+        lessonId,
+      });
+    }
+    this.assertLearnerDeliverable(entry, 'EXACT_RESUME');
+    const requestedHash = LessonDefinitionHashSchema.safeParse(definitionHash);
+    if (!requestedHash.success) {
+      throw new LessonProviderError(
+        'HASH_MISMATCH',
+        `requested revision hash "${definitionHash}" is invalid`,
+        { lessonId, definitionHash },
+      );
+    }
+    const location = this.discovery.byLessonId.get(lessonId)?.get(requestedHash.data);
+    if (location === undefined) {
+      throw new LessonProviderError(
+        'REVISION_NOT_FOUND',
+        `revision ${lessonId}@${requestedHash.data} was not found`,
+        { lessonId, definitionHash: requestedHash.data },
+      );
+    }
+    const cacheKey = `${lessonId}@${requestedHash.data}`;
+    const cached = this.cache.get(cacheKey);
+    if (cached !== undefined) return cached;
+
+    const snapshot = readRevisionSnapshot(location);
+    const active = requestedHash.data === entry.activeDefinitionHash;
+    if (active && snapshot.lifecycle !== entry.lifecycle) {
+      throw new LessonProviderError(
+        'LIFECYCLE_MISMATCH',
+        `active revision lifecycle ${snapshot.lifecycle} does not match catalog lifecycle ${entry.lifecycle}`,
+        {
+          lessonId,
+          definitionHash: requestedHash.data,
+          revisionLifecycle: snapshot.lifecycle,
+          catalogLifecycle: entry.lifecycle,
+        },
+      );
+    }
+
+    const grammar = detectGrammar(snapshot.artifacts.script);
+    let lesson: NormalizedLesson;
+    let answerKey: ServerAnswerKey;
+    if (grammar === 'L1_INLINE') {
+      lesson = normalizeLesson(snapshot.artifacts);
+      answerKey = buildL1AnswerKey(lesson);
+    } else {
+      const compilation = compileCanonicalLesson(snapshot.artifacts);
+      lesson = compilation.lesson;
+      answerKey = compilation.answerKey;
+    }
+    if (
+      lesson.lessonId !== lessonId ||
+      lesson.definitionHash !== requestedHash.data ||
+      answerKey.lessonId !== lessonId ||
+      answerKey.definitionHash !== requestedHash.data
+    ) {
+      throw new LessonProviderError(
+        'HASH_MISMATCH',
+        `compiled revision identity does not match ${lessonId}@${requestedHash.data}`,
+        {
+          lessonId,
+          definitionHash: requestedHash.data,
+          compiledLessonId: lesson.lessonId,
+          compiledDefinitionHash: lesson.definitionHash,
+        },
+      );
+    }
+    if (active) {
+      const expectedRuntime = grammar === 'L1_INLINE' ? 'vector' : 'normalized';
+      if (entry.runtimeKind !== expectedRuntime) {
+        throw new LessonProviderError(
+          'INVALID_REVISION',
+          `${lessonId} runtime ${entry.runtimeKind} contradicts grammar ${grammar}`,
+          { lessonId, runtimeKind: entry.runtimeKind, grammar },
+        );
+      }
+      if (!sameStrings(entry.orderedKcIds, lesson.orderedKcIds)) {
+        throw new LessonProviderError(
+          'INVALID_REVISION',
+          `${lessonId} catalog KC order does not match its active revision`,
+          { lessonId },
+        );
+      }
+    }
+
+    const loaded: LoadedLessonRevision = {
+      lessonId,
+      definitionHash: snapshot.actualDefinitionHash,
+      lifecycle: snapshot.lifecycle,
+      catalogEntry: entry,
+      lesson,
+      protectedAuthority: { answerKey },
+      authoredBindings: snapshot.authoredBindings,
+      artifactHashes: snapshot.artifactHashes,
+      inputHashes: snapshot.inputHashes,
+    };
+    this.cache.set(cacheKey, loaded);
+    return loaded;
+  }
+
+  legacyArtifacts(lessonId: string): RawLessonArtifacts {
+    const entry = this.byLessonId.get(lessonId);
+    if (entry === undefined) throw new UnknownLessonError(lessonId, this.lessonIds);
+    this.assertLearnerDeliverable(entry, 'LEGACY_COMPATIBILITY');
+    const location = this.discovery.byLessonId.get(lessonId)?.get(entry.activeDefinitionHash);
+    if (location === undefined) throw new UnknownLessonError(lessonId, this.lessonIds);
+    return readArtifacts(location.directory);
+  }
+
+  private assertLearnerDeliverable(
+    entry: LessonCatalogEntry,
+    accessMode: LessonLearnerAccessMode,
+  ): void {
+    const reason = learnerDeliveryBlockReason(entry);
+    if (reason !== undefined) {
+      const code: LessonProviderErrorCode =
+        reason === 'DISABLED'
+          ? 'LESSON_DISABLED'
+          : reason === 'KILL_SWITCH_ENGAGED'
+            ? 'KILL_SWITCH_ENGAGED'
+            : 'LESSON_RETIRED';
+      throw new LessonProviderError(
+        code,
+        `lesson "${entry.lessonId}" is unavailable for ${accessMode.toLowerCase()}: ${reason.toLowerCase()}`,
+        {
+          lessonId: entry.lessonId,
+          accessMode,
+          reason,
+          enabled: entry.enabled,
+          killSwitch: entry.killSwitch,
+          lifecycle: entry.lifecycle,
+        },
+      );
+    }
+  }
+}
+
+/** Storage-neutral source used by filesystem and Aurora-backed providers. */
 export interface LessonArtifactSource {
   listLessonIds(): readonly string[];
   hasLesson(lessonId: string): boolean;
-  /** lesson-script.json + learner-safe-items.json (+ protected-items.json for the key). */
   readArtifacts(lessonId: string): RawLessonArtifacts;
-  /** The parsed lesson-script.json object (for authored bindings). */
   readScriptRecord(lessonId: string): Record<string, unknown> | undefined;
 }
 
-/**
- * Build a provider over any artifact source. Normalization + answer keys are
- * resolved lazily and cached, exactly as the repo provider always did — the only
- * thing that varies is WHERE the raw artifacts come from (design note D5). The
- * learner-safe surface stays answer-free; keys resolve only via getAnswerKey.
- */
+/** Build the synchronous compatibility surface over any immutable artifact source. */
 export function createLessonContentProvider(source: LessonArtifactSource): LessonContentProvider {
   const normalizedCache = new Map<string, NormalizedLesson>();
   const answerCache = new Map<string, ServerAnswerKey>();
-  const authoringCache = new Map<string, AuthoredLessonBindings>();
+  const authoredCache = new Map<string, AuthoredLessonBindings>();
 
   const ensureKnown = (lessonId: string): void => {
     if (!source.hasLesson(lessonId)) throw new UnknownLessonError(lessonId, source.listLessonIds());
@@ -452,9 +978,14 @@ export function createLessonContentProvider(source: LessonArtifactSource): Lesso
     const cached = normalizedCache.get(lessonId);
     if (cached !== undefined) return cached;
     ensureKnown(lessonId);
-    const normalized = normalizeLesson(source.readArtifacts(lessonId));
-    normalizedCache.set(lessonId, normalized);
-    return normalized;
+    const artifacts = source.readArtifacts(lessonId);
+    const grammar = detectGrammar(artifacts.script);
+    const lesson =
+      grammar === 'L1_INLINE'
+        ? normalizeLesson(artifacts)
+        : compileCanonicalLesson(artifacts).lesson;
+    normalizedCache.set(lessonId, lesson);
+    return lesson;
   };
 
   return {
@@ -465,73 +996,297 @@ export function createLessonContentProvider(source: LessonArtifactSource): Lesso
     getAnswerKey: (lessonId) => {
       const cached = answerCache.get(lessonId);
       if (cached !== undefined) return cached;
-      const key = buildAnswerKey(normalizedOf(lessonId), source.readArtifacts(lessonId));
+      const artifacts = source.readArtifacts(lessonId);
+      const lesson = normalizedOf(lessonId);
+      const answerKey =
+        lesson.grammar === 'L1_INLINE'
+          ? buildL1AnswerKey(lesson)
+          : compileCanonicalLesson(artifacts).answerKey;
+      answerCache.set(lessonId, answerKey);
+      return answerKey;
+    },
+    getAuthoredBindings: (lessonId) => {
+      const cached = authoredCache.get(lessonId);
+      if (cached !== undefined) return cached;
+      ensureKnown(lessonId);
+      const script = source.readScriptRecord(lessonId);
+      if (script === undefined) throw new UnknownLessonError(lessonId, source.listLessonIds());
+      const bindings = authoredBindingsOf(script, lessonId);
+      authoredCache.set(lessonId, bindings);
+      return bindings;
+    },
+  };
+}
+
+const REPO_STORE = Symbol('repoLessonStore');
+type RepoBackedLessonRevisionProvider = LessonRevisionProvider & {
+  readonly [REPO_STORE]: RepoLessonStore;
+};
+
+export function createRepoLessonRevisionProvider(
+  options: RepoLessonRevisionProviderOptions = {},
+): LessonRevisionProvider {
+  const discovery = discoverRevisions(options.contentRoot ?? DEFAULT_CONTENT_ROOT);
+  const store = new RepoLessonStore(discovery, buildCatalog(discovery, options));
+  const provider: RepoBackedLessonRevisionProvider = {
+    [REPO_STORE]: store,
+    listActiveCatalogEntries: async () => store.listVisible(),
+    resolveSlug: async (slug) => store.resolveSlug(slug),
+    loadActiveRevision: async (reference) => store.loadActive(reference),
+    loadExactRevision: async (lessonId, definitionHash) =>
+      store.loadExact(lessonId, definitionHash),
+  };
+  return provider;
+}
+
+function repoStoreOf(provider: LessonRevisionProvider): RepoLessonStore {
+  const store = (provider as Partial<RepoBackedLessonRevisionProvider>)[REPO_STORE];
+  if (store === undefined) {
+    throw new LessonProviderError(
+      'COMPATIBILITY_UNAVAILABLE',
+      'the synchronous compatibility adapter only supports the repository provider',
+    );
+  }
+  return store;
+}
+
+/**
+ * Temporary filesystem-only adapter for synchronous runtime callers. It
+ * deliberately omits the presentation plan to preserve their pre-WP-05C model.
+ */
+export function createLessonContentProviderCompatibilityAdapter(
+  provider: LessonRevisionProvider,
+): LessonContentProvider {
+  const store = repoStoreOf(provider);
+  const normalizedCache = new Map<string, NormalizedLesson>();
+  const answerCache = new Map<string, ServerAnswerKey>();
+  const authoringCache = new Map<string, AuthoredLessonBindings>();
+
+  const artifactsOf = (lessonId: string): RawLessonArtifacts => store.legacyArtifacts(lessonId);
+  const normalizedOf = (lessonId: string): NormalizedLesson => {
+    const cached = normalizedCache.get(lessonId);
+    if (cached !== undefined) return cached;
+    const normalized = normalizeLesson(artifactsOf(lessonId));
+    normalizedCache.set(lessonId, normalized);
+    return normalized;
+  };
+
+  return {
+    listLessonIds: () => store.lessonIds,
+    hasLesson: (lessonId) => store.hasLesson(lessonId),
+    getNormalizedLesson: normalizedOf,
+    getDefinitionHash: (lessonId) => normalizedOf(lessonId).definitionHash,
+    getAnswerKey: (lessonId) => {
+      const cached = answerCache.get(lessonId);
+      if (cached !== undefined) return cached;
+      const artifacts = artifactsOf(lessonId);
+      let key: ServerAnswerKey;
+      try {
+        if (detectGrammar(artifacts.script) === 'L1_INLINE') {
+          key = buildL1AnswerKey(normalizedOf(lessonId));
+        } else {
+          key = compileCanonicalLesson(artifacts).answerKey;
+        }
+      } catch (error) {
+        if (
+          error instanceof LessonNormalizationError &&
+          error.detail.itemId !== undefined &&
+          /^protected correct_option_index for ".+" is outside its learner choices$/.test(
+            error.message,
+          )
+        ) {
+          const compatibilityMessage = error.message.replace(
+            'is outside its learner choices',
+            'is out of range',
+          );
+          throw new AnswerKeyResolutionError(compatibilityMessage, {
+            lessonId,
+            ...(error.detail.itemId === undefined ? {} : { itemId: error.detail.itemId }),
+          });
+        }
+        throw error;
+      }
       answerCache.set(lessonId, key);
       return key;
     },
     getAuthoredBindings: (lessonId) => {
       const cached = authoringCache.get(lessonId);
       if (cached !== undefined) return cached;
-      ensureKnown(lessonId);
-      const script = asRecord(source.readScriptRecord(lessonId));
-      const payload = asRecord(script?.payload);
-      const entries = asArray(payload?.question_evidence_plan)
-        .map(asRecord)
-        .filter((entry): entry is JsonRecord => entry !== undefined);
-      const value: AuthoredLessonBindings = {
-        lessonId,
-        artifactVersion:
-          typeof script?.artifact_version === 'string' ? script.artifact_version : undefined,
-        entries,
-      };
+      const script = asRecord(artifactsOf(lessonId).script);
+      if (script === undefined) throw new UnknownLessonError(lessonId, store.lessonIds);
+      const value = authoredBindingsOf(script, lessonId);
       authoringCache.set(lessonId, value);
       return value;
     },
   };
 }
 
-/**
- * The repo-backed provider. Discovers every `content/lessons/<id>/` carrying a
- * `lesson-script.json`, keyed by the script's own `payload.lesson_id`.
- */
+/** Existing construction signature, now explicitly routed through the adapter. */
 export function createRepoLessonContentProvider(
   contentRoot: string = DEFAULT_CONTENT_ROOT,
 ): LessonContentProvider {
-  const dirById = new Map<string, string>();
-  if (existsSync(contentRoot)) {
-    for (const entry of readdirSync(contentRoot, { withFileTypes: true })) {
-      if (!entry.isDirectory()) continue;
-      const dir = join(contentRoot, entry.name);
-      const scriptPath = join(dir, 'lesson-script.json');
-      if (!existsSync(scriptPath)) continue;
-      const payload = asRecord(asRecord(readJsonFile(scriptPath))?.payload);
-      const lessonId = typeof payload?.lesson_id === 'string' ? payload.lesson_id : undefined;
-      if (lessonId !== undefined) dirById.set(lessonId, dir);
-    }
-  }
-  const ids = [...dirById.keys()].sort();
-  const dirOf = (lessonId: string): string => {
-    const dir = dirById.get(lessonId);
-    if (dir === undefined) throw new UnknownLessonError(lessonId, ids);
-    return dir;
-  };
-  return createLessonContentProvider({
-    listLessonIds: () => ids,
-    hasLesson: (lessonId) => dirById.has(lessonId),
-    readArtifacts: (lessonId) => readArtifacts(dirOf(lessonId)),
-    readScriptRecord: (lessonId) =>
-      asRecord(readJsonFile(join(dirOf(lessonId), 'lesson-script.json'))),
-  });
+  return createLessonContentProviderCompatibilityAdapter(
+    createRepoLessonRevisionProvider({ contentRoot }),
+  );
 }
 
 /**
- * A composite provider: a synchronous base (the repo pilots, available at module
- * load) plus an optional secondary (the DB-backed release catalog) installed
- * asynchronously at Lambda cold start via {@link AttachableLessonContentProvider.attach}.
- * A lesson is served by the secondary when it has it, else the base — so the three
- * pilots keep working synchronously and the 111 build-a lessons resolve once the DB
- * provider is attached, WITHOUT threading a provider through the runtime call chain.
+ * Adapt an immutable synchronous artifact provider (including Aurora) to the
+ * revision-addressable runtime boundary.
  */
+export function createLessonRevisionProviderCompatibilityAdapter(
+  provider: LessonContentProvider,
+): LessonRevisionProvider {
+  const revisionCache = new Map<string, LoadedLessonRevision>();
+  const entryOf = (lessonId: string): LessonCatalogEntry => {
+    const lesson = provider.getNormalizedLesson(lessonId);
+    const slug = lessonId.toLowerCase();
+    return LessonCatalogEntrySchema.parse({
+      lessonId,
+      slug,
+      title: lessonId,
+      section: null,
+      cluster: 'R1',
+      estimatedMinutes: 15,
+      orderedKcIds: [...lesson.orderedKcIds],
+      prerequisiteLessonIds: [
+        ...new Set(lesson.prerequisiteGates.map((gate) => gate.prerequisiteLessonId)),
+      ],
+      runtimeKind: lesson.grammar === 'L1_INLINE' ? 'vector' : 'normalized',
+      lifecycle: 'DRAFT',
+      activeDefinitionHash: lesson.definitionHash,
+      enabled: true,
+      killSwitch: 'OPEN',
+      routePath: `/app/lessons/${slug}`,
+      candidateNonclaimStatus: 'INTERNAL_DRAFT_ONLY',
+    });
+  };
+  const revisionOf = (lessonId: string): LoadedLessonRevision => {
+    const cached = revisionCache.get(lessonId);
+    if (cached !== undefined) return cached;
+    if (!provider.hasLesson(lessonId)) {
+      throw new LessonProviderError('UNKNOWN_LESSON', `unknown lesson "${lessonId}"`, {
+        lessonId,
+      });
+    }
+    const lesson = provider.getNormalizedLesson(lessonId);
+    const revision: LoadedLessonRevision = {
+      lessonId,
+      definitionHash: LessonDefinitionHashSchema.parse(lesson.definitionHash),
+      lifecycle: 'DRAFT',
+      catalogEntry: entryOf(lessonId),
+      lesson,
+      protectedAuthority: { answerKey: provider.getAnswerKey(lessonId) },
+      authoredBindings: provider.getAuthoredBindings(lessonId),
+      artifactHashes: {
+        lessonScript: lesson.definitionHash,
+        learnerSafeItems: null,
+        protectedItems: null,
+        presentationPlan: null,
+      },
+      inputHashes: [],
+    };
+    revisionCache.set(lessonId, revision);
+    return revision;
+  };
+  const idForSlug = (slug: string): string | undefined =>
+    provider.listLessonIds().find((lessonId) => lessonId.toLowerCase() === slug);
+
+  return {
+    listActiveCatalogEntries: async () => provider.listLessonIds().map(entryOf),
+    resolveSlug: async (slug) => {
+      const lessonId = idForSlug(slug);
+      if (lessonId === undefined) {
+        throw new LessonProviderError('UNKNOWN_SLUG', `unknown lesson slug "${slug}"`, { slug });
+      }
+      const entry = entryOf(lessonId);
+      return LessonCatalogIdentitySchema.parse({
+        lessonId,
+        slug,
+        activeDefinitionHash: entry.activeDefinitionHash,
+      });
+    },
+    loadActiveRevision: async (reference) => {
+      const lessonId = 'lessonId' in reference ? reference.lessonId : idForSlug(reference.slug);
+      if (lessonId === undefined) {
+        throw new LessonProviderError('UNKNOWN_SLUG', `unknown lesson slug "${reference.slug}"`, {
+          slug: reference.slug,
+        });
+      }
+      return revisionOf(lessonId);
+    },
+    loadExactRevision: async (lessonId, definitionHash) => {
+      const revision = revisionOf(lessonId);
+      if (revision.definitionHash !== definitionHash) {
+        throw new LessonProviderError(
+          'REVISION_NOT_FOUND',
+          `revision ${lessonId}@${definitionHash} was not found`,
+          { lessonId, definitionHash },
+        );
+      }
+      return revision;
+    },
+  };
+}
+
+export interface AttachableLessonRevisionProvider extends LessonRevisionProvider {
+  attach(secondary: LessonRevisionProvider): void;
+}
+
+const fallbackProviderError = (error: unknown): boolean =>
+  error instanceof LessonProviderError &&
+  ['UNKNOWN_LESSON', 'UNKNOWN_SLUG', 'REVISION_NOT_FOUND'].includes(error.code);
+
+export function createCompositeLessonRevisionProvider(
+  base: LessonRevisionProvider,
+): AttachableLessonRevisionProvider {
+  let secondary: LessonRevisionProvider | undefined;
+  return {
+    attach: (next) => {
+      secondary = next;
+    },
+    listActiveCatalogEntries: async () => {
+      const entries = [
+        ...(await base.listActiveCatalogEntries()),
+        ...(secondary === undefined ? [] : await secondary.listActiveCatalogEntries()),
+      ];
+      return LessonCatalogResponseSchema.parse({
+        lessons: [...new Map(entries.map((entry) => [entry.lessonId, entry])).values()],
+      }).lessons;
+    },
+    resolveSlug: async (slug) => {
+      if (secondary !== undefined) {
+        try {
+          return await secondary.resolveSlug(slug);
+        } catch (error) {
+          if (!fallbackProviderError(error)) throw error;
+        }
+      }
+      return base.resolveSlug(slug);
+    },
+    loadActiveRevision: async (reference) => {
+      if (secondary !== undefined) {
+        try {
+          return await secondary.loadActiveRevision(reference);
+        } catch (error) {
+          if (!fallbackProviderError(error)) throw error;
+        }
+      }
+      return base.loadActiveRevision(reference);
+    },
+    loadExactRevision: async (lessonId, definitionHash) => {
+      if (secondary !== undefined) {
+        try {
+          return await secondary.loadExactRevision(lessonId, definitionHash);
+        } catch (error) {
+          if (!fallbackProviderError(error)) throw error;
+        }
+      }
+      return base.loadExactRevision(lessonId, definitionHash);
+    },
+  };
+}
+
 export interface AttachableLessonContentProvider extends LessonContentProvider {
   attach(secondary: LessonContentProvider): void;
 }
@@ -556,10 +1311,14 @@ export function createCompositeLessonContentProvider(
   };
 }
 
-/**
- * Default provider for the deployed learner runtime: the repo pilots now, with the
- * DB-backed release catalog attached at cold start (see the learner Lambda's
- * `createRuntime`). Consumers that import this keep using the same seam.
- */
+const repoLessonRevisionProvider = createRepoLessonRevisionProvider();
+
+/** Async provider used by normalized lesson workflow and exact run resume. */
+export const lessonRevisionProvider: AttachableLessonRevisionProvider =
+  createCompositeLessonRevisionProvider(repoLessonRevisionProvider);
+
+/** Default synchronous compatibility surface for the current runtime. */
 export const lessonContentProvider: AttachableLessonContentProvider =
-  createCompositeLessonContentProvider(createRepoLessonContentProvider());
+  createCompositeLessonContentProvider(
+    createLessonContentProviderCompatibilityAdapter(repoLessonRevisionProvider),
+  );
