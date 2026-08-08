@@ -1,6 +1,7 @@
 import { ATLAS_LESSON_CLUSTER, type SkillCluster } from '@mcat/contracts';
 
 import { CURRICULUM_PHASES, type CurriculumLesson } from '../data/curriculum-v3.generated';
+import { DB_BACKED_LESSONS, type DbBackedLessonSeed } from './registered-lessons.generated';
 
 /**
  * The Real Lesson Catalog registration manifest (Phase 6, wave 6A).
@@ -180,9 +181,50 @@ export function assertValidLessonRegistry(lessons: readonly RegisteredLesson[]):
   }
 }
 
+/** cluster -> provisional MCAT section bucket (null for cross-cutting reasoning clusters R1-R3). */
+function sectionForCluster(cluster: SkillCluster): LessonSection | null {
+  if (cluster.startsWith('BB')) return 'bb';
+  if (cluster.startsWith('CP')) return 'cp';
+  if (cluster.startsWith('PS')) return 'ps';
+  if (cluster.startsWith('CA')) return 'cars';
+  return null;
+}
+
 /**
- * The catalog. Exactly the three real lessons the project makes learner-facing —
- * L1 on its bespoke vector runtime, L2/L3 on the shared normalized engine.
+ * Build a full RegisteredLesson for a DB-backed (build-a import) normalized lesson.
+ * Identity + hard prerequisites come from the handoff seed; title + ordered KCs come
+ * from the curriculum and cluster from the atlas — the SAME sources the boot guard
+ * checks against, so a generated entry passes by construction and can never drift.
+ */
+function buildDbBackedLesson(seed: DbBackedLessonSeed): RegisteredLesson {
+  const curriculum = CURRICULUM_LESSON_BY_ID.get(seed.lessonId);
+  if (curriculum === undefined) {
+    throw new LessonRegistryError(
+      `${seed.lessonId} (DB-backed) is absent from the curriculum manifest`,
+    );
+  }
+  const cluster = ATLAS_LESSON_CLUSTER[seed.lessonId];
+  if (cluster === undefined) {
+    throw new LessonRegistryError(`${seed.lessonId} (DB-backed) is absent from the cluster atlas`);
+  }
+  const slug = seed.lessonId.toLowerCase();
+  return {
+    lessonId: seed.lessonId,
+    slug,
+    runtime: 'normalized',
+    title: curriculum.shortTitle,
+    section: sectionForCluster(cluster),
+    cluster,
+    estimatedMinutes: 15,
+    kcIds: curriculum.kcs.map((kc) => kc.id),
+    prerequisiteLessonIds: seed.prerequisiteLessonIds,
+    routePath: `/app/lessons/${slug}`,
+  };
+}
+
+/**
+ * The catalog: the three bespoke pilot lessons (L1 vector + two normalized) PLUS the
+ * 111 canonical build-a lessons, served DB-backed on the shared normalized engine.
  */
 export const REGISTERED_LESSONS: readonly RegisteredLesson[] = [
   {
@@ -221,6 +263,7 @@ export const REGISTERED_LESSONS: readonly RegisteredLesson[] = [
     prerequisiteLessonIds: [],
     routePath: '/app/lessons/v3-les-844372',
   },
+  ...DB_BACKED_LESSONS.map(buildDbBackedLesson),
 ];
 
 // Boot guard: run the structural check at module load so an invalid registration

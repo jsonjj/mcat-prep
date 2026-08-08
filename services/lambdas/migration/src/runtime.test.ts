@@ -422,7 +422,14 @@ describe('migration runtime security boundary', () => {
     const grants = sql.filter((statement) => statement.startsWith('grant '));
     expect(grants.join('\n')).not.toMatch(/\bgrant\s+(?:all|create|alter|drop)\b/);
     expect(grants.join('\n')).not.toMatch(/\bdelete\b/);
-    expect(grants.join('\n')).not.toMatch(/content_objects|content_releases|publication_runs/);
+    // Lesson content (build-a import) is READ-ONLY to the runtime: the DB-backed lesson
+    // provider selects content_objects + the lesson_* revision metadata, and the release
+    // gate selects content_releases. publication_runs stays ungranted (pipeline-only), and
+    // no grant may carry DELETE/ALL/CREATE/ALTER/DROP (asserted above).
+    expect(grants.join('\n')).not.toMatch(/publication_runs/);
+    expect(sql).toContain(
+      'grant select on table content_releases, content_objects, lesson_revisions, lesson_revision_objects, lesson_kc_membership, lesson_prerequisites, lesson_attachments, lesson_mastery_definitions, lesson_receipts to mcat_learner_api',
+    );
   });
 
   it.each([
