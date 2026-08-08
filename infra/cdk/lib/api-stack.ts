@@ -296,7 +296,12 @@ export class ApiStack extends Stack {
             sampledRequestsEnabled: false,
           },
         },
-        managedRule('AWSManagedCommonRuleSet', 'AWSManagedRulesCommonRuleSet', 10, ALLOW_LARGE_JSON_BODY),
+        managedRule(
+          'AWSManagedCommonRuleSet',
+          'AWSManagedRulesCommonRuleSet',
+          10,
+          ALLOW_LARGE_JSON_BODY,
+        ),
         managedRule('AWSManagedKnownBadInputsRuleSet', 'AWSManagedRulesKnownBadInputsRuleSet', 20),
       ],
     });

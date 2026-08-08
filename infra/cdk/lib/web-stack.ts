@@ -166,7 +166,12 @@ export function createWebDelivery(
       sampledRequestsEnabled: false,
     },
     rules: [
-      managedRule('AWSManagedCommonRuleSet', 'AWSManagedRulesCommonRuleSet', 10, ALLOW_LARGE_JSON_BODY),
+      managedRule(
+        'AWSManagedCommonRuleSet',
+        'AWSManagedRulesCommonRuleSet',
+        10,
+        ALLOW_LARGE_JSON_BODY,
+      ),
       managedRule('AWSManagedKnownBadInputsRuleSet', 'AWSManagedRulesKnownBadInputsRuleSet', 20),
       {
         name: 'SourceIpRateLimit',
