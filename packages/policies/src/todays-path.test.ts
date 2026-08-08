@@ -163,6 +163,37 @@ describe('Today\u2019s Path engine', () => {
     expect(noAdjacentSameKind(r.activities)).toBe(true);
   });
 
+  it('unlocks Practice WITHIN a day once enough lessons are scheduled (new learner), bounded to lesson minutes', () => {
+    const r = buildTodaysPath(
+      snap({
+        dailyBudgetMinutes: 240,
+        practiceUnlocked: false, // brand-new learner: nothing completed across days
+        candidateLessons: manyLessons(6), // but today itself schedules >= the unlock threshold
+      }),
+    );
+    const practiceMin = r.activities
+      .filter((a) => a.kind === 'practice')
+      .reduce((s, a) => s + a.estimatedMinutes, 0);
+    const lessonMin = r.activities
+      .filter((a) => a.kind === 'lesson')
+      .reduce((s, a) => s + a.estimatedMinutes, 0);
+    // Practice now fills the day for a new learner whose day itself teaches enough...
+    expect(practiceMin).toBeGreaterThan(0);
+    // ...but is bounded to ~the day's lesson minutes (reinforcement, not budget-fill/overload).
+    expect(practiceMin).toBeLessThanOrEqual(lessonMin);
+  });
+
+  it('keeps Practice OFF within a day below the lesson unlock threshold (new learner)', () => {
+    const r = buildTodaysPath(
+      snap({
+        dailyBudgetMinutes: 240,
+        practiceUnlocked: false,
+        candidateLessons: manyLessons(TODAYS_PATH_CONFIG.practiceUnlockLessons - 1),
+      }),
+    );
+    expect(r.activities.some((a) => a.kind === 'practice')).toBe(false);
+  });
+
   it('cuts an unavoidable same-kind run into even chunks instead of one long tail', () => {
     // 12 lessons + 2 CARS: zero adjacency is impossible, but the two CARS open three
     // gaps, so the longest lesson run must be 4 — not the 10-long tail a greedy
@@ -278,7 +309,13 @@ describe('Today\u2019s Path engine', () => {
 
     const built = buildTodaysPath(
       snap({
-        recall: { dueLearning: 0, dueReviews: 0, newAvailable: 8, due: 0, estimatedMinutesForDue: 0 },
+        recall: {
+          dueLearning: 0,
+          dueReviews: 0,
+          newAvailable: 8,
+          due: 0,
+          estimatedMinutesForDue: 0,
+        },
       }),
     );
     expect(built.activities.some((a) => a.kind === 'recall')).toBe(true);
@@ -319,7 +356,9 @@ describe('Today\u2019s Path engine', () => {
   it('reserves ONE Review-Mistakes repair slot, sized 3→5 by budget from repairable', () => {
     // Plenty repairable so the budget cap, not the supply, is what binds.
     const repairable = 5;
-    const short = buildTodaysPath(snap({ mistakesRepairable: repairable, dailyBudgetMinutes: 120 }));
+    const short = buildTodaysPath(
+      snap({ mistakesRepairable: repairable, dailyBudgetMinutes: 120 }),
+    );
     const shortSessions = short.activities.filter((a) => a.kind === 'review_mistakes');
     // A SINGLE slot (the guided runner feeds every mistake one at a time), never a
     // fan-out of short spacers.
@@ -523,7 +562,13 @@ describe('Today\u2019s Path engine', () => {
       snap({
         dailyBudgetMinutes: 360,
         practiceUnlocked: false,
-        recall: { dueLearning: 0, dueReviews: 0, newAvailable: 0, due: 0, estimatedMinutesForDue: 0 },
+        recall: {
+          dueLearning: 0,
+          dueReviews: 0,
+          newAvailable: 0,
+          due: 0,
+          estimatedMinutesForDue: 0,
+        },
         mistakesOpen: 0,
         candidateLessons: manyLessons(20),
       }),

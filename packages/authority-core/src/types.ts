@@ -300,6 +300,13 @@ export interface TodaysPathState {
   activities: TodaysPathActivityState[];
   /** How many mistakes sessions have been added to this day's plan (cap 2–3). */
   mistakesSessions: number;
+  /**
+   * KCs each scheduled lesson teaches (from the build's candidate lessons). Lets
+   * completing a lesson mid-day add its KCs to `taughtKcIds` immediately, so
+   * same-day Practice/Repair on a just-finished lesson is servable without waiting
+   * for a plan rebuild. Only the day's scheduled lessons, so it stays small.
+   */
+  lessonKcs?: Record<string, readonly string[]>;
 }
 
 /**

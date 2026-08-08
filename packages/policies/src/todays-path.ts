@@ -595,7 +595,8 @@ export function buildTodaysPath(
       activityId: 'review-mistakes',
       kind: 'review_mistakes',
       title: 'Review Mistakes',
-      detail: 'Repair what tripped you up — each hands you a fresh question (formative — never mastery).',
+      detail:
+        'Repair what tripped you up — each hands you a fresh question (formative — never mastery).',
       estimatedMinutes: mistakesSessionMinutes,
       count: mistakesCount,
       minutesBudget: null,
@@ -620,8 +621,6 @@ export function buildTodaysPath(
       .filter((c) => c.kind === 'lesson' && c.lessonSlug !== null)
       .map((c) => c.lessonSlug as string),
   );
-  const practiceEnabled = snap.practiceUnlocked && !carried.some((c) => c.kind === 'practice');
-
   const scoredBlock: PlannedActivity[] = [];
   let remaining = budgetForNew - spent;
 
@@ -712,9 +711,33 @@ export function buildTodaysPath(
   //    so the whole day is planned. Split into <=45-min blocks + spread by ordering.
   //    (Priority already went to new lessons above; practice is the reinforcement fill,
   //    which naturally grows as new lessons deplete.)
+  //
+  //    Unlock is cross-day (enough lessons completed over time) OR WITHIN-DAY: once
+  //    THIS day itself schedules enough lessons, Practice fills the remaining budget
+  //    and the orderer interleaves it AFTER the lessons — and completing a lesson marks
+  //    its KCs taught immediately (authority `recordPlanActivity`), so that practice is
+  //    servable in the same sitting. Without this, a brand-new learner's day stayed a
+  //    short lesson list with hours of empty "free study" (the reported bug).
+  const scheduledLessonCount =
+    scoredBlock.filter((a) => a.kind === 'lesson').length +
+    carried.filter((c) => c.kind === 'lesson').length;
+  const practiceEnabled =
+    (snap.practiceUnlocked || scheduledLessonCount >= cfg.practiceUnlockLessons) &&
+    !carried.some((c) => c.kind === 'practice');
   let practiceQs = 0;
   if (practiceEnabled) {
-    practiceQs = Math.max(0, Math.floor(remaining / cfg.costs.practicePerQuestion));
+    // Cross-day unlocked (enough lessons completed over TIME) fills the remaining
+    // budget as before — that learner has a real backlog of taught KCs to review.
+    // WITHIN-day unlock (a new learner whose TODAY crossed the lesson threshold)
+    // bounds Practice to ~the day's lesson minutes: it reinforces what was just
+    // taught, proportionally, instead of burying a 3-lesson day under hours of
+    // questions on only 3 lessons (overload) — and keeps the day's mix varied so the
+    // orderer can still avoid long same-kind runs.
+    const lessonMinutes =
+      scoredBlock.filter((a) => a.kind === 'lesson').reduce((s, a) => s + a.estimatedMinutes, 0) +
+      carried.filter((c) => c.kind === 'lesson').reduce((s, c) => s + c.estimatedMinutes, 0);
+    const practiceBudget = snap.practiceUnlocked ? remaining : Math.min(remaining, lessonMinutes);
+    practiceQs = Math.max(0, Math.floor(practiceBudget / cfg.costs.practicePerQuestion));
     remaining -= practiceQs * cfg.costs.practicePerQuestion;
   }
 

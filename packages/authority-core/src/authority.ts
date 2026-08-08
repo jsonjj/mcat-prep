@@ -1252,6 +1252,16 @@ export class Authority {
     const reviewMinutes = activities
       .filter((a) => a.kind === 'recall' || a.kind === 'review_mistakes')
       .reduce((sum, a) => sum + a.estimatedMinutes, 0);
+    // KCs each scheduled lesson teaches (from the build's candidate lessons), so
+    // completing a lesson mid-day can mark its KCs taught immediately — making
+    // same-day Practice/Repair on a just-finished lesson servable without a rebuild.
+    const kcByLesson = new Map(input.candidateLessons.map((l) => [l.lessonId, l.kcIds]));
+    const lessonKcs: Record<string, readonly string[]> = {};
+    for (const a of activities) {
+      if (a.kind === 'lesson' && a.lessonId !== null) {
+        lessonKcs[a.lessonId] = [...(kcByLesson.get(a.lessonId) ?? [])];
+      }
+    }
     state.plan = {
       planDate: result.planDate,
       dailyMinutesPreset: preset,
@@ -1267,6 +1277,7 @@ export class Authority {
         null,
       activities,
       mistakesSessions: activities.filter((a) => a.kind === 'review_mistakes').length,
+      lessonKcs,
     };
     return this.todaysPathView(state);
   }
@@ -1287,6 +1298,16 @@ export class Authority {
         const done = new Set(state.completedLessons ?? []);
         done.add(activity.lessonId);
         state.completedLessons = [...done];
+        // Mark the finished lesson's KCs taught NOW (not just on the next rebuild),
+        // so same-day Practice/Repair scheduled after it is actually servable. The
+        // full recompute in `todaysPathSnapshot` still runs on the next build and
+        // remains the source of truth; this only brings the mid-day set forward.
+        const taughtNow = state.plan?.lessonKcs?.[activity.lessonId];
+        if (taughtNow && taughtNow.length > 0) {
+          const taught = new Set(state.taughtKcIds ?? []);
+          for (const kc of taughtNow) taught.add(kc);
+          state.taughtKcIds = [...taught];
+        }
       }
       // Completing a Mistakes session stops those misses from re-scheduling one.
       // It does NOT hide them from the Mistakes tab: a mistake is resolved by a
@@ -4166,7 +4187,10 @@ export class Authority {
    * distractor, `correct_model` for the key (a few legacy rows use the space
    * spelling `"correct model"`, tolerated). Returns the text without the tag.
    */
-  private static parseErrorModel(raw: string): { readonly correctModel: boolean; readonly text: string } {
+  private static parseErrorModel(raw: string): {
+    readonly correctModel: boolean;
+    readonly text: string;
+  } {
     const match = /^\s*(correct[_ ]model|misconception)\s*:?\s*([\s\S]*)$/i.exec(raw);
     if (match === null) return { correctModel: false, text: raw.trim() };
     const correctModel = /^correct[_ ]model$/i.test(match[1]!);
@@ -4271,9 +4295,7 @@ export class Authority {
     const misses = attempts.filter((a) => !a.correct && a.firstAttempt);
     // One batched read of the population median RT per missed item, so speed is
     // banded against the item (spec §11.2) rather than a one-size cutoff.
-    const itemMedians = await this.practiceBank.itemResponseTimes(
-      misses.map((m) => m.questionId),
-    );
+    const itemMedians = await this.practiceBank.itemResponseTimes(misses.map((m) => m.questionId));
     const hydrated = await Promise.all(
       misses.map(async (miss) => {
         const content = await this.hydrateAttempt(miss);
@@ -4306,7 +4328,10 @@ export class Authority {
           // WS1 band (a miss is confidently_wrong or normal) + WS2/WS3 join: the
           // picked distractor's authored misconception, post-answer, one string.
           calibration: this.calibrationFor(state, miss, itemMedians.get(miss.questionId) ?? null),
-          chosenMisconception: Authority.pickedMisconception(answer.errorModels, miss.chosenChoiceId),
+          chosenMisconception: Authority.pickedMisconception(
+            answer.errorModels,
+            miss.chosenChoiceId,
+          ),
           resolved: Authority.resolved(attempts, miss),
           focus: focusFor(miss.cluster, miss.skill),
         };
@@ -4464,7 +4489,9 @@ export class Authority {
         assertable,
         // Named only once the pattern is real; the mode of the picked
         // misconceptions across the group's distinct missed items, else null.
-        leaningMisconception: assertable ? leaningMisconceptionOf(group.missed, misconceptionByItem) : null,
+        leaningMisconception: assertable
+          ? leaningMisconceptionOf(group.missed, misconceptionByItem)
+          : null,
         focus: focusFor(group.cluster, group.skill),
       });
     }
@@ -4547,7 +4574,8 @@ export class Authority {
     // Open first, then most-recently-flagged first within each group.
     return views.sort(
       (a, b) =>
-        Number(a.resolved) - Number(b.resolved) || Date.parse(b.flaggedAt) - Date.parse(a.flaggedAt),
+        Number(a.resolved) - Number(b.resolved) ||
+        Date.parse(b.flaggedAt) - Date.parse(a.flaggedAt),
     );
   }
 
