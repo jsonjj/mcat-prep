@@ -232,7 +232,10 @@ describeWithPostgres('migration PostgreSQL principals', () => {
         learner_stream_write: true,
         learner_stream_delete: false,
         learner_rate_limit_delete: false,
-        learner_content_read: false,
+        // Content is now learner-READABLE (SELECT-only): the DB-backed lesson provider
+        // selects the active release's immutable revisions + content_objects to serve
+        // the build-a catalog. Authored/imported by mcat_admin; no write grant here.
+        learner_content_read: true,
         worker_connect: true,
         worker_create: false,
         worker_temp: false,
