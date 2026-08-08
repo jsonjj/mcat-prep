@@ -61,6 +61,41 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
         /* offline shell is a progressive enhancement */
       });
   });
+
+  // Content-only deploys keep sw.js byte-identical, so the `controllerchange`
+  // reload above never fires and an open tab stays stranded on the old bundle —
+  // the reason shipped fixes looked "still not applied" until a manual hard
+  // refresh. Independently of the SW, detect a new deploy by comparing the entry
+  // bundle THIS tab is running (import.meta.url resolves to the built
+  // /assets/index-<hash>.js) against the entry the live index.html now references,
+  // then reload to adopt it. Only on tab refocus or a slow interval, and NEVER
+  // while the learner is mid-activity, so a reload can't interrupt an answer in
+  // progress (the server persists progress regardless).
+  const runningEntry = new URL(import.meta.url).pathname.split('/').pop() ?? '';
+  const MID_ACTIVITY =
+    /(\/practice\/(session|test)|\/cars|\/recall\/(review|new|edit|import)|\/mistakes\/repair|\/passage|\/diagnostic|\/lessons\/)/i;
+  let reloadingForVersion = false;
+  const adoptNewDeployWhenSafe = async (): Promise<void> => {
+    if (reloadingForVersion || !runningEntry) return;
+    if (document.visibilityState !== 'visible') return;
+    if (MID_ACTIVITY.test(window.location.pathname)) return;
+    try {
+      // The query string sidesteps the SW's cache-first for '/', and no-store the
+      // HTTP cache, so this always reflects what CloudFront is serving right now.
+      const html = await fetch(`/index.html?_=${Date.now()}`, { cache: 'no-store' }).then((r) =>
+        r.text(),
+      );
+      const shipped = html.match(/assets\/(index-[A-Za-z0-9_-]+\.js)/)?.[1];
+      if (shipped && shipped !== runningEntry) {
+        reloadingForVersion = true;
+        window.location.reload();
+      }
+    } catch {
+      /* offline or transient — try again on the next refocus/interval */
+    }
+  };
+  document.addEventListener('visibilitychange', () => void adoptNewDeployWhenSafe());
+  window.setInterval(() => void adoptNewDeployWhenSafe(), 5 * 60 * 1000);
 } else if ('serviceWorker' in navigator && import.meta.env.DEV) {
   // DEV self-heal: a service worker left over from a production build/preview on
   // this origin keeps serving a stale, cache-first shell + bundle — so local edits
