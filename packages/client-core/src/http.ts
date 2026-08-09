@@ -176,6 +176,20 @@ export function isUnauthenticatedError(error: unknown): boolean {
   return error instanceof ApiClientError && error.code === 'unauthorized';
 }
 
+/**
+ * Whether a failure is one the SERVER explicitly marked retryable — chiefly the
+ * transient 503 `unavailable` a freshly cold-started Lambda instance returns
+ * while it is still attaching the lesson catalog (the learner-API catch-all wraps
+ * that window as `{ code: 'unavailable', retryable: true }`). Safe to re-issue:
+ * the server sets `retryable` only when the request was rejected before doing any
+ * work, and every command carries an idempotencyKey, so a replay never
+ * double-writes. Reads/mutations use this to ride out the cold-start window
+ * instead of surfacing "temporarily unavailable" / "could not be restored".
+ */
+export function isRetryableError(error: unknown): boolean {
+  return error instanceof ApiClientError && error.retryable === true;
+}
+
 export class HttpAuthorityClient implements AuthorityPort, AuthPort {
   private readonly baseUrl: string;
   private readonly fetchImpl: typeof globalThis.fetch;

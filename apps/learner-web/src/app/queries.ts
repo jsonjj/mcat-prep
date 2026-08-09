@@ -11,7 +11,12 @@ import type {
   NormalizedLessonAction,
   VectorLessonAction,
 } from '@mcat/contracts';
-import { isUnauthenticatedError, type AttemptTiming, type GoalInput } from '@mcat/client-core';
+import {
+  isRetryableError,
+  isUnauthenticatedError,
+  type AttemptTiming,
+  type GoalInput,
+} from '@mcat/client-core';
 import { authority } from './authority';
 import { diagnosticClient, type DiagnosticBlockView } from './diagnostic-client';
 import { practiceTestClient, type PracticeTestBlockView } from './practice-test-client';
@@ -39,15 +44,19 @@ export const queryClient = new QueryClient({
       // a transient 401, and under a blanket `retry: false` it failed PERMANENTLY:
       // progress/mastery blanked out, and — worse — the Today's-Path GET erroring
       // meant useEnsureTodaysPath never saw `isSuccess`, so the build POST was never
-      // sent and the plan hung. Retry ONLY unauthorized reads, with a growing backoff,
-      // so they re-issue once the session lands. The budget is generous (~6 tries /
+      // sent and the plan hung. Retry unauthorized reads AND server-marked-retryable
+      // failures — the transient 503 `unavailable` a cold Lambda instance returns while
+      // it is still attaching the lesson catalog (what surfaced as repeated
+      // "temporarily unavailable" 503s on /lessons/*/status) — with a growing backoff,
+      // so they re-issue once the session/instance is ready. The budget is generous (~6 tries /
       // ~10s) because a COLD RELOAD re-runs the session bootstrap, which rotates the
       // `__Host-` cookie: reads firing in that window 401 until it settles, and the
       // window can exceed the old ~2s/3-try budget — that overflow is exactly what
       // surfaced the lesson "could not be restored" on reload. Genuine sign-out is
       // still handled by RequireAuth (bootstrap), and every other error class still
       // fails fast — no hammering a truly broken endpoint.
-      retry: (failureCount, error) => failureCount < 6 && isUnauthenticatedError(error),
+      retry: (failureCount, error) =>
+        failureCount < 6 && (isUnauthenticatedError(error) || isRetryableError(error)),
       retryDelay: (attempt) => Math.min(300 * 2 ** attempt, 3000),
     },
     mutations: {
@@ -59,7 +68,8 @@ export const queryClient = new QueryClient({
       // once the session lands is safe (no double-write). Only unauthorized errors
       // retry; every other failure still surfaces immediately. Budget matches the
       // reads (~6 tries / ~10s) to outlast a cold-reload bootstrap.
-      retry: (failureCount, error) => failureCount < 6 && isUnauthenticatedError(error),
+      retry: (failureCount, error) =>
+        failureCount < 6 && (isUnauthenticatedError(error) || isRetryableError(error)),
       retryDelay: (attempt) => Math.min(300 * 2 ** attempt, 3000),
     },
   },

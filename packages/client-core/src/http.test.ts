@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { AcceptedCommandResponseSchema, GoalCommandSchema } from '@mcat/contracts';
-import { ApiClientError, HttpAuthorityClient, MemorySession, isUnauthenticatedError } from './http';
+import {
+  ApiClientError,
+  HttpAuthorityClient,
+  MemorySession,
+  isRetryableError,
+  isUnauthenticatedError,
+} from './http';
 
 const bootstrapResponse = {
   authenticated: true,
@@ -191,6 +197,25 @@ describe('signed-out client behaviour', () => {
     expect(isUnauthenticatedError(clientSide)).toBe(true);
     expect(isUnauthenticatedError(serverSide)).toBe(true);
     expect(isUnauthenticatedError(new Error('network'))).toBe(false);
+  });
+
+  it('treats server-marked-retryable failures (transient 503 unavailable) as retryable', () => {
+    const unavailable = ApiClientError.from({
+      code: 'unavailable',
+      message: 'The learner service is temporarily unavailable.',
+      requestId: 'request-503',
+      retryable: true,
+    });
+    const notRetryable = ApiClientError.from({
+      code: 'unauthorized',
+      message: 'A valid learner session is required.',
+      requestId: 'request-401',
+      retryable: false,
+    });
+
+    expect(isRetryableError(unavailable)).toBe(true);
+    expect(isRetryableError(notRetryable)).toBe(false);
+    expect(isRetryableError(new Error('network'))).toBe(false);
   });
 
   it('bootstraps for a CSRF token before the first exchange attempt', async () => {
