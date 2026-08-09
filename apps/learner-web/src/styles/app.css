@@ -1630,7 +1630,7 @@ body {
    other screen keeps the shared 760px cap and nothing else changes. The block is
    `mc-progressboard`, not `mc-progress`, to avoid the thin progress-*bar* class. */
 .mc-progressboard__head {
-  gap: var(--mc-space-1);
+  gap: var(--mc-space-3);
 }
 .mc-progressboard__grid {
   display: flex;
@@ -1705,11 +1705,9 @@ body {
    rather than a full-width band. */
 .mc-scorebox {
   position: relative;
-  align-self: center;
   width: 100%;
   max-width: 360px;
-  margin-bottom: var(--mc-space-4);
-  padding: var(--mc-space-5) var(--mc-space-5) var(--mc-space-4);
+  padding: var(--mc-space-4) var(--mc-space-5);
   background: var(--mc-surface);
   border: 1px solid var(--mc-border);
   border-radius: var(--mc-radius-card);
@@ -1789,6 +1787,22 @@ body {
 .mc-scorebox__fine {
   font-size: var(--mc-text-12);
   color: var(--mc-ink-muted);
+}
+/* Wide dashboard: the header becomes a row so the score card sits top-right, in line with
+   the "Progress" title, instead of living inside the center column where it pushed the
+   lesson-mastery key and the brain down. Narrow screens keep the default stacked header
+   (title, then the card). */
+@media (min-width: 1180px) {
+  .mc-progressboard--wide .mc-progressboard__head {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--mc-space-5);
+  }
+  .mc-progressboard--wide .mc-progressboard__head .mc-scorebox {
+    width: 320px;
+    flex: 0 0 auto;
+  }
 }
 .mc-progressboard__rail {
   min-width: 0;

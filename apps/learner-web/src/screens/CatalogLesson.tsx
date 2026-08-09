@@ -157,6 +157,19 @@ export function CatalogLesson({ lessonId }: { lessonId: string }) {
     submit.mutate(action, { onSuccess: () => void run.refetch() });
   };
 
+  const restart = (): void => {
+    // A blocked run is a spent dead-end; starting again begins a fresh attempt (the server
+    // discards the blocked run and re-starts on the active revision). Guard the auto-start
+    // effect and refetch both reads so the fresh run renders immediately.
+    startAttempted.current = true;
+    start.mutate(undefined, {
+      onSuccess: () => {
+        void status.refetch();
+        void run.refetch();
+      },
+    });
+  };
+
   const progressLabel =
     view.kcOrdinal !== null && view.totalKcs > 0
       ? `Concept ${view.kcOrdinal} of ${view.totalKcs}`
@@ -198,9 +211,11 @@ export function CatalogLesson({ lessonId }: { lessonId: string }) {
       <CatalogLessonScreen
         screen={view.screen}
         pending={submit.isPending}
+        restarting={start.isPending}
         focusTargetRef={focusTargetRef}
         onAction={send}
         onReturn={backToCurriculum}
+        onRestart={restart}
       />
     </article>
   );
@@ -209,15 +224,19 @@ export function CatalogLesson({ lessonId }: { lessonId: string }) {
 function CatalogLessonScreen({
   screen,
   pending,
+  restarting,
   focusTargetRef,
   onAction,
   onReturn,
+  onRestart,
 }: {
   screen: NormalizedLessonScreen;
   pending: boolean;
+  restarting: boolean;
   focusTargetRef: React.MutableRefObject<HTMLElement | null>;
   onAction: (action: NormalizedLessonAction) => void;
   onReturn: () => void;
+  onRestart: () => void;
 }) {
   const setFocusTarget = (element: HTMLElement | null): void => {
     focusTargetRef.current = element;
@@ -294,11 +313,16 @@ function CatalogLessonScreen({
           Let’s pause here
         </h1>
         <div className="mc-vector-lesson__body">
-          <p>This lesson needs a support step that isn’t ready yet. Your progress is saved.</p>
+          <p>You can restart this lesson to try it again, or come back to it later.</p>
         </div>
-        <Button variant="primary" size="lg" onClick={onReturn}>
-          Back to curriculum
-        </Button>
+        <div className="mc-vector-lesson__state-actions">
+          <Button variant="primary" size="lg" disabled={restarting} onClick={onRestart}>
+            {restarting ? 'Restarting…' : 'Restart lesson'}
+          </Button>
+          <Button variant="secondary" size="lg" onClick={onReturn}>
+            Back to curriculum
+          </Button>
+        </div>
       </section>
     );
   }

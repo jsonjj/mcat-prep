@@ -214,13 +214,8 @@ function EstimatedScore() {
       )}
       {showInfo ? (
         <div className="mc-scorebox__popover" role="dialog" aria-label="How this score is estimated">
-          <p>
-            A quick estimate from your evidence so far: your lesson mastery and reasoning skills
-            (about ¾) plus your CARS reading ability (about ¼), placed on the 472–528 MCAT scale.
-          </p>
-          <p className="mc-scorebox__fine">
-            It moves as you learn, and it’s a guide — not an official score predictor.
-          </p>
+          <p>Estimated from your lesson mastery, reasoning skills, and CARS reading ability.</p>
+          <p className="mc-scorebox__fine">Updates as you learn — a guide, not an official prediction.</p>
         </div>
       ) : null}
     </div>
@@ -241,13 +236,13 @@ export function Progress() {
     <div className="mc-screen mc-progressboard mc-progressboard--wide">
       <header className="mc-screen__head mc-progressboard__head">
         <h1 className="mc-h1">Progress</h1>
+        <EstimatedScore />
       </header>
 
       <div className="mc-progressboard__grid">
         <SkillRail />
 
         <section className="mc-progressboard__center" aria-label="Lessons mastered — Evidence Atlas">
-          <EstimatedScore />
           <div className="mc-masterykey">
             <span className="mc-masterykey__title">Lesson mastery</span>
             <ul className="mc-masterykey__items">

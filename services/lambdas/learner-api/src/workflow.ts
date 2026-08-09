@@ -753,12 +753,16 @@ export class RepositoryLearnerKernel {
       const persisted = runs[lessonId];
       const resumed =
         persisted === undefined ? undefined : await this.resumeNormalizedRun(persisted, lessonId);
-      // A stale/unrestorable persisted run is discarded and re-started on the ACTIVE
-      // revision, so a lesson whose content moved since the learner began self-heals into
-      // a clean start rather than 503'ing forever.
-      const existing = resumed === undefined || resumed === 'RESET' ? undefined : resumed.run;
+      const resumedRun = resumed === undefined || resumed === 'RESET' ? undefined : resumed.run;
+      // An explicit start discards a run that can't continue and begins a fresh attempt on
+      // the ACTIVE revision: a stale/unrestorable run (RESET), or a terminal BLOCKED run —
+      // a spent dead-end whose cursor is gone, so resuming it would just re-show the pause.
+      // This is what makes "Restart lesson" on the pause screen work for every blocked run
+      // (and lets a lesson whose content moved self-heal into a clean start).
+      const existing =
+        resumedRun !== undefined && resumedRun.status !== 'BLOCKED' ? resumedRun : undefined;
       const revision =
-        resumed !== undefined && resumed !== 'RESET'
+        existing !== undefined && resumed !== undefined && resumed !== 'RESET'
           ? resumed.revision
           : await this.normalizedLessonProvider().loadActiveRevision({ lessonId });
       const disposition =
