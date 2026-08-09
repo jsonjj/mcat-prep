@@ -240,15 +240,32 @@ export function useEnsureTodaysPath() {
     const recallStale =
       available >= RECALL_MIN_DUE &&
       (recall === undefined || (recall.status === 'ready' && (recall.count ?? 0) < available));
+    // A plan built before a lesson's estimated length changed still shows the OLD minutes
+    // (e.g. a flat 15m). Detect a scheduled lesson whose planned duration no longer matches
+    // the current catalog and rebuild so Today's Path reflects real per-lesson lengths and
+    // re-fits the day's budget around them.
+    const estimateBySlug = new Map(REGISTERED_LESSONS.map((l) => [l.slug, l.estimatedMinutes]));
+    const planEstimatesStale = (view?.activities ?? []).some(
+      (a) =>
+        a.kind === 'lesson' &&
+        a.lessonSlug !== null &&
+        estimateBySlug.has(a.lessonSlug) &&
+        estimateBySlug.get(a.lessonSlug) !== a.estimatedMinutes,
+    );
     const needsBuild = !view?.built;
-    const needsRecall = Boolean(view?.built) && recallStale;
-    if (!needsBuild && !needsRecall) return;
-    // Key the guard by the available count so each new import re-triggers exactly
-    // once; a no-op server response for the same count must not loop.
-    const sig = `${view?.planDate ?? 'none'}:${needsBuild ? 'build' : `recall:${available}`}`;
+    const needsRefresh = Boolean(view?.built) && planEstimatesStale;
+    const needsRecall = Boolean(view?.built) && !needsRefresh && recallStale;
+    if (!needsBuild && !needsRefresh && !needsRecall) return;
+    // Key the guard by the reason (and, for recall, the available count) so each distinct
+    // trigger fires exactly once; a no-op server response must not loop.
+    const sig = `${view?.planDate ?? 'none'}:${
+      needsBuild ? 'build' : needsRefresh ? 'refresh' : `recall:${available}`
+    }`;
     if (attempted.current === sig) return;
     attempted.current = sig;
-    build.mutate(undefined);
+    // A stale-estimate refresh must force a rebuild of the already-built plan; a first
+    // build or recall re-injection uses the normal (non-forced) path.
+    build.mutate(needsRefresh ? { force: true } : undefined);
   }, [path.isSuccess, path.data, load.data, build]);
   return path;
 }

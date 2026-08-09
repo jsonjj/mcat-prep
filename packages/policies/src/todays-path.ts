@@ -473,9 +473,17 @@ export function buildTodaysPath(
     // `sizeRecall`'s due floor; the runner-side safety net covers any estimate/reality
     // gap that still slips through. No mastery is read or written here.
     if (c.kind === 'recall' && snap.recall.due === 0) continue;
-    if (carriedMinutes + c.estimatedMinutes > carryCap) break;
-    carried.push({ ...c, carriedOver: true });
-    carriedMinutes += c.estimatedMinutes;
+    // Refresh a carried lesson's duration from the current candidate, so a lesson carried
+    // over from an earlier day reflects its latest estimated length instead of the value
+    // baked in when it was first planned. Other kinds keep their planned estimate.
+    const candidate =
+      c.kind === 'lesson' && c.lessonSlug !== null
+        ? snap.candidateLessons.find((l) => l.slug === c.lessonSlug)
+        : undefined;
+    const estimatedMinutes = candidate?.estimatedMinutes ?? c.estimatedMinutes;
+    if (carriedMinutes + estimatedMinutes > carryCap) break;
+    carried.push({ ...c, carriedOver: true, estimatedMinutes });
+    carriedMinutes += estimatedMinutes;
   }
 
   // New planning budget: fill up to the preset, counting carried minutes toward it,

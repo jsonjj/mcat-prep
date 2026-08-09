@@ -122,6 +122,25 @@ describe('Today\u2019s Path engine', () => {
     expect(r.plannedMinutes).toBeLessThanOrEqual(r.dailyBudgetMinutes);
   });
 
+  it('refreshes a carried-over lesson’s estimated minutes from the current candidate', () => {
+    const carriedLesson: CarriedActivity = {
+      ...planned('lesson', 'lesson:carry'),
+      lessonSlug: 'carry',
+      lessonId: 'L-carry',
+      estimatedMinutes: 15, // stale value baked in when it was first planned days ago
+    };
+    const r = buildTodaysPath(
+      snap({
+        dailyBudgetMinutes: 360,
+        carryOver: [carriedLesson],
+        candidateLessons: [lesson({ lessonId: 'L-carry', slug: 'carry', estimatedMinutes: 50 })],
+      }),
+    );
+    const carried = r.activities.find((a) => a.kind === 'lesson' && a.lessonSlug === 'carry');
+    expect(carried?.carriedOver).toBe(true);
+    expect(carried?.estimatedMinutes).toBe(50); // refreshed from the candidate, not the stale 15
+  });
+
   it('puts Recall first when eligible; otherwise opens on a lesson', () => {
     const withRecall = buildTodaysPath(
       snap({
