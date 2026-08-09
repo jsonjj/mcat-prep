@@ -97,6 +97,7 @@ import {
 import { vectorLessonResponseSubmissions } from './vector-lesson-response-source';
 import {
   lessonRevisionProvider,
+  LessonProviderError,
   type LessonRevisionProvider,
   type LoadedLessonRevision,
 } from './lesson-content-provider';
@@ -119,6 +120,27 @@ import type { LessonResponseSubmission } from './lesson-response-seam';
  * produce the shape without importing this lambda's workflow.
  */
 export type { LessonBindingResolution, LessonResponseSubmission } from './lesson-response-seam';
+
+/**
+ * A persisted run's pinned revision can no longer be served: the lesson was
+ * re-normalized/re-imported (hash moved) or removed. These are permanent for the stored
+ * run, so a resume can never succeed and the run should be reset rather than 503'd.
+ * Deliberate blocks (disabled/retired/kill-switch) and transient infra errors are NOT
+ * matched here — they must keep their real status and remain retryable.
+ */
+function isStaleRunRevisionError(error: unknown): boolean {
+  return (
+    error instanceof LessonProviderError &&
+    (error.code === 'REVISION_NOT_FOUND' ||
+      error.code === 'UNKNOWN_LESSON' ||
+      error.code === 'UNKNOWN_SLUG')
+  );
+}
+
+function logStaleRunReset(lessonId: string, reason: string, error: unknown): void {
+  const detail = error instanceof Error ? `: ${error.message}` : '';
+  console.warn(`[learner-api] resetting stale normalized run for ${lessonId} (${reason})${detail}`);
+}
 
 interface MutationApplication {
   readonly eventType: string;
@@ -609,30 +631,69 @@ export class RepositoryLearnerKernel {
     return this.dependencies.lessonRevisionProvider ?? lessonRevisionProvider;
   }
 
-  private async exactNormalizedLessonRevision(
-    value: unknown,
-    expectedLessonId: string,
-  ): Promise<LoadedLessonRevision> {
-    const address = normalizedRunRevisionAddress(value);
-    if (address.lessonId !== expectedLessonId) {
+  /**
+   * Resume a persisted normalized run against its pinned immutable revision, or report
+   * that the stored run must be RESET.
+   *
+   * A run is pinned to the exact `definitionHash` it started on. When a lesson is later
+   * re-normalized or re-imported its hash moves, so `loadExactRevision` throws
+   * REVISION_NOT_FOUND and the OLD run can never resume — previously that surfaced as a
+   * permanent 503 ("The lesson could not be restored") on both /status and /run for the
+   * one lesson a learner had in progress, while never-started lessons worked. The right
+   * behavior is to treat such a run as stale and let the caller start fresh on the active
+   * revision (the in-progress state was against outdated content anyway).
+   *
+   * Only PERMANENT conditions reset: a moved/absent pinned revision, a run bound to the
+   * wrong lesson, an unparseable revision address, or a persisted run whose shape no
+   * longer restores. Deliberate lesson blocks (disabled/retired/kill-switch) and
+   * transient infrastructure errors are re-thrown unchanged so they keep their real
+   * status and stay retryable — a cold-start DB hiccup must never silently wipe a run.
+   */
+  private async resumeNormalizedRun(
+    persisted: unknown,
+    lessonId: string,
+  ): Promise<{ readonly run: NormalizedLessonRun; readonly revision: LoadedLessonRevision } | 'RESET'> {
+    let address: { readonly lessonId: string; readonly definitionHash: string };
+    try {
+      address = normalizedRunRevisionAddress(persisted);
+    } catch (error) {
+      logStaleRunReset(lessonId, 'unparseable revision address', error);
+      return 'RESET';
+    }
+    if (address.lessonId !== lessonId) {
+      // A run stored under a different lesson is a data-integrity fault, not a stale
+      // revision — surface it rather than silently starting the wrong lesson fresh.
       throw validationError('The persisted run does not match the requested lesson.');
     }
-    return this.normalizedLessonProvider().loadExactRevision(
-      address.lessonId,
-      address.definitionHash,
-    );
+    let revision: LoadedLessonRevision;
+    try {
+      revision = await this.normalizedLessonProvider().loadExactRevision(
+        address.lessonId,
+        address.definitionHash,
+      );
+    } catch (error) {
+      if (isStaleRunRevisionError(error)) {
+        logStaleRunReset(lessonId, `pinned revision ${address.definitionHash} moved`, error);
+        return 'RESET';
+      }
+      throw error;
+    }
+    try {
+      return { run: restoreNormalizedLessonRun(persisted, revision), revision };
+    } catch (error) {
+      logStaleRunReset(lessonId, 'persisted run no longer restores', error);
+      return 'RESET';
+    }
   }
 
   async normalizedLessonStatus(lessonId: string, principal: Principal) {
     const state = withNormalizedLessons(await this.loadState(principal));
     const persisted = state.normalizedLessonRuns?.[lessonId];
-    const run =
-      persisted === undefined
-        ? undefined
-        : restoreNormalizedLessonRun(
-            persisted,
-            await this.exactNormalizedLessonRevision(persisted, lessonId),
-          );
+    const resumed =
+      persisted === undefined ? undefined : await this.resumeNormalizedRun(persisted, lessonId);
+    // A stale/unrestorable run reports NOT_STARTED so the client offers a clean start
+    // instead of dead-ending on "The lesson could not be restored".
+    const run = resumed === undefined || resumed === 'RESET' ? undefined : resumed.run;
     return {
       availability: 'AVAILABLE' as const,
       runState: run?.paused ? 'PAUSED' : (run?.status ?? 'NOT_STARTED'),
@@ -646,8 +707,13 @@ export class RepositoryLearnerKernel {
     if (persisted === undefined) {
       throw validationError('Start this lesson before requesting its current screen.');
     }
-    const revision = await this.exactNormalizedLessonRevision(persisted, lessonId);
-    return renderNormalizedLessonRun(restoreNormalizedLessonRun(persisted, revision), revision);
+    const resumed = await this.resumeNormalizedRun(persisted, lessonId);
+    if (resumed === 'RESET') {
+      // Stale/unrestorable run behaves as not-started; the client re-starts, which
+      // overwrites it with a fresh run on the active revision.
+      throw validationError('Start this lesson before requesting its current screen.');
+    }
+    return renderNormalizedLessonRun(resumed.run, resumed.revision);
   }
 
   async handleNormalizedLessonStart(
@@ -659,12 +725,16 @@ export class RepositoryLearnerKernel {
       const state = withNormalizedLessons(baseState);
       const runs = (state.normalizedLessonRuns ??= {});
       const persisted = runs[lessonId];
+      const resumed =
+        persisted === undefined ? undefined : await this.resumeNormalizedRun(persisted, lessonId);
+      // A stale/unrestorable persisted run is discarded and re-started on the ACTIVE
+      // revision, so a lesson whose content moved since the learner began self-heals into
+      // a clean start rather than 503'ing forever.
+      const existing = resumed === undefined || resumed === 'RESET' ? undefined : resumed.run;
       const revision =
-        persisted === undefined
-          ? await this.normalizedLessonProvider().loadActiveRevision({ lessonId })
-          : await this.exactNormalizedLessonRevision(persisted, lessonId);
-      const existing =
-        persisted === undefined ? undefined : restoreNormalizedLessonRun(persisted, revision);
+        resumed !== undefined && resumed !== 'RESET'
+          ? resumed.revision
+          : await this.normalizedLessonProvider().loadActiveRevision({ lessonId });
       const disposition =
         existing === undefined
           ? 'STARTED'
@@ -709,8 +779,13 @@ export class RepositoryLearnerKernel {
       if (runs === undefined || persisted === undefined) {
         throw validationError('Start this lesson before sending a lesson command.');
       }
-      const revision = await this.exactNormalizedLessonRevision(persisted, lessonId);
-      const previousRun = restoreNormalizedLessonRun(persisted, revision);
+      const resumed = await this.resumeNormalizedRun(persisted, lessonId);
+      if (resumed === 'RESET') {
+        // The stored run can no longer resume (its pinned revision moved); a command
+        // against it can't be honored, so ask the client to re-start on the active revision.
+        throw validationError('Start this lesson before sending a lesson command.');
+      }
+      const { run: previousRun, revision } = resumed;
       let nextRun: NormalizedLessonRun;
       try {
         nextRun = applyNormalizedLessonAction(

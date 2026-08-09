@@ -9,6 +9,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   createRepoLessonRevisionProvider,
+  LessonProviderError,
   type LessonRevisionProvider,
   type LoadedLessonRevision,
 } from './lesson-content-provider';
@@ -301,5 +302,57 @@ describe('normalized lesson transport revision boundary', () => {
     await expect(kernel.normalizedLessonRun(L3, principal)).rejects.toThrow(
       'The persisted run does not match the requested lesson.',
     );
+  });
+
+  it('self-heals a run whose pinned revision no longer resolves instead of 503ing', async () => {
+    // The learner starts against one revision; the lesson is later re-normalized, so its
+    // definitionHash moves and the old pinned revision is no longer served. Previously
+    // that made /status and /run throw REVISION_NOT_FOUND forever ("could not be
+    // restored"). Now the stale run is reset and the lesson restarts on the active one.
+    const base = await createRepoLessonRevisionProvider().loadActiveRevision({ lessonId: L2 });
+    const oldRevision = revisionWithIdentity(base, '5'.repeat(64), 'Stale entry heading');
+    const newRevision = revisionWithIdentity(base, '6'.repeat(64), 'Fresh entry heading');
+    let active = oldRevision;
+    const provider: LessonRevisionProvider = {
+      listActiveCatalogEntries: async () => [active.catalogEntry],
+      resolveSlug: async () => ({
+        lessonId: active.lessonId,
+        slug: active.catalogEntry.slug,
+        activeDefinitionHash: active.definitionHash,
+      }),
+      loadActiveRevision: async () => active,
+      loadExactRevision: async (lessonId, definitionHash) => {
+        if (lessonId === L2 && definitionHash === active.definitionHash) return active;
+        throw new LessonProviderError(
+          'REVISION_NOT_FOUND',
+          `revision ${lessonId}@${definitionHash} was not found`,
+          { lessonId, definitionHash },
+        );
+      },
+    };
+    const { kernel, principal } = kernelWith(provider);
+
+    const started = (await kernel.handleNormalizedLessonStart(
+      L2,
+      { envelope: envelope(0) },
+      principal,
+    )) as unknown as { streamVersion: number };
+    // Content moved: the active pointer advances and the old exact revision is gone.
+    active = newRevision;
+
+    // Status must not throw — the unresumable run reports NOT_STARTED so the client
+    // offers a clean start rather than dead-ending.
+    const status = await kernel.normalizedLessonStatus(L2, principal);
+    expect(status.runState).toBe('NOT_STARTED');
+    expect(status.actionLabel).toBe('Start');
+
+    // A fresh start overwrites the stale run and pins to the ACTIVE revision.
+    await kernel.handleNormalizedLessonStart(
+      L2,
+      { envelope: envelope(started.streamVersion) },
+      principal,
+    );
+    const view = await kernel.normalizedLessonRun(L2, principal);
+    expect(view.screen).toMatchObject({ heading: 'Fresh entry heading' });
   });
 });
