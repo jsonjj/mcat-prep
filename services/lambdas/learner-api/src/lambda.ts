@@ -381,14 +381,33 @@ async function createRuntime(): Promise<LearnerApi> {
   // release gate): before activation it resolves nothing and only the file-based
   // pilots serve; once a release is activated the imported lessons resolve from
   // Aurora. Best-effort — a failure here must never take down the API.
-  try {
-    const dbLessons = await loadLessonRevisionProvider({ db: pool, environment: 'dev' });
-    lessonContentProvider.attach(dbLessons);
-    lessonRevisionProvider.attach(createLessonRevisionProviderCompatibilityAdapter(dbLessons));
-  } catch {
-    // Best-effort: a failure to attach the DB catalog must never take down the API.
-    // The file-based pilots still serve, and an unattached release simply surfaces as
-    // the imported lessons not resolving (diagnosable from content_releases lifecycle).
+  // Best-effort for BOOT (a failure must never take down the API), but RETRIED with
+  // backoff. Previously a SINGLE transient cold-start DB blip here was swallowed
+  // silently, leaving THIS Lambda instance permanently serving 503 "temporarily
+  // unavailable" for every build-a lesson (getNormalizedLessonStatus -> unknown
+  // lesson) while a healthy instance served 200 — the instance-dependent 503 that
+  // surfaced as "The lesson could not be restored". Retrying lets a transient blip
+  // recover before we fall back, and the failure is now LOGGED (no longer silent) so
+  // a genuine outage is diagnosable from CloudWatch instead of guesswork.
+  for (let attempt = 1; attempt <= 5; attempt += 1) {
+    try {
+      const dbLessons = await loadLessonRevisionProvider({ db: pool, environment: 'dev' });
+      lessonContentProvider.attach(dbLessons);
+      lessonRevisionProvider.attach(createLessonRevisionProviderCompatibilityAdapter(dbLessons));
+      break;
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+      if (attempt === 5) {
+        // Fall back to file-based pilots only; imported lessons will 503 until an
+        // instance attaches successfully (a fresh cold start retries this whole path).
+        console.error(`[learner-api] lesson catalog attach failed after ${attempt} attempts: ${detail}`);
+      } else {
+        console.error(
+          `[learner-api] lesson catalog attach attempt ${attempt} failed, retrying: ${detail}`,
+        );
+        await new Promise((resolve) => setTimeout(resolve, Math.min(250 * 2 ** (attempt - 1), 2000)));
+      }
+    }
   }
   const authority = new Authority(undefined, systemClock);
   const repository = new PostgresAuthorityRepository(pool, {
