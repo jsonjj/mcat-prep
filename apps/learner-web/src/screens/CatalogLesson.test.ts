@@ -11,6 +11,7 @@ const hooks = vi.hoisted(() => ({
   start: vi.fn(),
   run: vi.fn(),
   submit: vi.fn(),
+  recordPlanMutate: vi.fn(),
 }));
 
 vi.mock('../app/queries', () => ({
@@ -18,6 +19,10 @@ vi.mock('../app/queries', () => ({
   useStartNormalizedLesson: () => hooks.start(),
   useNormalizedLessonRun: () => hooks.run(),
   useSubmitNormalizedLessonAction: () => hooks.submit(),
+}));
+
+vi.mock('../app/today-queries', () => ({
+  useRecordPlanActivity: () => ({ mutate: hooks.recordPlanMutate }),
 }));
 
 const submitMutate = vi.fn();
@@ -89,11 +94,11 @@ const button = (renderer: ReactTestRenderer, label: string): ReactTestInstance =
   return match;
 };
 
-const lessonElement = (): ReactElement =>
+const lessonElement = (planState?: { returnTo: string; activityId: string }): ReactElement =>
   createElement(
     MemoryRouter,
     {
-      initialEntries: ['/app/lessons/v3-les-789208'],
+      initialEntries: [{ pathname: '/app/lessons/v3-les-789208', state: planState ?? null }],
       future: { v7_startTransition: true, v7_relativeSplatPath: true },
     },
     createElement(
@@ -107,13 +112,20 @@ const lessonElement = (): ReactElement =>
         path: '/app/curriculum',
         element: createElement('p', null, 'Curriculum destination'),
       }),
+      createElement(Route, {
+        path: '/app/today',
+        element: createElement('p', null, 'Plan destination'),
+      }),
     ),
   );
 
-const renderLesson = async (): Promise<ReactTestRenderer> => {
+const renderLesson = async (planState?: {
+  returnTo: string;
+  activityId: string;
+}): Promise<ReactTestRenderer> => {
   let renderer!: ReactTestRenderer;
   await act(async () => {
-    renderer = create(lessonElement(), {
+    renderer = create(lessonElement(planState), {
       createNodeMock(element) {
         if (element.type === 'h1') {
           return {
@@ -444,5 +456,24 @@ describe('CatalogLesson canonical screens', () => {
     await act(async () => button(renderer, 'Pause and return').props.onClick());
 
     expect(textOf(renderer.toJSON())).toContain('Curriculum destination');
+  });
+
+  it('marks the plan step complete and returns to the plan when finished from Today’s Path', async () => {
+    hooks.recordPlanMutate.mockClear();
+    showScreen({ kind: 'COMPLETE' });
+    const renderer = await renderLesson({
+      returnTo: '/app/today',
+      activityId: 'lesson:v3-les-789208',
+    });
+
+    // Reaching COMPLETE marks the plan activity done so Today's Path can advance.
+    expect(hooks.recordPlanMutate).toHaveBeenCalledWith({
+      activityId: 'lesson:v3-les-789208',
+      status: 'complete',
+    });
+
+    // And the completion screen returns to the PLAN, not the curriculum.
+    await act(async () => button(renderer, 'Back to plan').props.onClick());
+    expect(textOf(renderer.toJSON())).toContain('Plan destination');
   });
 });
