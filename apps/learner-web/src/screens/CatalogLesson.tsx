@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import type { NormalizedLessonAction, NormalizedLessonScreen } from '@mcat/contracts';
 import { Button, Callout } from '@mcat/ui-web';
 import {
@@ -8,6 +8,7 @@ import {
   useStartNormalizedLesson,
   useSubmitNormalizedLessonAction,
 } from '../app/queries';
+import { useRecordPlanActivity } from '../app/today-queries';
 import { lessonById } from '../app/lesson-catalog';
 
 /**
@@ -36,6 +37,14 @@ const FEEDBACK_HEADINGS: Record<FeedbackOutcome, string> = {
 
 export function CatalogLesson({ lessonId }: { lessonId: string }) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const recordPlan = useRecordPlanActivity();
+  // Today's Path launches a lesson with a return target + the plan activity id, so
+  // finishing it advances the plan; opened straight from the Curriculum, both are absent.
+  const navState = location.state as { returnTo?: string; activityId?: string } | null;
+  const returnTo = navState?.returnTo;
+  const planActivityId = navState?.activityId;
+  const fromPlan = Boolean(returnTo && planActivityId);
   const lesson = lessonById(lessonId);
   const slug = lesson?.slug ?? '';
 
@@ -88,7 +97,22 @@ export function CatalogLesson({ lessonId }: { lessonId: string }) {
     if (submit.isError) void refetchRun();
   }, [refetchRun, submit.isError]);
 
-  const backToCurriculum = (): void => navigate('/app/curriculum');
+  // A lesson launched from Today's Path advances the plan when it finishes: mark the plan
+  // activity complete the moment the run reaches COMPLETE (once), regardless of how the
+  // learner then leaves the screen. Opened straight from the Curriculum (no plan activity
+  // id), this is a no-op.
+  const planCompletionRecorded = useRef(false);
+  useEffect(() => {
+    if (view?.screen.kind !== 'COMPLETE' || !planActivityId || planCompletionRecorded.current) {
+      return;
+    }
+    planCompletionRecorded.current = true;
+    recordPlan.mutate({ activityId: planActivityId, status: 'complete' });
+  }, [view, planActivityId, recordPlan]);
+
+  // Return to the plan when launched from Today's Path, else the curriculum. Completion is
+  // recorded by the effect above, so pausing or leaving a lesson never marks it done.
+  const backToCurriculum = (): void => navigate(returnTo ?? '/app/curriculum');
   const retryRestore = (): void => {
     if (runState === 'NOT_STARTED' && start.isError) {
       start.mutate();
@@ -212,6 +236,7 @@ export function CatalogLesson({ lessonId }: { lessonId: string }) {
         screen={view.screen}
         pending={submit.isPending}
         restarting={start.isPending}
+        fromPlan={fromPlan}
         focusTargetRef={focusTargetRef}
         onAction={send}
         onReturn={backToCurriculum}
@@ -225,6 +250,7 @@ function CatalogLessonScreen({
   screen,
   pending,
   restarting,
+  fromPlan,
   focusTargetRef,
   onAction,
   onReturn,
@@ -233,11 +259,13 @@ function CatalogLessonScreen({
   screen: NormalizedLessonScreen;
   pending: boolean;
   restarting: boolean;
+  fromPlan: boolean;
   focusTargetRef: React.MutableRefObject<HTMLElement | null>;
   onAction: (action: NormalizedLessonAction) => void;
   onReturn: () => void;
   onRestart: () => void;
 }) {
+  const returnLabel = fromPlan ? 'Back to plan' : 'Back to curriculum';
   const setFocusTarget = (element: HTMLElement | null): void => {
     focusTargetRef.current = element;
   };
@@ -320,7 +348,7 @@ function CatalogLessonScreen({
             {restarting ? 'Restarting…' : 'Restart lesson'}
           </Button>
           <Button variant="secondary" size="lg" onClick={onReturn}>
-            Back to curriculum
+            {returnLabel}
           </Button>
         </div>
       </section>
@@ -333,7 +361,7 @@ function CatalogLessonScreen({
         {COMPLETION_COPY}
       </h1>
       <Button variant="primary" size="lg" onClick={onReturn}>
-        Back to curriculum
+        {returnLabel}
       </Button>
     </section>
   );
