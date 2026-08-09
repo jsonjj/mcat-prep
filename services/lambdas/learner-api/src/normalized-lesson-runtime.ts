@@ -691,9 +691,18 @@ function enterBranch(
 ): NormalizedLessonRun {
   const kc = kcForStep(lesson, failedStep);
   const binding = bindingFor(kc, failedItem.exitFunction);
-  if (binding === undefined) return terminal(run, 'BLOCKED');
-  const first = branchSequence(kc, binding)[0];
-  if (first === undefined) return terminal(run, 'BLOCKED');
+  const first = binding === undefined ? undefined : branchSequence(kc, binding)[0];
+  if (binding === undefined || first === undefined) {
+    // No authored support/remediation branch for this missed checkpoint. The imported
+    // lesson batch ships checkpoints WITHOUT repair branches, so branching here would
+    // dead-end the learner at BLOCKED ("Let's pause here") and make the lesson
+    // uncompletable past the first missed checkpoint. Instead, continue the baseline
+    // sequence: the miss is already recorded as evidence and the learner has already seen
+    // the correct-answer feedback, so advance to the next step (or complete). Lessons that
+    // DO author a branch are unaffected and still remediate as designed.
+    const next = nextBaselineStep(lesson, failedStep.stepId, run.responses);
+    return next === null ? terminal(run, 'DELIVERY_COMPLETE') : enterStep(run, next);
+  }
   return {
     ...enterStep(run, first),
     branch: {

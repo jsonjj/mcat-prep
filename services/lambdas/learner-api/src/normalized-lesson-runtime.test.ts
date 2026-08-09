@@ -795,6 +795,50 @@ describe('canonical repair, exact re-entry, and bounded handoff', () => {
     expect(run.passedExits[kc.kcId] ?? []).not.toContain(binding.failedFunction);
     expect(continueRun(run, revision).status).toBe('BLOCKED');
   });
+
+  it('continues past a missed checkpoint when no support branch is authored, but still branches when one exists', async () => {
+    const base = await provider.loadActiveRevision({ lessonId: L3 });
+    const exitStep = base.lesson.kcs
+      .flatMap((kc) => kc.cleanBaselineSteps)
+      .find((step) =>
+        step.itemIds.some(
+          (itemId) =>
+            (base.lesson.items.find((item) => item.itemId === itemId)?.exitFunction ?? 'NONE') !==
+            'NONE',
+        ),
+      );
+    if (exitStep === undefined) throw new Error('L3 has no exit checkpoint step');
+    const exitItemId = exitStep.itemIds.find(
+      (itemId) =>
+        (base.lesson.items.find((item) => item.itemId === itemId)?.exitFunction ?? 'NONE') !==
+        'NONE',
+    );
+    if (exitItemId === undefined) throw new Error('L3 exit step has no exit item');
+
+    // Control: with the authored branch present, a miss still enters remediation.
+    let control = advanceToStep(createRun(base), exitStep.stepId, base);
+    control = continueRun(submit(control, wrongResponseFor(base, exitItemId), base), base);
+    expect(control.branch).not.toBeNull();
+    expect(control.status).toBe('IN_PROGRESS');
+
+    // Imported-lesson gap: checkpoints present, but no repair/re-entry branches authored.
+    // A miss must not dead-end at BLOCKED ("Let's pause here") — it continues the baseline.
+    const noBranch: LoadedLessonRevision = {
+      ...base,
+      lesson: {
+        ...base.lesson,
+        kcs: base.lesson.kcs.map((kc) => ({ ...kc, branchBindings: [] })),
+      },
+    };
+    let run = advanceToStep(createRun(noBranch), exitStep.stepId, noBranch);
+    run = submit(run, wrongResponseFor(noBranch, exitItemId), noBranch);
+    expect(run.display).toBe('FEEDBACK');
+    expect(run.responses[exitItemId]?.outcome).not.toBe('CORRECT');
+    run = continueRun(run, noBranch);
+    expect(run.status).not.toBe('BLOCKED');
+    expect(renderNormalizedLessonRun(run, noBranch).screen.kind).not.toBe('BLOCKED');
+    expect(run.branch).toBeNull();
+  });
 });
 
 describe('response-control validation and feedback', () => {
