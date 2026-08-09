@@ -190,6 +190,34 @@ export function isRetryableError(error: unknown): boolean {
   return error instanceof ApiClientError && error.retryable === true;
 }
 
+// Client-side concurrency cap for API requests. The learner-API degrades sharply
+// above ~16 SIMULTANEOUS requests: each cold Lambda instance loads the full lesson
+// catalog on start, so a burst scales up many cold instances that hammer Aurora at
+// once and a chunk of them 5xx (measured: ≤16 concurrent = 100% OK, 32 concurrent =
+// ~25% fail). Surfaces like Curriculum fire one `/status` per lesson card, which can
+// cross that line and cascade into "temporarily unavailable" / "could not be
+// restored". Funnel every request through a small semaphore so bursts queue on the
+// client and never trigger the scale-up storm; normal flows (a few concurrent calls)
+// are unaffected. Module-scoped so it caps the whole app, not one client instance.
+const MAX_CONCURRENT_REQUESTS = 6;
+let inFlightRequests = 0;
+const requestWaiters: Array<() => void> = [];
+
+function acquireRequestSlot(): Promise<void> {
+  if (inFlightRequests < MAX_CONCURRENT_REQUESTS) {
+    inFlightRequests += 1;
+    return Promise.resolve();
+  }
+  return new Promise<void>((resolve) => requestWaiters.push(resolve));
+}
+
+function releaseRequestSlot(): void {
+  const next = requestWaiters.shift();
+  // Hand the slot directly to a waiter (in-flight count unchanged), or free it.
+  if (next) next();
+  else inFlightRequests -= 1;
+}
+
 export class HttpAuthorityClient implements AuthorityPort, AuthPort {
   private readonly baseUrl: string;
   private readonly fetchImpl: typeof globalThis.fetch;
@@ -225,32 +253,37 @@ export class HttpAuthorityClient implements AuthorityPort, AuthPort {
       headers.set('x-csrf-token', csrfToken);
     }
 
-    const response = await this.fetchImpl(`${this.baseUrl}${path}`, {
-      ...init,
-      method,
-      headers,
-      credentials: 'include',
-    });
-
-    let json: unknown;
+    await acquireRequestSlot();
     try {
-      json = await response.json();
-    } catch {
+      const response = await this.fetchImpl(`${this.baseUrl}${path}`, {
+        ...init,
+        method,
+        headers,
+        credentials: 'include',
+      });
+
+      let json: unknown;
+      try {
+        json = await response.json();
+      } catch {
+        if (!response.ok) {
+          throw safeUnavailable(response.headers.get('x-amzn-requestid') ?? 'unknown-request');
+        }
+        throw new TypeError('The service returned invalid JSON.');
+      }
+
       if (!response.ok) {
-        throw safeUnavailable(response.headers.get('x-amzn-requestid') ?? 'unknown-request');
+        const parsed = HttpApiErrorSchema.safeParse(json);
+        if (!parsed.success) {
+          throw safeUnavailable(response.headers.get('x-amzn-requestid') ?? 'unknown-request');
+        }
+        throw ApiClientError.from(parsed.data);
       }
-      throw new TypeError('The service returned invalid JSON.');
-    }
 
-    if (!response.ok) {
-      const parsed = HttpApiErrorSchema.safeParse(json);
-      if (!parsed.success) {
-        throw safeUnavailable(response.headers.get('x-amzn-requestid') ?? 'unknown-request');
-      }
-      throw ApiClientError.from(parsed.data);
+      return schema.parse(json);
+    } finally {
+      releaseRequestSlot();
     }
-
-    return schema.parse(json);
   }
 
   /**
