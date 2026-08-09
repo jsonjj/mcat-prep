@@ -374,6 +374,15 @@ async function createRuntime(): Promise<LearnerApi> {
     connectionString: databaseUrl(environment, secret),
     applicationName: 'mcat-learner-api',
     maxConnections: 2,
+    // The cold-start catalog attach runs a single ~22MB query. On a cold Aurora
+    // buffer that exceeds the 5s DEFAULT statement timeout and is killed, so the
+    // instance boots without the catalog and returns 503 for every build-a lesson
+    // for its whole life (the instance-dependent "temporarily unavailable" storm:
+    // fine on a warm instance, broken on a cold one). Give queries room to finish
+    // on a cold connection — still far under the 29s Lambda timeout — while
+    // steady-state queries stay sub-second and unaffected.
+    statementTimeoutMs: 15_000,
+    connectionTimeoutMs: 8_000,
   });
   // Loudly flag an unseeded database at cold start (best-effort; never blocks boot).
   await logContentHealth(pool);
@@ -389,25 +398,20 @@ async function createRuntime(): Promise<LearnerApi> {
   // surfaced as "The lesson could not be restored". Retrying lets a transient blip
   // recover before we fall back, and the failure is now LOGGED (no longer silent) so
   // a genuine outage is diagnosable from CloudWatch instead of guesswork.
-  for (let attempt = 1; attempt <= 5; attempt += 1) {
-    try {
-      const dbLessons = await loadLessonRevisionProvider({ db: pool, environment: 'dev' });
-      lessonContentProvider.attach(dbLessons);
-      lessonRevisionProvider.attach(createLessonRevisionProviderCompatibilityAdapter(dbLessons));
-      break;
-    } catch (error) {
-      const detail = error instanceof Error ? error.message : String(error);
-      if (attempt === 5) {
-        // Fall back to file-based pilots only; imported lessons will 503 until an
-        // instance attaches successfully (a fresh cold start retries this whole path).
-        console.error(`[learner-api] lesson catalog attach failed after ${attempt} attempts: ${detail}`);
-      } else {
-        console.error(
-          `[learner-api] lesson catalog attach attempt ${attempt} failed, retrying: ${detail}`,
-        );
-        await new Promise((resolve) => setTimeout(resolve, Math.min(250 * 2 ** (attempt - 1), 2000)));
-      }
-    }
+  // ONE attempt: with the raised timeouts above the ~22MB load completes on a cold
+  // connection, so this succeeds on the first try. Retrying a timed-out 22MB query
+  // within the same cold start is pointless and would risk the 29s Lambda budget; a
+  // fresh cold start (or the client's retryable-503 retry landing on another
+  // instance) re-attempts. Best-effort so a genuine DB outage never takes the API
+  // down (file pilots still serve), and the failure is LOGGED, not silent.
+  try {
+    const dbLessons = await loadLessonRevisionProvider({ db: pool, environment: 'dev' });
+    lessonContentProvider.attach(dbLessons);
+    lessonRevisionProvider.attach(createLessonRevisionProviderCompatibilityAdapter(dbLessons));
+  } catch (error) {
+    console.error(
+      `[learner-api] lesson catalog attach failed: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
   const authority = new Authority(undefined, systemClock);
   const repository = new PostgresAuthorityRepository(pool, {
