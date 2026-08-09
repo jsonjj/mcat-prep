@@ -713,16 +713,36 @@ function enterBranch(
   };
 }
 
+/**
+ * Rejoin the main lesson after a struggled checkpoint instead of dead-ending. A lesson
+ * never blocks the learner: once repair/re-entry is exhausted (or a bounded handoff note
+ * has been shown), continue at the next concept on the clean baseline so the learner
+ * always finishes. The miss is already recorded as evidence and no exit credit is granted,
+ * so mastery stays withheld and the planner can resurface the KC later — but the lesson is
+ * completable end to end.
+ */
+function continueAfterBranch(
+  lesson: NormalizedLesson,
+  run: NormalizedLessonRun,
+): NormalizedLessonRun {
+  const fromStepId = run.branch?.failedStepId ?? run.currentStepId;
+  const rejoined: NormalizedLessonRun = { ...run, branch: null, blockAfterCurrentStep: false };
+  if (fromStepId === null) return terminal(rejoined, 'DELIVERY_COMPLETE');
+  const next = nextBaselineStep(lesson, fromStepId, run.responses);
+  return next === null ? terminal(rejoined, 'DELIVERY_COMPLETE') : enterStep(rejoined, next);
+}
+
 function handoffOrBlock(lesson: NormalizedLesson, run: NormalizedLessonRun): NormalizedLessonRun {
   const branch = run.branch;
-  if (branch === null) return terminal(run, 'BLOCKED');
+  if (branch === null) return continueAfterBranch(lesson, run);
   const kc = lesson.kcs.find((candidate) => candidate.kcId === branch.kcId);
   const binding = kc?.branchBindings.find(
     (candidate) => candidate.failedFunction === branch.failedFunction,
   );
-  if (kc === undefined || binding === undefined) return terminal(run, 'BLOCKED');
+  if (kc === undefined || binding === undefined) return continueAfterBranch(lesson, run);
   const handoff = plannerHandoffStep(kc, binding);
-  if (handoff === null) return terminal(run, 'BLOCKED');
+  if (handoff === null) return continueAfterBranch(lesson, run);
+  // Show the authored bounded handoff note, then rejoin the baseline (never dead-end).
   return {
     ...enterStep(run, handoff),
     blockAfterCurrentStep: true,
@@ -738,7 +758,7 @@ function advancePrerequisiteOutcome(
   if (outcome === 'CORRECT') {
     return enterStep(run, exactStepForNode(lesson, gate.passNodeId, gate.itemId));
   }
-  if (gate.failureHandoffNodeId === null) return terminal(run, 'BLOCKED');
+  if (gate.failureHandoffNodeId === null) return continueAfterBranch(lesson, run);
   const handoff = exactStepForNode(lesson, gate.failureHandoffNodeId, gate.itemId);
   return {
     ...enterStep(run, handoff),
@@ -817,7 +837,9 @@ function advanceAfterContent(
   lesson: NormalizedLesson,
   run: NormalizedLessonRun,
 ): NormalizedLessonRun {
-  if (run.blockAfterCurrentStep) return terminal(run, 'BLOCKED');
+  // A bounded handoff note was just shown after a struggled checkpoint. Rejoin the main
+  // lesson at the next concept rather than dead-ending, so the learner always finishes.
+  if (run.blockAfterCurrentStep) return continueAfterBranch(lesson, run);
   if (run.currentStepId === null) return terminal(run, 'DELIVERY_COMPLETE');
   if (run.branch !== null) return advanceBranch(lesson, run);
   const next = nextBaselineStep(lesson, run.currentStepId, run.responses);

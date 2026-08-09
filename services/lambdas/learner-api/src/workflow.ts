@@ -142,21 +142,6 @@ function logStaleRunReset(lessonId: string, reason: string, error: unknown): voi
   console.warn(`[learner-api] resetting stale normalized run for ${lessonId} (${reason})${detail}`);
 }
 
-/**
- * Whether a lesson can ever legitimately reach the terminal BLOCKED state under the
- * current runtime. A missed checkpoint only continues (never blocks) now, so the only
- * remaining block sources are an authored remediation branch that hands off, or a
- * prerequisite gate. A lesson with neither can never block — so a run persisted as
- * BLOCKED on such a lesson is a stale artifact of the old runtime and should be reset.
- */
-function lessonCanBlock(revision: LoadedLessonRevision): boolean {
-  const lesson = revision.lesson;
-  const hasBranches = lesson.kcs.some((kc) => kc.branchBindings.length > 0);
-  const hasGates =
-    Array.isArray(lesson.prerequisiteGates) && lesson.prerequisiteGates.length > 0;
-  return hasBranches || hasGates;
-}
-
 interface MutationApplication {
   readonly eventType: string;
   readonly payload: JsonObject;
@@ -700,13 +685,12 @@ export class RepositoryLearnerKernel {
       logStaleRunReset(lessonId, 'persisted run no longer restores', error);
       return 'RESET';
     }
-    if (run.status === 'BLOCKED' && !lessonCanBlock(revision)) {
-      // Obsolete terminal block: the OLD runtime dead-ended this run on a missed
-      // checkpoint that now continues, and the lesson has no branch/gate that could ever
-      // legitimately block — so this state can never recur and its cursor is already gone.
-      // Reset so the lesson restarts fresh (and now completes past the miss) instead of
-      // showing "Let's pause here" forever. Lessons that CAN block keep their real state.
-      logStaleRunReset(lessonId, 'obsolete BLOCKED run (lesson has no branches or gates)', undefined);
+    if (run.status === 'BLOCKED') {
+      // Lessons never dead-end anymore — a struggled checkpoint continues to the next
+      // concept — so ANY run persisted as BLOCKED is a stale artifact of the old runtime
+      // whose cursor is already gone. Reset it so the lesson restarts fresh and plays
+      // through to completion instead of showing "Let's pause here" forever.
+      logStaleRunReset(lessonId, 'obsolete BLOCKED run (lessons no longer block)', undefined);
       return 'RESET';
     }
     return { run, revision };

@@ -684,11 +684,13 @@ describe('canonical repair, exact re-entry, and bounded handoff', () => {
     expect(run.currentStepId).toBe(handoff.stepId);
     expect(renderNormalizedLessonRun(run, revision).screen.kind).toBe('EXPOSITION');
     run = continueRun(run, revision);
-    expect(run.status).toBe('BLOCKED');
-    expect(renderNormalizedLessonRun(run, revision).screen.kind).toBe('BLOCKED');
+    // Finish-through: after the authored handoff note, the lesson rejoins the baseline
+    // (the next concept) instead of dead-ending, so the learner can always complete it.
+    expect(run.status).not.toBe('BLOCKED');
+    expect(renderNormalizedLessonRun(run, revision).screen.kind).not.toBe('BLOCKED');
   });
 
-  it('sends a failed exact re-entry to the authored bounded handoff instead of looping or advancing', async () => {
+  it('sends a failed exact re-entry to the authored bounded handoff, then rejoins the baseline instead of looping', async () => {
     const revision = await provider.loadActiveRevision({ lessonId: L3 });
     const kc = revision.lesson.kcs[0];
     const binding = kc?.branchBindings.find(
@@ -737,7 +739,7 @@ describe('canonical repair, exact re-entry, and bounded handoff', () => {
     run = continueRun(run, revision);
     expect(run.currentStepId).toBe(handoff.stepId);
     expect(run.passedExits[kc.kcId] ?? []).not.toContain(binding.failedFunction);
-    expect(continueRun(run, revision).status).toBe('BLOCKED');
+    expect(continueRun(run, revision).status).not.toBe('BLOCKED');
   });
 
   it('continues to the next authored repair after an earlier failed confirmation, then hands off after the final failed repair', async () => {
@@ -793,7 +795,7 @@ describe('canonical repair, exact re-entry, and bounded handoff', () => {
     run = continueRun(run, revision);
     expect(run.currentStepId).toBe(handoff.stepId);
     expect(run.passedExits[kc.kcId] ?? []).not.toContain(binding.failedFunction);
-    expect(continueRun(run, revision).status).toBe('BLOCKED');
+    expect(continueRun(run, revision).status).not.toBe('BLOCKED');
   });
 
   it('continues past a missed checkpoint when no support branch is authored, but still branches when one exists', async () => {

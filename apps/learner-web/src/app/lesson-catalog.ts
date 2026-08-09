@@ -191,6 +191,22 @@ function sectionForCluster(cluster: SkillCluster): LessonSection | null {
 }
 
 /**
+ * Estimated minutes a learner spends on a DB-backed lesson. Authored durations aren't in
+ * the handoff artifacts yet, so approximate from the concept (KC) count — the "N concepts"
+ * shown on the lesson — at roughly ten minutes per concept (teaching + guided practice + a
+ * checkpoint, with room for a repair), clamped to a realistic 30–60 minute lesson. The
+ * planner reserves the day's budget directly from this, so Today's Path reflects it
+ * automatically (and rebuilds when the daily time changes).
+ */
+const LESSON_MINUTES_MIN = 30;
+const LESSON_MINUTES_MAX = 60;
+const MINUTES_PER_CONCEPT = 10;
+function estimatedLessonMinutes(conceptCount: number): number {
+  const raw = Math.round(conceptCount * MINUTES_PER_CONCEPT);
+  return Math.min(LESSON_MINUTES_MAX, Math.max(LESSON_MINUTES_MIN, raw));
+}
+
+/**
  * Build a full RegisteredLesson for a DB-backed (build-a import) normalized lesson.
  * Identity + hard prerequisites come from the handoff seed; title + ordered KCs come
  * from the curriculum and cluster from the atlas — the SAME sources the boot guard
@@ -215,7 +231,7 @@ function buildDbBackedLesson(seed: DbBackedLessonSeed): RegisteredLesson {
     title: curriculum.shortTitle,
     section: sectionForCluster(cluster),
     cluster,
-    estimatedMinutes: 15,
+    estimatedMinutes: estimatedLessonMinutes(curriculum.kcs.length),
     kcIds: curriculum.kcs.map((kc) => kc.id),
     prerequisiteLessonIds: seed.prerequisiteLessonIds,
     routePath: `/app/lessons/${slug}`,
