@@ -355,4 +355,43 @@ describe('normalized lesson transport revision boundary', () => {
     const view = await kernel.normalizedLessonRun(L2, principal);
     expect(view.screen).toMatchObject({ heading: 'Fresh entry heading' });
   });
+
+  it('resets an obsolete BLOCKED run so a lesson without support branches restarts fresh', async () => {
+    const base = await createRepoLessonRevisionProvider().loadActiveRevision({ lessonId: L2 });
+    // Imported-lesson shape: checkpoints present, no repair branches (and L2 has no gates),
+    // so the runtime can no longer reach BLOCKED — a persisted BLOCKED run is now stale.
+    const noBranch: LoadedLessonRevision = {
+      ...base,
+      lesson: { ...base.lesson, kcs: base.lesson.kcs.map((kc) => ({ ...kc, branchBindings: [] })) },
+    };
+    const provider: LessonRevisionProvider = {
+      listActiveCatalogEntries: async () => [noBranch.catalogEntry],
+      resolveSlug: async () => ({
+        lessonId: noBranch.lessonId,
+        slug: noBranch.catalogEntry.slug,
+        activeDefinitionHash: noBranch.definitionHash,
+      }),
+      loadActiveRevision: async () => noBranch,
+      loadExactRevision: async () => noBranch,
+    };
+    const { kernel, principal, repository } = kernelWith(provider);
+    await kernel.handleNormalizedLessonStart(L2, { envelope: envelope(0) }, principal);
+
+    // Force the persisted run into the terminal BLOCKED state the OLD runtime produced.
+    const projection = repository.projectionFor(principal.learnerId);
+    if (projection === null) throw new Error('learner projection missing');
+    const state = structuredClone(projection.state) as {
+      normalizedLessonRuns?: Record<string, { status?: string; currentStepId?: string | null }>;
+    };
+    const persistedRun = state.normalizedLessonRuns?.[L2];
+    if (persistedRun === undefined) throw new Error('persisted run missing');
+    persistedRun.status = 'BLOCKED';
+    persistedRun.currentStepId = null;
+    repository.seedProjection({ ...projection, state: state as typeof projection.state });
+
+    // Reopening must not report BLOCKED anymore — it resets to a clean, startable state.
+    const status = await kernel.normalizedLessonStatus(L2, principal);
+    expect(status.runState).toBe('NOT_STARTED');
+    expect(status.actionLabel).toBe('Start');
+  });
 });
