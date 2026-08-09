@@ -1699,6 +1699,97 @@ body {
 .mc-masterykey__dot--locked {
   background: #b6b2c4;
 }
+/* Estimated-score hero: a plain white card at the top-center of the dashboard, above
+   the lesson-mastery key. A big number + label, with a "?" in the corner that toggles
+   a one-paragraph explanation. Width-capped and centered so it reads as a focal card
+   rather than a full-width band. */
+.mc-scorebox {
+  position: relative;
+  align-self: center;
+  width: 100%;
+  max-width: 360px;
+  margin-bottom: var(--mc-space-4);
+  padding: var(--mc-space-5) var(--mc-space-5) var(--mc-space-4);
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border);
+  border-radius: var(--mc-radius-card);
+  box-shadow: var(--mc-shadow-card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+.mc-scorebox__label {
+  font-size: var(--mc-text-14);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mc-ink-muted);
+}
+.mc-scorebox__value {
+  font-size: var(--mc-text-48);
+  font-weight: 800;
+  line-height: 1.05;
+  color: var(--mc-primary);
+  font-variant-numeric: tabular-nums;
+}
+.mc-scorebox__value--muted {
+  color: var(--mc-ink-muted);
+}
+.mc-scorebox__hint {
+  font-size: var(--mc-text-12);
+  color: var(--mc-ink-muted);
+}
+.mc-scorebox__info {
+  position: absolute;
+  top: var(--mc-space-3);
+  right: var(--mc-space-3);
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--mc-border);
+  background: transparent;
+  color: var(--mc-ink-muted);
+  font-size: var(--mc-text-12);
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+.mc-scorebox__info:hover,
+.mc-scorebox__info[aria-expanded='true'] {
+  color: var(--mc-primary);
+  border-color: var(--mc-primary);
+}
+.mc-scorebox__popover {
+  position: absolute;
+  top: calc(var(--mc-space-3) + 28px);
+  right: var(--mc-space-3);
+  z-index: 5;
+  width: min(280px, 78vw);
+  padding: var(--mc-space-3) var(--mc-space-4);
+  text-align: left;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border);
+  border-radius: 14px;
+  box-shadow: var(--mc-shadow-card);
+  font-size: var(--mc-text-14);
+  line-height: 1.45;
+  color: var(--mc-ink);
+}
+.mc-scorebox__popover p {
+  margin: 0;
+}
+.mc-scorebox__popover p + p {
+  margin-top: var(--mc-space-2);
+}
+.mc-scorebox__fine {
+  font-size: var(--mc-text-12);
+  color: var(--mc-ink-muted);
+}
 .mc-progressboard__rail {
   min-width: 0;
   padding: var(--mc-space-4);
