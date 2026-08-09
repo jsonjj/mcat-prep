@@ -1707,6 +1707,7 @@ body {
   position: relative;
   width: 100%;
   max-width: 360px;
+  margin-inline: auto;
   padding: var(--mc-space-4) var(--mc-space-5);
   background: var(--mc-surface);
   border: 1px solid var(--mc-border);
@@ -1788,20 +1789,19 @@ body {
   font-size: var(--mc-text-12);
   color: var(--mc-ink-muted);
 }
-/* Wide dashboard: the header becomes a row so the score card sits top-right, in line with
-   the "Progress" title, instead of living inside the center column where it pushed the
-   lesson-mastery key and the brain down. Narrow screens keep the default stacked header
-   (title, then the card). */
+/* Wide dashboard: a three-track header (title left, score card centered, empty right)
+   keeps the card centered on screen at the top without pushing the three-column grid or
+   the brain down. Narrow screens stack: title, then the centered card. */
 @media (min-width: 1180px) {
   .mc-progressboard--wide .mc-progressboard__head {
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: var(--mc-space-5);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: start;
+    gap: var(--mc-space-4);
   }
   .mc-progressboard--wide .mc-progressboard__head .mc-scorebox {
+    grid-column: 2;
     width: 320px;
-    flex: 0 0 auto;
   }
 }
 .mc-progressboard__rail {

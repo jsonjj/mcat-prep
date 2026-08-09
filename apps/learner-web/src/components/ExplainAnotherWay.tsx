@@ -66,21 +66,29 @@ export function ExplainAnotherWay({ questionId, source, gate }: Props) {
         ) : null}
       </Inline>
       {result !== null && activeMode !== null ? (
-        <Callout tone="info" title={REWRITE_MODE_LABELS[activeMode]}>
-          <div className="mc-explain__body">
-            {paragraphs.map((line, index) => (
-              <p key={index}>{line}</p>
-            ))}
-          </div>
-          {/* Only the REAL model rewrite is labelled as AI-generated. The deterministic
-              fallback (result.fallback) is a verbatim re-statement of the vetted
-              explanation, so it needs no such caveat. */}
-          {!result.fallback ? (
+        result.fallback ? (
+          // The model rewrite was unavailable (provider offline/over-budget) or its
+          // output failed the grounding check. Rather than re-print the same explanation
+          // under an "another way" heading — which reads as a bug — say so plainly. The
+          // vetted explanation above still stands.
+          <Callout tone="info" title="A fresh re-explanation isn’t available right now">
+            <p className="mc-explain__body mc-muted">
+              The AI re-explainer is momentarily unavailable — the explanation above still stands.
+              Try again in a moment.
+            </p>
+          </Callout>
+        ) : (
+          <Callout tone="info" title={REWRITE_MODE_LABELS[activeMode]}>
+            <div className="mc-explain__body">
+              {paragraphs.map((line, index) => (
+                <p key={index}>{line}</p>
+              ))}
+            </div>
             <p className="mc-explain__ainote mc-muted mc-fineprint">
               AI-generated re-explanation — double-check it against the official explanation above.
             </p>
-          ) : null}
-        </Callout>
+          </Callout>
+        )
       ) : null}
     </div>
   );
