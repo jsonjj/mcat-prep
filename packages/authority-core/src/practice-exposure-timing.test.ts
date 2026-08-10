@@ -134,6 +134,7 @@ describe('exposure is recorded on the answer, not on the serve', () => {
       await authority.practiceBank.recentlySeenIds(state.learnerId, {
         withinDays: 14,
         limit: 500,
+        now: CLOCK.now(),
       }),
     ).toEqual([]);
 

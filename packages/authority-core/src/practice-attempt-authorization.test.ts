@@ -147,6 +147,7 @@ describe('an adaptive-practice answer requires a server-issued attempt', () => {
       await authority.practiceBank.recentlySeenIds(state.learnerId, {
         withinDays: 14,
         limit: 50,
+        now: CLOCK.now(),
       }),
     ).toEqual([]);
   });

@@ -108,7 +108,10 @@ const opFromPrimarySkill = (primarySkill: string | null | undefined): ReasoningO
   }
 };
 
-const domainOf = (section: string | null, primarySkill: string | null | undefined): PracticeDomain =>
+const domainOf = (
+  section: string | null,
+  primarySkill: string | null | undefined,
+): PracticeDomain =>
   section === 'cars' || carsSkillOf(primarySkill) !== null ? 'cars' : 'science';
 
 const reasoningOpOf = (value: string | null | undefined): ReasoningOperation | null =>
@@ -120,7 +123,8 @@ const reasoningOpOf = (value: string | null | undefined): ReasoningOperation | n
 const skillOf = (
   reasoningOperation: string | null | undefined,
   primarySkill: string | null | undefined,
-): ReasoningOperation | null => reasoningOpOf(reasoningOperation) ?? opFromPrimarySkill(primarySkill);
+): ReasoningOperation | null =>
+  reasoningOpOf(reasoningOperation) ?? opFromPrimarySkill(primarySkill);
 
 const asCluster = (value: string | null): SkillCluster | null => value as SkillCluster | null;
 
@@ -302,9 +306,7 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
           }
         : {
             section: 'cars',
-            ...(query.carsSkill !== undefined
-              ? { primarySkill: `CARS_${query.carsSkill}` }
-              : {}),
+            ...(query.carsSkill !== undefined ? { primarySkill: `CARS_${query.carsSkill}` } : {}),
           }),
     });
     return rows.map(toBankItem);
@@ -372,13 +374,14 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
 
   async recentlySeenIds(
     learnerId: string,
-    { withinDays, limit }: { withinDays: number; limit: number },
+    { withinDays, limit, now }: { withinDays: number; limit: number; now: UtcTimestamp },
   ): Promise<string[]> {
     const schema = await this.schema();
     if (!schema.hasExposure) {
       const map = this.memExposure.get(learnerId);
       if (map === undefined) return [];
-      const cutoff = Date.now() - Math.max(0, withinDays) * 86_400_000;
+      // Injected clock, not Date.now() — exposures are written on the same clock.
+      const cutoff = Date.parse(now) - Math.max(0, withinDays) * 86_400_000;
       return [...map.entries()]
         .filter(([, e]) => Date.parse(e.lastSeenAt) >= cutoff)
         .sort((a, b) => Date.parse(b[1].lastSeenAt) - Date.parse(a[1].lastSeenAt))
@@ -387,10 +390,11 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
     }
     const { rows } = await this.pool.query<{ question_id: string }>(
       `select question_id from practice_exposure
-        where learner_id = $1 and last_seen_at >= (now() - ($2 || ' days')::interval)
+        where learner_id = $1
+          and last_seen_at >= ($4::timestamptz - ($2 || ' days')::interval)
         order by last_seen_at desc
         limit $3`,
-      [learnerId, String(Math.max(0, withinDays)), Math.min(Math.max(limit, 1), 2000)],
+      [learnerId, String(Math.max(0, withinDays)), Math.min(Math.max(limit, 1), 2000), now],
     );
     return rows.map((r) => r.question_id);
   }
@@ -590,9 +594,7 @@ export class PostgresPracticeBankPort implements PracticeBankPort {
     if (!schema.hasAttemptLog) {
       const list = this.memAttempts.get(learnerId) ?? [];
       if (
-        list.some(
-          (e) => e.questionId === entry.questionId && e.activityType === entry.activityType,
-        )
+        list.some((e) => e.questionId === entry.questionId && e.activityType === entry.activityType)
       ) {
         return;
       }

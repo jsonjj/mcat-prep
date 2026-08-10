@@ -334,17 +334,21 @@ describe('FilePracticeBankPort per-learner bookkeeping', () => {
     const bank = port();
     await bank.recordExposure('learner-1', 'sirs2-a', at);
 
-    expect(await bank.recentlySeenIds('learner-1', { withinDays: 14, limit: 10 })).toEqual([
-      'sirs2-a',
-    ]);
-    expect(await bank.recentlySeenIds('learner-2', { withinDays: 14, limit: 10 })).toEqual([]);
+    expect(await bank.recentlySeenIds('learner-1', { withinDays: 14, limit: 10, now: at })).toEqual(
+      ['sirs2-a'],
+    );
+    expect(await bank.recentlySeenIds('learner-2', { withinDays: 14, limit: 10, now: at })).toEqual(
+      [],
+    );
   });
 
   it('forgets exposure older than the window', async () => {
     const bank = port();
     await bank.recordExposure('learner-1', 'sirs2-a', '2026-06-01T00:00:00.000Z' as UtcTimestamp);
 
-    expect(await bank.recentlySeenIds('learner-1', { withinDays: 14, limit: 10 })).toEqual([]);
+    expect(await bank.recentlySeenIds('learner-1', { withinDays: 14, limit: 10, now: at })).toEqual(
+      [],
+    );
   });
 
   it('queues repair against the real KC id, newest first and deduplicated', async () => {

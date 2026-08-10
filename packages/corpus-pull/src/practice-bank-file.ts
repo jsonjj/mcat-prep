@@ -352,11 +352,12 @@ export class FilePracticeBankPort implements PracticeBankPort {
 
   async recentlySeenIds(
     learnerId: string,
-    { withinDays, limit }: { withinDays: number; limit: number },
+    { withinDays, limit, now }: { withinDays: number; limit: number; now: UtcTimestamp },
   ): Promise<string[]> {
     const map = this.exposure.get(learnerId);
     if (map === undefined) return [];
-    const cutoff = Date.now() - Math.max(0, withinDays) * 86_400_000;
+    // Injected clock, not Date.now() — see SyntheticPracticeBankPort.recentlySeenIds.
+    const cutoff = Date.parse(now) - Math.max(0, withinDays) * 86_400_000;
     return [...map.entries()]
       .filter(([, entry]) => Date.parse(entry.lastSeenAt) >= cutoff)
       .sort((a, b) => Date.parse(b[1].lastSeenAt) - Date.parse(a[1].lastSeenAt))

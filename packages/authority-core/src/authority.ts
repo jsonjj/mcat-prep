@@ -3073,7 +3073,7 @@ export class Authority {
     const [units, repairs, recentlySeen] = await Promise.all([
       this.practiceBank.listUnits({ limit: 400 }),
       this.practiceBank.recentMisses(state.learnerId, { limit: 20 }),
-      this.practiceBank.recentlySeenIds(state.learnerId, { withinDays: 14, limit: 500 }),
+      this.practiceBank.recentlySeenIds(state.learnerId, { withinDays: 14, limit: 500, now }),
     ]);
 
     const snapshot = this.buildPracticeSnapshot(state, units, repairs, now, focusToken);
@@ -3840,6 +3840,7 @@ export class Authority {
     const recentlySeen = await this.practiceBank.recentlySeenIds(state.learnerId, {
       withinDays: 30,
       limit: 200,
+      now: this.clock.now(),
     });
     const candidates = await this.practiceBank.findItems(
       { domain: 'cars', carsSkill: skill, targetB: 0 },

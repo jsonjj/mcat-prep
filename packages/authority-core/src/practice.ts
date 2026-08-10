@@ -235,7 +235,10 @@ export interface PracticeBankPort {
   getAnswer(questionId: string): Promise<PracticeAnswer | null>;
   questionStats(questionId: string): Promise<{ attempts: number; correct: number }>;
   recordAttempt(questionId: string, correct: boolean, now: UtcTimestamp): Promise<void>;
-  recentlySeenIds(learnerId: string, input: { withinDays: number; limit: number }): Promise<string[]>;
+  recentlySeenIds(
+    learnerId: string,
+    input: { withinDays: number; limit: number; now: UtcTimestamp },
+  ): Promise<string[]>;
   /**
    * Record one exposure and report what the learner's history was before it.
    *
@@ -299,9 +302,7 @@ export interface PracticeBankPort {
    * discipline the WS0 NULL timing columns preserve. Only requested ids with at
    * least one captured sample appear in the result.
    */
-  itemResponseTimes(
-    questionIds: readonly string[],
-  ): Promise<ReadonlyMap<string, ItemResponseTime>>;
+  itemResponseTimes(questionIds: readonly string[]): Promise<ReadonlyMap<string, ItemResponseTime>>;
 }
 
 /** Median (p50) of a sample, or null when empty; mean of the middle two on an even count. */
@@ -428,7 +429,10 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
   private readonly exposure = new Map<string, Map<string, ExposureEntry>>();
   /** Served-item authorizations, kept strictly apart from `exposure`. */
   private readonly grants = new Map<string, Map<string, StoredPracticeAttemptGrant>>();
-  private readonly misses = new Map<string, { kcId: string; skill?: ReasoningOperation; at: string }[]>();
+  private readonly misses = new Map<
+    string,
+    { kcId: string; skill?: ReasoningOperation; at: string }[]
+  >();
   /** Practice attempt log. Newest last; keyed per learner, one row per item. */
   private readonly attempts = new Map<string, PracticeAttemptLogEntry[]>();
 
@@ -568,11 +572,14 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
 
   async recentlySeenIds(
     learnerId: string,
-    { withinDays, limit }: { withinDays: number; limit: number },
+    { withinDays, limit, now }: { withinDays: number; limit: number; now: UtcTimestamp },
   ): Promise<string[]> {
     const map = this.exposure.get(learnerId);
     if (map === undefined) return [];
-    const cutoff = Date.now() - withinDays * 86_400_000;
+    // Use the injected clock, NOT Date.now(): exposures are recorded on the same clock, so
+    // a fixed-clock test (or any app/DB clock skew) must measure the window from it — a
+    // real-time cutoff against fixed-clock exposures made this window a date time-bomb.
+    const cutoff = Date.parse(now) - Math.max(0, withinDays) * 86_400_000;
     return [...map.entries()]
       .filter(([, entry]) => Date.parse(entry.lastSeenAt) >= cutoff)
       .sort((a, b) => Date.parse(b[1].lastSeenAt) - Date.parse(a[1].lastSeenAt))
@@ -634,7 +641,11 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
     now: UtcTimestamp,
   ): Promise<void> {
     const list = this.misses.get(learnerId) ?? [];
-    list.push(target.skill ? { kcId: target.kcId, skill: target.skill, at: now } : { kcId: target.kcId, at: now });
+    list.push(
+      target.skill
+        ? { kcId: target.kcId, skill: target.skill, at: now }
+        : { kcId: target.kcId, at: now },
+    );
     this.misses.set(learnerId, list);
   }
 
@@ -643,9 +654,7 @@ export class SyntheticPracticeBankPort implements PracticeBankPort {
     // Mirrors the partial unique index on (learner_id, activity_type, question_id):
     // a resubmit must not double-count a miss.
     if (
-      list.some(
-        (e) => e.questionId === entry.questionId && e.activityType === entry.activityType,
-      )
+      list.some((e) => e.questionId === entry.questionId && e.activityType === entry.activityType)
     ) {
       return;
     }
