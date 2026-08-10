@@ -46,7 +46,7 @@ describe('the Mistakes tab’s query keys', () => {
 describe('the invalidation stays targeted rather than blanket', () => {
   it('leaves the mistake keys out of the plain plan-mutation set', () => {
     // in_progress / skipped and a budget change move no mistake state.
-    expect(TODAYS_PATH_INVALIDATE).toEqual(['today', 'todays-path', 'bootstrap']);
+    expect(TODAYS_PATH_INVALIDATE).toEqual(['today', 'todays-path']);
     expect(missing(TODAYS_PATH_INVALIDATE)).toEqual([...MISTAKE_KEYS]);
   });
 

@@ -234,7 +234,11 @@ export function useConfirmPlan() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (goal: GoalInput) => authority.confirmPlan(goal),
-    onSuccess: () => invalidateLearner(qc),
+    // Completing onboarding flips `bootstrap.onboardingComplete`, which the app-access
+    // gate reads — so this is one of the few places that MUST refetch bootstrap now that
+    // it is no longer in LEARNER_KEYS (which every gameplay write shares).
+    onSuccess: () =>
+      Promise.all([invalidateLearner(qc), qc.invalidateQueries({ queryKey: ['bootstrap'] })]),
   });
 }
 
@@ -350,7 +354,10 @@ export function useResetProgress() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: () => authority.resetProgress(),
-    onSuccess: () => invalidateLearner(qc),
+    // A reset can move onboarding/auth-relevant state, so refetch bootstrap explicitly
+    // (it is intentionally no longer in LEARNER_KEYS).
+    onSuccess: () =>
+      Promise.all([invalidateLearner(qc), qc.invalidateQueries({ queryKey: ['bootstrap'] })]),
   });
 }
 

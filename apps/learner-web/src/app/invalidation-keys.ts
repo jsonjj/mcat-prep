@@ -48,8 +48,18 @@ export const CARS_REASONING_KEY = 'cars-reasoning-patterns';
  * one without the other is how the Atlas would explain a state it is no longer
  * in.
  */
+/**
+ * DELIBERATELY NOT here (nor in any per-write set below): `'bootstrap'`. Refetching
+ * `useBootstrap` calls `POST /v1/bootstrap`, which ROTATES the server session cookie and
+ * immediately revokes the previous one. Invalidating it on every scored attempt fired a
+ * bootstrap concurrently with the ~13 reads these sets refetch, so the rotation revoked
+ * the cookie out from under those reads — a 401 storm — and whichever bootstrap lost the
+ * race returned `authenticated:false`, bouncing the learner to /signin every ~minute.
+ * A scored answer / plan build never changes auth or onboarding state, so bootstrap does
+ * NOT need refetching here; the two mutations that DO change it (`confirmPlan`,
+ * `resetProgress`) invalidate `['bootstrap']` explicitly.
+ */
 export const MASTERY_KEYS = [
-  'bootstrap',
   'mastery',
   'mastery-skills',
   'mastery-lessons',
@@ -69,8 +79,8 @@ export const PRACTICE_INVALIDATE_KEYS: readonly string[] = [
   CARS_REASONING_KEY,
 ];
 
-/** Today's Path views rebuilt after any plan mutation. */
-export const TODAYS_PATH_INVALIDATE: readonly string[] = ['today', 'todays-path', 'bootstrap'];
+/** Today's Path views rebuilt after any plan mutation. (No `'bootstrap'` — see above.) */
+export const TODAYS_PATH_INVALIDATE: readonly string[] = ['today', 'todays-path'];
 
 /** Completing an activity can also be completing a Review Mistakes slot. */
 export const PLAN_ACTIVITY_COMPLETE_INVALIDATE: readonly string[] = [
@@ -84,7 +94,9 @@ export const PLAN_ACTIVITY_COMPLETE_INVALIDATE: readonly string[] = [
  * already reached the tab.
  */
 export const LEARNER_KEYS: readonly string[] = [
-  'bootstrap',
+  // No `'bootstrap'` — see the note on MASTERY_KEYS. The Study/lesson/duel writes that
+  // go through this set never change auth or onboarding, so they must not rotate the
+  // session; `confirmPlan`/`resetProgress` refetch bootstrap explicitly.
   'goal',
   'today',
   'session',
