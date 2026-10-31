@@ -338,8 +338,8 @@ importers:
         specifier: workspace:*
         version: link:../contracts
       zod:
-        specifier: 3.24.1
-        version: 3.24.1
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       typescript:
         specifier: 5.7.3
@@ -370,8 +370,8 @@ importers:
         specifier: workspace:*
         version: link:../domain
       zod:
-        specifier: 3.24.1
-        version: 3.24.1
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       typescript:
         specifier: 5.7.3
@@ -383,8 +383,8 @@ importers:
   packages/contracts:
     dependencies:
       zod:
-        specifier: 3.24.1
-        version: 3.24.1
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       typescript:
         specifier: 5.7.3
@@ -455,8 +455,8 @@ importers:
         specifier: workspace:*
         version: link:../contracts
       zod:
-        specifier: 3.24.1
-        version: 3.24.1
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       typescript:
         specifier: 5.7.3
@@ -544,8 +544,8 @@ importers:
         specifier: 5.2.1
         version: 5.2.1
       zod:
-        specifier: 3.24.1
-        version: 3.24.1
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       typescript:
         specifier: 5.7.3
@@ -914,11 +914,11 @@ importers:
         specifier: workspace:*
         version: link:../../packages/domain
       zod:
-        specifier: 3.24.1
-        version: 3.24.1
+        specifier: 4.6.6
+        version: 4.6.6
       zod-to-json-schema:
         specifier: 3.23.5
-        version: 3.23.5(zod@3.24.1)
+        version: 3.23.5(zod@4.6.6)
     devDependencies:
       '@types/node':
         specifier: 22.10.5
@@ -939,8 +939,8 @@ importers:
         specifier: workspace:*
         version: link:../../services/persistence-postgres
       zod:
-        specifier: 3.24.1
-        version: 3.24.1
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       '@types/node':
         specifier: 22.10.5
@@ -961,8 +961,8 @@ importers:
         specifier: workspace:*
         version: link:../../services/persistence-postgres
       zod:
-        specifier: 3.24.1
-        version: 3.24.1
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       '@types/node':
         specifier: 22.10.5
@@ -1769,6 +1769,7 @@ packages:
   '@smithy/core@3.29.7':
     resolution: {integrity: sha512-BiEE2bnnGoPKdlGe3L+gOYORDHFGPuYVRLP7iUow/Sflm0B4hC4XY3FC1MRuc7ltzpW2xNnXopKi34TTkULlKQ==}
     engines: {node: '>=18.0.0'}
+    deprecated: Deprecated due to a bug in custom logger data redaction. See https://github.com/aws/aws-sdk-js-v3/issues/8393.
 
   '@smithy/credential-provider-imds@4.4.12':
     resolution: {integrity: sha512-ZZPDbl/aRp77aycuoMlo3BTayT4CE2a3uoqETYZU5ySnVbhpl5IJiY7dCZedn+ZusyDLqVv44IvKBiXd2/nK0Q==}
@@ -2239,6 +2240,7 @@ packages:
   eslint@9.17.0:
     resolution: {integrity: sha512-evtlNcpJg+cZLcnVKwsai8fExnqjGPicK7gnUtlNuzu+Fv9bI0aLpND5T44VLQtoMEnI57LoXO9XAkIXwohKrA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -3023,8 +3025,8 @@ packages:
     peerDependencies:
       zod: ^3.23.3
 
-  zod@3.24.1:
-    resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
+  zod@4.6.6:
+    resolution: {integrity: sha512-4UmzQUF5fxvfcYHlbjBmejU+w+hbDnWFx4aS8kBx7nPBHcO2SqPbpAG8snbdg+Xse4pRefR98hgjFgIMCI/UhA==}
 
   zustand@3.7.2:
     resolution: {integrity: sha512-PIJDIZKtokhof+9+60cpockVOq05sJzHCriyvaLBmEJixseQ1a5Kdov6fWZfWOu5SK9c+FhH1jU0tntLxRJYMA==}
@@ -5020,11 +5022,11 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  zod-to-json-schema@3.23.5(zod@3.24.1):
+  zod-to-json-schema@3.23.5(zod@4.6.6):
     dependencies:
-      zod: 3.24.1
+      zod: 4.6.6
 
-  zod@3.24.1: {}
+  zod@4.6.6: {}
 
   zustand@3.7.2(react@18.3.1):
     optionalDependencies:
